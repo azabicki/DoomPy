@@ -61,25 +61,35 @@ def btn_restart_game(content, frame_menu_buttons):
 
 
 def btn_play_trait(p):
+    # get card
+    card = play_trait.get()
+
     # return if no trait selected
-    if play_trait.get() == "":
+    if card == "":
         print("no trait is selected...")
         return
 
-    print("{} is playing {}".format(player_name[p].get(), play_trait.get()))
-
     # add to players traits
     cur_players_lst = list(player_cards[p].get())
-    cur_players_lst.append(play_trait.get())
+    cur_players_lst.append(card)
     player_cards[p].set(cur_players_lst)
 
-    # remove from deck
-    cur_deck_cards = list(deck_cards.get())
-    cur_deck_cards.remove(play_trait.get())
-    deck_cards.set(cur_deck_cards)
+    # remove from deck if all cards played
+    card_played = 0
+    for i in range(n_player.get()):
+        card_played = card_played + sum([1 for x in list(player_cards[i].get()) if x == card])
+    card_n = traits_df[traits_df['name'] == card]['n_of_cards'].values[0]
+
+    if card_played == card_n:
+        cur_deck_cards = list(deck_cards.get())
+        cur_deck_cards.remove(card)
+        deck_cards.set(cur_deck_cards)
 
     # clear trait search & selection
     btn_clear_trait_search()
+
+    print("{} is playing {}, which is {} times in the deck and was played {} times".format(
+        player_name[p].get(), card, card_n, card_played))
 
 
 def search_trait_in_list(event):

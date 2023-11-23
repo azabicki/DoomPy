@@ -5,15 +5,15 @@ from math import floor
 from functools import partial
 import pandas as pd
 
-# system settings ######################################################
+# system settings ########################################################
 curdir = os.path.dirname(__file__)
 
-# load card list #######################################################
+# load card list #########################################################
 traits_df = pd.read_excel(os.path.join(curdir, "cards.xlsx"))
 traits_list_all = sorted(traits_df["name"].values.tolist())
 
 
-# functions ############################################################
+# functions ##############################################################
 def btn_clear_trait_search():
     search_trait_str.set("")
     lbox_cards.set(deck_cards.get())
@@ -22,7 +22,7 @@ def btn_clear_trait_search():
 
 
 def btn_restart_game(content, frame_menu_buttons):
-    # reset game variables
+    # reset card/trait variables
     search_trait_str.set("")
     deck_cards.set(traits_list_all)
     lbox_cards.set(traits_list_all)
@@ -315,8 +315,8 @@ def create_menu_frame(content, defaults):
     return frame, lbox_traits
 
 
-###########################################################################
-# default variables
+##########################################################################
+# default variables ------------------------------------------------------
 defaults = {
     "names": ["Lisa", "Julia", "Anton", "Adam", "Ben", "Franzi"],
     "n_player": 4,
@@ -325,7 +325,7 @@ defaults = {
     "bg_frame_1": "lightgrey",
 }
 
-# create a window
+# create a window --------------------------------------------------------
 root = tk.Tk()
 root.title("LIVE Doomlings Calculator")
 root.geometry("1600x800")
@@ -333,7 +333,7 @@ root.configure(background="grey")
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
 
-# init variables
+# init variables ---------------------------------------------------------
 n_player = tk.IntVar(value=defaults["n_player"])
 max_player = tk.IntVar(value=defaults["max_player"])
 search_trait_str = tk.StringVar(value="")
@@ -351,25 +351,25 @@ for i in range(max_player.get()):
                           'total': tk.IntVar(value=0)})
     player_cards.append(tk.Variable(value=[]))
 
-# styling
+# styling ----------------------------------------------------------------
 gui_style = ttk.Style()
 gui_style.configure("total.TLabel", font=("", 56, "bold"), foreground="red")
 
-# content frame
+# content frame ----------------------------------------------------------
 content = tk.Frame(root, width=1200, height=800, bg=defaults["bg_content"])
 content.grid(column=0, row=0, sticky="nesw")
 content.columnconfigure(0, weight=0)
 for i in range(n_player.get()):
     content.columnconfigure(i + 1, weight=1)
 
-# create menu frame
+# create menu frame ------------------------------------------------------
 frame_menu, lbox_traits = create_menu_frame(content, defaults)
 frame_menu.grid(column=0, row=0, padx=5, pady=5, stick="nesw")
 
-# create player-frames
+# create player-frames ---------------------------------------------------
 frames_player = []
 for i in range(n_player.get()):
     frames_player.append(create_player_frame(content, defaults, i))
 
-# ----- run ---------------
+# ----- run --------------------------------------------------------------
 root.mainloop()

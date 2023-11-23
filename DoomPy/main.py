@@ -14,16 +14,27 @@ traits_list_all = sorted(traits_df["name"].values.tolist())
 
 
 # functions ############################################################
-def btn_clear_trait_search(*args):
+def btn_clear_trait_search():
     search_trait_str.set("")
     lbox_cards.set(deck_cards.get())
     lbox_traits.selection_clear(0, tk.END)
     play_trait.set("")
 
 
-def btn_restart_game(content, frame_menu_buttons, *args):
-    # init game variables
-    reset_vars()
+def btn_restart_game(content, frame_menu_buttons):
+    # reset game variables
+    search_trait_str.set("")
+    deck_cards.set(traits_list_all)
+    lbox_cards.set(traits_list_all)
+    play_trait.set("")
+
+    player_points = []
+    player_cards = []
+    for i in range(max_player.get()):
+        player_points.append({'face': tk.IntVar(value=0), 'drop': tk.IntVar(value=0),
+                              'worlds_end': tk.IntVar(value=0), 'MOL': tk.IntVar(value=0),
+                              'total': tk.IntVar(value=0)})
+        player_cards.append(tk.Variable(value=[]))
 
     # clear traits listbox
     btn_clear_trait_search()
@@ -33,7 +44,7 @@ def btn_restart_game(content, frame_menu_buttons, *args):
 
     # clear grid configuration
     for i in range(n_player.get()):
-        content.columnconfigure(i + 1, weight=1)
+        content.columnconfigure(i+1, weight=1)
 
     # forget current player_frames
     for w in frames_player:
@@ -44,13 +55,12 @@ def btn_restart_game(content, frame_menu_buttons, *args):
     for i in range(n_player.get()):
         # create frame
         frames_player.append(create_player_frame(content, defaults, i))
-        frames_player[i].grid(column=i + 1, row=0, padx=5, pady=5, sticky="n")
 
         # clear player_cards listbox
         player_cards[i].set("")
 
 
-def btn_play_trait(p, *args):
+def btn_play_trait(p):
     # return if no trait selected
     if play_trait.get() == "":
         print("no trait is selected...")
@@ -89,14 +99,14 @@ def update_selected_trait(x):
 def create_player_frame(content, defaults, i):
     frame = tk.Frame(content, bg=defaults["bg_frame_1"])
     frame.columnconfigure(0, weight=1)
-    frame.columnconfigure(1, weight=1)
     frame.rowconfigure(0, weight=1)  # name
     frame.rowconfigure(1, weight=1)  # points
     frame.rowconfigure(2, weight=5)  # traits
+    frame.grid(column=i + 1, row=0, padx=5, pady=5, sticky="n")  # or use nesw for x-streched frames!
 
     # ----- name + overview current points --------------
     frame_points = tk.Frame(frame)
-    frame_points.grid(row=0, column=0, padx=5, pady=5, sticky="nesw")
+    frame_points.grid(row=0, column=0, padx=5, pady=5, ipady=5, sticky="nesw")
     frame_points.columnconfigure(0, weight=1)
     frame_points.columnconfigure(1, weight=1)
     frame_points.columnconfigure(2, weight=1)
@@ -148,7 +158,7 @@ def create_player_frame(content, defaults, i):
         frame_points,
         textvariable=player_points[i]['total'],
         style="total.TLabel",
-    ).grid(row=1, column=2, rowspan=4, padx=(10, 10), pady=(10, 10))
+    ).grid(row=1, column=2, rowspan=4, padx=0, pady=0)
 
     # ----- list of traits played --------------
     frame_traits = tk.Frame(frame)
@@ -191,7 +201,7 @@ def create_player_entries(container):
     for i in range(n_player.get()):
         ttk.Label(
             container,
-            text="player {}: ".format(i + 1),
+            text="player {}: ".format(i+1),
         ).grid(row=i, column=0)
         ttk.Entry(
             container,
@@ -303,23 +313,6 @@ def create_menu_frame(content, defaults):
     return frame, lbox_traits
 
 
-def reset_vars():
-    search_trait_str.set("")
-    deck_cards.set(traits_list_all)
-    lbox_cards.set(traits_list_all)
-    play_trait.set("")
-
-    player_name = []
-    player_points = []
-    player_cards = []
-    for i in range(max_player.get()):
-        player_name.append(tk.StringVar(value=defaults["names"][i]))
-        player_points.append({'face': tk.IntVar(value=0), 'drop': tk.IntVar(value=0),
-                              'worlds_end': tk.IntVar(value=0), 'MOL': tk.IntVar(value=0),
-                              'total': tk.IntVar(value=0)})
-        player_cards.append(tk.Variable(value=[]))
-
-
 ###########################################################################
 # default variables
 defaults = {
@@ -338,7 +331,7 @@ root.configure(background="grey")
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
 
-# init Variables
+# init variables
 n_player = tk.IntVar(value=defaults["n_player"])
 max_player = tk.IntVar(value=defaults["max_player"])
 search_trait_str = tk.StringVar(value="")
@@ -358,7 +351,7 @@ for i in range(max_player.get()):
 
 # styling
 gui_style = ttk.Style()
-gui_style.configure("total.TLabel", font=("", 48, "bold"), foreground="red")
+gui_style.configure("total.TLabel", font=("", 56, "bold"), foreground="red")
 
 # content frame
 content = tk.Frame(root, width=1200, height=800, bg=defaults["bg_content"])
@@ -375,7 +368,6 @@ frame_menu.grid(column=0, row=0, padx=5, pady=5, stick="nesw")
 frames_player = []
 for i in range(n_player.get()):
     frames_player.append(create_player_frame(content, defaults, i))
-    frames_player[i].grid(column=i + 1, row=0, padx=5, pady=5, sticky="n")
 
 # ----- run ---------------
 root.mainloop()

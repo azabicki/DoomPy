@@ -28,14 +28,6 @@ def btn_restart_game(content, frame_menu_buttons):
     lbox_cards.set(traits_list_all)
     play_trait.set("")
 
-    player_points = []
-    player_cards = []
-    for i in range(max_player.get()):
-        player_points.append({'face': tk.IntVar(value=0), 'drop': tk.IntVar(value=0),
-                              'worlds_end': tk.IntVar(value=0), 'MOL': tk.IntVar(value=0),
-                              'total': tk.IntVar(value=0)})
-        player_cards.append(tk.Variable(value=[]))
-
     # clear traits listbox
     btn_clear_trait_search()
 

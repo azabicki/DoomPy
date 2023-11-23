@@ -9,19 +9,22 @@ import pandas as pd
 curdir = os.path.dirname(__file__)
 
 # load card list #######################################################
-traits = pd.read_excel(os.path.join(curdir, "cards.xlsx"))
-traits_list = sorted(traits["name"].values.tolist())
+traits_df = pd.read_excel(os.path.join(curdir, "cards.xlsx"))
+traits_list_all = sorted(traits_df["name"].values.tolist())
 
 
 # functions ############################################################
 def btn_clear_trait_search(*args):
-    trait_entry_str.set("")
-    list_cards.set(traits_list)
+    search_trait_str.set("")
+    lbox_cards.set(deck_cards.get())
     lbox_traits.selection_clear(0, tk.END)
     play_trait.set("")
 
 
 def btn_restart_game(content, frame_menu_buttons, *args):
+    # init game variables
+    reset_vars()
+
     # clear traits listbox
     btn_clear_trait_search()
 
@@ -56,25 +59,30 @@ def btn_play_trait(p, *args):
     print("{} is playing {}".format(player_name[p].get(), play_trait.get()))
 
     # add to players traits
-    cur_lst = list(player_cards[p].get())
-    cur_lst.append(play_trait.get())
-    player_cards[p].set(cur_lst)
+    cur_players_lst = list(player_cards[p].get())
+    cur_players_lst.append(play_trait.get())
+    player_cards[p].set(cur_players_lst)
+
+    # remove from deck
+    cur_deck_cards = list(deck_cards.get())
+    cur_deck_cards.remove(play_trait.get())
+    deck_cards.set(cur_deck_cards)
 
     # clear trait search & selection
-    # btn_clear_trait_search()
+    btn_clear_trait_search()
 
 
 def search_trait_in_list(event):
     value = event.widget.get()
 
     if value == "":
-        list_cards.set(traits_list)
+        lbox_cards.set(deck_cards.get())
     else:
-        list_cards.set([item for item in traits_list if value.lower() in item.lower()])
+        lbox_cards.set([item for item in deck_cards.get() if value.lower() in item.lower()])
 
 
 def update_selected_trait(x):
-    selected_card = list_cards.get()[int(x[0])]
+    selected_card = lbox_cards.get()[int(x[0])]
     play_trait.set(selected_card)
 
 
@@ -120,25 +128,25 @@ def create_player_frame(content, defaults, i):
 
     ttk.Label(
         frame_points,
-        text="0",
-    ).grid(row=1, column=1)
+        textvariable=player_points[i]['face'],
+    ).grid(row=1, column=1, sticky="w")
     ttk.Label(
         frame_points,
-        text="0",
-    ).grid(row=2, column=1)
+        textvariable=player_points[i]['drop'],
+    ).grid(row=2, column=1, sticky="w")
     ttk.Label(
         frame_points,
-        text="0",
-    ).grid(row=3, column=1)
+        textvariable=player_points[i]['worlds_end'],
+    ).grid(row=3, column=1, sticky="w")
     ttk.Label(
         frame_points,
-        text="0",
-    ).grid(row=4, column=1)
+        textvariable=player_points[i]['MOL'],
+    ).grid(row=4, column=1, sticky="w")
 
     # total points
     ttk.Label(
         frame_points,
-        text="00",
+        textvariable=player_points[i]['total'],
         style="total.TLabel",
     ).grid(row=1, column=2, rowspan=4, padx=(10, 10), pady=(10, 10))
 
@@ -252,7 +260,7 @@ def create_menu_frame(content, defaults):
     trait_ent = ttk.Entry(
         frame_menu_traits,
         width=10,
-        textvariable=trait_entry_str,
+        textvariable=search_trait_str,
     )
     trait_ent.grid(row=1, column=0, padx=(10, 0), sticky="w")
     trait_ent.bind("<KeyRelease>", search_trait_in_list)
@@ -265,7 +273,7 @@ def create_menu_frame(content, defaults):
     ).grid(row=1, column=1, padx=(0, 10), sticky="w")
 
     lbox_traits = tk.Listbox(
-        frame_menu_traits, height=8, listvariable=list_cards, selectmode=tk.SINGLE
+        frame_menu_traits, height=8, listvariable=lbox_cards, selectmode=tk.SINGLE
     )
     lbox_traits.grid(row=2, column=0, columnspan=2, padx=10)
     lbox_traits.bind(
@@ -295,6 +303,23 @@ def create_menu_frame(content, defaults):
     return frame, lbox_traits
 
 
+def reset_vars():
+    search_trait_str.set("")
+    deck_cards.set(traits_list_all)
+    lbox_cards.set(traits_list_all)
+    play_trait.set("")
+
+    player_name = []
+    player_points = []
+    player_cards = []
+    for i in range(max_player.get()):
+        player_name.append(tk.StringVar(value=defaults["names"][i]))
+        player_points.append({'face': tk.IntVar(value=0), 'drop': tk.IntVar(value=0),
+                              'worlds_end': tk.IntVar(value=0), 'MOL': tk.IntVar(value=0),
+                              'total': tk.IntVar(value=0)})
+        player_cards.append(tk.Variable(value=[]))
+
+
 ###########################################################################
 # default variables
 defaults = {
@@ -316,14 +341,19 @@ root.rowconfigure(0, weight=1)
 # init Variables
 n_player = tk.IntVar(value=defaults["n_player"])
 max_player = tk.IntVar(value=defaults["max_player"])
-list_cards = tk.Variable(value=traits_list)
+search_trait_str = tk.StringVar(value="")
+deck_cards = tk.Variable(value=traits_list_all)
+lbox_cards = tk.Variable(value=traits_list_all)
 play_trait = tk.StringVar(value="")
-trait_entry_str = tk.StringVar(value="")
 
 player_name = []
+player_points = []
 player_cards = []
 for i in range(max_player.get()):
     player_name.append(tk.StringVar(value=defaults["names"][i]))
+    player_points.append({'face': tk.IntVar(value=0), 'drop': tk.IntVar(value=0),
+                          'worlds_end': tk.IntVar(value=0), 'MOL': tk.IntVar(value=0),
+                          'total': tk.IntVar(value=0)})
     player_cards.append(tk.Variable(value=[]))
 
 # styling

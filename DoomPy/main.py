@@ -153,7 +153,7 @@ def search_trait_in_list(event):
         lbox_cards.set([item for item in deck_cards.get() if value.lower() in item.lower()])
 
 
-def update_selected_trait(what, idx, p):
+def update_selected_trait(what, idx):
     if what == "lbox":
         if idx == ():
             play_trait.set("")
@@ -166,7 +166,7 @@ def update_selected_trait(what, idx, p):
         if idx == ():
             handle_trait.set("")
         else:
-            selected_card = player_cards[p].get()[int(idx[0])]
+            selected_card = player_cards[what].get()[int(idx[0])]
             handle_trait.set(selected_card)
 
         print("handle PLAYER_listbox -> selected trait = {}".format(handle_trait.get()))
@@ -251,7 +251,7 @@ def create_player_frame(content, defaults, i):
     )
     lbox_player.grid(row=0, column=0, padx=5, pady=5, sticky='nesw')
     lbox_player.bind(
-        "<<ListboxSelect>>", lambda e: update_selected_trait(i, lbox_player.curselection(), i)
+        "<<ListboxSelect>>", lambda e: update_selected_trait(i, lbox_player.curselection())
     )
 
     ttk.Button(
@@ -377,7 +377,7 @@ def create_menu_frame(content, defaults):
     )
     lbox_traits.grid(row=2, column=0, columnspan=2, padx=10)
     lbox_traits.bind(
-        "<<ListboxSelect>>", lambda e: update_selected_trait("lbox", lbox_traits.curselection(), 0)
+        "<<ListboxSelect>>", lambda e: update_selected_trait("lbox", lbox_traits.curselection())
     )
 
     ttk.Label(

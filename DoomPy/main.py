@@ -175,14 +175,14 @@ def update_selected_trait(what, idx, p):
 def create_player_frame(content, defaults, i):
     frame = tk.Frame(content, bg=defaults["bg_frame_1"])
     frame.columnconfigure(0, weight=1)
-    frame.rowconfigure(0, weight=1)  # name
-    frame.rowconfigure(1, weight=1)  # points
-    frame.rowconfigure(2, weight=5)  # traits
-    frame.grid(column=i + 1, row=0, padx=5, pady=5, sticky="n")  # or use nesw for x-streched frames!
+    frame.rowconfigure(0, weight=1)  # name + points
+    frame.rowconfigure(1, weight=5)  # traits
+#    frame.rowconfigure(2, weight=1)  # further actions
+    frame.grid(column=i + 1, row=0, padx=5, pady=5, sticky="nesw")  # or use nesw for x-streched frames!
 
-    # ----- name + overview current points --------------
-    frame_points = tk.Frame(frame)
-    frame_points.grid(row=0, column=0, padx=5, pady=5, ipady=5, sticky="nesw")
+    # ----- name + overview current points -------------------------------
+    frame_points = tk.Frame(frame, borderwidth=2, relief="solid")
+    frame_points.grid(row=0, column=0, padx=5, pady=5, sticky="nesw")
     frame_points.columnconfigure(0, weight=1)
     frame_points.columnconfigure(1, weight=1)
     frame_points.columnconfigure(2, weight=1)
@@ -234,11 +234,11 @@ def create_player_frame(content, defaults, i):
         frame_points,
         textvariable=player_points[i]['total'],
         style="total.TLabel",
-    ).grid(row=1, column=2, rowspan=4, padx=0, pady=0)
+    ).grid(row=1, column=2, rowspan=4, padx=0, pady=0, sticky='nesw')
 
-    # ----- list of traits played --------------
-    frame_traits = tk.Frame(frame)
-    frame_traits.grid(row=1, column=0, padx=5, sticky="nesw")
+    # ----- list of traits played ----------------------------------------
+    frame_traits = tk.Frame(frame, borderwidth=2, relief="solid")
+    frame_traits.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="nesw")
     frame_traits.columnconfigure(0, weight=1)
     frame_traits.columnconfigure(1, weight=1)
     frame_traits.columnconfigure(2, weight=1)
@@ -260,7 +260,11 @@ def create_player_frame(content, defaults, i):
         command=partial(btn_discard_trait, i, lbox_player),
     ).grid(row=1, column=0)
 
-    # ----- xxx --------------
+    # ----- action buttons -------------------------------------
+#    frame_actions = tk.Frame(frame, borderwidth=2, relief="solid")
+#    frame_actions.grid(row=2, column=0, padx=5, pady=5, sticky="nesw")
+#    frame_actions.columnconfigure(0, weight=1)
+#    frame_actions.columnconfigure(1, weight=1)
 
     return frame
 

@@ -52,36 +52,96 @@ def btn_restart_game(content, frame_menu_buttons):
         player_cards[i].set("")
 
 
-def btn_play_trait(p):
-    # get card
-    card = play_trait.get()
-
+def btn_discard_trait(p, lbox_player):
     # return if no trait selected
-    if card == "":
+    if handle_trait.get() == "":
         print("no trait is selected...")
         return
 
+    # get card
+    card = handle_trait.get()
+    card_face = int(traits_df[traits_df['name'] == card]['points'].values[0])
+
+    # remove from players traits
+    cur_players_cards = list(player_cards[p].get())
+    cur_players_cards.remove(card)
+    player_cards[p].set(cur_players_cards)
+
+    # add to deck traits, if not there
+    if card not in list(deck_cards.get()):
+        cur_deck_cards = list(deck_cards.get())
+        cur_deck_cards.append(card)
+        deck_cards.set(sorted(cur_deck_cards))
+
+    print("{} is discarding {} ({} pts)".format(player_name[p].get(), card, card_face))
+
+    # update scoring
+    update_scoring(p)
+
+    # clear player trait selection
+    lbox_player.selection_clear(0, tk.END)
+    handle_trait.set("")
+
+
+def btn_play_trait(p):
+    # return if no trait selected
+    if play_trait.get() == "":
+        print("no trait is selected...")
+        return
+
+    # get card
+    card = play_trait.get()
+    card_n = traits_df[traits_df['name'] == card]['n_of_cards'].values[0]
+    card_face = int(traits_df[traits_df['name'] == card]['points'].values[0])
+
     # add to players traits
-    cur_players_lst = list(player_cards[p].get())
-    cur_players_lst.append(card)
-    player_cards[p].set(cur_players_lst)
+    cur_players_cards = list(player_cards[p].get())
+    cur_players_cards.append(card)
+    player_cards[p].set(sorted(cur_players_cards))
 
     # remove from deck if all cards played
     card_played = 0
     for i in range(n_player.get()):
         card_played = card_played + sum([1 for x in list(player_cards[i].get()) if x == card])
-    card_n = traits_df[traits_df['name'] == card]['n_of_cards'].values[0]
 
     if card_played == card_n:
         cur_deck_cards = list(deck_cards.get())
         cur_deck_cards.remove(card)
         deck_cards.set(cur_deck_cards)
 
+    print("{} is playing {} ({} pts), which is {} times in the deck and was played {} times".format(
+        player_name[p].get(), card, card_face, card_n, card_played))
+
+    # update scoring
+    update_scoring(p)
+
     # clear trait search & selection
     btn_clear_trait_search()
 
-    print("{} is playing {}, which is {} times in the deck and was played {} times".format(
-        player_name[p].get(), card, card_n, card_played))
+
+def update_scoring(p):
+    # get cards
+    cards = player_cards[p].get()
+
+    # calculate face value
+    cards_face = int(sum([traits_df[traits_df['name'] == card]['points'].values[0] for card in cards]))
+    player_points[p]['face'].set(cards_face)
+
+    # calculate drop points
+    cards_drop = 0
+    player_points[p]['drop'].set(cards_drop)
+
+    # calculate world's end points
+    cards_worlds_end = 0
+    player_points[p]['worlds_end'].set(cards_worlds_end)
+
+    # calculate total score
+    total = cards_face + cards_drop + cards_worlds_end
+    player_points[p]['total'].set(total)
+
+    print("  -> face score is: {} ".format(cards_face))
+    print("  -> drop score is: {} ".format(cards_drop))
+    print("  -> total score is: {} ".format(total))
 
 
 def search_trait_in_list(event):
@@ -93,9 +153,23 @@ def search_trait_in_list(event):
         lbox_cards.set([item for item in deck_cards.get() if value.lower() in item.lower()])
 
 
-def update_selected_trait(x):
-    selected_card = lbox_cards.get()[int(x[0])]
-    play_trait.set(selected_card)
+def update_selected_trait(what, idx, p):
+    if what == "lbox":
+        if idx == ():
+            play_trait.set("")
+        else:
+            selected_card = lbox_cards.get()[int(idx[0])]
+            play_trait.set(selected_card)
+
+        print("handle DECK_listbox -> selected trait = {}".format(play_trait.get()))
+    else:
+        if idx == ():
+            handle_trait.set("")
+        else:
+            selected_card = player_cards[p].get()[int(idx[0])]
+            handle_trait.set(selected_card)
+
+        print("handle PLAYER_listbox -> selected trait = {}".format(handle_trait.get()))
 
 
 def create_player_frame(content, defaults, i):
@@ -169,12 +243,22 @@ def create_player_frame(content, defaults, i):
     frame_traits.columnconfigure(1, weight=1)
     frame_traits.columnconfigure(2, weight=1)
 
-    tk.Listbox(
+    lbox_player = tk.Listbox(
         frame_traits,
         height=20,
         listvariable=player_cards[i],
         selectmode=tk.SINGLE,
-    ).grid(row=0, column=0, padx=10, pady=10)
+    )
+    lbox_player.grid(row=0, column=0, padx=5, pady=5, sticky='nesw')
+    lbox_player.bind(
+        "<<ListboxSelect>>", lambda e: update_selected_trait(i, lbox_player.curselection(), i)
+    )
+
+    ttk.Button(
+        frame_traits,
+        text="discard",
+        command=partial(btn_discard_trait, i, lbox_player),
+    ).grid(row=1, column=0)
 
     # ----- xxx --------------
 
@@ -289,7 +373,7 @@ def create_menu_frame(content, defaults):
     )
     lbox_traits.grid(row=2, column=0, columnspan=2, padx=10)
     lbox_traits.bind(
-        "<<ListboxSelect>>", lambda e: update_selected_trait(lbox_traits.curselection())
+        "<<ListboxSelect>>", lambda e: update_selected_trait("lbox", lbox_traits.curselection(), 0)
     )
 
     ttk.Label(
@@ -340,6 +424,7 @@ search_trait_str = tk.StringVar(value="")
 deck_cards = tk.Variable(value=traits_list_all)
 lbox_cards = tk.Variable(value=traits_list_all)
 play_trait = tk.StringVar(value="")
+handle_trait = tk.StringVar(value="")
 
 player_name = []
 player_points = []

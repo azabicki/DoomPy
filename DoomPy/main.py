@@ -328,7 +328,19 @@ def create_player_frame(content, defaults, i):
         frame_points,
         textvariable=player_points[i]['total'],
         style="total.TLabel",
-    ).grid(row=1, column=2, rowspan=4, padx=0, pady=0, sticky='nesw')
+    ).grid(row=1, column=2, rowspan=4, padx=0, pady=0, sticky='ns')
+
+    # gene pool
+    ttk.Label(
+        frame_points,
+        text="gene pool",
+    ).grid(row=1, column=3, columnspan=2, padx=0, pady=0, sticky='ns')
+
+    ttk.Label(
+        frame_points,
+        textvariable=player_genes[i],
+        style="genes.TLabel",
+    ).grid(row=2, column=3, rowspan=3, columnspan=2, padx=0, pady=0, sticky='n')
 
     # ----- list of traits played ----------------------------------------
     frame_traits = tk.Frame(frame, borderwidth=2, relief="solid")
@@ -519,6 +531,7 @@ defaults = {
     "names": ["Lisa", "Julia", "Anton", "Adam", "Ben", "Franzi"],
     "n_player": 4,
     "max_player": 6,
+    "starting_genes": 6,
     "bg_content": "grey",
     "bg_frame_1": "lightgrey",
 }
@@ -541,10 +554,12 @@ play_trait = tk.StringVar(value="")
 
 player_name = []
 player_points = []
+player_genes = []
 player_cards = []
 handle_trait = []
 for i in range(max_player.get()):
     player_name.append(tk.StringVar(value=defaults["names"][i]))
+    player_genes.append(tk.IntVar(value=defaults["starting_genes"]))
     player_points.append({'face': tk.IntVar(value=0), 'drop': tk.IntVar(value=0),
                           'worlds_end': tk.IntVar(value=0), 'MOL': tk.IntVar(value=0),
                           'total': tk.IntVar(value=0)})
@@ -554,6 +569,7 @@ for i in range(max_player.get()):
 # styling ----------------------------------------------------------------
 gui_style = ttk.Style()
 gui_style.configure("total.TLabel", font=("", 56, "bold"), foreground="red")
+gui_style.configure("genes.TLabel", font=("", 38, "bold"), foreground="hotpink1")
 gui_style.configure("move.TCombobox", selectbackground="none")
 
 # load images ------------------------------------------------------------

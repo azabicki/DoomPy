@@ -87,12 +87,6 @@ def btn_discard_trait(from_, lbox_player):
 
 
 def btn_move_trait(from_, cbox_move_to):
-    # return if wrong button used
-    if from_ != handle_trait_player.get():
-        cbox_move_to.current(0)
-        print("move_to_button at non_active_player klicked...")
-        return
-
     # return if no trait selected
     if handle_trait[from_].get() == "":
         cbox_move_to.current(0)
@@ -107,7 +101,7 @@ def btn_move_trait(from_, cbox_move_to):
 
     # return if from == to
     to = defaults["names"].index(cbox_move_to.get())
-    if handle_trait_player.get() == to:
+    if from_ == to:
         cbox_move_to.current(0)
         print(">>> move <<< 'source' and 'target' player are the same...")
         return
@@ -205,8 +199,6 @@ def update_selected_trait(where, idx):
 
     else:
         # trait in one of PLAYERS traits is selected, note: 'where' represents the player here
-        handle_trait_player.set(where)
-
         if idx == ():
             handle_trait[where].set("")
             print(">>> select <<<  no trait in players list available...")
@@ -490,7 +482,6 @@ search_trait_str = tk.StringVar(value="")               # searching for traits i
 deck_cards = tk.Variable(value=traits_list_all)
 lbox_cards = tk.Variable(value=traits_list_all)     # traits >>shown<< in listbox on the left, i.e. after filtering
 play_trait = tk.StringVar(value="")
-handle_trait_player = tk.IntVar(value=-1)
 
 player_name = []
 player_points = []

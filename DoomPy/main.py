@@ -55,7 +55,7 @@ def btn_restart_game(content, frame_menu_buttons):
 def btn_discard_trait(from_, lbox_player):
     # return if no trait selected
     if handle_trait[from_].get() == "":
-        print("no trait selected to discard...")
+        print(">>> discard <<< no trait selected...")
         return
 
     # get card
@@ -73,7 +73,7 @@ def btn_discard_trait(from_, lbox_player):
         cur_deck_cards.append(card)
         deck_cards.set(sorted(cur_deck_cards))
 
-    print("{} is discarding {} ({} pts)".format(player_name[from_].get(), card, card_face))
+    print(">>> discard <<< {} is discarding {} ({} pts)".format(player_name[from_].get(), card, card_face))
 
     # update scoring
     update_scoring(from_)
@@ -96,25 +96,25 @@ def btn_move_trait(from_, cbox_move_to):
     # return if no trait selected
     if handle_trait[from_].get() == "":
         cbox_move_to.current(0)
-        print("no trait selected to move...")
+        print(">>> move <<< no trait selected...")
         return
 
     # return if no target selected
     if cbox_move_to.get() == " move trait to ...":
         cbox_move_to.current(0)
-        print("no valid target selected to move trait to...")
+        print(">>> move <<< clicked on 'move trait to...'")
         return
 
     # return if from == to
     to = defaults["names"].index(cbox_move_to.get())
     if handle_trait_player.get() == to:
         cbox_move_to.current(0)
-        print("move_target is same as source...")
+        print(">>> move <<< 'source' and 'target' player are the same...")
         return
 
     selected_card = handle_trait[from_].get()
 
-    print("moving '{}' from {} to {}".format(
+    print(">>> move <<< '{}' is moved from '{}' to '{}'".format(
         selected_card, player_name[from_].get(), player_name[to].get()))
 
     cbox_move_to.current(0)
@@ -123,7 +123,7 @@ def btn_move_trait(from_, cbox_move_to):
 def btn_play_trait(p):
     # return if no trait selected
     if play_trait.get() == "":
-        print("no trait selected to play...")
+        print(">>> play <<< no trait selected...")
         return
 
     # get card
@@ -146,7 +146,7 @@ def btn_play_trait(p):
         cur_deck_cards.remove(card)
         deck_cards.set(cur_deck_cards)
 
-    print("{} is playing {} ({} pts), which is {} times in the deck and was played {} times".format(
+    print(">>> play <<< {} is playing {} ({} pts), which is {} times in the deck and was played {} times".format(
         player_name[p].get(), card, card_face, card_n, card_played))
 
     # update scoring
@@ -176,6 +176,7 @@ def update_scoring(p):
     total = cards_face + cards_drop + cards_worlds_end
     player_points[p]['total'].set(total)
 
+    print(">>> scoring <<< calculations are updated for {} ".format(player_name[p].get))
     print("  -> face score is: {} ".format(cards_face))
     print("  -> drop score is: {} ".format(cards_drop))
     print("  -> total score is: {} ".format(total))
@@ -200,7 +201,7 @@ def update_selected_trait(where, idx):
             selected_card = lbox_cards.get()[int(idx[0])]
             play_trait.set(selected_card)
 
-            print("handle DECK_listbox -> selected trait = {}".format(play_trait.get()))
+            print(">>> select <<< handle DECK_listbox -> selected trait = {}".format(play_trait.get()))
 
     else:
         # trait in one of PLAYERS traits is selected, note: 'where' represents the player here
@@ -208,13 +209,14 @@ def update_selected_trait(where, idx):
 
         if idx == ():
             handle_trait[where].set("")
+            print(">>> select <<<  no trait in players list available...")
+
         else:
             selected_card = player_cards[where].get()[int(idx[0])]
             handle_trait[where].set(selected_card)
 
-            print("handle PLAYER_listbox -> selected trait = {} - by {} ({})".format(
-                handle_trait[where].get(), player_name[where].get(), handle_trait_player.get()))
-
+            print(">>> select <<< handle PLAYER_listbox -> selected trait = {} - by {}".format(
+                handle_trait[where].get(), player_name[where].get()))
 
 
 def create_player_frame(content, defaults, i):
@@ -303,7 +305,7 @@ def create_player_frame(content, defaults, i):
     cbox_move_to = ttk.Combobox(
         frame_traits,
         height=n_player,
-        values=[' move trait to ...'] + defaults["names"][:n_player.get()],
+        values=[" move trait to ..."] + defaults["names"][:n_player.get()],
         exportselection=0,
         state="readonly",
         width=12

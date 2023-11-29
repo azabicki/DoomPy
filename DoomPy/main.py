@@ -4,6 +4,8 @@ from tkinter import ttk
 from math import floor
 from functools import partial
 import pandas as pd
+from PIL import Image, ImageTk
+
 
 # system settings ########################################################
 curdir = os.path.dirname(__file__)
@@ -11,6 +13,13 @@ curdir = os.path.dirname(__file__)
 # load card list #########################################################
 traits_df = pd.read_excel(os.path.join(curdir, "cards.xlsx"))
 traits_list_all = sorted(traits_df["name"].values.tolist())
+
+# load images ------------------------------------------------------------
+size_star = 30
+img_star = Image.open(os.path.join(curdir, "files", "dominant_star.png"))
+img_star = img_star.resize((size_star, size_star))
+img_empty_star = Image.open(os.path.join(curdir, "files", "empty_star.png"))
+img_empty_star = img_empty_star.resize((size_star, size_star))
 
 
 # functions ##############################################################
@@ -129,6 +138,9 @@ def btn_move_trait(from_, cbox_move_to):
     update_scoring(from_)
     update_scoring(to)
 
+    # update dominant stars
+    update_stars()
+
 
 def btn_play_trait(p):
     # return if no trait selected
@@ -162,6 +174,9 @@ def btn_play_trait(p):
     # update scoring
     update_scoring(p)
 
+    # update dominant stars
+    update_stars()
+
     # clear trait search & update listbox & selection
     btn_clear_trait_search()
 
@@ -190,6 +205,25 @@ def update_scoring(p):
     print("  -> face score is: {} ".format(cards_face))
     print("  -> drop score is: {} ".format(cards_drop))
     print("  -> total score is: {} ".format(total))
+
+
+def update_stars():
+
+    for p in range(n_player.get()):
+        n_stars = sum([traits_df[traits_df['name'] == card]['dominant'].values[0] for card in player_cards[p].get()])
+        print("---------------------> {} dominant traits".format(n_stars))
+
+        tmp_frame = frames_player[p].winfo_children()
+        lbl1 = frames_player[p].nametowidget(str(tmp_frame[0]) + '.!frame.!label')
+        lbl2 = frames_player[p].nametowidget(str(tmp_frame[0]) + '.!frame.!label2')
+
+        lbl1.configure(image=pic_empty_star)
+        lbl2.configure(image=pic_empty_star)
+        if n_stars >= 1:
+            lbl1.configure(image=pic_star)
+
+        if n_stars == 2:
+            lbl2.configure(image=pic_star)
 
 
 def search_trait_in_list(event):
@@ -240,14 +274,19 @@ def create_player_frame(content, defaults, i):
     frame_points.grid(row=0, column=0, padx=5, pady=5, sticky="nesw")
     frame_points.columnconfigure(0, weight=1)
     frame_points.columnconfigure(1, weight=1)
-    frame_points.columnconfigure(2, weight=1)
+    frame_points.columnconfigure(2, weight=2)
+    frame_points.columnconfigure(3, weight=1)
+    frame_points.columnconfigure(4, weight=1)
 
     # name
     ttk.Label(
         frame_points,
         textvariable=player_name[i],
         font='"Comic Sans MS" 36 italic',
-    ).grid(row=0, column=0, padx=5, pady=(0, 10), columnspan=3)
+    ).grid(row=0, column=0, padx=5, pady=(0, 10), columnspan=3, sticky='ns')
+
+    ttk.Label(frame_points, image=pic_empty_star).grid(row=0, column=3, padx=0, pady=0, sticky="nes")
+    ttk.Label(frame_points, image=pic_empty_star).grid(row=0, column=4, padx=0, pady=0, sticky="nsw")
 
     # single points
     ttk.Label(
@@ -516,6 +555,10 @@ for i in range(max_player.get()):
 gui_style = ttk.Style()
 gui_style.configure("total.TLabel", font=("", 56, "bold"), foreground="red")
 gui_style.configure("move.TCombobox", selectbackground="none")
+
+# load images ------------------------------------------------------------
+pic_star = ImageTk.PhotoImage(img_star)
+pic_empty_star = ImageTk.PhotoImage(img_empty_star)
 
 # content frame ----------------------------------------------------------
 content = tk.Frame(root, width=1200, height=800, bg=defaults["bg_content"])

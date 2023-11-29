@@ -208,23 +208,28 @@ def update_scoring(p):
     print("  -> total score is: {} ".format(total))
 
 
+def update_genes():
+    pass
+
+
 def update_stars():
-
+    # loop players
     for p in range(n_player.get()):
+        # number of dominant traits
         n_stars = sum([traits_df[traits_df['name'] == card]['dominant'].values[0] for card in player_cards[p].get()])
-        print("---------------------> {} dominant traits".format(n_stars))
 
+        # find label widgets
         tmp_frame = frames_player[p].winfo_children()
         lbl1 = frames_player[p].nametowidget(str(tmp_frame[0]) + '.!frame.!label')
         lbl2 = frames_player[p].nametowidget(str(tmp_frame[0]) + '.!frame.!label2')
 
+        # edit images
         lbl1.configure(image=pic_empty_star)
         lbl2.configure(image=pic_empty_star)
-        if n_stars >= 1:
+        if n_stars > 0:
             lbl1.configure(image=pic_star)
-
-        if n_stars == 2:
-            lbl2.configure(image=pic_star)
+            if n_stars > 1:
+                lbl2.configure(image=pic_star)
 
 
 def search_trait_in_list(event):

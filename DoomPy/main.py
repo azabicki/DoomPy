@@ -52,7 +52,7 @@ def btn_restart_game(content, frame_menu_buttons):
         player_cards[i].set("")
 
 
-def btn_discard_trait(p, lbox_player):
+def btn_discard_trait(from_, lbox_player):
     # return if no trait selected
     if handle_trait.get() == "":
         print("no trait selected to discard...")
@@ -63,9 +63,9 @@ def btn_discard_trait(p, lbox_player):
     card_face = int(traits_df[traits_df['name'] == card]['points'].values[0])
 
     # remove from players traits
-    cur_players_cards = list(player_cards[p].get())
+    cur_players_cards = list(player_cards[from_].get())
     cur_players_cards.remove(card)
-    player_cards[p].set(cur_players_cards)
+    player_cards[from_].set(cur_players_cards)
 
     # add to deck traits, if not there
     if card not in list(deck_cards.get()):
@@ -73,10 +73,10 @@ def btn_discard_trait(p, lbox_player):
         cur_deck_cards.append(card)
         deck_cards.set(sorted(cur_deck_cards))
 
-    print("{} is discarding {} ({} pts)".format(player_name[p].get(), card, card_face))
+    print("{} is discarding {} ({} pts)".format(player_name[from_].get(), card, card_face))
 
     # update scoring
-    update_scoring(p)
+    update_scoring(from_)
 
     # clear player trait selection
     lbox_player.selection_clear(0, tk.END)
@@ -94,7 +94,7 @@ def btn_move_trait(from_, cbox_move_to):
         return
 
     # return if no trait selected
-    if handle_trait.get() == "":
+    if handle_trait[from_].get() == "":
         cbox_move_to.current(0)
         print("no trait selected to move...")
         return
@@ -112,7 +112,7 @@ def btn_move_trait(from_, cbox_move_to):
         print("move_target is same as source...")
         return
 
-    selected_card = handle_trait.get()
+    selected_card = handle_trait[from_].get()
 
     print("moving '{}' from {} to {}".format(
         selected_card, player_name[from_].get(), player_name[to].get()))
@@ -191,10 +191,9 @@ def search_trait_in_list(event):
         lbox_cards.set([item for item in deck_cards.get() if value.lower() in item.lower()])
 
 
-def update_selected_trait(what, idx):
-    if what == "lbox":
+def update_selected_trait(where, idx):
+    if where == "lbox":
         # trait in DECK is selected
-
         if idx == ():
             play_trait.set("")
         else:
@@ -204,14 +203,14 @@ def update_selected_trait(what, idx):
             print("handle DECK_listbox -> selected trait = {}".format(play_trait.get()))
 
     else:
-        # trait in one of PLAYERS traits is selected, note: 'what' represents the player here
-        handle_trait_player.set(what)
+        # trait in one of PLAYERS traits is selected, note: 'where' represents the player here
+        handle_trait_player.set(where)
 
         if idx == ():
             handle_trait.set("")
         else:
-            selected_card = player_cards[what].get()[int(idx[0])]
             handle_trait.set(selected_card)
+            selected_card = player_cards[where].get()[int(idx[0])]
 
             print("handle PLAYER_listbox -> selected trait = {} - by {} ({})".format(
                 handle_trait.get(), player_name[what].get(), handle_trait_player.get()))

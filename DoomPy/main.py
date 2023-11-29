@@ -54,12 +54,12 @@ def btn_restart_game(content, frame_menu_buttons):
 
 def btn_discard_trait(from_, lbox_player):
     # return if no trait selected
-    if handle_trait.get() == "":
+    if handle_trait[from_].get() == "":
         print("no trait selected to discard...")
         return
 
     # get card
-    card = handle_trait.get()
+    card = handle_trait[from_].get()
     card_face = int(traits_df[traits_df['name'] == card]['points'].values[0])
 
     # remove from players traits
@@ -80,7 +80,7 @@ def btn_discard_trait(from_, lbox_player):
 
     # clear player trait selection
     lbox_player.selection_clear(0, tk.END)
-    handle_trait.set("")
+    handle_trait[from_].set("")
 
     # clear trait search & update listbox & selection
     btn_clear_trait_search()
@@ -207,13 +207,13 @@ def update_selected_trait(where, idx):
         handle_trait_player.set(where)
 
         if idx == ():
-            handle_trait.set("")
+            handle_trait[where].set("")
         else:
-            handle_trait.set(selected_card)
             selected_card = player_cards[where].get()[int(idx[0])]
+            handle_trait[where].set(selected_card)
 
             print("handle PLAYER_listbox -> selected trait = {} - by {} ({})".format(
-                handle_trait.get(), player_name[what].get(), handle_trait_player.get()))
+                handle_trait[where].get(), player_name[where].get(), handle_trait_player.get()))
 
 
 
@@ -293,6 +293,7 @@ def create_player_frame(content, defaults, i):
         height=20,
         listvariable=player_cards[i],
         selectmode=tk.SINGLE,
+        exportselection=False,
     )
     lbox_player.grid(row=0, column=0, padx=5, pady=5, sticky='nesw')
     lbox_player.bind(
@@ -487,18 +488,19 @@ search_trait_str = tk.StringVar(value="")               # searching for traits i
 deck_cards = tk.Variable(value=traits_list_all)
 lbox_cards = tk.Variable(value=traits_list_all)     # traits >>shown<< in listbox on the left, i.e. after filtering
 play_trait = tk.StringVar(value="")
-handle_trait = tk.StringVar(value="")
 handle_trait_player = tk.IntVar(value=-1)
 
 player_name = []
 player_points = []
 player_cards = []
+handle_trait = []
 for i in range(max_player.get()):
     player_name.append(tk.StringVar(value=defaults["names"][i]))
     player_points.append({'face': tk.IntVar(value=0), 'drop': tk.IntVar(value=0),
                           'worlds_end': tk.IntVar(value=0), 'MOL': tk.IntVar(value=0),
                           'total': tk.IntVar(value=0)})
     player_cards.append(tk.Variable(value=[]))
+    handle_trait.append(tk.StringVar(value=""))
 
 # styling ----------------------------------------------------------------
 gui_style = ttk.Style()

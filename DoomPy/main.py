@@ -228,21 +228,23 @@ def update_genes():
             # get gene effect of this card
             effect = traits_df[traits_df['name'] == card]['gene_pool'].values[0]
 
-            # rules are saved in strings
+            # if there is a rule saved as strings
             if isinstance(effect, str):
                 tmp = effect.split()
                 value = int(tmp[0])
                 who = tmp[1]
 
-                if who == 'all':
-                    diff_genes = [i + value for i in diff_genes]
-                elif who == 'self':
-                    diff_genes[p] += value
-                elif who == 'other':
-                    diff_genes = [i+value if i != p else i for i in diff_genes]
+                # apply rule
+                match who:
+                    case 'all':
+                        diff_genes = [i + value for i in diff_genes]
+                    case 'self':
+                        diff_genes[p] += value
+                    case 'other':
+                        diff_genes = [i+value if i != p else i for i in diff_genes]
 
-                # print(">>> genes <<< {}'s '{}' has gene effect on '{}' -> current effect: {}".format
-                #       (player_name[p].get(), card, who, diff_genes))
+                print(">>> genes <<< {}'s '{}' has gene effect on '{}' -> current effect: {}".format(
+                    player_name[p].get(), card, who, diff_genes))
 
     # update gene values
     for p in range(n_player.get()):

@@ -54,6 +54,9 @@ def btn_restart_game(content, frame_menu_buttons):
     # create player_frames + tidy them up
     frames_player.clear()
     for i in range(n_player.get()):
+        # create gene_pool_var
+        player_genes[i].set(genes_at_start.get())
+
         # create frame
         frames_player.append(create_player_frame(content, defaults, i))
 
@@ -432,6 +435,7 @@ def create_menu_frame(content, defaults):
     frame_menu_player.grid(row=0, column=0, padx=5, pady=5, sticky="nesw")
     frame_menu_player.columnconfigure(0, weight=1)
 
+    # number of players -----
     ttk.Label(
         frame_menu_player,
         text="# of players?",
@@ -448,20 +452,38 @@ def create_menu_frame(content, defaults):
         command=lambda: create_player_entries(frame_player_entries),
     ).grid(row=1, column=0, columnspan=2)
 
+    # name of players -----
     ttk.Label(
         frame_menu_player,
         text="who's playing?",
         font="'' 18",
-    ).grid(row=2, column=0, columnspan=2, pady=(10, 0))
+    ).grid(row=2, column=0, columnspan=2, pady=(20, 0))
 
     frame_player_entries = tk.Frame(frame_menu_player)
     create_player_entries(frame_player_entries)
 
+    # genes at beginning -----
+    ttk.Label(
+        frame_menu_player,
+        text="gene pool at start?",
+        font="'' 18",
+    ).grid(row=n_player.get() + 3, column=0, columnspan=2, pady=(20, 0))
+
+    ttk.Spinbox(
+        frame_menu_player,
+        from_=4,
+        to=8,
+        width=3,
+        textvariable=genes_at_start,
+        wrap=False
+    ).grid(row=n_player.get() + 4, column=0, columnspan=2)
+
+    # restart button -----
     ttk.Button(
         frame_menu_player,
         text="restart game",
         command=lambda: btn_restart_game(content, frame_menu_buttons),
-    ).grid(row=n_player.get() + 3, column=0, columnspan=2, pady=10)
+    ).grid(row=n_player.get() + 5, column=0, columnspan=2, pady=(20, 10))
 
     # ----- frame 4 trait selection --------------------------------------------------------
     frame_menu_traits = tk.Frame(frame, borderwidth=2, relief="solid")
@@ -527,7 +549,7 @@ defaults = {
     "names": ["Lisa", "Julia", "Anton", "Adam", "Ben", "Franzi"],
     "n_player": 4,
     "max_player": 6,
-    "starting_genes": 6,
+    "genes_at_start": 6,
     "bg_content": "grey",
     "bg_frame_1": "lightgrey",
 }
@@ -543,6 +565,7 @@ root.rowconfigure(0, weight=1)
 # init variables ---------------------------------------------------------
 n_player = tk.IntVar(value=defaults["n_player"])        # number of cuurent players
 max_player = tk.IntVar(value=defaults["max_player"])    # theoretical max. num of players
+genes_at_start = tk.IntVar(value=defaults["genes_at_start"])    # theoretical max. num of players
 search_trait_str = tk.StringVar(value="")               # searching for traits in playable deck
 deck_cards = tk.Variable(value=traits_list_all)
 lbox_cards = tk.Variable(value=traits_list_all)     # traits >>shown<< in listbox on the left, i.e. after filtering
@@ -555,7 +578,7 @@ player_cards = []
 handle_trait = []
 for i in range(max_player.get()):
     player_name.append(tk.StringVar(value=defaults["names"][i]))
-    player_genes.append(tk.IntVar(value=defaults["starting_genes"]))
+    player_genes.append(tk.IntVar(value=genes_at_start.get()))
     player_points.append({'face': tk.IntVar(value=0), 'drop': tk.IntVar(value=0),
                           'worlds_end': tk.IntVar(value=0), 'MOL': tk.IntVar(value=0),
                           'total': tk.IntVar(value=0)})

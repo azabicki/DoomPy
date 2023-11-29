@@ -86,6 +86,39 @@ def btn_discard_trait(p, lbox_player):
     btn_clear_trait_search()
 
 
+def btn_move_trait(from_, cbox_move_to):
+    # return if wrong button used
+    if from_ != handle_trait_player.get():
+        cbox_move_to.current(0)
+        print("move_to_button at non_active_player klicked...")
+        return
+
+    # return if no trait selected
+    if handle_trait.get() == "":
+        cbox_move_to.current(0)
+        print("no trait selected to move...")
+        return
+
+    # return if no target selected
+    if cbox_move_to.get() == " move trait to ...":
+        cbox_move_to.current(0)
+        print("no valid target selected to move trait to...")
+        return
+
+    # return if from == to
+    to = defaults["names"].index(cbox_move_to.get())
+    if handle_trait_player.get() == to:
+        cbox_move_to.current(0)
+        print("move_target is same as source...")
+        return
+
+    selected_card = handle_trait.get()
+
+    print("moving '{}' from {} to {}".format(
+        selected_card, player_name[from_].get(), player_name[to].get()))
+
+    cbox_move_to.current(0)
+
 
 def btn_play_trait(p):
     # return if no trait selected
@@ -267,11 +300,25 @@ def create_player_frame(content, defaults, i):
         "<<ListboxSelect>>", lambda e: update_selected_trait(i, lbox_player.curselection())
     )
 
+    cbox_move_to = ttk.Combobox(
+        frame_traits,
+        height=n_player,
+        values=[' move trait to ...'] + defaults["names"][:n_player.get()],
+        exportselection=0,
+        state="readonly",
+        width=12
+    )
+    cbox_move_to.current(0)
+    cbox_move_to.grid(row=1, column=0, padx=4, sticky='nsw')
+    cbox_move_to.bind(
+        "<<ComboboxSelected>>", lambda e: btn_move_trait(i, cbox_move_to)
+    )
+
     ttk.Button(
         frame_traits,
-        text="discard",
+        text="discard trait",
         command=partial(btn_discard_trait, i, lbox_player),
-    ).grid(row=1, column=0)
+    ).grid(row=2, column=0, padx=5, sticky='nsw')
 
     # ----- action buttons -------------------------------------
 #    frame_actions = tk.Frame(frame, borderwidth=2, relief="solid")

@@ -31,11 +31,9 @@ def btn_clear_trait_search():
 
 
 def btn_restart_game(content, frame_menu_buttons):
-    # reset card/trait variables
-    search_trait_str.set("")
+    # reset deck & lbox lists
     deck_cards.set(traits_list_all)
     lbox_cards.set(traits_list_all)
-    play_trait.set("")
 
     # clear traits listbox
     btn_clear_trait_search()

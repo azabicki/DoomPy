@@ -186,7 +186,7 @@ def update_scoring(p):
     total = cards_face + cards_drop + cards_worlds_end
     player_points[p]['total'].set(total)
 
-    print(">>> scoring <<< calculations are updated for {} ".format(player_name[p].get))
+    print(">>> scoring <<< calculations are updated for {} ".format(player_name[p].get()))
     print("  -> face score is: {} ".format(cards_face))
     print("  -> drop score is: {} ".format(cards_drop))
     print("  -> total score is: {} ".format(total))

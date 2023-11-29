@@ -95,6 +95,10 @@ def btn_discard_trait(from_, lbox_player):
     # clear trait search & update listbox & selection
     btn_clear_trait_search()
 
+    # update stars & genes
+    update_stars()
+    update_genes()
+
 
 def btn_move_trait(from_, cbox_move_to):
     # return if no trait selected
@@ -139,8 +143,9 @@ def btn_move_trait(from_, cbox_move_to):
     update_scoring(from_)
     update_scoring(to)
 
-    # update dominant stars
+    # update stars & genes
     update_stars()
+    update_genes()
 
 
 def btn_play_trait(p):
@@ -175,8 +180,9 @@ def btn_play_trait(p):
     # update scoring
     update_scoring(p)
 
-    # update dominant stars
+    # update stars & genes
     update_stars()
+    update_genes()
 
     # clear trait search & update listbox & selection
     btn_clear_trait_search()
@@ -220,8 +226,8 @@ def update_stars():
 
         # find label widgets
         tmp_frame = frames_player[p].winfo_children()
-        lbl1 = frames_player[p].nametowidget(str(tmp_frame[0]) + '.!frame.!label')
-        lbl2 = frames_player[p].nametowidget(str(tmp_frame[0]) + '.!frame.!label2')
+        lbl1 = frames_player[p].nametowidget(str(tmp_frame[0]) + '.!label2')
+        lbl2 = frames_player[p].nametowidget(str(tmp_frame[0]) + '.!label3')
 
         # edit images
         lbl1.configure(image=pic_empty_star)

@@ -470,7 +470,7 @@ def create_player_entries(container):
             width=8,
         ).grid(row=i, column=1)
 
-    container.grid(row=3, column=0, columnspan=2)
+    container.grid(row=5, column=0, columnspan=2)
 
 
 def create_menu_frame(content, defaults):
@@ -480,60 +480,78 @@ def create_menu_frame(content, defaults):
     frame.rowconfigure(1, weight=4)
     frame.rowconfigure(2, weight=1)
 
-    # ----- frame 4 player names --------------------------------------------------------
-    frame_menu_player = tk.Frame(frame)
-    frame_menu_player.grid(row=0, column=0, padx=5, pady=5, sticky="nesw")
-    frame_menu_player.columnconfigure(0, weight=1)
+    # ----- frame 4 settings --------------------------------------------------------
+    frame_menu_options = tk.Frame(frame)
+    frame_menu_options.grid(row=0, column=0, padx=5, pady=5, sticky="nesw")
+    frame_menu_options.columnconfigure(0, weight=1)
+    frame_menu_options.columnconfigure(1, weight=1)
 
-    # number of players -----
+    # title -----
     ttk.Label(
-        frame_menu_player,
-        text="# of players?",
-        font="'' 18",
-    ).grid(row=0, column=0, columnspan=2, pady=(5, 0))
+        frame_menu_options,
+        text="OPTIONS",
+        font="'' 24",
+    ).grid(row=0, column=0, columnspan=2, pady=(5, 5))
 
+    # nr players -----
+    ttk.Label(
+        frame_menu_options,
+        text="# players: ",
+    ).grid(row=1, column=0, sticky='e')
     ttk.Spinbox(
-        frame_menu_player,
+        frame_menu_options,
         from_=2,
         to=max_player.get(),
         width=3,
         textvariable=n_player,
         wrap=False,
         command=lambda: create_player_entries(frame_player_entries),
-    ).grid(row=1, column=0, columnspan=2)
-
-    # name of players -----
-    ttk.Label(
-        frame_menu_player,
-        text="who's playing?",
-        font="'' 18",
-    ).grid(row=2, column=0, columnspan=2, pady=(20, 0))
-
-    frame_player_entries = tk.Frame(frame_menu_player)
-    create_player_entries(frame_player_entries)
+    ).grid(row=1, column=1, sticky='w')
 
     # genes at beginning -----
     ttk.Label(
-        frame_menu_player,
-        text="gene pool at start?",
-        font="'' 18",
-    ).grid(row=n_player.get() + 3, column=0, columnspan=2, pady=(20, 0))
-
+        frame_menu_options,
+        text="gene pool: ",
+    ).grid(row=2, column=0, sticky='e')
     ttk.Spinbox(
-        frame_menu_player,
+        frame_menu_options,
         from_=4,
         to=8,
         width=3,
         textvariable=genes_at_start,
         wrap=False
-    ).grid(row=n_player.get() + 4, column=0, columnspan=2)
+    ).grid(row=2, column=1, sticky='w')
+
+    # nr players -----
+    ttk.Label(
+        frame_menu_options,
+        text="# catastrophies: ",
+    ).grid(row=3, column=0, sticky='e')
+    ttk.Spinbox(
+        frame_menu_options,
+        from_=2,
+        to=8,
+        width=3,
+        textvariable=n_catastrophies,
+        wrap=False
+    ).grid(row=3, column=1, sticky='w')
+
+    # name of players -----
+    ttk.Label(
+        frame_menu_options,
+        text="who's playing?",
+        font="'' 18",
+    ).grid(row=4, column=0, columnspan=2, pady=(20, 0))
+
+    frame_player_entries = tk.Frame(frame_menu_options)
+    create_player_entries(frame_player_entries)
 
     # restart button -----
     ttk.Button(
-        frame_menu_player,
+        frame_menu_options,
         text="restart game",
         command=lambda: btn_restart_game(content, frame_menu_buttons),
-    ).grid(row=n_player.get() + 5, column=0, columnspan=2, pady=(20, 10))
+    ).grid(row=n_player.get() + 6, column=0, columnspan=2, pady=10)
 
     # ----- frame 4 trait selection --------------------------------------------------------
     frame_menu_traits = tk.Frame(frame)
@@ -563,7 +581,7 @@ def create_menu_frame(content, defaults):
     ).grid(row=1, column=1, padx=(0, 10), sticky="w")
 
     lbox_traits = tk.Listbox(
-        frame_menu_traits, height=8, listvariable=lbox_cards, selectmode=tk.SINGLE, exportselection=False
+        frame_menu_traits, height=7, listvariable=lbox_cards, selectmode=tk.SINGLE, exportselection=False
     )
     lbox_traits.grid(row=2, column=0, columnspan=2, padx=10)
     lbox_traits.bind(
@@ -599,6 +617,7 @@ defaults = {
     "names": ["Lisa", "Julia", "Anton", "Adam", "Ben", "Franzi"],
     "n_player": 4,
     "max_player": 6,
+    "n_catastrophies": 4,
     "genes_at_start": 6,
     "bg_content": "grey",
     "bg_frame_menu": "#71C671",
@@ -615,10 +634,11 @@ root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
 
 # init variables ---------------------------------------------------------
-n_player = tk.IntVar(value=defaults["n_player"])        # number of cuurent players
-max_player = tk.IntVar(value=defaults["max_player"])    # theoretical max. num of players
-genes_at_start = tk.IntVar(value=defaults["genes_at_start"])    # theoretical max. num of players
-search_trait_str = tk.StringVar(value="")               # searching for traits in playable deck
+n_player = tk.IntVar(value=defaults["n_player"])                # number of current players
+max_player = tk.IntVar(value=defaults["max_player"])            # theoretical max. num of players
+n_catastrophies = tk.IntVar(value=defaults["n_catastrophies"])         # number of catastrophies
+genes_at_start = tk.IntVar(value=defaults["genes_at_start"])    # gene pool at start
+search_trait_str = tk.StringVar(value="")                       # searching for traits in playable deck
 deck_cards = tk.Variable(value=traits_list_all)
 lbox_cards = tk.Variable(value=traits_list_all)     # traits >>shown<< in listbox on the left, i.e. after filtering
 play_trait = tk.StringVar(value="")

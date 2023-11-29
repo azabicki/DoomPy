@@ -106,12 +106,28 @@ def btn_move_trait(from_, cbox_move_to):
         print(">>> move <<< 'source' and 'target' player are the same...")
         return
 
-    selected_card = handle_trait[from_].get()
+    # get card
+    card = handle_trait[from_].get()
+
+    # remove from 'giving' players traits
+    from_players_cards = list(player_cards[from_].get())
+    from_players_cards.remove(card)
+    player_cards[from_].set(from_players_cards)
+
+    # add to 'receiving' players traits
+    to_players_cards = list(player_cards[to].get())
+    to_players_cards.append(card)
+    player_cards[to].set(sorted(to_players_cards))
 
     print(">>> move <<< '{}' is moved from '{}' to '{}'".format(
-        selected_card, player_name[from_].get(), player_name[to].get()))
+        card, player_name[from_].get(), player_name[to].get()))
 
+    # clear combobox
     cbox_move_to.current(0)
+
+    # update scoring
+    update_scoring(from_)
+    update_scoring(to)
 
 
 def btn_play_trait(p):

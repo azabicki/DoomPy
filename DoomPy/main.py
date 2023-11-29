@@ -307,20 +307,16 @@ def create_player_frame(content, defaults, i):
     ).grid(row=4, column=0, sticky="e")
 
     ttk.Label(
-        frame_points,
-        textvariable=player_points[i]['face'],
+        frame_points, textvariable=player_points[i]['face'],
     ).grid(row=1, column=1, sticky="w")
     ttk.Label(
-        frame_points,
-        textvariable=player_points[i]['drop'],
+        frame_points, textvariable=player_points[i]['drop'],
     ).grid(row=2, column=1, sticky="w")
     ttk.Label(
-        frame_points,
-        textvariable=player_points[i]['worlds_end'],
+        frame_points, textvariable=player_points[i]['worlds_end'],
     ).grid(row=3, column=1, sticky="w")
     ttk.Label(
-        frame_points,
-        textvariable=player_points[i]['MOL'],
+        frame_points, textvariable=player_points[i]['MOL'],
     ).grid(row=4, column=1, sticky="w")
 
     # total points
@@ -568,7 +564,7 @@ for i in range(max_player.get()):
 
 # styling ----------------------------------------------------------------
 gui_style = ttk.Style()
-gui_style.configure("total.TLabel", font=("", 56, "bold"), foreground="red")
+gui_style.configure("total.TLabel", font=("", 72, "bold"), foreground="orangered1")
 gui_style.configure("genes.TLabel", font=("", 38, "bold"), foreground="hotpink1")
 gui_style.configure("move.TCombobox", selectbackground="none")
 

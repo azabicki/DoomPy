@@ -11,8 +11,12 @@ from PIL import Image, ImageTk
 curdir = os.path.dirname(__file__)
 
 # load card list #########################################################
-traits_df = pd.read_excel(os.path.join(curdir, "cards.xlsx"))
+traits_df = pd.read_excel(os.path.join(curdir, "cards.xlsx"), sheet_name="traits")
 traits_list_all = sorted(traits_df["name"].values.tolist())
+
+ages_df = pd.read_excel(os.path.join(curdir, "cards.xlsx"), sheet_name="ages")
+ages_list = sorted(ages_df["name"].values.tolist())
+catastrophies_list = ages_df[ages_df["type"] == "Catastrophe"]["name"].values.tolist()
 
 # load images ------------------------------------------------------------
 size_star = 30
@@ -555,13 +559,13 @@ def create_menu_frame(content, defaults):
 
     # ----- frame 4 trait selection --------------------------------------------------------
     frame_menu_traits = tk.Frame(frame)
-    frame_menu_traits.grid(row=1, column=0, padx=5, pady=0, sticky="nesw")
+    frame_menu_traits.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="nesw")
     frame_menu_traits.columnconfigure(0, weight=1)
     frame_menu_traits.columnconfigure(1, weight=1)
 
     ttk.Label(
         frame_menu_traits,
-        text="select trait:",
+        text="play trait",
         font="'' 18",
     ).grid(row=0, column=0, columnspan=2, pady=(5, 0))
 
@@ -581,7 +585,7 @@ def create_menu_frame(content, defaults):
     ).grid(row=1, column=1, padx=(0, 10), sticky="w")
 
     lbox_traits = tk.Listbox(
-        frame_menu_traits, height=7, listvariable=lbox_cards, selectmode=tk.SINGLE, exportselection=False
+        frame_menu_traits, height=4, listvariable=lbox_cards, selectmode=tk.SINGLE, exportselection=False
     )
     lbox_traits.grid(row=2, column=0, columnspan=2, padx=10)
     lbox_traits.bind(
@@ -597,9 +601,36 @@ def create_menu_frame(content, defaults):
     frame_menu_buttons = tk.Frame(frame_menu_traits)
     create_player_buttons(frame_menu_buttons)
 
+    # ----- frame 4 catastrophy selection --------------------------------------------------------
+    frame_menu_catastrophy = tk.Frame(frame)
+    frame_menu_catastrophy.grid(row=2, column=0, padx=5, pady=0, ipady=5, sticky="nesw")
+    frame_menu_catastrophy.columnconfigure(0, weight=1)
+    frame_menu_catastrophy.columnconfigure(1, weight=1)
+
+    ttk.Label(
+        frame_menu_catastrophy,
+        text="catastrophies",
+        font="'' 18",
+    ).grid(row=0, column=0, columnspan=2, pady=(5, 0))
+
+    for c in range(1, n_catastrophies.get()):
+        cbox_catastrophy = ttk.Combobox(
+            frame_menu_catastrophy,
+            values=[" catastrophe {}...".format(c)] + catastrophies_list,
+            exportselection=0,
+            state="readonly",
+            width=18,
+            style="move.TCombobox"
+        )
+        cbox_catastrophy.current(0)
+        cbox_catastrophy.grid(row=1+c, column=0, columnspan=2, padx=4, sticky='ns')
+#        cbox_catastrophy.bind(
+#            "<<ComboboxSelected>>", lambda e: btn_move_trait(i, cbox_catastrophy)
+#        )
+
     # ----- frame for control buttons --------------------------------------------------------
     frame_menu_controls = tk.Frame(frame)
-    frame_menu_controls.grid(row=2, column=0, padx=5, pady=5, sticky="nesw")
+    frame_menu_controls.grid(row=3, column=0, padx=5, pady=5, sticky="nesw")
     frame_menu_controls.columnconfigure(0, weight=1)
 
     ttk.Button(
@@ -656,6 +687,10 @@ for i in range(max_player.get()):
                           'total': tk.IntVar(value=0)})
     player_cards.append(tk.Variable(value=[]))
     handle_trait.append(tk.StringVar(value=""))
+
+catastrophies = []
+for i in range(n_catastrophies.get()):
+    catastrophies.append(tk.StringVar(value=""))
 
 # styling ----------------------------------------------------------------
 gui_style = ttk.Style()

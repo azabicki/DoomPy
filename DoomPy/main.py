@@ -215,7 +215,47 @@ def update_scoring(p):
 
 
 def update_genes():
-    pass
+    # init vars
+    diff_genes = [0] * n_player.get()
+
+    # loop players and calculate +- genes of all played traits
+    for p in range(n_player.get()):
+        # get cards
+        cards = player_cards[p].get()
+
+        # loop cards
+        for card in cards:
+            # get gene effect of this card
+            effect = traits_df[traits_df['name'] == card]['gene_pool'].values[0]
+
+            # rules are saved in strings
+            if isinstance(effect, str):
+                tmp = effect.split()
+                value = int(tmp[0])
+                who = tmp[1]
+
+                if who == 'all':
+                    diff_genes = [i + value for i in diff_genes]
+                elif who == 'self':
+                    diff_genes[p] += value
+                elif who == 'other':
+                    diff_genes = [i+value if i != p else i for i in diff_genes]
+
+                # print(">>> genes <<< {}'s '{}' has gene effect on '{}' -> current effect: {}".format
+                #       (player_name[p].get(), card, who, diff_genes))
+
+    # update gene values
+    for p in range(n_player.get()):
+        new_gp = genes_at_start.get() + diff_genes[p]
+        if new_gp > 8:
+            player_genes[p].set(8)
+        elif new_gp < 1:
+            player_genes[p].set(1)
+        else:
+            player_genes[p].set(new_gp)
+
+    print(">>> genes <<< total gene effect: {} -> new gene pools are {}".format(
+        diff_genes, [player_genes[i].get() for i in range(n_player.get())]))
 
 
 def update_stars():

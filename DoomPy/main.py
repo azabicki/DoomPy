@@ -265,16 +265,15 @@ def update_selected_trait(where, idx):
 
 
 def create_player_frame(content, defaults, i):
-    frame = tk.Frame(content, bg=defaults["bg_frame_1"])
+    frame = tk.Frame(content, bg=defaults["bg_frame_player"])
     frame.columnconfigure(0, weight=1)
-    frame.rowconfigure(0, weight=1)  # name + points
-    frame.rowconfigure(1, weight=5)  # traits
-#    frame.rowconfigure(2, weight=1)  # further actions
-    frame.grid(column=i + 1, row=0, padx=5, pady=5, sticky="nesw")  # or use nesw for x-streched frames!
+    frame.rowconfigure(1, weight=1)  # traits
+    # frame.rowconfigure(2, weight=1)  # further actions
+    frame.grid(column=i + 1, row=0, padx=5, pady=5, sticky="nesw")  # or use nsw for non-x-streched frames!
 
     # ----- name + overview current points -------------------------------
-    frame_points = tk.Frame(frame, borderwidth=2, relief="solid")
-    frame_points.grid(row=0, column=0, padx=5, pady=5, sticky="nesw")
+    frame_points = tk.Frame(frame)
+    frame_points.grid(row=0, column=0, padx=5, pady=5, ipady=3, sticky="nesw")
     frame_points.columnconfigure(0, weight=1)
     frame_points.columnconfigure(1, weight=1)
     frame_points.columnconfigure(2, weight=2)
@@ -342,7 +341,7 @@ def create_player_frame(content, defaults, i):
     ).grid(row=2, column=3, rowspan=3, columnspan=2, padx=0, pady=0, sticky='n')
 
     # ----- list of traits played ----------------------------------------
-    frame_traits = tk.Frame(frame, borderwidth=2, relief="solid")
+    frame_traits = tk.Frame(frame)
     frame_traits.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="nesw")
     frame_traits.columnconfigure(0, weight=1)
     frame_traits.columnconfigure(1, weight=1)
@@ -350,12 +349,12 @@ def create_player_frame(content, defaults, i):
 
     lbox_player = tk.Listbox(
         frame_traits,
-        height=20,
+        height=22,
         listvariable=player_cards[i],
         selectmode=tk.SINGLE,
         exportselection=False,
     )
-    lbox_player.grid(row=0, column=0, padx=5, pady=5, sticky='nesw')
+    lbox_player.grid(row=0, column=0, padx=8, pady=8, sticky='nesw')
     lbox_player.bind(
         "<<ListboxSelect>>", lambda e: update_selected_trait(i, lbox_player.curselection())
     )
@@ -379,10 +378,10 @@ def create_player_frame(content, defaults, i):
         frame_traits,
         text="discard trait",
         command=partial(btn_discard_trait, i, lbox_player),
-    ).grid(row=2, column=0, padx=5, sticky='nsw')
+    ).grid(row=2, column=0, padx=8, sticky='nsw')
 
     # ----- action buttons -------------------------------------
-#    frame_actions = tk.Frame(frame, borderwidth=2, relief="solid")
+#    frame_actions = tk.Frame(frame)
 #    frame_actions.grid(row=2, column=0, padx=5, pady=5, sticky="nesw")
 #    frame_actions.columnconfigure(0, weight=1)
 #    frame_actions.columnconfigure(1, weight=1)
@@ -424,14 +423,14 @@ def create_player_entries(container):
 
 
 def create_menu_frame(content, defaults):
-    frame = tk.Frame(content, bg=defaults["bg_frame_1"])
+    frame = tk.Frame(content, bg=defaults["bg_frame_menu"])
     frame.columnconfigure(0, weight=1)
     frame.rowconfigure(0, weight=1)
     frame.rowconfigure(1, weight=4)
     frame.rowconfigure(2, weight=1)
 
     # ----- frame 4 player names --------------------------------------------------------
-    frame_menu_player = tk.Frame(frame, borderwidth=2, relief="solid")
+    frame_menu_player = tk.Frame(frame)
     frame_menu_player.grid(row=0, column=0, padx=5, pady=5, sticky="nesw")
     frame_menu_player.columnconfigure(0, weight=1)
 
@@ -486,7 +485,7 @@ def create_menu_frame(content, defaults):
     ).grid(row=n_player.get() + 5, column=0, columnspan=2, pady=(20, 10))
 
     # ----- frame 4 trait selection --------------------------------------------------------
-    frame_menu_traits = tk.Frame(frame, borderwidth=2, relief="solid")
+    frame_menu_traits = tk.Frame(frame)
     frame_menu_traits.grid(row=1, column=0, padx=5, pady=0, sticky="nesw")
     frame_menu_traits.columnconfigure(0, weight=1)
     frame_menu_traits.columnconfigure(1, weight=1)
@@ -530,7 +529,7 @@ def create_menu_frame(content, defaults):
     create_player_buttons(frame_menu_buttons)
 
     # ----- frame for control buttons --------------------------------------------------------
-    frame_menu_controls = tk.Frame(frame, borderwidth=2, relief="solid")
+    frame_menu_controls = tk.Frame(frame)
     frame_menu_controls.grid(row=2, column=0, padx=5, pady=5, sticky="nesw")
     frame_menu_controls.columnconfigure(0, weight=1)
 
@@ -551,6 +550,8 @@ defaults = {
     "max_player": 6,
     "genes_at_start": 6,
     "bg_content": "grey",
+    "bg_frame_menu": "#71C671",
+    "bg_frame_player": "lightskyblue",
     "bg_frame_1": "lightgrey",
 }
 

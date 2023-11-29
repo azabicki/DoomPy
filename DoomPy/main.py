@@ -316,7 +316,8 @@ def create_player_frame(content, defaults, i):
         values=[" move trait to ..."] + defaults["names"][:n_player.get()],
         exportselection=0,
         state="readonly",
-        width=12
+        width=12,
+        style="move.TCombobox"
     )
     cbox_move_to.current(0)
     cbox_move_to.grid(row=1, column=0, padx=4, sticky='nsw')
@@ -514,6 +515,7 @@ for i in range(max_player.get()):
 # styling ----------------------------------------------------------------
 gui_style = ttk.Style()
 gui_style.configure("total.TLabel", font=("", 56, "bold"), foreground="red")
+gui_style.configure("move.TCombobox", selectbackground="none")
 
 # content frame ----------------------------------------------------------
 content = tk.Frame(root, width=1200, height=800, bg=defaults["bg_content"])

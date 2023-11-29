@@ -55,7 +55,7 @@ def btn_restart_game(content, frame_menu_buttons):
 def btn_discard_trait(p, lbox_player):
     # return if no trait selected
     if handle_trait.get() == "":
-        print("no trait is selected...")
+        print("no trait selected to discard...")
         return
 
     # get card
@@ -82,11 +82,15 @@ def btn_discard_trait(p, lbox_player):
     lbox_player.selection_clear(0, tk.END)
     handle_trait.set("")
 
+    # clear trait search & update listbox & selection
+    btn_clear_trait_search()
+
+
 
 def btn_play_trait(p):
     # return if no trait selected
     if play_trait.get() == "":
-        print("no trait is selected...")
+        print("no trait selected to play...")
         return
 
     # get card
@@ -115,7 +119,7 @@ def btn_play_trait(p):
     # update scoring
     update_scoring(p)
 
-    # clear trait search & selection
+    # clear trait search & update listbox & selection
     btn_clear_trait_search()
 
 
@@ -146,6 +150,7 @@ def update_scoring(p):
 
 def search_trait_in_list(event):
     value = event.widget.get()
+    lbox_traits.selection_clear(0, tk.END)
 
     if value == "":
         lbox_cards.set(deck_cards.get())
@@ -155,21 +160,29 @@ def search_trait_in_list(event):
 
 def update_selected_trait(what, idx):
     if what == "lbox":
+        # trait in DECK is selected
+
         if idx == ():
             play_trait.set("")
         else:
             selected_card = lbox_cards.get()[int(idx[0])]
             play_trait.set(selected_card)
 
-        print("handle DECK_listbox -> selected trait = {}".format(play_trait.get()))
+            print("handle DECK_listbox -> selected trait = {}".format(play_trait.get()))
+
     else:
+        # trait in one of PLAYERS traits is selected, note: 'what' represents the player here
+        handle_trait_player.set(what)
+
         if idx == ():
             handle_trait.set("")
         else:
             selected_card = player_cards[what].get()[int(idx[0])]
             handle_trait.set(selected_card)
 
-        print("handle PLAYER_listbox -> selected trait = {}".format(handle_trait.get()))
+            print("handle PLAYER_listbox -> selected trait = {} - by {} ({})".format(
+                handle_trait.get(), player_name[what].get(), handle_trait_player.get()))
+
 
 
 def create_player_frame(content, defaults, i):
@@ -373,7 +386,7 @@ def create_menu_frame(content, defaults):
     ).grid(row=1, column=1, padx=(0, 10), sticky="w")
 
     lbox_traits = tk.Listbox(
-        frame_menu_traits, height=8, listvariable=lbox_cards, selectmode=tk.SINGLE
+        frame_menu_traits, height=8, listvariable=lbox_cards, selectmode=tk.SINGLE, exportselection=False
     )
     lbox_traits.grid(row=2, column=0, columnspan=2, padx=10)
     lbox_traits.bind(
@@ -422,13 +435,14 @@ root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
 
 # init variables ---------------------------------------------------------
-n_player = tk.IntVar(value=defaults["n_player"])
-max_player = tk.IntVar(value=defaults["max_player"])
-search_trait_str = tk.StringVar(value="")
+n_player = tk.IntVar(value=defaults["n_player"])        # number of cuurent players
+max_player = tk.IntVar(value=defaults["max_player"])    # theoretical max. num of players
+search_trait_str = tk.StringVar(value="")               # searching for traits in playable deck
 deck_cards = tk.Variable(value=traits_list_all)
-lbox_cards = tk.Variable(value=traits_list_all)
+lbox_cards = tk.Variable(value=traits_list_all)     # traits >>shown<< in listbox on the left, i.e. after filtering
 play_trait = tk.StringVar(value="")
 handle_trait = tk.StringVar(value="")
+handle_trait_player = tk.IntVar(value=-1)
 
 player_name = []
 player_points = []

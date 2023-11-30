@@ -14,10 +14,10 @@ curdir = os.path.dirname(__file__)
 
 # load card list #########################################################
 traits_df = pd.read_excel(os.path.join(curdir, "cards.xlsx"), sheet_name="traits")
-traits_list_all = sorted(traits_df["name"].values.tolist())
+traits_list_all = sorted(traits_df.name.values.tolist())
 
 ages_df = pd.read_excel(os.path.join(curdir, "cards.xlsx"), sheet_name="ages")
-ages_list = sorted(ages_df["name"].values.tolist())
+ages_list = sorted(ages_df.name.values.tolist())
 catastrophies_list = sorted(ages_df[ages_df["type"] == "Catastrophe"]["name"].values.tolist())
 
 # load images ------------------------------------------------------------
@@ -89,7 +89,7 @@ def btn_discard_trait(from_):
 
     # get card
     card = handle_trait[from_].get()
-    card_face = int(traits_df[traits_df['name'] == card]['points'].values[0])
+    card_face = int(traits_df[traits_df.name == card]['points'].values[0])
 
     # remove from players traits
     cur_players_cards = list(player_cards[from_].get())
@@ -188,8 +188,8 @@ def btn_play_trait(p):
 
     # get card
     card = play_trait.get()
-    card_n = traits_df[traits_df['name'] == card]['n_of_cards'].values[0]
-    card_face = int(traits_df[traits_df['name'] == card]['points'].values[0])
+    card_n = traits_df[traits_df.name == card]['n_of_cards'].values[0]
+    card_face = int(traits_df[traits_df.name == card]['points'].values[0])
 
     # add to players traits
     cur_players_cards = list(player_cards[p].get())
@@ -253,7 +253,7 @@ def update_scoring(p):
     cards = player_cards[p].get()
 
     # calculate face value
-    p_face = int(sum([traits_df[traits_df['name'] == card]['points'].values[0] for card in cards]))
+    p_face = int(sum([traits_df[traits_df.name == card]['points'].values[0] for card in cards]))
     player_points[p]['face'].set(p_face)
 
     # calculate drop points
@@ -284,7 +284,7 @@ def update_genes():
         # loop cards
         for card in cards:
             # get gene effect of this card
-            effect = traits_df[traits_df['name'] == card]['gene_pool'].values[0]
+            effect = traits_df[traits_df.name == card]['gene_pool'].values[0]
 
             # if there is a rule saved as strings
             if isinstance(effect, str):
@@ -309,9 +309,9 @@ def update_genes():
         # get card & effect
         card = catastrophies[c].get()
         # check if catastrophy was played
-        if card in ages_df["name"].values.tolist():
+        if card in ages_df.name.values.tolist():
             # get effect and apply it
-            effect = int(ages_df[ages_df['name'] == card]['gene_pool'].values[0])
+            effect = int(ages_df[ages_df.name == card]['gene_pool'].values[0])
             diff_genes = [i + effect for i in diff_genes]
 
             print(">>> genes <<< catastrophe '{}' has gene effect off '{}' -> current effect: {}"
@@ -335,7 +335,7 @@ def update_stars():
     # loop players
     for p in range(n_player.get()):
         # number of dominant traits
-        n_stars = np.nansum([traits_df[traits_df['name'] == card]['dominant'].values[0]
+        n_stars = np.nansum([traits_df[traits_df.name == card]['dominant'].values[0]
                              for card in player_cards[p].get()])
 
         # find label widgets

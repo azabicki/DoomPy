@@ -61,22 +61,26 @@ def btn_restart_game(content, frame_menu_buttons, frame_menu_catastrophe):
         w.grid_forget()
 
     # create player_frames + tidy them up
+    player_lbox.clear()
     frames_player.clear()
     for i in range(n_player.get()):
         # create gene_pool_var
         player_genes[i].set(genes_at_start.get())
 
-        # create frame
-        frames_player.append(create_player_frame(content, defaults, i))
+        # reset players listbox'es
+        player_lbox.append(None)
 
         # clear player_cards listbox
         player_cards[i].set("")
+
+        # create frame
+        frames_player.append(create_player_frame(content, defaults, i))
 
         # update scoring
         update_scoring(i)
 
 
-def btn_discard_trait(from_, lbox_player):
+def btn_discard_trait(from_):
     # return if no trait selected
     if handle_trait[from_].get() == "":
         print(">>> discard <<< no trait selected...")
@@ -103,7 +107,7 @@ def btn_discard_trait(from_, lbox_player):
     update_scoring(from_)
 
     # clear player trait selection
-    lbox_player.selection_clear(0, tk.END)
+    player_lbox[from_].selection_clear(0, tk.END)
     handle_trait[from_].set("")
 
     # clear trait search & update listbox & selection
@@ -137,6 +141,9 @@ def btn_move_trait(from_, cbox_move_to):
     # get card
     card = handle_trait[from_].get()
 
+    print(">>> move <<< '{}' is moved from '{}' to '{}'"
+          .format(card, player_name[from_].get(), player_name[to].get()))
+
     # remove from 'giving' players traits
     from_players_cards = list(player_cards[from_].get())
     from_players_cards.remove(card)
@@ -147,8 +154,16 @@ def btn_move_trait(from_, cbox_move_to):
     to_players_cards.append(card)
     player_cards[to].set(sorted(to_players_cards))
 
-    print(">>> move <<< '{}' is moved from '{}' to '{}'".format(
-        card, player_name[from_].get(), player_name[to].get()))
+    # keep correct trait selected in list of receiving player
+    if not handle_trait[to].get() == "":
+        print(">>> move <<< trait selection corrected in '{}'s trait pile".format(player_name[to].get()))
+        list_idx_old_selection = player_cards[to].get().index(handle_trait[to].get())
+        player_lbox[to].selection_clear(0, tk.END)
+        player_lbox[to].selection_set(list_idx_old_selection)
+
+    # deselect traits in list of giving player
+    update_selected_trait(from_, ())
+    player_lbox[from_].selection_clear(0, tk.END)
 
     # clear combobox
     cbox_move_to.current(0)
@@ -345,7 +360,8 @@ def update_selected_trait(where, idx):
         # trait in one of PLAYERS traits is selected, note: 'where' represents the player here
         if idx == ():
             handle_trait[where].set("")
-            print(">>> select <<<  no trait in players list available...")
+
+            print(">>> select <<<  no trait selected in '{}'s list...".format(player_name[where].get()))
 
         else:
             selected_card = player_cards[where].get()[int(idx[0])]
@@ -438,16 +454,16 @@ def create_player_frame(content, defaults, i):
     frame_traits.columnconfigure(1, weight=1)
     frame_traits.columnconfigure(2, weight=1)
 
-    lbox_player = tk.Listbox(
+    player_lbox[i] = tk.Listbox(
         frame_traits,
         height=22,
         listvariable=player_cards[i],
         selectmode=tk.SINGLE,
         exportselection=False,
     )
-    lbox_player.grid(row=0, column=0, padx=8, pady=8, sticky='nesw')
-    lbox_player.bind(
-        "<<ListboxSelect>>", lambda e: update_selected_trait(i, lbox_player.curselection())
+    player_lbox[i].grid(row=0, column=0, padx=8, pady=8, sticky='nesw')
+    player_lbox[i].bind(
+        "<<ListboxSelect>>", lambda e: update_selected_trait(i, player_lbox[i].curselection())
     )
 
     cbox_move_to = ttk.Combobox(
@@ -468,7 +484,7 @@ def create_player_frame(content, defaults, i):
     ttk.Button(
         frame_traits,
         text="discard trait",
-        command=partial(btn_discard_trait, i, lbox_player),
+        command=partial(btn_discard_trait, i),
     ).grid(row=2, column=0, padx=8, sticky='nsw')
 
     # ----- action buttons -------------------------------------
@@ -717,9 +733,10 @@ lbox_cards = tk.Variable(value=traits_list_all)     # traits >>shown<< in listbo
 play_trait = tk.StringVar(value="")
 
 player_name = []
-player_points = []
 player_genes = []
+player_points = []
 player_cards = []
+player_lbox = []
 handle_trait = []
 for i in range(max_player.get()):
     player_name.append(tk.StringVar(value=defaults["names"][i]))
@@ -728,6 +745,7 @@ for i in range(max_player.get()):
                           'worlds_end': tk.IntVar(value=0), 'MOL': tk.IntVar(value=0),
                           'total': tk.IntVar(value=0)})
     player_cards.append(tk.Variable(value=[]))
+    player_lbox.append(None)
     handle_trait.append(tk.StringVar(value=""))
 
 catastrophies = []

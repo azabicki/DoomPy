@@ -17,7 +17,7 @@ traits_list_all = sorted(traits_df["name"].values.tolist())
 
 ages_df = pd.read_excel(os.path.join(curdir, "cards.xlsx"), sheet_name="ages")
 ages_list = sorted(ages_df["name"].values.tolist())
-catastrophies_list = ages_df[ages_df["type"] == "Catastrophe"]["name"].values.tolist()
+catastrophies_list = sorted(ages_df[ages_df["type"] == "Catastrophe"]["name"].values.tolist())
 
 # load images ------------------------------------------------------------
 size_star = 30
@@ -252,23 +252,23 @@ def update_scoring(p):
     cards = player_cards[p].get()
 
     # calculate face value
-    cards_face = int(sum([traits_df[traits_df['name'] == card]['points'].values[0] for card in cards]))
-    player_points[p]['face'].set(cards_face)
+    p_face = int(sum([traits_df[traits_df['name'] == card]['points'].values[0] for card in cards]))
+    player_points[p]['face'].set(p_face)
 
     # calculate drop points
-    cards_drop = 0
-    player_points[p]['drop'].set(cards_drop)
+    p_drop = 0
+    player_points[p]['drop'].set(p_drop)
 
     # calculate world's end points
     cards_worlds_end = 0
     player_points[p]['worlds_end'].set(cards_worlds_end)
 
     # calculate total score
-    total = cards_face + cards_drop + cards_worlds_end
+    total = p_face + p_drop + p_worlds_end
     player_points[p]['total'].set(total)
 
-    print(">>> scoring <<< calculations updated for {}: face = {}  -  drops = {}  -  total = {}"
-          .format(player_name[p].get(), cards_face, cards_drop, total))
+    print(">>> scoring <<< calculations updated for {}: face = {}  -  drops = {}  -  WE = {}  -  total = {}"
+          .format(player_name[p].get(), p_face, p_drop, p_worlds_end, total))
 
 
 def update_genes():
@@ -696,9 +696,10 @@ def create_menu_frame(content, defaults):
     frame_menu_catastrophe.columnconfigure(0, weight=1)
     frame_menu_catastrophe.columnconfigure(1, weight=1)
 
+    # catastrophies -----
     ttk.Label(
         frame_menu_catastrophe,
-        text="catastrophies",
+        text="Catastrophies",
         font="'' 18",
     ).grid(row=0, column=0, columnspan=2, pady=(5, 0))
 
@@ -763,12 +764,12 @@ root.rowconfigure(0, weight=1)
 # init variables ---------------------------------------------------------
 n_player = tk.IntVar(value=defaults["n_player"])                # number of current players
 max_player = tk.IntVar(value=defaults["max_player"])            # theoretical max. num of players
-n_catastrophies = tk.IntVar(value=defaults["n_catastrophies"])         # number of catastrophies
+n_catastrophies = tk.IntVar(value=defaults["n_catastrophies"])  # number of catastrophies
 worlds_end_cbox = [None]
 worlds_end = tk.StringVar(value="")
 genes_at_start = tk.IntVar(value=defaults["genes_at_start"])    # gene pool at start
 search_trait_str = tk.StringVar(value="")                       # searching for traits in playable deck
-deck_cards = tk.Variable(value=traits_list_all)
+deck_cards = tk.Variable(value=traits_list_all)     # all traits in deck (or discard pile) left to be drawn
 lbox_cards = tk.Variable(value=traits_list_all)     # traits >>shown<< in listbox on the left, i.e. after filtering
 play_trait = tk.StringVar(value="")
 
@@ -776,7 +777,7 @@ player_name = []
 player_genes = []
 player_points = []
 player_cards = []
-player_lbox = []
+player_lbox = []    # needed to be able to edit selected traits in players listbox
 handle_trait = []
 for i in range(max_player.get()):
     player_name.append(tk.StringVar(value=defaults["names"][i]))

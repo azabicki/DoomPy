@@ -34,7 +34,7 @@ def btn_clear_trait_search():
     play_trait.set("")
 
 
-def btn_restart_game(content, frame_menu_buttons):
+def btn_restart_game(content, frame_menu_buttons, frame_menu_catastrophe):
     # reset deck & lbox lists
     deck_cards.set(traits_list_all)
     lbox_cards.set(traits_list_all)
@@ -44,6 +44,12 @@ def btn_restart_game(content, frame_menu_buttons):
 
     # update player buttons
     create_player_buttons(frame_menu_buttons)
+
+    # clear catastrophie comboboxes & clear variable
+    create_catastrophies(frame_menu_catastrophe)
+    catastrophies.clear()
+    for i in range(n_catastrophies.get()):
+        catastrophies.append(tk.StringVar(value=""))
 
     # clear grid configuration
     for i in range(n_player.get()):
@@ -192,6 +198,18 @@ def btn_play_trait(p):
     btn_clear_trait_search()
 
 
+def btn_play_catastrophe(event, c):
+    # get & set played catastrophe
+    played_catastrophy = event.widget.get()
+    catastrophies[c].set(played_catastrophy)
+
+    # debug outout
+    print(">>> catastrophe <<< played catastrophe #{}: {}".format(c+1, played_catastrophy))
+
+    # update genes
+    update_genes()
+
+
 def update_scoring(p):
     # get cards
     cards = player_cards[p].get()
@@ -247,8 +265,21 @@ def update_genes():
                     case 'other':
                         diff_genes = [i+value if i != p else i for i in diff_genes]
 
-                print(">>> genes <<< {}'s '{}' has gene effect on '{}' -> current effect: {}".format(
-                    player_name[p].get(), card, who, diff_genes))
+                print(">>> genes <<< {}'s '{}' has gene effect off '{}' on '{}' -> current effect: {}".format(
+                    player_name[p].get(), card, value, who, diff_genes))
+
+    # check what catastrophies were played alread
+    for c in range(n_catastrophies.get()):
+        # get card & effect
+        card = catastrophies[c].get()
+        # check if catastrophy was played
+        if card in ages_df["name"].values.tolist():
+            # get effect and apply it
+            effect = int(ages_df[ages_df['name'] == card]['gene_pool'].values[0])
+            diff_genes = [i + effect for i in diff_genes]
+
+            print(">>> genes <<< catastrophe '{}' has gene effect off '{}' -> current effect: {}".format(
+                card, effect, diff_genes))
 
     # update gene values
     for p in range(n_player.get()):
@@ -324,7 +355,7 @@ def create_player_frame(content, defaults, i):
     frame.columnconfigure(0, weight=1)
     frame.rowconfigure(1, weight=1)  # traits
     # frame.rowconfigure(2, weight=1)  # further actions
-    frame.grid(column=i + 1, row=0, padx=5, pady=5, sticky="nesw")  # or use nsw for non-x-streched frames!
+    frame.grid(column=i+1, row=0, padx=5, pady=5, sticky="nesw")  # or use nsw for non-x-streched frames!
 
     # ----- name + overview current points -------------------------------
     frame_points = tk.Frame(frame)
@@ -444,6 +475,25 @@ def create_player_frame(content, defaults, i):
     return frame
 
 
+def create_catastrophies(container):
+    for w in container.grid_slaves():
+        if not w.winfo_class() == 'TLabel':
+            w.grid_forget()
+
+    for c in range(n_catastrophies.get()):
+        cbox_catastrophy = ttk.Combobox(
+            container,
+            values=[" catastrophe {}...".format(c+1)] + catastrophies_list,
+            exportselection=0,
+            state="readonly",
+            width=18,
+            style="move.TCombobox"
+        )
+        cbox_catastrophy.current(0)
+        cbox_catastrophy.grid(row=c+1, column=0, columnspan=2, padx=4, sticky='ns')
+        cbox_catastrophy.bind("<<ComboboxSelected>>", lambda ev, c=c: btn_play_catastrophe(ev, c))
+
+
 def create_player_buttons(container):
     for w in container.grid_slaves():
         w.grid_forget()
@@ -526,7 +576,7 @@ def create_menu_frame(content, defaults):
         wrap=False
     ).grid(row=2, column=1, sticky='w')
 
-    # nr players -----
+    # nr catastrophies -----
     ttk.Label(
         frame_menu_options,
         text="# catastrophies: ",
@@ -554,7 +604,7 @@ def create_menu_frame(content, defaults):
     ttk.Button(
         frame_menu_options,
         text="restart game",
-        command=lambda: btn_restart_game(content, frame_menu_buttons),
+        command=lambda: btn_restart_game(content, frame_menu_buttons, frame_menu_catastrophe),
     ).grid(row=n_player.get() + 6, column=0, columnspan=2, pady=10)
 
     # ----- frame 4 trait selection --------------------------------------------------------
@@ -602,31 +652,18 @@ def create_menu_frame(content, defaults):
     create_player_buttons(frame_menu_buttons)
 
     # ----- frame 4 catastrophy selection --------------------------------------------------------
-    frame_menu_catastrophy = tk.Frame(frame)
-    frame_menu_catastrophy.grid(row=2, column=0, padx=5, pady=0, ipady=5, sticky="nesw")
-    frame_menu_catastrophy.columnconfigure(0, weight=1)
-    frame_menu_catastrophy.columnconfigure(1, weight=1)
+    frame_menu_catastrophe = tk.Frame(frame)
+    frame_menu_catastrophe.grid(row=2, column=0, padx=5, pady=0, ipady=5, sticky="nesw")
+    frame_menu_catastrophe.columnconfigure(0, weight=1)
+    frame_menu_catastrophe.columnconfigure(1, weight=1)
 
     ttk.Label(
-        frame_menu_catastrophy,
+        frame_menu_catastrophe,
         text="catastrophies",
         font="'' 18",
     ).grid(row=0, column=0, columnspan=2, pady=(5, 0))
 
-    for c in range(1, n_catastrophies.get()):
-        cbox_catastrophy = ttk.Combobox(
-            frame_menu_catastrophy,
-            values=[" catastrophe {}...".format(c)] + catastrophies_list,
-            exportselection=0,
-            state="readonly",
-            width=18,
-            style="move.TCombobox"
-        )
-        cbox_catastrophy.current(0)
-        cbox_catastrophy.grid(row=1+c, column=0, columnspan=2, padx=4, sticky='ns')
-#        cbox_catastrophy.bind(
-#            "<<ComboboxSelected>>", lambda e: btn_move_trait(i, cbox_catastrophy)
-#        )
+    create_catastrophies(frame_menu_catastrophe)
 
     # ----- frame for control buttons --------------------------------------------------------
     frame_menu_controls = tk.Frame(frame)

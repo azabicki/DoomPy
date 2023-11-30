@@ -71,6 +71,9 @@ def btn_restart_game(content, frame_menu_buttons, frame_menu_catastrophe):
         # clear player_cards listbox
         player_cards[i].set("")
 
+        # update scoring
+        update_scoring(i)
+
 
 def btn_discard_trait(from_, lbox_player):
     # return if no trait selected

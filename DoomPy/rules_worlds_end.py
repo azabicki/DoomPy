@@ -1,15 +1,17 @@
 # rules for calculing WORLDS END points
-def calculate_worlds_end(card):
-    print(" ---> calculate: {}".format(card))
-    points = 0
+def calculate_worlds_end(worlds_end, p, player_cards, traits):
+    cards = player_cards[p].get()
 
-    match card:
+    match worlds_end:
         case "AI Takeover":
-            # 2 each_colorless ignore_colorless_effects
+            # 2 colorless_worth ignore_colorless_effects
+            colors = [traits[traits.name == card]['color'].values[0] for card in cards]
+            n_colorless = sum([1 for col in colors if "Colorless" in col])
+
             points = 0
 
         case "AI Takeover (excl. dominant)":
-            # 2 each_colorless ignore_colorless_effects noDominant
+            # 2 colorless_worth ignore_colorless_effects noDominant
             points = 0
 
         case "Algal Superbloom":
@@ -146,6 +148,9 @@ def calculate_worlds_end(card):
 
         case "Volcanic Winter":
             # 1 each_red_in_left_trait_pile
+            points = 0
+
+        case _:
             points = 0
 
     return points

@@ -261,7 +261,7 @@ def update_scoring(p):
     player_points[p]['drop'].set(p_drop)
 
     # calculate world's end points
-    p_worlds_end = calculate_worlds_end(worlds_end.get())
+    p_worlds_end = calculate_worlds_end(worlds_end.get(), p, player_cards, traits_df)
     player_points[p]['worlds_end'].set(p_worlds_end)
 
     # calculate total score

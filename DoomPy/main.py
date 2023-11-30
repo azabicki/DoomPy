@@ -219,10 +219,25 @@ def btn_play_trait(p):
     btn_clear_trait_search()
 
 
+def btn_play_worlds_end():
+    # do nothing if no catastrophy selected
+    if worlds_end.get() == " select world's end ...":
+        return
+
+    print(">>> world's end <<< '{}' is happening now...".format(worlds_end.get()))
+
+    for i in range(n_player.get()):
+        update_scoring(i)
+
+
 def btn_play_catastrophe(event, c):
     # get & set played catastrophe
     played_catastrophy = event.widget.get()
     catastrophies[c].set(played_catastrophy)
+
+    # update worlds end combobox
+    played_catastrophies = [catastrophies[i].get() for i in range(n_catastrophies.get()) if catastrophies[i].get()]
+    worlds_end_cbox[0]['values'] = [" select world's end ..."] + played_catastrophies
 
     # debug outout
     print(">>> catastrophe <<< played catastrophe #{}: {}"
@@ -689,6 +704,26 @@ def create_menu_frame(content, defaults):
 
     create_catastrophies(frame_menu_catastrophe)
 
+    # world's end -----
+    ttk.Label(
+        frame_menu_catastrophe,
+        text="World's End",
+        font="'' 18",
+    ).grid(row=n_catastrophies.get()+1, column=0, columnspan=2, pady=(8, 5))
+
+    worlds_end_cbox[0] = ttk.Combobox(
+        frame_menu_catastrophe,
+        values=[" select world's end ..."],
+        exportselection=0,
+        state="readonly",
+        width=18,
+        style="move.TCombobox",
+        textvariable=worlds_end
+    )
+    worlds_end_cbox[0].current(0)
+    worlds_end_cbox[0].grid(row=n_catastrophies.get()+2, column=0, columnspan=2, padx=4, sticky='ns')
+    worlds_end_cbox[0].bind("<<ComboboxSelected>>", lambda e: btn_play_worlds_end())
+
     # ----- frame for control buttons --------------------------------------------------------
     frame_menu_controls = tk.Frame(frame)
     frame_menu_controls.grid(row=3, column=0, padx=5, pady=5, sticky="nesw")
@@ -720,7 +755,7 @@ defaults = {
 # create a window --------------------------------------------------------
 root = tk.Tk()
 root.title("LIVE Doomlings Calculator")
-root.geometry("1600x800")
+root.geometry("1600x900")
 root.configure(background="grey")
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
@@ -729,6 +764,8 @@ root.rowconfigure(0, weight=1)
 n_player = tk.IntVar(value=defaults["n_player"])                # number of current players
 max_player = tk.IntVar(value=defaults["max_player"])            # theoretical max. num of players
 n_catastrophies = tk.IntVar(value=defaults["n_catastrophies"])         # number of catastrophies
+worlds_end_cbox = [None]
+worlds_end = tk.StringVar(value="")
 genes_at_start = tk.IntVar(value=defaults["genes_at_start"])    # gene pool at start
 search_trait_str = tk.StringVar(value="")                       # searching for traits in playable deck
 deck_cards = tk.Variable(value=traits_list_all)

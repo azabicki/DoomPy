@@ -6,6 +6,7 @@ from functools import partial
 import pandas as pd
 import numpy as np
 from PIL import Image, ImageTk
+from rules_worlds_end import calculate_worlds_end
 
 
 # system settings ########################################################
@@ -260,8 +261,8 @@ def update_scoring(p):
     player_points[p]['drop'].set(p_drop)
 
     # calculate world's end points
-    cards_worlds_end = 0
-    player_points[p]['worlds_end'].set(cards_worlds_end)
+    p_worlds_end = calculate_worlds_end(worlds_end.get())
+    player_points[p]['worlds_end'].set(p_worlds_end)
 
     # calculate total score
     total = p_face + p_drop + p_worlds_end

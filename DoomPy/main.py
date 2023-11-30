@@ -4,6 +4,7 @@ from tkinter import ttk
 from math import floor
 from functools import partial
 import pandas as pd
+import numpy as np
 from PIL import Image, ImageTk
 
 
@@ -302,7 +303,8 @@ def update_stars():
     # loop players
     for p in range(n_player.get()):
         # number of dominant traits
-        n_stars = sum([traits_df[traits_df['name'] == card]['dominant'].values[0] for card in player_cards[p].get()])
+        n_stars = np.nansum([traits_df[traits_df['name'] == card]['dominant'].values[0]
+                             for card in player_cards[p].get()])
 
         # find label widgets
         tmp_frame = frames_player[p].winfo_children()

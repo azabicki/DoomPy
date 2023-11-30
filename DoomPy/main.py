@@ -101,7 +101,8 @@ def btn_discard_trait(from_):
         cur_deck_cards.append(card)
         deck_cards.set(sorted(cur_deck_cards))
 
-    print(">>> discard <<< {} is discarding {} ({} pts)".format(player_name[from_].get(), card, card_face))
+    print(">>> discard <<< {} is discarding {} ({} pts)"
+          .format(player_name[from_].get(), card, card_face))
 
     # update scoring
     update_scoring(from_)
@@ -156,7 +157,8 @@ def btn_move_trait(from_, cbox_move_to):
 
     # keep correct trait selected in list of receiving player
     if not handle_trait[to].get() == "":
-        print(">>> move <<< trait selection corrected in '{}'s trait pile".format(player_name[to].get()))
+        print(">>> move <<< trait selection corrected in '{}'s trait pile"
+              .format(player_name[to].get()))
         list_idx_old_selection = player_cards[to].get().index(handle_trait[to].get())
         player_lbox[to].selection_clear(0, tk.END)
         player_lbox[to].selection_set(list_idx_old_selection)
@@ -203,8 +205,8 @@ def btn_play_trait(p):
         cur_deck_cards.remove(card)
         deck_cards.set(cur_deck_cards)
 
-    print(">>> play <<< {} is playing {} ({} pts), which is {} times in the deck and was played {} times".format(
-        player_name[p].get(), card, card_face, card_n, card_played))
+    print(">>> play <<< {} is playing {} ({} pts), which is {} times in the deck and was played {} times"
+          .format(player_name[p].get(), card, card_face, card_n, card_played))
 
     # update scoring
     update_scoring(p)
@@ -223,7 +225,8 @@ def btn_play_catastrophe(event, c):
     catastrophies[c].set(played_catastrophy)
 
     # debug outout
-    print(">>> catastrophe <<< played catastrophe #{}: {}".format(c+1, played_catastrophy))
+    print(">>> catastrophe <<< played catastrophe #{}: {}"
+          .format(c+1, played_catastrophy))
 
     # update genes
     update_genes()
@@ -249,10 +252,8 @@ def update_scoring(p):
     total = cards_face + cards_drop + cards_worlds_end
     player_points[p]['total'].set(total)
 
-    print(">>> scoring <<< calculations are updated for {} ".format(player_name[p].get()))
-    print("  -> face score is: {} ".format(cards_face))
-    print("  -> drop score is: {} ".format(cards_drop))
-    print("  -> total score is: {} ".format(total))
+    print(">>> scoring <<< calculations updated for {}: face = {}  -  drops = {}  -  total = {}"
+          .format(player_name[p].get(), cards_face, cards_drop, total))
 
 
 def update_genes():
@@ -284,8 +285,8 @@ def update_genes():
                     case 'other':
                         diff_genes = [i+value if i != p else i for i in diff_genes]
 
-                print(">>> genes <<< {}'s '{}' has gene effect off '{}' on '{}' -> current effect: {}".format(
-                    player_name[p].get(), card, value, who, diff_genes))
+                print(">>> genes <<< {}'s '{}' has gene effect off '{}' on '{}' -> current effect: {}"
+                      .format(player_name[p].get(), card, value, who, diff_genes))
 
     # check what catastrophies were played alread
     for c in range(n_catastrophies.get()):
@@ -297,8 +298,8 @@ def update_genes():
             effect = int(ages_df[ages_df['name'] == card]['gene_pool'].values[0])
             diff_genes = [i + effect for i in diff_genes]
 
-            print(">>> genes <<< catastrophe '{}' has gene effect off '{}' -> current effect: {}".format(
-                card, effect, diff_genes))
+            print(">>> genes <<< catastrophe '{}' has gene effect off '{}' -> current effect: {}"
+                  .format(card, effect, diff_genes))
 
     # update gene values
     for p in range(n_player.get()):
@@ -310,8 +311,8 @@ def update_genes():
         else:
             player_genes[p].set(new_gp)
 
-    print(">>> genes <<< total gene effect: {} -> new gene pools are {}".format(
-        diff_genes, [player_genes[i].get() for i in range(n_player.get())]))
+    print(">>> genes <<< total gene effect: {} -> new gene pools are {}"
+          .format(diff_genes, [player_genes[i].get() for i in range(n_player.get())]))
 
 
 def update_stars():
@@ -354,21 +355,23 @@ def update_selected_trait(where, idx):
             selected_card = lbox_cards.get()[int(idx[0])]
             play_trait.set(selected_card)
 
-            print(">>> select <<< handle DECK_listbox -> selected trait = {}".format(play_trait.get()))
+            print(">>> select <<< handle DECK_listbox -> selected trait = {}"
+                  .format(play_trait.get()))
 
     else:
         # trait in one of PLAYERS traits is selected, note: 'where' represents the player here
         if idx == ():
             handle_trait[where].set("")
 
-            print(">>> select <<<  no trait selected in '{}'s list...".format(player_name[where].get()))
+            print(">>> select <<<  no trait selected in '{}'s list..."
+                  .format(player_name[where].get()))
 
         else:
             selected_card = player_cards[where].get()[int(idx[0])]
             handle_trait[where].set(selected_card)
 
-            print(">>> select <<< handle PLAYER_listbox -> selected trait = {} - by {}".format(
-                handle_trait[where].get(), player_name[where].get()))
+            print(">>> select <<< handle PLAYER_listbox -> selected trait = {} - by {}"
+                  .format(handle_trait[where].get(), player_name[where].get()))
 
 
 def create_player_frame(content, defaults, i):

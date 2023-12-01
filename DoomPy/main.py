@@ -118,7 +118,7 @@ def btn_move_trait(from_, cbox_move_to):
 
     # keep correct trait selected in list of receiving player
     if not player_trait[to].get() == "":
-        print(">>> move <<< trait selection corrected in '{}'s trait pile"
+        print("   >>> trait selection corrected in '{}'s trait pile"
               .format(player_name[to].get()))
         list_idx_old_selection = player_cards[to].get().index(player_trait[to].get())
         player_lbox[to].selection_clear(0, tk.END)
@@ -228,7 +228,7 @@ def update_scoring(p):
     total = p_face + p_drop + p_worlds_end
     player_points[p]['total'].set(total)
 
-    print(">>> scoring <<< calculations updated for {}: face = {}  -  drops = {}  -  WE = {}  -  total = {}"
+    print(">>> scoring <<< current points for {}: face = {}  |  drops = {}  |  WE = {}  |  total = {}"
           .format(player_name[p].get(), p_face, p_drop, p_worlds_end, total))
 
 
@@ -287,8 +287,9 @@ def update_genes():
         else:
             player_genes[p].set(new_gp)
 
-    print(">>> genes <<< total gene effect: {} -> new gene pools are {}"
-          .format(diff_genes, [player_genes[i].get() for i in range(n_player.get())]))
+    if any(i > 0 for i in diff_genes):
+        print("   >>> total gene effect: {} -> new gene pools are {}"
+              .format(diff_genes, [player_genes[i].get() for i in range(n_player.get())]))
 
 
 def update_stars():
@@ -689,33 +690,6 @@ def create_menu_frame():
     ).grid(padx=10, pady=5, sticky="we")
 
 
-def start_game():
-    # reset variables ----------------------------------------------------
-    reset_variables()
-
-    # update frame_configurations settings -------------------------------
-    for w in frame_menu.grid_slaves():
-        w.grid_forget()
-
-    for w in frame_playground.grid_slaves():
-        w.grid_forget()
-
-    for i in range(defaults["max_player"]):
-        w = 1 if i+1 <= n_player.get() else 0
-        frame_playground.columnconfigure(i, weight=w)
-
-    # fill _menu_ frame --------------------------------------------------
-    create_menu_frame()
-
-    # fill _playground_ frame with _player_ frames -----------------------
-    for i in range(n_player.get()):
-        # frame_playground.columnconfigure(i, weight=1)
-        frames_player.append(create_player_frame(frame_playground, i))
-
-    # clear traits listbox -----------------------------------------------
-    btn_clear_trait_search()
-
-
 def reset_variables():
     # update current settings
     n_player.set(opt_n_player.get())
@@ -738,10 +712,10 @@ def reset_variables():
     for i in range(n_player.get()):
         if len(last_names) >= i+1:
             player_name.append(tk.StringVar(value=last_names[i].get()))
-            print(">>> reset <<< use *previous* name for player #{} = {}".format(i+1, player_name[i].get()))
+            print("   >>> use *previous* name for player #{} = {}".format(i+1, player_name[i].get()))
         else:
             player_name.append(tk.StringVar(value=defaults["names"][i]))
-            print(">>> reset <<< use *default* name for player #{} = {}".format(i+1, player_name[i].get()))
+            print("   >>> use *default* name for player #{} = {}".format(i+1, player_name[i].get()))
 
         player_genes.append(tk.IntVar(value=n_genes.get()))
         player_points.append({'face': tk.IntVar(value=0), 'drop': tk.IntVar(value=0),
@@ -759,6 +733,36 @@ def reset_variables():
     catastrophies.clear()
     for i in range(n_catastrophies.get()):
         catastrophies.append(tk.StringVar(value=""))
+
+
+def start_game():
+    # reset variables ----------------------------------------------------
+    print(">>> initialize <<< reset variables")
+    reset_variables()
+
+    # update frame_configurations settings -------------------------------
+    for w in frame_menu.grid_slaves():
+        w.grid_forget()
+
+    for w in frame_playground.grid_slaves():
+        w.grid_forget()
+
+    for i in range(defaults["max_player"]):
+        w = 1 if i+1 <= n_player.get() else 0
+        frame_playground.columnconfigure(i, weight=w)
+
+    # fill _menu_ frame --------------------------------------------------
+    print(">>> initialize <<< create menu")
+    create_menu_frame()
+
+    # fill _playground_ frame with _player_ frames -----------------------
+    print(">>> initialize <<< create playground")
+    for i in range(n_player.get()):
+        # frame_playground.columnconfigure(i, weight=1)
+        frames_player.append(create_player_frame(frame_playground, i))
+
+    # clear traits listbox -----------------------------------------------
+    btn_clear_trait_search()
 
 
 ##########################################################################

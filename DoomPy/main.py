@@ -1,4 +1,5 @@
 import os
+import json
 import tkinter as tk
 from tkinter import ttk
 from math import floor
@@ -12,7 +13,11 @@ from rules_worlds_end import calculate_worlds_end
 # system settings ########################################################
 curdir = os.path.dirname(__file__)
 
-# load card list #########################################################
+# load defaults ----------------------------------------------------------
+with open("DoomPy/config.json") as json_file:
+    defaults = json.load(json_file)
+
+# load cards.xlsx --------------------------------------------------------
 traits_df = pd.read_excel(os.path.join(curdir, "files", "cards.xlsx"), sheet_name="traits")
 traits_list = sorted(traits_df.name.values.tolist())
 
@@ -515,7 +520,7 @@ def create_menu_frame():
     ).grid(row=2, column=0, sticky='e')
     ttk.Spinbox(
         frame_menu_options,
-        from_=4,
+        from_=3,
         to=8,
         width=3,
         textvariable=opt_n_genes,
@@ -757,20 +762,6 @@ def reset_variables():
 
 
 ##########################################################################
-# default variables ------------------------------------------------------
-defaults = {
-    "names": ["Lisa", "Julia", "Anton", "Adam", "Ben", "Franzi"],
-    "n_player": 4,
-    "max_player": 6,
-    "n_genes": 6,
-    "n_catastrophies": 4,
-    "bg_content": "grey",
-    "bg_frame_menu": "#71C671",
-    "bg_frame_player": "lightskyblue",
-    "bg_frame_1": "lightgrey",
-    "color_frame_width": 6,
-}
-
 # create a window --------------------------------------------------------
 root = tk.Tk()
 root.title("LIVE Doomlings Calculator")

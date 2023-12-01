@@ -1,0 +1,18 @@
+{
+    "names": [
+        "Lisa",
+        "Julia",
+        "Anton",
+        "Adam",
+        "Ben",
+        "Franzi"
+    ],
+    "n_player": 4,
+    "max_player": 6,
+    "n_genes": 6,
+    "n_catastrophies": 4,
+    "bg_content": "grey",
+    "bg_frame_menu": "#71C671",
+    "bg_frame_player": "lightskyblue",
+    "color_frame_width": 6
+}

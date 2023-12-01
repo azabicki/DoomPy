@@ -831,17 +831,6 @@ frame_playground = tk.Frame(content, bg=defaults["bg_content"])
 frame_playground.grid(row=0, column=1, padx=0, pady=0, stick="nesw")
 frame_playground.rowconfigure(0, weight=1)
 
-# reset variables --------------------------------------------------------
-# reset_variables()
-
-# fill _menu_ frame ------------------------------------------------------
-# create_menu_frame()
-
-# fill _playground_ frame with _player_ frames ---------------------------
-# for i in range(n_player.get()):
-#    frame_playground.columnconfigure(i, weight=1)
-#    frames_player.append(create_player_frame(frame_playground, i))
-
 # (re)start game -------------------------------------------------------------
 start_game()
 

@@ -14,7 +14,7 @@ curdir = os.path.dirname(__file__)
 
 # load card list #########################################################
 traits_df = pd.read_excel(os.path.join(curdir, "files", "cards.xlsx"), sheet_name="traits")
-traits_list_all = sorted(traits_df.name.values.tolist())
+traits_list = sorted(traits_df.name.values.tolist())
 
 ages_df = pd.read_excel(os.path.join(curdir, "files", "cards.xlsx"), sheet_name="ages")
 ages_list = sorted(ages_df.name.values.tolist())
@@ -30,65 +30,20 @@ img_empty_star = img_empty_star.resize((size_star, size_star))
 
 # functions ##############################################################
 def btn_clear_trait_search():
-    search_trait_str.set("")
+    search_trait.set("")
     lbox_cards.set(deck_cards.get())
-    lbox_traits.selection_clear(0, tk.END)
+    lbox_traits[0].selection_clear(0, tk.END)
     play_trait.set("")
-
-
-def btn_restart_game(content, frame_menu_buttons, frame_menu_catastrophe):
-    # reset deck & lbox lists
-    deck_cards.set(traits_list_all)
-    lbox_cards.set(traits_list_all)
-
-    # clear traits listbox
-    btn_clear_trait_search()
-
-    # update player buttons
-    create_player_buttons(frame_menu_buttons)
-
-    # clear catastrophie comboboxes & clear variable
-    create_catastrophies(frame_menu_catastrophe)
-    catastrophies.clear()
-    for i in range(n_catastrophies.get()):
-        catastrophies.append(tk.StringVar(value=""))
-
-    # clear grid configuration
-    for i in range(n_player.get()):
-        content.columnconfigure(i+1, weight=1)
-
-    # forget current player_frames
-    for w in frames_player:
-        w.grid_forget()
-
-    # create player_frames + tidy them up
-    player_lbox.clear()
-    frames_player.clear()
-    for i in range(n_player.get()):
-        # create gene_pool_var
-        player_genes[i].set(genes_at_start.get())
-
-        # reset players listbox'es
-        player_lbox.append(None)
-
-        # clear player_cards listbox
-        player_cards[i].set("")
-
-        # create frame
-        frames_player.append(create_player_frame(content, defaults, i))
-
-        # update scoring
-        update_scoring(i)
 
 
 def btn_discard_trait(from_):
     # return if no trait selected
-    if handle_trait[from_].get() == "":
+    if player_trait[from_].get() == "":
         print(">>> discard <<< no trait selected...")
         return
 
     # get card
-    card = handle_trait[from_].get()
+    card = player_trait[from_].get()
     card_face = int(traits_df[traits_df.name == card]['points'].values[0])
 
     # remove from players traits
@@ -110,7 +65,7 @@ def btn_discard_trait(from_):
 
     # clear player trait selection
     player_lbox[from_].selection_clear(0, tk.END)
-    handle_trait[from_].set("")
+    player_trait[from_].set("")
 
     # clear trait search & update listbox & selection
     btn_clear_trait_search()
@@ -122,7 +77,7 @@ def btn_discard_trait(from_):
 
 def btn_move_trait(from_, cbox_move_to):
     # return if no trait selected
-    if handle_trait[from_].get() == "":
+    if player_trait[from_].get() == "":
         cbox_move_to.current(0)
         print(">>> move <<< no trait selected...")
         return
@@ -141,7 +96,7 @@ def btn_move_trait(from_, cbox_move_to):
         return
 
     # get card
-    card = handle_trait[from_].get()
+    card = player_trait[from_].get()
 
     print(">>> move <<< '{}' is moved from '{}' to '{}'"
           .format(card, player_name[from_].get(), player_name[to].get()))
@@ -157,10 +112,10 @@ def btn_move_trait(from_, cbox_move_to):
     player_cards[to].set(sorted(to_players_cards))
 
     # keep correct trait selected in list of receiving player
-    if not handle_trait[to].get() == "":
+    if not player_trait[to].get() == "":
         print(">>> move <<< trait selection corrected in '{}'s trait pile"
               .format(player_name[to].get()))
-        list_idx_old_selection = player_cards[to].get().index(handle_trait[to].get())
+        list_idx_old_selection = player_cards[to].get().index(player_trait[to].get())
         player_lbox[to].selection_clear(0, tk.END)
         player_lbox[to].selection_set(list_idx_old_selection)
 
@@ -319,7 +274,7 @@ def update_genes():
 
     # update gene values
     for p in range(n_player.get()):
-        new_gp = genes_at_start.get() + diff_genes[p]
+        new_gp = n_genes.get() + diff_genes[p]
         if new_gp > 8:
             player_genes[p].set(8)
         elif new_gp < 1:
@@ -354,7 +309,7 @@ def update_stars():
 
 def search_trait_in_list(event):
     value = event.widget.get()
-    lbox_traits.selection_clear(0, tk.END)
+    lbox_traits[0].selection_clear(0, tk.END)
 
     if value == "":
         lbox_cards.set(deck_cards.get())
@@ -377,29 +332,31 @@ def update_selected_trait(where, idx):
     else:
         # trait in one of PLAYERS traits is selected, note: 'where' represents the player here
         if idx == ():
-            handle_trait[where].set("")
+            player_trait[where].set("")
 
             print(">>> select <<<  no trait selected in '{}'s list..."
                   .format(player_name[where].get()))
 
         else:
             selected_card = player_cards[where].get()[int(idx[0])]
-            handle_trait[where].set(selected_card)
+            player_trait[where].set(selected_card)
 
             print(">>> select <<< handle PLAYER_listbox -> selected trait = {} - by {}"
-                  .format(handle_trait[where].get(), player_name[where].get()))
+                  .format(player_trait[where].get(), player_name[where].get()))
 
 
-def create_player_frame(content, defaults, i):
-    frame = tk.Frame(content, bg=defaults["bg_frame_player"])
+def create_player_frame(container, i):
+    border = defaults["color_frame_width"]
+
+    frame = tk.Frame(container, bg=defaults["bg_frame_player"])
     frame.columnconfigure(0, weight=1)
     frame.rowconfigure(1, weight=1)  # traits
     # frame.rowconfigure(2, weight=1)  # further actions
-    frame.grid(column=i+1, row=0, padx=5, pady=5, sticky="nesw")  # or use nsw for non-x-streched frames!
+    frame.grid(column=i, row=0, padx=5, pady=5, sticky="nesw")  # or use nsw for non-x-streched frames!
 
     # ----- name + overview current points -------------------------------
     frame_points = tk.Frame(frame)
-    frame_points.grid(row=0, column=0, padx=5, pady=5, ipady=3, sticky="nesw")
+    frame_points.grid(row=0, column=0, padx=border, pady=border, ipady=3, sticky="nesw")
     frame_points.columnconfigure(0, weight=1)
     frame_points.columnconfigure(1, weight=1)
     frame_points.columnconfigure(2, weight=2)
@@ -468,7 +425,7 @@ def create_player_frame(content, defaults, i):
 
     # ----- list of traits played ----------------------------------------
     frame_traits = tk.Frame(frame)
-    frame_traits.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="nesw")
+    frame_traits.grid(row=1, column=0, padx=border, pady=(0, border), sticky="nesw")
     frame_traits.columnconfigure(0, weight=1)
     frame_traits.columnconfigure(1, weight=1)
     frame_traits.columnconfigure(2, weight=1)
@@ -508,75 +465,25 @@ def create_player_frame(content, defaults, i):
 
     # ----- action buttons -------------------------------------
 #    frame_actions = tk.Frame(frame)
-#    frame_actions.grid(row=2, column=0, padx=5, pady=5, sticky="nesw")
+#    frame_actions.grid(row=2, column=0, padx=border, pady=(0, border), sticky="nesw")
 #    frame_actions.columnconfigure(0, weight=1)
 #    frame_actions.columnconfigure(1, weight=1)
 
     return frame
 
 
-def create_catastrophies(container):
-    for w in container.grid_slaves():
-        if not w.winfo_class() == 'TLabel':
-            w.grid_forget()
+def create_menu_frame():
+    border = defaults["color_frame_width"]
 
-    for c in range(n_catastrophies.get()):
-        cbox_catastrophy = ttk.Combobox(
-            container,
-            values=[" catastrophe {}...".format(c+1)] + catastrophies_list,
-            exportselection=0,
-            state="readonly",
-            width=18,
-            style="move.TCombobox"
-        )
-        cbox_catastrophy.current(0)
-        cbox_catastrophy.grid(row=c+1, column=0, columnspan=2, padx=4, sticky='ns')
-        cbox_catastrophy.bind("<<ComboboxSelected>>", lambda ev, c=c: btn_play_catastrophe(ev, c))
+    frame_menu.columnconfigure(0, weight=1)
+    frame_menu.rowconfigure(0, weight=1)
+    frame_menu.rowconfigure(1, weight=1)
+    frame_menu.rowconfigure(2, weight=4)
+    frame_menu.rowconfigure(3, weight=1)
 
-
-def create_player_buttons(container):
-    for w in container.grid_slaves():
-        w.grid_forget()
-
-    for i in range(n_player.get()):
-        clspn = int(i + 1 == n_player.get() and (i + 1) % 2 == 1) + 1
-        ttk.Button(
-            container,
-            textvariable=player_name[i],
-            command=partial(btn_play_trait, i),
-        ).grid(row=floor(i / 2), column=i % 2, columnspan=clspn)
-
-    container.grid(row=4, column=0, columnspan=2, pady=(0, 10))
-
-
-def create_player_entries(container):
-    for w in container.grid_slaves():
-        w.grid_forget()
-
-    for i in range(n_player.get()):
-        ttk.Label(
-            container,
-            text="player {}: ".format(i+1),
-        ).grid(row=i, column=0)
-        ttk.Entry(
-            container,
-            textvariable=player_name[i],
-            width=8,
-        ).grid(row=i, column=1)
-
-    container.grid(row=5, column=0, columnspan=2)
-
-
-def create_menu_frame(content, defaults):
-    frame = tk.Frame(content, bg=defaults["bg_frame_menu"])
-    frame.columnconfigure(0, weight=1)
-    frame.rowconfigure(0, weight=1)
-    frame.rowconfigure(1, weight=4)
-    frame.rowconfigure(2, weight=1)
-
-    # ----- frame 4 settings --------------------------------------------------------
-    frame_menu_options = tk.Frame(frame)
-    frame_menu_options.grid(row=0, column=0, padx=5, pady=5, sticky="nesw")
+    # ----- frame 4 options -------------------------------------------------------------
+    frame_menu_options = tk.Frame(frame_menu)
+    frame_menu_options.grid(row=0, column=0, padx=border, pady=border, sticky="nesw")
     frame_menu_options.columnconfigure(0, weight=1)
     frame_menu_options.columnconfigure(1, weight=1)
 
@@ -595,11 +502,10 @@ def create_menu_frame(content, defaults):
     ttk.Spinbox(
         frame_menu_options,
         from_=2,
-        to=max_player.get(),
+        to=defaults["max_player"],
         width=3,
-        textvariable=n_player,
+        textvariable=opt_n_player,
         wrap=False,
-        command=lambda: create_player_entries(frame_player_entries),
     ).grid(row=1, column=1, sticky='w')
 
     # genes at beginning -----
@@ -612,7 +518,7 @@ def create_menu_frame(content, defaults):
         from_=4,
         to=8,
         width=3,
-        textvariable=genes_at_start,
+        textvariable=opt_n_genes,
         wrap=False
     ).grid(row=2, column=1, sticky='w')
 
@@ -626,47 +532,63 @@ def create_menu_frame(content, defaults):
         from_=2,
         to=8,
         width=3,
-        textvariable=n_catastrophies,
+        textvariable=opt_n_catastrophies,
         wrap=False
     ).grid(row=3, column=1, sticky='w')
-
-    # name of players -----
-    ttk.Label(
-        frame_menu_options,
-        text="who's playing?",
-        font="'' 18",
-    ).grid(row=4, column=0, columnspan=2, pady=(20, 0))
-
-    frame_player_entries = tk.Frame(frame_menu_options)
-    create_player_entries(frame_player_entries)
 
     # restart button -----
     ttk.Button(
         frame_menu_options,
         text="restart game",
-        command=lambda: btn_restart_game(content, frame_menu_buttons, frame_menu_catastrophe),
-    ).grid(row=n_player.get() + 6, column=0, columnspan=2, pady=10)
+        command=start_game,
+    ).grid(row=4, column=0, columnspan=2, padx=10, pady=5, sticky="we")
 
-    # ----- frame 4 trait selection --------------------------------------------------------
-    frame_menu_traits = tk.Frame(frame)
-    frame_menu_traits.grid(row=1, column=0, padx=5, pady=(0, 5), sticky="nesw")
+    # ----- frame 4 player names --------------------------------------------------------
+    frame_menu_names = tk.Frame(frame_menu)
+    frame_menu_names.grid(row=1, column=0, padx=border, pady=(0, border), ipady=4, sticky="nesw")
+    frame_menu_names.columnconfigure(0, weight=1)
+    frame_menu_names.columnconfigure(1, weight=1)
+
+    # title -----
+    ttk.Label(
+        frame_menu_names,
+        text="who's playing?",
+        font="'' 18",
+    ).grid(row=0, column=0, columnspan=2, pady=(5, 5))
+
+    # name entries ---
+    for i in range(n_player.get()):
+        ttk.Label(
+            frame_menu_names,
+            text="player {}: ".format(i+1),
+        ).grid(row=i+1, column=0, sticky='e')
+        ttk.Entry(
+            frame_menu_names,
+            textvariable=player_name[i],
+            width=8,
+        ).grid(row=i+1, column=1, sticky='w')
+
+    # ----- frame 4 trait selection -----------------------------------------------------
+    frame_menu_traits = tk.Frame(frame_menu)
+    frame_menu_traits.grid(row=2, column=0, padx=border, pady=(0, border), sticky="nesw")
     frame_menu_traits.columnconfigure(0, weight=1)
     frame_menu_traits.columnconfigure(1, weight=1)
 
+    # 'play trai' -----
     ttk.Label(
         frame_menu_traits,
         text="play trait",
         font="'' 18",
     ).grid(row=0, column=0, columnspan=2, pady=(5, 0))
 
+    # search field -----
     trait_ent = ttk.Entry(
         frame_menu_traits,
         width=10,
-        textvariable=search_trait_str,
+        textvariable=search_trait,
     )
     trait_ent.grid(row=1, column=0, padx=(10, 0), sticky="w")
     trait_ent.bind("<KeyRelease>", search_trait_in_list)
-
     ttk.Button(
         frame_menu_traits,
         text="clear",
@@ -674,26 +596,40 @@ def create_menu_frame(content, defaults):
         command=btn_clear_trait_search,
     ).grid(row=1, column=1, padx=(0, 10), sticky="w")
 
-    lbox_traits = tk.Listbox(
-        frame_menu_traits, height=4, listvariable=lbox_cards, selectmode=tk.SINGLE, exportselection=False
+    # listbox with (filtered) deck-cards -----
+    lbox_traits[0] = tk.Listbox(
+        frame_menu_traits,
+        height=5,
+        listvariable=lbox_cards,
+        selectmode=tk.SINGLE,
+        exportselection=False
     )
-    lbox_traits.grid(row=2, column=0, columnspan=2, padx=10)
-    lbox_traits.bind(
-        "<<ListboxSelect>>", lambda e: update_selected_trait("lbox", lbox_traits.curselection())
+    lbox_traits[0].grid(row=2, column=0, columnspan=2, padx=10)
+    lbox_traits[0].bind(
+        "<<ListboxSelect>>", lambda e: update_selected_trait("lbox", lbox_traits[0].curselection())
     )
 
+    # 'who gets it?' -----
     ttk.Label(
         frame_menu_traits,
         text="who gets the trait?",
         font="'' 18",
     ).grid(row=3, column=0, columnspan=2, pady=(10, 0))
 
+    # player buttons -----
     frame_menu_buttons = tk.Frame(frame_menu_traits)
-    create_player_buttons(frame_menu_buttons)
+    frame_menu_buttons.grid(row=4, column=0, columnspan=2, pady=(0, 5))
+    for i in range(n_player.get()):
+        clspn = int(i + 1 == n_player.get() and (i + 1) % 2 == 1) + 1
+        ttk.Button(
+            frame_menu_buttons,
+            textvariable=player_name[i],
+            command=partial(btn_play_trait, i),
+        ).grid(row=floor(i / 2), column=i % 2, columnspan=clspn)
 
-    # ----- frame 4 catastrophy selection --------------------------------------------------------
-    frame_menu_catastrophe = tk.Frame(frame)
-    frame_menu_catastrophe.grid(row=2, column=0, padx=5, pady=0, ipady=5, sticky="nesw")
+    # ----- frame 4 catastrophy selection -----------------------------------------------
+    frame_menu_catastrophe = tk.Frame(frame_menu)
+    frame_menu_catastrophe.grid(row=3, column=0, padx=border, pady=(0, border), sticky="nesw")
     frame_menu_catastrophe.columnconfigure(0, weight=1)
     frame_menu_catastrophe.columnconfigure(1, weight=1)
 
@@ -703,15 +639,25 @@ def create_menu_frame(content, defaults):
         text="Catastrophies",
         font="'' 18",
     ).grid(row=0, column=0, columnspan=2, pady=(5, 0))
-
-    create_catastrophies(frame_menu_catastrophe)
+    for c in range(n_catastrophies.get()):
+        cbox_catastrophy = ttk.Combobox(
+            frame_menu_catastrophe,
+            values=[" catastrophe {}...".format(c+1)] + catastrophies_list,
+            exportselection=0,
+            state="readonly",
+            width=18,
+            style="move.TCombobox"
+        )
+        cbox_catastrophy.current(0)
+        cbox_catastrophy.grid(row=c+1, column=0, columnspan=2, padx=4, sticky='ns')
+        cbox_catastrophy.bind("<<ComboboxSelected>>", lambda ev, c=c: btn_play_catastrophe(ev, c))
 
     # world's end -----
     ttk.Label(
         frame_menu_catastrophe,
         text="World's End",
         font="'' 18",
-    ).grid(row=n_catastrophies.get()+1, column=0, columnspan=2, pady=(8, 5))
+    ).grid(row=n_catastrophies.get()+1, column=0, columnspan=2, pady=(5, 0))
 
     worlds_end_cbox[0] = ttk.Combobox(
         frame_menu_catastrophe,
@@ -723,12 +669,12 @@ def create_menu_frame(content, defaults):
         textvariable=worlds_end
     )
     worlds_end_cbox[0].current(0)
-    worlds_end_cbox[0].grid(row=n_catastrophies.get()+2, column=0, columnspan=2, padx=4, sticky='ns')
+    worlds_end_cbox[0].grid(row=n_catastrophies.get()+2, column=0, columnspan=2, padx=4, pady=(0, 5), sticky='ns')
     worlds_end_cbox[0].bind("<<ComboboxSelected>>", lambda e: btn_play_worlds_end())
 
-    # ----- frame for control buttons --------------------------------------------------------
-    frame_menu_controls = tk.Frame(frame)
-    frame_menu_controls.grid(row=3, column=0, padx=5, pady=5, sticky="nesw")
+    # ----- frame for control buttons ---------------------------------------------------
+    frame_menu_controls = tk.Frame(frame_menu)
+    frame_menu_controls.grid(row=4, column=0, padx=border, pady=(0, border), sticky="nesw")
     frame_menu_controls.columnconfigure(0, weight=1)
 
     ttk.Button(
@@ -737,7 +683,77 @@ def create_menu_frame(content, defaults):
         command=root.quit,
     ).grid(padx=10, pady=5, sticky="we")
 
-    return frame, lbox_traits
+
+def start_game():
+    # reset variables ----------------------------------------------------
+    reset_variables()
+
+    # update frame_configurations settings -------------------------------
+    for w in frame_menu.grid_slaves():
+        w.grid_forget()
+
+    for w in frame_playground.grid_slaves():
+        w.grid_forget()
+
+    for i in range(defaults["max_player"]):
+        w = 1 if i+1 <= n_player.get() else 0
+        frame_playground.columnconfigure(i, weight=w)
+
+    # fill _menu_ frame --------------------------------------------------
+    create_menu_frame()
+
+    # fill _playground_ frame with _player_ frames -----------------------
+    for i in range(n_player.get()):
+        # frame_playground.columnconfigure(i, weight=1)
+        frames_player.append(create_player_frame(frame_playground, i))
+
+    # clear traits listbox -----------------------------------------------
+    btn_clear_trait_search()
+
+
+def reset_variables():
+    # update current settings
+    n_player.set(opt_n_player.get())
+    n_genes.set(opt_n_genes.get())
+    n_catastrophies.set(opt_n_catastrophies.get())
+
+    # save previous names
+    last_names = player_name.copy()
+
+    # reset _player_ variables
+    frames_player.clear()
+    player_name.clear()
+    player_genes.clear()
+    player_points.clear()
+    player_cards.clear()
+    player_lbox.clear()
+    player_trait.clear()
+
+    # fill variables
+    for i in range(n_player.get()):
+        if len(last_names) >= i+1:
+            player_name.append(tk.StringVar(value=last_names[i].get()))
+            print(">>> reset <<< use *previous* name for player #{} = {}".format(i+1, player_name[i].get()))
+        else:
+            player_name.append(tk.StringVar(value=defaults["names"][i]))
+            print(">>> reset <<< use *default* name for player #{} = {}".format(i+1, player_name[i].get()))
+
+        player_genes.append(tk.IntVar(value=n_genes.get()))
+        player_points.append({'face': tk.IntVar(value=0), 'drop': tk.IntVar(value=0),
+                              'worlds_end': tk.IntVar(value=0), 'MOL': tk.IntVar(value=0),
+                              'total': tk.IntVar(value=0)})
+        player_cards.append(tk.Variable(value=[]))
+        player_lbox.append(None)
+        player_trait.append(tk.StringVar(value=""))
+
+    # reset deck/lbox card-lists
+    deck_cards.set(traits_list)
+    lbox_cards.set(traits_list)
+
+    # reset occured catastrophies
+    catastrophies.clear()
+    for i in range(n_catastrophies.get()):
+        catastrophies.append(tk.StringVar(value=""))
 
 
 ##########################################################################
@@ -746,12 +762,13 @@ defaults = {
     "names": ["Lisa", "Julia", "Anton", "Adam", "Ben", "Franzi"],
     "n_player": 4,
     "max_player": 6,
+    "n_genes": 6,
     "n_catastrophies": 4,
-    "genes_at_start": 6,
     "bg_content": "grey",
     "bg_frame_menu": "#71C671",
     "bg_frame_player": "lightskyblue",
     "bg_frame_1": "lightgrey",
+    "color_frame_width": 6,
 }
 
 # create a window --------------------------------------------------------
@@ -761,38 +778,6 @@ root.geometry("1600x900")
 root.configure(background="grey")
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
-
-# init variables ---------------------------------------------------------
-n_player = tk.IntVar(value=defaults["n_player"])                # number of current players
-max_player = tk.IntVar(value=defaults["max_player"])            # theoretical max. num of players
-n_catastrophies = tk.IntVar(value=defaults["n_catastrophies"])  # number of catastrophies
-worlds_end_cbox = [None]
-worlds_end = tk.StringVar(value="")
-genes_at_start = tk.IntVar(value=defaults["genes_at_start"])    # gene pool at start
-search_trait_str = tk.StringVar(value="")                       # searching for traits in playable deck
-deck_cards = tk.Variable(value=traits_list_all)     # all traits in deck (or discard pile) left to be drawn
-lbox_cards = tk.Variable(value=traits_list_all)     # traits >>shown<< in listbox on the left, i.e. after filtering
-play_trait = tk.StringVar(value="")
-
-player_name = []
-player_genes = []
-player_points = []
-player_cards = []
-player_lbox = []    # needed to be able to edit selected traits in players listbox
-handle_trait = []
-for i in range(max_player.get()):
-    player_name.append(tk.StringVar(value=defaults["names"][i]))
-    player_genes.append(tk.IntVar(value=genes_at_start.get()))
-    player_points.append({'face': tk.IntVar(value=0), 'drop': tk.IntVar(value=0),
-                          'worlds_end': tk.IntVar(value=0), 'MOL': tk.IntVar(value=0),
-                          'total': tk.IntVar(value=0)})
-    player_cards.append(tk.Variable(value=[]))
-    player_lbox.append(None)
-    handle_trait.append(tk.StringVar(value=""))
-
-catastrophies = []
-for i in range(n_catastrophies.get()):
-    catastrophies.append(tk.StringVar(value=""))
 
 # styling ----------------------------------------------------------------
 gui_style = ttk.Style()
@@ -804,21 +789,61 @@ gui_style.configure("move.TCombobox", selectbackground="none")
 pic_star = ImageTk.PhotoImage(img_star)
 pic_empty_star = ImageTk.PhotoImage(img_empty_star)
 
-# content frame ----------------------------------------------------------
+# init variables ---------------------------------------------------------
+opt_n_player = tk.IntVar(value=defaults["n_player"])                # OPTIONS: number of players
+opt_n_genes = tk.IntVar(value=defaults["n_genes"])                  # OPTIONS: gene pool at beginning
+opt_n_catastrophies = tk.IntVar(value=defaults["n_catastrophies"])  # OPTIONS: number of catastrophies
+
+n_player = tk.IntVar()          # number of current players
+n_genes = tk.IntVar()           # gene pool at start
+n_catastrophies = tk.IntVar()   # number of catastrophies
+
+search_trait = tk.StringVar(value="")   # searching for traits in playable deck
+deck_cards = tk.Variable(value="")      # all traits in deck (or discard pile) left to be drawn
+lbox_cards = tk.Variable(value="")      # traits >>shown<< in listbox on the left, i.e. after filtering
+play_trait = tk.StringVar(value="")     # selected trait in listbox
+lbox_traits = [None]                    # listbox widget of deck cards -> needed to be able to edit selected traits
+
+catastrophies = []                  # occured catastrophies / StringVar
+worlds_end = tk.StringVar(value="")
+worlds_end_cbox = [None]
+
+frames_player = []      # list of all players frames
+player_name = []        # current players names / StringVar
+player_genes = []       # current players gene pool / IntVar
+player_points = []      # current players points / dictionary
+player_cards = []       # current players traits played / Var 4 listbox
+player_lbox = []        # listbox widget of current players -> needed to be able to edit selected traits
+player_trait = []       # selected traits in players trait piles / StringVar
+
+# create _content_ frame -------------------------------------------------
 content = tk.Frame(root, width=1200, height=800, bg=defaults["bg_content"])
 content.grid(column=0, row=0, sticky="nesw")
 content.columnconfigure(0, weight=0)
-for i in range(n_player.get()):
-    content.columnconfigure(i + 1, weight=1)
+content.columnconfigure(1, weight=1)
 
-# create menu frame ------------------------------------------------------
-frame_menu, lbox_traits = create_menu_frame(content, defaults)
-frame_menu.grid(column=0, row=0, padx=5, pady=5, stick="nesw")
+# create _menu_ frame ----------------------------------------------------
+frame_menu = tk.Frame(content, bg=defaults["bg_frame_menu"])
+frame_menu.grid(row=0, column=0, padx=5, pady=5, stick="nesw")
 
-# create player-frames ---------------------------------------------------
-frames_player = []
-for i in range(n_player.get()):
-    frames_player.append(create_player_frame(content, defaults, i))
+# create _playground_ frame ----------------------------------------------
+frame_playground = tk.Frame(content, bg=defaults["bg_content"])
+frame_playground.grid(row=0, column=1, padx=0, pady=0, stick="nesw")
+frame_playground.rowconfigure(0, weight=1)
+
+# reset variables --------------------------------------------------------
+# reset_variables()
+
+# fill _menu_ frame ------------------------------------------------------
+# create_menu_frame()
+
+# fill _playground_ frame with _player_ frames ---------------------------
+# for i in range(n_player.get()):
+#    frame_playground.columnconfigure(i, weight=1)
+#    frames_player.append(create_player_frame(frame_playground, i))
+
+# (re)start game -------------------------------------------------------------
+start_game()
 
 # ----- run --------------------------------------------------------------
 root.mainloop()

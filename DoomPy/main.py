@@ -13,18 +13,18 @@ from rules_worlds_end import calculate_worlds_end
 curdir = os.path.dirname(__file__)
 
 # load card list #########################################################
-traits_df = pd.read_excel(os.path.join(curdir, "cards.xlsx"), sheet_name="traits")
+traits_df = pd.read_excel(os.path.join(curdir, "files", "cards.xlsx"), sheet_name="traits")
 traits_list_all = sorted(traits_df.name.values.tolist())
 
-ages_df = pd.read_excel(os.path.join(curdir, "cards.xlsx"), sheet_name="ages")
+ages_df = pd.read_excel(os.path.join(curdir, "files", "cards.xlsx"), sheet_name="ages")
 ages_list = sorted(ages_df.name.values.tolist())
 catastrophies_list = sorted(ages_df[ages_df["type"] == "Catastrophe"]["name"].values.tolist())
 
 # load images ------------------------------------------------------------
 size_star = 30
-img_star = Image.open(os.path.join(curdir, "files", "dominant_star.png"))
+img_star = Image.open(os.path.join(curdir, "files", "dominant_stars", "dominant_star.png"))
 img_star = img_star.resize((size_star, size_star))
-img_empty_star = Image.open(os.path.join(curdir, "files", "empty_star.png"))
+img_empty_star = Image.open(os.path.join(curdir, "files", "dominant_stars", "empty_star.png"))
 img_empty_star = img_empty_star.resize((size_star, size_star))
 
 

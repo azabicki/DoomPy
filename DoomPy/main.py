@@ -77,7 +77,7 @@ def btn_discard_trait(from_):
     player_traits[from_].set(cur_players_cards)
 
     create_trait_pile(player_rb_frames[from_], from_)
-    player_trait_selected[from_].set("")
+    player_trait_selected[from_].set("none")
 
     # add to deck traits, if not there
     if card not in list(deck_cards.get()):
@@ -123,27 +123,20 @@ def btn_move_trait(from_, cbox_move_to):
     print(">>> move <<< '{}' is moved from '{}' to '{}'"
           .format(card, player_name[from_].get(), player_name[to].get()))
 
-    # remove from 'giving' players traits
+    # remove from 'giving' players traits & clear trait selection
     from_players_cards = list(player_traits[from_].get())
     from_players_cards.remove(card)
     player_traits[from_].set(from_players_cards)
+
+    create_trait_pile(player_rb_frames[from_], from_)
+    player_trait_selected[from_].set("none")
 
     # add to 'receiving' players traits
     to_players_cards = list(player_traits[to].get())
     to_players_cards.append(card)
     player_traits[to].set(sorted(to_players_cards))
 
-    # keep correct trait selected in list of receiving player
-    if not player_trait_selected[to].get() == "":
-        print("   >>> trait selection corrected in '{}'s trait pile"
-              .format(player_name[to].get()))
-        list_idx_old_selection = player_traits[to].get().index(player_trait_selected[to].get())
-        player_lbox[to].selection_clear(0, tk.END)
-        player_lbox[to].selection_set(list_idx_old_selection)
-
-    # deselect traits in list of giving player
-    update_selected_trait(from_, ())
-    player_lbox[from_].selection_clear(0, tk.END)
+    create_trait_pile(player_rb_frames[to], to)
 
     # clear combobox
     cbox_move_to.current(0)
@@ -766,7 +759,7 @@ def reset_variables():
                               'total': tk.IntVar(value=0)})
         player_traits.append(tk.Variable(value=[]))
         player_lbox.append(None)
-        player_trait_selected.append(tk.StringVar(value=""))
+        player_trait_selected.append(tk.StringVar(value="none"))
         player_rb_frames.append(None)
         player_trait_selected_rb.append(tk.StringVar(value=""))
 

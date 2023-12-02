@@ -359,18 +359,9 @@ def update_selected_trait(where, idx):
 
     else:
         # trait in one of PLAYERS traits is selected, note: 'where' represents the player here
-        if idx == ():
-            player_trait_selected[where].set("")
-
-            print(">>> select <<<  no trait selected in '{}'s list..."
-                  .format(player_name[where].get()))
-
-        else:
-            selected_card = player_traits[where].get()[int(idx[0])]
-            player_trait_selected[where].set(selected_card)
-
-            print(">>> select <<< handle PLAYER_listbox -> selected trait = {} - by {}"
-                  .format(player_trait_selected[where].get(), player_name[where].get()))
+        player_trait_selected[where].set(idx.get())
+        print(">>> select <<< handle PLAYER_listbox -> selected trait = {} - by {}"
+              .format(player_trait_selected[where].get(), player_name[where].get()))
 
 
 def create_trait_pile(frame_trait_overview, p):
@@ -378,7 +369,6 @@ def create_trait_pile(frame_trait_overview, p):
     for w in frame_trait_overview.grid_slaves():
         w.grid_forget()
 
-    print("______: {}".format(player_traits[p].get()))
     # loop traits in pile
     for t, trait in enumerate(player_traits[p].get()):
         # radiobutton
@@ -391,6 +381,7 @@ def create_trait_pile(frame_trait_overview, p):
             value=trait,
             bg=defaults["bg_trait_pile"],
             fg='black',
+            command=lambda: update_selected_trait(p, player_trait_selected_rb[p]),
             ).grid(row=t, column=0, padx=3, pady=ypad, sticky='nsw')
 
         # current color

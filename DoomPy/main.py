@@ -77,7 +77,7 @@ def btn_discard_trait(from_):
     player_traits[from_].set(cur_players_cards)
 
     create_trait_pile(player_rb_frames[from_], from_)
-    player_trait_selected[from_].set("")    
+    player_trait_selected[from_].set("")
 
     # add to deck traits, if not there
     if card not in list(deck_cards.get()):
@@ -372,11 +372,11 @@ def create_trait_pile(frame_trait_overview, p):
         tk.Radiobutton(
             frame_trait_overview,
             text=" " + trait,
-            variable=player_trait_selected_rb[p],
+            variable=player_trait_selected[p],
             value=trait,
             bg=defaults["bg_trait_pile"],
             fg='black',
-            command=lambda: update_selected_trait(p, player_trait_selected_rb[p]),
+            command=lambda: update_selected_trait(p, player_trait_selected[p]),
             ).grid(row=t, column=0, padx=3, pady=ypad, sticky='nsw')
 
         # current color

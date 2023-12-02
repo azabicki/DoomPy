@@ -48,7 +48,7 @@ img_bg = Image.open(os.path.join(curdir, "files", color_set, "bg.png")).resize((
 img_br = Image.open(os.path.join(curdir, "files", color_set, "br.png")).resize((size_color, size_color))
 img_bp = Image.open(os.path.join(curdir, "files", color_set, "bp.png")).resize((size_color, size_color))
 img_gp = Image.open(os.path.join(curdir, "files", color_set, "gp.png")).resize((size_color, size_color))
-img_gr = Image.open(os.path.join(curdir, "files", color_set, "gr.png")).resize((size_color, size_color)) 
+img_gr = Image.open(os.path.join(curdir, "files", color_set, "gr.png")).resize((size_color, size_color))
 img_pr = Image.open(os.path.join(curdir, "files", color_set, "pr.png")).resize((size_color, size_color))
 img_bgpr = Image.open(os.path.join(curdir, "files", color_set, "bgpr.png")).resize((size_color, size_color))
 
@@ -71,10 +71,13 @@ def btn_discard_trait(from_):
     card = player_trait_selected[from_].get()
     card_face = int(traits_df[traits_df.name == card]['points'].values[0])
 
-    # remove from players traits
+    # remove from players traits & clear trait selection
     cur_players_cards = list(player_traits[from_].get())
     cur_players_cards.remove(card)
     player_traits[from_].set(cur_players_cards)
+
+    create_trait_pile(player_rb_frames[from_], from_)
+    player_trait_selected[from_].set("")    
 
     # add to deck traits, if not there
     if card not in list(deck_cards.get()):
@@ -85,19 +88,13 @@ def btn_discard_trait(from_):
     print(">>> discard <<< {} is discarding {} ({} pts)"
           .format(player_name[from_].get(), card, card_face))
 
-    # update scoring
+    # update scoring, stars & genes
     update_scoring(from_)
-
-    # clear player trait selection
-    player_lbox[from_].selection_clear(0, tk.END)
-    player_trait_selected[from_].set("")
-
-    # clear trait search & update listbox & selection
-    btn_clear_trait_search()
-
-    # update stars & genes
     update_stars()
     update_genes()
+
+    # update trait search if discarded trait matches filter
+    search_trait_in_list(search_trait)
 
 
 def btn_move_trait(from_, cbox_move_to):
@@ -151,11 +148,9 @@ def btn_move_trait(from_, cbox_move_to):
     # clear combobox
     cbox_move_to.current(0)
 
-    # update scoring
+    # update scoring, stars & genes
     update_scoring(from_)
     update_scoring(to)
-
-    # update stars & genes
     update_stars()
     update_genes()
 

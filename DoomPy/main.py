@@ -176,7 +176,7 @@ def btn_play_trait(to):
         cur_deck_cards.remove(card)
         deck_cards.set(cur_deck_cards)
 
-    print(">>> play <<< {} is playing {} ({} pts), which is {} times in the deck and was played {} times"
+    print(">>> play <<< '{}' is playing '{}' ({} pts), which is {} times in the deck and was played {} times"
           .format(player_name[to].get(), card, card_face, card_n, card_played))
 
     # update scoring
@@ -211,7 +211,7 @@ def btn_play_catastrophe(event, c):
     worlds_end_cbox[0]['values'] = [" select world's end ..."] + played_catastrophies
 
     # debug outout
-    print(">>> catastrophe <<< played catastrophe #{}: {}"
+    print(">>> catastrophe <<< played catastrophe #{}: '{}'"
           .format(c+1, played_catastrophy))
 
     # update genes
@@ -238,7 +238,7 @@ def update_scoring(p):
     total = p_face + p_drop + p_worlds_end
     player_points[p]['total'].set(total)
 
-    print(">>> scoring <<< current points for {}: face = {}  |  drops = {}  |  WE = {}  |  total = {}"
+    print(">>> scoring <<< current points for '{}': face = {}  |  drops = {}  |  WE = {}  |  total = {}"
           .format(player_name[p].get(), p_face, p_drop, p_worlds_end, total))
 
 
@@ -271,7 +271,7 @@ def update_genes():
                     case 'other':
                         diff_genes = [i+value if i != p else i for i in diff_genes]
 
-                print(">>> genes <<< {}'s '{}' has gene effect off '{}' on '{}' -> current effect: {}"
+                print(">>> genes <<< '{}'s '{}' has gene effect off '{}' on '{}' -> current effect: {}"
                       .format(player_name[p].get(), card, value, who, diff_genes))
 
     # check what catastrophies were played alread
@@ -342,13 +342,13 @@ def update_selected_trait(where, idx):
             selected_card = lbox_cards.get()[int(idx[0])]
             play_trait.set(selected_card)
 
-            print(">>> select <<< handle DECK_listbox -> selected trait = {}"
+            print(">>> select <<< handle DECK_listbox -> selected trait = '{}'"
                   .format(play_trait.get()))
 
     else:
         # trait in one of PLAYERS traits is selected, note: 'where' represents the player here
         player_trait_selected[where].set(idx.get())
-        print(">>> select <<< handle PLAYER_listbox -> selected trait = {} - by {}"
+        print(">>> select <<< handle PLAYER_listbox -> selected trait = '{}' - by '{}'"
               .format(player_trait_selected[where].get(), player_name[where].get()))
 
 
@@ -739,10 +739,8 @@ def reset_variables():
     player_genes.clear()
     player_points.clear()
     player_traits.clear()
-    player_lbox.clear()
     player_trait_selected.clear()
     player_rb_frames.clear()
-    player_trait_selected_rb.clear()
 
     # fill variables
     for i in range(n_player.get()):
@@ -758,10 +756,8 @@ def reset_variables():
                               'worlds_end': tk.IntVar(value=0), 'MOL': tk.IntVar(value=0),
                               'total': tk.IntVar(value=0)})
         player_traits.append(tk.Variable(value=[]))
-        player_lbox.append(None)
         player_trait_selected.append(tk.StringVar(value="none"))
         player_rb_frames.append(None)
-        player_trait_selected_rb.append(tk.StringVar(value=""))
 
     # reset deck/lbox card-lists
     deck_cards.set(traits_list)
@@ -857,11 +853,9 @@ frames_player = []          # list of all players frames
 player_name = []            # current players names / StringVar
 player_genes = []           # current players gene pool / IntVar
 player_points = []          # current players points / dictionary
-player_traits = []           # current players traits played / Var 4 listbox
-player_lbox = []            # listbox widget of current players -> needed to be able to edit selected traits
+player_traits = []          # current players traits played / Var 4 listbox
 player_trait_selected = []  # selected traits in players trait piles / StringVar
-player_rb_frames = []
-player_trait_selected_rb = []
+player_rb_frames = []       # frame containing players traits -> needed to be able to edit selected traits
 
 # create _content_ frame -------------------------------------------------
 content = tk.Frame(root, width=1200, height=800, bg=defaults["bg_content"])

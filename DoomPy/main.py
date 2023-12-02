@@ -475,7 +475,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=c)
 
         # gene pool
-        if isinstance(traits_df[traits_df.name == trait]['gene_pool'].values[0], str):
+        if traits_df[traits_df.name == trait]['gene_pool'].values[0] == 1:
             c += 1
             tk.Label(
                 frame_pics,

@@ -176,6 +176,8 @@ def btn_play_trait(to):
     cur_players_cards.append(card)
     player_traits[to].set(sorted(cur_players_cards))
 
+    create_trait_pile(player_rb_frames[to], to)
+
     # remove from deck if all cards played
     card_played = 0
     for i in range(n_player.get()):
@@ -371,6 +373,45 @@ def update_selected_trait(where, idx):
                   .format(player_trait_selected[where].get(), player_name[where].get()))
 
 
+def create_trait_pile(frame_trait_overview, p):
+    # first, clean up frame
+    for w in frame_trait_overview.grid_slaves():
+        w.grid_forget()
+
+    print("______: {}".format(player_traits[p].get()))
+    # loop traits in pile
+    for t, trait in enumerate(player_traits[p].get()):
+        # radiobutton
+        ypad = (3, 0) if t == 0 else 0
+
+        tk.Radiobutton(
+            frame_trait_overview,
+            text=" " + trait,
+            variable=player_trait_selected_rb[p],
+            value=trait,
+            bg=defaults["bg_trait_pile"],
+            fg='black',
+            ).grid(row=t, column=0, padx=3, pady=ypad, sticky='nsw')
+
+        # current color
+        color = traits_df[traits_df.name == trait]['cur_color'].values[0]
+        cc = 'c' if 'colorless' in color.lower() else ''
+        cb = 'b' if 'blue' in color.lower() else ''
+        cg = 'g' if 'green' in color.lower() else ''
+        cp = 'p' if 'purple' in color.lower() else ''
+        cr = 'r' if 'red' in color.lower() else ''
+
+        tk.Label(
+            frame_trait_overview,
+            image=pic_colors[cc+cb+cg+cp+cr],
+            bg=defaults["bg_trait_pile"]
+            ).grid(row=t, column=1, sticky='sw')
+
+        # effect on?
+
+        # attached to?
+
+
 def create_player_frame(p):
     border = defaults["color_frame_width"]
 
@@ -456,19 +497,10 @@ def create_player_frame(p):
     frame_traits.rowconfigure(0, weight=1)
     frame_traits.columnconfigure(0, weight=1)
     frame_traits.columnconfigure(1, weight=1)
-    frame_traits.columnconfigure(2, weight=1)
 
-    player_lbox[p] = tk.Listbox(
-        frame_traits,
-        height=22,
-        listvariable=player_traits[p],
-        selectmode=tk.SINGLE,
-        exportselection=False,
-    )
-    player_lbox[p].grid(row=0, column=0, padx=8, pady=8, sticky='nesw')
-    player_lbox[p].bind(
-        "<<ListboxSelect>>", lambda e: update_selected_trait(p, player_lbox[p].curselection())
-    )
+    player_rb_frames[p] = tk.Frame(frame_traits, bg=defaults["bg_trait_pile"])
+    player_rb_frames[p].grid(row=0, column=0, columnspan=2, sticky='nesw', padx=border, pady=border)
+    create_trait_pile(player_rb_frames[p], p)
 
     # action buttons -----
     cbox_move_to = ttk.Combobox(
@@ -730,6 +762,8 @@ def reset_variables():
     player_traits.clear()
     player_lbox.clear()
     player_trait_selected.clear()
+    player_rb_frames.clear()
+    player_trait_selected_rb.clear()
 
     # fill variables
     for i in range(n_player.get()):
@@ -747,6 +781,8 @@ def reset_variables():
         player_traits.append(tk.Variable(value=[]))
         player_lbox.append(None)
         player_trait_selected.append(tk.StringVar(value=""))
+        player_rb_frames.append(None)
+        player_trait_selected_rb.append(tk.StringVar(value=""))
 
     # reset deck/lbox card-lists
     deck_cards.set(traits_list)
@@ -845,6 +881,7 @@ player_points = []          # current players points / dictionary
 player_traits = []           # current players traits played / Var 4 listbox
 player_lbox = []            # listbox widget of current players -> needed to be able to edit selected traits
 player_trait_selected = []  # selected traits in players trait piles / StringVar
+player_rb_frames = []
 player_trait_selected_rb = []
 
 # create _content_ frame -------------------------------------------------

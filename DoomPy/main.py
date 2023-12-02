@@ -335,8 +335,8 @@ def update_stars():
                 lbl2.configure(image=pic_star)
 
 
-def search_trait_in_list(event):
-    value = event.widget.get()
+def search_trait_in_list(inp):
+    value = inp.get()
     lbox_traits[0].selection_clear(0, tk.END)
 
     if value == "":
@@ -640,7 +640,7 @@ def create_menu_frame():
         textvariable=search_trait,
     )
     trait_ent.grid(row=1, column=0, padx=(10, 0), sticky="w")
-    trait_ent.bind("<KeyRelease>", search_trait_in_list)
+    trait_ent.bind("<KeyRelease>", lambda e: search_trait_in_list(search_trait))
     ttk.Button(
         frame_menu_traits,
         text="clear",

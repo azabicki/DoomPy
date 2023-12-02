@@ -394,6 +394,7 @@ def create_trait_pile(frame_trait_overview, p):
         # radiobutton
         ypad = (3, 0) if t == 0 else 0
 
+        # trait name
         tk.Radiobutton(
             frame_trait_overview,
             text=" " + trait,
@@ -404,6 +405,10 @@ def create_trait_pile(frame_trait_overview, p):
             command=lambda: update_selected_trait(p, player_trait_selected[p]),
             ).grid(row=t, column=0, padx=3, pady=ypad, sticky='nsw')
 
+        # pictues
+        frame_pics = tk.Frame(frame_trait_overview, bg=defaults["bg_trait_pile"])
+        frame_pics.grid(row=t, column=1, sticky='sw')
+
         # current color
         color = traits_df[traits_df.name == trait]['cur_color'].values[0]
         cc = 'c' if 'colorless' in color.lower() else ''
@@ -413,10 +418,97 @@ def create_trait_pile(frame_trait_overview, p):
         cr = 'r' if 'red' in color.lower() else ''
 
         tk.Label(
-            frame_trait_overview,
+            frame_pics,
             image=pic_colors[cc+cb+cg+cp+cr],
             bg=defaults["bg_trait_pile"]
-            ).grid(row=t, column=1, sticky='sw')
+            ).grid(row=0, column=0)
+
+        # collection
+        lbl_collection = tk.Label(
+            frame_pics,
+            image=pic_empty_star,
+            bg=defaults["bg_trait_pile"])
+        lbl_collection.grid(row=0, column=1)
+
+        match traits_df[traits_df.name == trait]['game'].values[0].lower():
+            case 'classic':
+                lbl_collection['image'] = pic_classic
+            case 'kickstarter':
+                lbl_collection['image'] = pic_kickstarter
+            case 'techlings':
+                lbl_collection['image'] = pic_techlings
+            case 'mythlings':
+                lbl_collection['image'] = pic_mythlings
+            case 'dinolings':
+                lbl_collection['image'] = pic_dinolings
+            case 'multi-color':
+                lbl_collection['image'] = pic_multicolor
+            case 'overlush':
+                lbl_collection['image'] = pic_overlush
+
+        # dominant
+        c = 1  # initialize column index which changes depending on card
+        if traits_df[traits_df.name == trait]['dominant'].values[0] == 1:
+            c += 1
+            tk.Label(
+                frame_pics,
+                image=pic_dominant,
+                bg=defaults["bg_trait_pile"]
+                ).grid(row=0, column=c)
+
+        # action
+        if traits_df[traits_df.name == trait]['action'].values[0] == 1:
+            c += 1
+            tk.Label(
+                frame_pics,
+                image=pic_action,
+                bg=defaults["bg_trait_pile"]
+                ).grid(row=0, column=c)
+
+        # drop
+        if traits_df[traits_df.name == trait]['drop'].values[0] == 1:
+            c += 1
+            tk.Label(
+                frame_pics,
+                image=pic_drop,
+                bg=defaults["bg_trait_pile"]
+                ).grid(row=0, column=c)
+
+        # gene pool
+        if isinstance(traits_df[traits_df.name == trait]['gene_pool'].values[0], str):
+            c += 1
+            tk.Label(
+                frame_pics,
+                image=pic_gene_pool,
+                bg=defaults["bg_trait_pile"]
+                ).grid(row=0, column=c)
+
+        # worlds_end
+        if traits_df[traits_df.name == trait]['worlds_end'].values[0] == 1:
+            c += 1
+            tk.Label(
+                frame_pics,
+                image=pic_worlds_end,
+                bg=defaults["bg_trait_pile"]
+                ).grid(row=0, column=c)
+
+        # effectless
+        if traits_df[traits_df.name == trait]['effectless'].values[0] == 1:
+            c += 1
+            tk.Label(
+                frame_pics,
+                image=pic_effectless,
+                bg=defaults["bg_trait_pile"]
+                ).grid(row=0, column=c)
+
+        # attachment
+        if traits_df[traits_df.name == trait]['attachment'].values[0] == 1:
+            c += 1
+            tk.Label(
+                frame_pics,
+                image=pic_attachment,
+                bg=defaults["bg_trait_pile"]
+                ).grid(row=0, column=c)
 
         # effect on?
 

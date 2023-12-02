@@ -27,30 +27,62 @@ catastrophies_list = sorted(ages_df[ages_df["type"] == "Catastrophe"]["name"].va
 
 # add columns to traits_df
 traits_df["cur_color"] = traits_df.color
-traits_df["cur_points"] = traits_df.points
+traits_df["cur_face"] = traits_df.face
 traits_df["cur_effect"] = True
 
 # load images ------------------------------------------------------------
+img_empty = Image.open(os.path.join(curdir, "images", "empty.png")).resize((5, 5))
+
 size_star = 30
-img_star = Image.open(os.path.join(curdir, "files", "dominant_stars", "dominant_star.png")
+img_star = Image.open(os.path.join(curdir, "images", "dominant_stars", "dominant_star.png")
                       ).resize((size_star, size_star))
-img_empty_star = Image.open(os.path.join(curdir, "files", "dominant_stars", "empty_star.png")
+img_empty_star = Image.open(os.path.join(curdir, "images", "dominant_stars", "empty_star.png")
                             ).resize((size_star, size_star))
 
-size_color = 15
-color_set = "colors_borders"
-img_c = Image.open(os.path.join(curdir, "files", color_set, "c.png")).resize((size_color, size_color))
-img_b = Image.open(os.path.join(curdir, "files", color_set, "b.png")).resize((size_color, size_color))
-img_g = Image.open(os.path.join(curdir, "files", color_set, "g.png")).resize((size_color, size_color))
-img_p = Image.open(os.path.join(curdir, "files", color_set, "p.png")).resize((size_color, size_color))
-img_r = Image.open(os.path.join(curdir, "files", color_set, "r.png")).resize((size_color, size_color))
-img_bg = Image.open(os.path.join(curdir, "files", color_set, "bg.png")).resize((size_color, size_color))
-img_br = Image.open(os.path.join(curdir, "files", color_set, "br.png")).resize((size_color, size_color))
-img_bp = Image.open(os.path.join(curdir, "files", color_set, "bp.png")).resize((size_color, size_color))
-img_gp = Image.open(os.path.join(curdir, "files", color_set, "gp.png")).resize((size_color, size_color))
-img_gr = Image.open(os.path.join(curdir, "files", color_set, "gr.png")).resize((size_color, size_color))
-img_pr = Image.open(os.path.join(curdir, "files", color_set, "pr.png")).resize((size_color, size_color))
-img_bgpr = Image.open(os.path.join(curdir, "files", color_set, "bgpr.png")).resize((size_color, size_color))
+size_icons = 20
+color_set = "colors_round"
+img_c = Image.open(os.path.join(curdir, "images", color_set, "c.png")).resize((size_icons, size_icons))
+img_b = Image.open(os.path.join(curdir, "images", color_set, "b.png")).resize((size_icons, size_icons))
+img_g = Image.open(os.path.join(curdir, "images", color_set, "g.png")).resize((size_icons, size_icons))
+img_p = Image.open(os.path.join(curdir, "images", color_set, "p.png")).resize((size_icons, size_icons))
+img_r = Image.open(os.path.join(curdir, "images", color_set, "r.png")).resize((size_icons, size_icons))
+img_bg = Image.open(os.path.join(curdir, "images", color_set, "bg.png")).resize((size_icons, size_icons))
+img_br = Image.open(os.path.join(curdir, "images", color_set, "br.png")).resize((size_icons, size_icons))
+img_bp = Image.open(os.path.join(curdir, "images", color_set, "bp.png")).resize((size_icons, size_icons))
+img_gp = Image.open(os.path.join(curdir, "images", color_set, "gp.png")).resize((size_icons, size_icons))
+img_gr = Image.open(os.path.join(curdir, "images", color_set, "gr.png")).resize((size_icons, size_icons))
+img_pr = Image.open(os.path.join(curdir, "images", color_set, "pr.png")).resize((size_icons, size_icons))
+img_bgpr = Image.open(os.path.join(curdir, "images", color_set, "bgpr.png")).resize((size_icons, size_icons))
+
+types_set = 'types_official_A'
+img_action = Image.open(os.path.join(curdir, "images", types_set, "action.png")
+                        ).resize((size_icons, size_icons))
+img_attachment = Image.open(os.path.join(curdir, "images", types_set, "attachment.png")
+                            ).resize((size_icons, size_icons))
+img_classic = Image.open(os.path.join(curdir, "images", types_set, "classic.png")
+                         ).resize((size_icons, size_icons))
+img_dinolings = Image.open(os.path.join(curdir, "images", types_set, "dinolings.png")
+                           ).resize((size_icons, size_icons))
+img_dominant = Image.open(os.path.join(curdir, "images", types_set, "dominant.png")
+                          ).resize((size_icons, size_icons))
+img_drop = Image.open(os.path.join(curdir, "images", types_set, "drop.png")
+                      ).resize((size_icons, size_icons))
+img_effectless = Image.open(os.path.join(curdir, "images", types_set, "effectless.png")
+                            ).resize((size_icons, size_icons))
+img_gene_pool = Image.open(os.path.join(curdir, "images", types_set, "gene_pool.png")
+                           ).resize((size_icons, size_icons))
+img_kickstarter = Image.open(os.path.join(curdir, "images", types_set, "kickstarter.png")
+                             ).resize((size_icons, size_icons))
+img_multicolor = Image.open(os.path.join(curdir, "images", types_set, "multicolor.png")
+                            ).resize((size_icons, size_icons))
+img_mythlings = Image.open(os.path.join(curdir, "images", types_set, "mythlings.png")
+                           ).resize((size_icons, size_icons))
+img_overlush = Image.open(os.path.join(curdir, "images", types_set, "overlush.png")
+                          ).resize((size_icons, size_icons))
+img_techlings = Image.open(os.path.join(curdir, "images", types_set, "worlds_end.png")
+                           ).resize((size_icons, size_icons))
+img_worlds_end = Image.open(os.path.join(curdir, "images", types_set, "worlds_end.png")
+                            ).resize((size_icons, size_icons))
 
 
 # functions ##############################################################
@@ -69,7 +101,7 @@ def btn_discard_trait(from_):
 
     # get card
     card = player_trait_selected[from_].get()
-    card_face = int(traits_df[traits_df.name == card]['points'].values[0])
+    card_face = int(traits_df[traits_df.name == card]['face'].values[0])
 
     # remove from players traits & clear trait selection
     cur_players_cards = list(player_traits[from_].get())
@@ -157,7 +189,7 @@ def btn_play_trait(to):
     # get card
     card = play_trait.get()
     card_n = traits_df[traits_df.name == card]['n_of_cards'].values[0]
-    card_face = int(traits_df[traits_df.name == card]['points'].values[0])
+    card_face = int(traits_df[traits_df.name == card]['face'].values[0])
 
     # add to players traits
     cur_players_cards = list(player_traits[to].get())
@@ -223,7 +255,7 @@ def update_scoring(p):
     cards = player_traits[p].get()
 
     # calculate face value
-    p_face = int(sum([traits_df[traits_df.name == card]['points'].values[0] for card in cards]))
+    p_face = int(sum([traits_df[traits_df.name == card]['face'].values[0] for card in cards]))
     player_points[p]['face'].set(p_face)
 
     # calculate drop points
@@ -254,7 +286,7 @@ def update_genes():
         # loop cards
         for card in cards:
             # get gene effect of this card
-            effect = traits_df[traits_df.name == card]['gene_pool'].values[0]
+            effect = traits_df[traits_df.name == card]['effect_gene_pool'].values[0]
 
             # if there is a rule saved as strings
             if isinstance(effect, str):
@@ -815,6 +847,7 @@ gui_style.configure("genes.TLabel", font=("", 38, "bold"), foreground="hotpink1"
 gui_style.configure("move.TCombobox", selectbackground="none")
 
 # load images ------------------------------------------------------------
+pic_empty = ImageTk.PhotoImage(img_empty)
 pic_star = ImageTk.PhotoImage(img_star)
 pic_empty_star = ImageTk.PhotoImage(img_empty_star)
 pic_colors = {"c": ImageTk.PhotoImage(img_c),
@@ -829,6 +862,21 @@ pic_colors = {"c": ImageTk.PhotoImage(img_c),
               "gr": ImageTk.PhotoImage(img_gr),
               "pr": ImageTk.PhotoImage(img_pr),
               "bgpr": ImageTk.PhotoImage(img_bgpr)}
+
+pic_action = ImageTk.PhotoImage(img_action)
+pic_attachment = ImageTk.PhotoImage(img_attachment)
+pic_classic = ImageTk.PhotoImage(img_classic)
+pic_dinolings = ImageTk.PhotoImage(img_dinolings)
+pic_dominant = ImageTk.PhotoImage(img_dominant)
+pic_drop = ImageTk.PhotoImage(img_drop)
+pic_effectless = ImageTk.PhotoImage(img_effectless)
+pic_gene_pool = ImageTk.PhotoImage(img_gene_pool)
+pic_kickstarter = ImageTk.PhotoImage(img_kickstarter)
+pic_multicolor = ImageTk.PhotoImage(img_multicolor)
+pic_mythlings = ImageTk.PhotoImage(img_mythlings)
+pic_overlush = ImageTk.PhotoImage(img_overlush)
+pic_techlings = ImageTk.PhotoImage(img_techlings)
+pic_worlds_end = ImageTk.PhotoImage(img_worlds_end)
 
 # init variables ---------------------------------------------------------
 opt_n_player = tk.IntVar(value=defaults["n_player"])                # OPTIONS: number of players

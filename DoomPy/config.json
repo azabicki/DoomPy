@@ -12,7 +12,7 @@
     "n_genes": 6,
     "n_catastrophies": 4,
     "bg_content": "grey",
-    "bg_frame_menu": "#71C671",
-    "bg_frame_player": "lightskyblue",
+    "menu_frame_color": "#71C671",
+    "player_frame_color": "lightskyblue",    
     "color_frame_width": 6
 }

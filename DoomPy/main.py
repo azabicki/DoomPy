@@ -27,10 +27,10 @@ catastrophies_list = sorted(ages_df[ages_df["type"] == "Catastrophe"]["name"].va
 
 # load images ------------------------------------------------------------
 size_star = 30
-img_star = Image.open(os.path.join(curdir, "files", "dominant_stars", "dominant_star.png"))
-img_star = img_star.resize((size_star, size_star))
-img_empty_star = Image.open(os.path.join(curdir, "files", "dominant_stars", "empty_star.png"))
-img_empty_star = img_empty_star.resize((size_star, size_star))
+img_star = Image.open(os.path.join(curdir, "files", "dominant_stars", "dominant_star.png")
+                      ).resize((size_star, size_star))
+img_empty_star = Image.open(os.path.join(curdir, "files", "dominant_stars", "empty_star.png")
+                            ).resize((size_star, size_star))
 
 
 # functions ##############################################################
@@ -354,7 +354,7 @@ def update_selected_trait(where, idx):
 def create_player_frame(p):
     border = defaults["color_frame_width"]
 
-    frame = tk.Frame(frame_playground, bg=defaults["bg_frame_player"])
+    frame = tk.Frame(frame_playground, bg=defaults["player_frame_color"])
     frame.columnconfigure(0, weight=1)
     frame.rowconfigure(1, weight=1)  # traits
     # frame.rowconfigure(2, weight=1)  # further actions
@@ -376,6 +376,7 @@ def create_player_frame(p):
         font='"Comic Sans MS" 36 italic',
     ).grid(row=0, column=0, padx=5, pady=(0, 10), columnspan=3, sticky='ns')
 
+    # stars
     ttk.Label(frame_points, image=pic_empty_star).grid(row=0, column=3, padx=0, pady=0, sticky="nes")
     ttk.Label(frame_points, image=pic_empty_star).grid(row=0, column=4, padx=0, pady=0, sticky="nsw")
 
@@ -460,7 +461,7 @@ def create_player_frame(p):
         style="move.TCombobox"
     )
     cbox_move_to.current(0)
-    cbox_move_to.grid(row=1, column=0, padx=4, sticky='nsw')
+    cbox_move_to.grid(row=1, column=0, pady=(0, border), sticky='ns')
     cbox_move_to.bind(
         "<<ComboboxSelected>>", lambda e: btn_move_trait(p, cbox_move_to)
     )
@@ -469,7 +470,7 @@ def create_player_frame(p):
         frame_traits,
         text="discard trait",
         command=partial(btn_discard_trait, p),
-    ).grid(row=2, column=0, padx=8, sticky='nsw')
+    ).grid(row=1, column=1, pady=(0, border), sticky='ns')
 
     # ----- action buttons -------------------------------------
 #    frame_actions = tk.Frame(frame)
@@ -821,7 +822,7 @@ content.columnconfigure(0, weight=0)
 content.columnconfigure(1, weight=1)
 
 # create _menu_ frame ----------------------------------------------------
-frame_menu = tk.Frame(content, bg=defaults["bg_frame_menu"])
+frame_menu = tk.Frame(content, bg=defaults["menu_frame_color"])
 frame_menu.grid(row=0, column=0, padx=5, pady=5, stick="nesw")
 
 # create _playground_ frame ----------------------------------------------

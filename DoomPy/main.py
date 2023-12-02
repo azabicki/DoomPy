@@ -25,6 +25,11 @@ ages_df = pd.read_excel(os.path.join(curdir, "files", "cards.xlsx"), sheet_name=
 ages_list = sorted(ages_df.name.values.tolist())
 catastrophies_list = sorted(ages_df[ages_df["type"] == "Catastrophe"]["name"].values.tolist())
 
+# add columns to traits_df
+traits_df["cur_color"] = traits_df.color
+traits_df["cur_points"] = traits_df.points
+traits_df["cur_effect"] = True
+
 # load images ------------------------------------------------------------
 size_star = 30
 img_star = Image.open(os.path.join(curdir, "files", "dominant_stars", "dominant_star.png")

@@ -37,6 +37,21 @@ img_star = Image.open(os.path.join(curdir, "files", "dominant_stars", "dominant_
 img_empty_star = Image.open(os.path.join(curdir, "files", "dominant_stars", "empty_star.png")
                             ).resize((size_star, size_star))
 
+size_color = 15
+color_set = "colors_borders"
+img_c = Image.open(os.path.join(curdir, "files", color_set, "c.png")).resize((size_color, size_color))
+img_b = Image.open(os.path.join(curdir, "files", color_set, "b.png")).resize((size_color, size_color))
+img_g = Image.open(os.path.join(curdir, "files", color_set, "g.png")).resize((size_color, size_color))
+img_p = Image.open(os.path.join(curdir, "files", color_set, "p.png")).resize((size_color, size_color))
+img_r = Image.open(os.path.join(curdir, "files", color_set, "r.png")).resize((size_color, size_color))
+img_bg = Image.open(os.path.join(curdir, "files", color_set, "bg.png")).resize((size_color, size_color))
+img_br = Image.open(os.path.join(curdir, "files", color_set, "br.png")).resize((size_color, size_color))
+img_bp = Image.open(os.path.join(curdir, "files", color_set, "bp.png")).resize((size_color, size_color))
+img_gp = Image.open(os.path.join(curdir, "files", color_set, "gp.png")).resize((size_color, size_color))
+img_gr = Image.open(os.path.join(curdir, "files", color_set, "gr.png")).resize((size_color, size_color)) 
+img_pr = Image.open(os.path.join(curdir, "files", color_set, "pr.png")).resize((size_color, size_color))
+img_bgpr = Image.open(os.path.join(curdir, "files", color_set, "bgpr.png")).resize((size_color, size_color))
+
 
 # functions ##############################################################
 def btn_clear_trait_search():
@@ -791,6 +806,18 @@ gui_style.configure("move.TCombobox", selectbackground="none")
 # load images ------------------------------------------------------------
 pic_star = ImageTk.PhotoImage(img_star)
 pic_empty_star = ImageTk.PhotoImage(img_empty_star)
+pic_colors = {"c": ImageTk.PhotoImage(img_c),
+              "b": ImageTk.PhotoImage(img_b),
+              "g": ImageTk.PhotoImage(img_g),
+              "p": ImageTk.PhotoImage(img_p),
+              "r": ImageTk.PhotoImage(img_r),
+              "bg": ImageTk.PhotoImage(img_bg),
+              "bp": ImageTk.PhotoImage(img_bp),
+              "br": ImageTk.PhotoImage(img_br),
+              "gp": ImageTk.PhotoImage(img_gp),
+              "gr": ImageTk.PhotoImage(img_gr),
+              "pr": ImageTk.PhotoImage(img_pr),
+              "bgpr": ImageTk.PhotoImage(img_bgpr)}
 
 # init variables ---------------------------------------------------------
 opt_n_player = tk.IntVar(value=defaults["n_player"])                # OPTIONS: number of players

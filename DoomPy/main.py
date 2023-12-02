@@ -63,7 +63,7 @@ def btn_clear_trait_search():
 
 def btn_discard_trait(from_):
     # return if no trait selected
-    if player_trait_selected[from_].get() == "":
+    if player_trait_selected[from_].get() == "none":
         print(">>> discard <<< no trait selected...")
         return
 
@@ -99,7 +99,7 @@ def btn_discard_trait(from_):
 
 def btn_move_trait(from_, cbox_move_to):
     # return if no trait selected
-    if player_trait_selected[from_].get() == "":
+    if player_trait_selected[from_].get() == "none":
         cbox_move_to.current(0)
         print(">>> move <<< no trait selected...")
         return

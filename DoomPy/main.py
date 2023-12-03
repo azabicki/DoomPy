@@ -260,13 +260,21 @@ def btn_move_trait(from_, cbox_move_to):
 
 
 def btn_play_trait(to):
-    # return if no trait selected
-    if play_trait.get() == "":
-        print(">>> play <<< no trait selected...")
-        return
-
     # get card
     card = play_trait.get()
+
+    # return, if no trait selected
+    if card == "":
+        print(">>> play <<< ERROR - no trait selected")
+        return
+
+    # return, if player already has two dominants
+    if traits_df[traits_df.name == card]['dominant'].values[0] == 1:
+        if sum([1 for t in player_traits[to].get()
+                if traits_df[traits_df.name == t]['dominant'].values[0] == 1]) == 2:
+            print(">>> play <<< ERROR - already 2 dominant traits in trait pile")
+            return
+
     card_n = traits_df[traits_df.name == card]['n_of_cards'].values[0]
     card_face = int(traits_df[traits_df.name == card]['face'].values[0])
 

@@ -28,7 +28,7 @@ catastrophies_list = sorted(ages_df[ages_df["type"] == "Catastrophe"]["name"].va
 # add columns to traits_df
 traits_df["cur_color"] = traits_df.color
 traits_df["cur_face"] = traits_df.face
-traits_df["cur_effect"] = True
+traits_df["cur_effect"] = 'none'
 traits_df["cur_host"] = 'none'
 traits_df["cur_attachment"] = 'none'
 
@@ -93,6 +93,40 @@ def btn_clear_trait_search():
     lbox_cards.set(deck_cards.get())
     lbox_traits[0].selection_clear(0, tk.END)
     play_trait.set("")
+
+
+def btn_attach_to(from_, attachment, event):
+    # get host from event_data
+    host = event.widget.get()
+
+    print(">>> attachment <<< '{}' is attaching '{}' to '{}' "
+          .format(player_name[from_].get(), attachment, host))
+
+    # check if attachment moved from old_host
+    old_idx = traits_df.index[traits_df.cur_attachment == attachment].tolist()
+    if old_idx:
+        old_host = traits_df.at[old_idx[0], 'name']
+        print("___ OLD HOST: {}".format(old_host))
+        update_hosts_current_status(old_host, [])
+        # traits_df.loc[traits_df.cur_attachment == attachment, 'cur_attachment'] = 'none'
+    else:
+        print("no previous host....")
+
+    # check if attachment is set back to "..." (idx=0)
+    if event.widget.current() == 0:
+        # set host to status_row of attachment
+        traits_df.loc[traits_df.name == attachment, 'cur_host'] = 'none'
+    else:
+        # set host to status_row of attachment
+        traits_df.loc[traits_df.name == attachment, 'cur_host'] = host
+
+        # set attachment to status_row of host & update effects of attachment on host
+        traits_df.loc[traits_df.name == host, 'cur_attachment'] = attachment
+        update_hosts_current_status(host, attachment)
+
+    # recreate trait pile & clear trait selection
+    create_trait_pile(player_rb_frames[from_], from_)
+
 
 
 def btn_discard_trait(from_):
@@ -282,6 +316,33 @@ def reset_traits_current_status(trait):
     print(">>> reseting <<< status of '{}' is reseted to default {}".format(trait, add_txt))
 
 
+def update_hosts_current_status(host, attachment):
+    # if 'attachment' is empty, host will be reseted
+    if attachment:
+        # get effects of attachments from rules.py
+        effects = rules.attachment_effects(traits_df, host, attachment)
+
+        # update cur_values of host
+        traits_df.loc[traits_df.name == host, "cur_color"] = effects['color']
+        traits_df.loc[traits_df.name == host, "cur_face"] = effects['face']
+        traits_df.loc[traits_df.name == host, "cur_effect"] = effects['effect']
+
+        print(">>> cur_values <<< '{}' is updated due to effects of {}".format(host, attachment))
+
+    else:
+        # reset host
+        true_color = traits_df[traits_df.name == host]["color"].values[0]
+        true_face = traits_df[traits_df.name == host]["face"].values[0]
+
+        traits_df.loc[traits_df.name == host, "cur_color"] = true_color
+        traits_df.loc[traits_df.name == host, "cur_face"] = true_face
+        traits_df.loc[traits_df.name == host, "cur_effect"] = 'none'
+        traits_df.loc[traits_df.name == host, "cur_host"] = 'none'
+        traits_df.loc[traits_df.name == host, "cur_attachment"] = 'none'
+
+        print(">>> cur_values <<< '{}' is reseted to defaults".format(host))
+
+
 def update_scoring(p):
     # get cards
     cards = player_traits[p].get()
@@ -442,8 +503,8 @@ def create_trait_pile(frame_trait_overview, p):
         frame_pics = tk.Frame(frame_trait_overview, bg=defaults["bg_trait_pile"])
         frame_pics.grid(row=irow, column=1, sticky='sw')
 
-        # current color
-        color = traits_df[traits_df.name == trait]['cur_color'].values[0]
+        # _true_ color
+        color = traits_df[traits_df.name == trait]['color'].values[0]
         cc = 'c' if 'colorless' in color.lower() else ''
         cb = 'b' if 'blue' in color.lower() else ''
         cg = 'g' if 'green' in color.lower() else ''
@@ -543,7 +604,40 @@ def create_trait_pile(frame_trait_overview, p):
                 bg=defaults["bg_trait_pile"]
                 ).grid(row=0, column=icol)
 
-        # attached to?
+        # add ATTACHMENT combobox if trait is attachment -----------------
+        if traits_df[traits_df.name == trait]['attachment'].values[0] == 1:
+            irow += 1
+            tk.Label(
+                frame_trait_overview,
+                text='attach to: ',
+                bg=defaults["bg_trait_pile"],
+                fg='black'
+                ).grid(row=irow, column=0, sticky='e', padx=(40, 0))
+
+            # filter only non-attachment-traits and check if this is already attached to a trait
+            traits_filtered = rules.filter_attachables(traits_df, player_traits[p].get(), trait)
+
+            # create combobox
+            cbox_attach_to = ttk.Combobox(
+                frame_trait_overview,
+                height=len(traits_filtered)+1,
+                values=[" ... "] + traits_filtered,
+                exportselection=0,
+                state="readonly",
+                width=10,
+                style="move.TCombobox"
+            )
+            cbox_attach_to.grid(row=irow, column=1, sticky='w')
+            cbox_attach_to.bind(
+                "<<ComboboxSelected>>", lambda e, t=trait: btn_attach_to(p, t, e)
+            )
+
+            # check if already attached to host
+            if traits_df[traits_df.name == trait]['cur_host'].values[0] == 'none':
+                cbox_attach_to.current(0)
+            else:
+                cur_host = traits_df[traits_df.name == trait]['cur_host'].values[0]
+                cbox_attach_to.current(traits_filtered.index(cur_host)+1)
 
 
 def create_player_frame(p):

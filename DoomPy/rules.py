@@ -1,12 +1,76 @@
-# import tkinter as tk
-from tkinter import ttk
+# rules for filtering attachable traits depending on trait_pile and attachment
+def filter_attachables(traits_df, traits_filtered, attachment):
+    # get attachment-rule of attachment
+    rule = traits_df[traits_df.name == attachment].effect_attachment.values[0].split()
+
+    # filter out all attachment-traits
+    traits_filtered = [card for card in traits_filtered
+                       if card not in traits_df[traits_df.attachment == 1].name.values.tolist()]
+
+    # filter out all dominant
+    traits_filtered = [card for card in traits_filtered
+                       if card not in traits_df[traits_df.dominant == 1].name.values.tolist()]
+
+    # filter out traits with attachments
+    traits_filtered = [card for card in traits_filtered
+                       if traits_df[traits_df.name == card].cur_attachment.values[0] == 'none'
+                       or traits_df[traits_df.name == card].cur_attachment.values[0] == attachment]
+
+    # filter out based on specific rules
+    match rule[0]:
+        case 'negative_face':
+            traits_filtered = [card for card in traits_filtered
+                               if traits_df[traits_df.name == card].face.values[0] < 0]
+
+        case 'non_blue':
+            traits_filtered = [card for card in traits_filtered
+                               if 'blue' not in traits_df[traits_df.name == card].color.values[0].lower()]
+
+        case 'non_green':
+            traits_filtered = [card for card in traits_filtered
+                               if 'green' not in traits_df[traits_df.name == card].color.values[0].lower()]
+
+        case 'color':
+            traits_filtered = [card for card in traits_filtered
+                               if 'colorless' not in traits_df[traits_df.name == card].color.values[0].lower()]
+
+        case 'effectless':
+            traits_filtered = [card for card in traits_filtered
+                               if traits_df[traits_df.name == card].effectless.values[0] == 1]
+
+    return traits_filtered
 
 
-# rules for each card
-def attachment(trait, traits, container, irow, attachments_list):
-    match trait:
-        case 'GMO':
-            print("_____ attaching GMO _____")
+def attachment_effects(traits_df, host, attachment):
+    # get current effects of host
+    effects = {'color':  traits_df[traits_df.name == host].cur_color.values[0],
+               'face':   traits_df[traits_df.name == host].cur_face.values[0],
+               'effect': traits_df[traits_df.name == host].cur_effect.values[0]}
+
+    # get effect of attachment
+    rule = traits_df[traits_df.name == attachment].effect_attachment.values[0].split()
+
+    # update current effect based on specific rules
+    match rule[1]:
+        case 'IsBlue':
+            effects['color'] = 'Blue'
+
+        case 'IsGreen':
+            effects['color'] = 'Green'
+
+        case 'Inactive':
+            effects['effect'] = rule[1]
+
+        case 'NoDiscard':
+            effects['effect'] = rule[1]
+
+        case 'NoRemove':
+            effects['effect'] = rule[1]
+
+        case 'NoSwap_NoSteal':
+            effects['effect'] = rule[1]
+
+    return effects
 
 
 def worlds_end(worlds_end, p, player_cards, traits):

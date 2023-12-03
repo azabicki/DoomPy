@@ -687,13 +687,6 @@ def create_trait_pile(frame_trait_overview, p):
         # ----- ATTACHMENT combobox if trait is attachment ---------------
         if traits_df[traits_df.name == trait]['attachment'].values[0] == 1:
             irow += 1
-            tk.Label(
-                frame_trait_overview,
-                text='attach to: ',
-                bg=defaults["bg_trait_pile"],
-                fg='black'
-                ).grid(row=irow, column=0, sticky='e', padx=(40, 0))
-
             # filter only non-attachment-traits and check if this is already attached to a trait
             traits_filtered = rules.filter_attachables(traits_df, player_traits[p].get(), trait)
 
@@ -701,13 +694,12 @@ def create_trait_pile(frame_trait_overview, p):
             cbox_attach_to = ttk.Combobox(
                 frame_trait_overview,
                 height=len(traits_filtered)+1,
-                values=[" ... "] + traits_filtered,
+                values=["attach to"] + traits_filtered,
                 exportselection=0,
                 state="readonly",
-                width=10,
-                style="move.TCombobox"
+                width=7,
             )
-            cbox_attach_to.grid(row=irow, column=1, sticky='w')
+            cbox_attach_to.grid(row=irow, column=0, sticky='e')
             cbox_attach_to.bind(
                 "<<ComboboxSelected>>", lambda e, t=trait: btn_attach_to(p, t, e)
             )

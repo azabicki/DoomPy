@@ -81,7 +81,7 @@ img_mythlings = Image.open(os.path.join(curdir, "images", types_set, "mythlings.
                            ).resize((size_icons, size_icons))
 img_overlush = Image.open(os.path.join(curdir, "images", types_set, "overlush.png")
                           ).resize((size_icons, size_icons))
-img_techlings = Image.open(os.path.join(curdir, "images", types_set, "worlds_end.png")
+img_techlings = Image.open(os.path.join(curdir, "images", types_set, "techlings.png")
                            ).resize((size_icons, size_icons))
 img_worlds_end = Image.open(os.path.join(curdir, "images", types_set, "worlds_end.png")
                             ).resize((size_icons, size_icons))

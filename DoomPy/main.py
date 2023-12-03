@@ -7,7 +7,7 @@ from functools import partial
 import pandas as pd
 import numpy as np
 from PIL import Image, ImageTk
-from rules_worlds_end import calculate_worlds_end
+import rules as rules
 
 
 # system settings ########################################################
@@ -263,7 +263,7 @@ def update_scoring(p):
     player_points[p]['drop'].set(p_drop)
 
     # calculate world's end points
-    p_worlds_end = calculate_worlds_end(worlds_end.get(), p, player_traits, traits_df)
+    p_worlds_end = rules.worlds_end(worlds_end.get(), p, player_traits, traits_df)
     player_points[p]['worlds_end'].set(p_worlds_end)
 
     # calculate total score
@@ -390,11 +390,12 @@ def create_trait_pile(frame_trait_overview, p):
         w.grid_forget()
 
     # loop traits in pile
-    for t, trait in enumerate(player_traits[p].get()):
-        # radiobutton
-        ypad = (3, 0) if t == 0 else 0
+    irow = 1
+    for trait in player_traits[p].get():
+        ypad = (3, 0) if irow == 0 else 0
+        irow += 1
 
-        # trait name
+        # radiobutton ----------------------------------------------------
         tk.Radiobutton(
             frame_trait_overview,
             text=" " + trait,
@@ -403,11 +404,11 @@ def create_trait_pile(frame_trait_overview, p):
             bg=defaults["bg_trait_pile"],
             fg='black',
             command=lambda: update_selected_trait(p, player_trait_selected[p]),
-            ).grid(row=t, column=0, padx=3, pady=ypad, sticky='nsw')
+            ).grid(row=irow, column=0, padx=3, pady=ypad, sticky='nsw')
 
-        # pictues
+        # pictues --------------------------------------------------------
         frame_pics = tk.Frame(frame_trait_overview, bg=defaults["bg_trait_pile"])
-        frame_pics.grid(row=t, column=1, sticky='sw')
+        frame_pics.grid(row=irow, column=1, sticky='sw')
 
         # current color
         color = traits_df[traits_df.name == trait]['cur_color'].values[0]
@@ -447,70 +448,68 @@ def create_trait_pile(frame_trait_overview, p):
                 lbl_collection['image'] = pic_overlush
 
         # dominant
-        c = 1  # initialize column index which changes depending on card
+        icol = 1  # initialize column index which changes depending on card
         if traits_df[traits_df.name == trait]['dominant'].values[0] == 1:
-            c += 1
+            icol += 1
             tk.Label(
                 frame_pics,
                 image=pic_dominant,
                 bg=defaults["bg_trait_pile"]
-                ).grid(row=0, column=c)
+                ).grid(row=0, column=icol)
 
         # action
         if traits_df[traits_df.name == trait]['action'].values[0] == 1:
-            c += 1
+            icol += 1
             tk.Label(
                 frame_pics,
                 image=pic_action,
                 bg=defaults["bg_trait_pile"]
-                ).grid(row=0, column=c)
+                ).grid(row=0, column=icol)
 
         # drop
         if traits_df[traits_df.name == trait]['drop'].values[0] == 1:
-            c += 1
+            icol += 1
             tk.Label(
                 frame_pics,
                 image=pic_drop,
                 bg=defaults["bg_trait_pile"]
-                ).grid(row=0, column=c)
+                ).grid(row=0, column=icol)
 
         # gene pool
         if traits_df[traits_df.name == trait]['gene_pool'].values[0] == 1:
-            c += 1
+            icol += 1
             tk.Label(
                 frame_pics,
                 image=pic_gene_pool,
                 bg=defaults["bg_trait_pile"]
-                ).grid(row=0, column=c)
+                ).grid(row=0, column=icol)
 
         # worlds_end
         if traits_df[traits_df.name == trait]['worlds_end'].values[0] == 1:
-            c += 1
+            icol += 1
             tk.Label(
                 frame_pics,
                 image=pic_worlds_end,
                 bg=defaults["bg_trait_pile"]
-                ).grid(row=0, column=c)
+                ).grid(row=0, column=icol)
 
         # effectless
         if traits_df[traits_df.name == trait]['effectless'].values[0] == 1:
-            c += 1
+            icol += 1
             tk.Label(
                 frame_pics,
                 image=pic_effectless,
                 bg=defaults["bg_trait_pile"]
-                ).grid(row=0, column=c)
+                ).grid(row=0, column=icol)
 
         # attachment
         if traits_df[traits_df.name == trait]['attachment'].values[0] == 1:
-            c += 1
+            icol += 1
             tk.Label(
                 frame_pics,
                 image=pic_attachment,
                 bg=defaults["bg_trait_pile"]
-                ).grid(row=0, column=c)
-
-        # effect on?
+                ).grid(row=0, column=icol)
 
         # attached to?
 

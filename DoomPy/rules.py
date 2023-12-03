@@ -1,5 +1,15 @@
-# rules for calculing WORLDS END points
-def calculate_worlds_end(worlds_end, p, player_cards, traits):
+# import tkinter as tk
+from tkinter import ttk
+
+
+# rules for each card
+def attachment(trait, traits, container, irow, attachments_list):
+    match trait:
+        case 'GMO':
+            print("_____ attaching GMO _____")
+
+
+def worlds_end(worlds_end, p, player_cards, traits):
     cards = player_cards[p].get()
 
     match worlds_end:
@@ -8,7 +18,10 @@ def calculate_worlds_end(worlds_end, p, player_cards, traits):
             colors = [traits[traits.name == card]['color'].values[0] for card in cards]
             n_colorless = sum([1 for col in colors if "Colorless" in col])
 
-            points = 0
+            if n_colorless > 100:
+                points = 100
+            else:
+                points = 0
 
         case "AI Takeover (excl. dominant)":
             # 2 colorless_worth ignore_colorless_effects noDominant

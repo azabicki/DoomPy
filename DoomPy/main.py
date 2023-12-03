@@ -142,22 +142,21 @@ def btn_attach_to(from_, attachment, event):
 
 
 def btn_discard_trait(from_):
-    # return if no trait selected
-    if player_trait_selected[from_].get() == "none":
-        print(">>> discard <<< no trait selected...")
-        return
-
     # get card
     card = player_trait_selected[from_].get()
-    card_face = int(traits_df[traits_df.name == card]['face'].values[0])
+
+    # return, if no trait selected
+    if card == "none":
+        print(">>> discard <<< ERROR - no trait selected")
+        return
+
+    # return, if attachment selected
+    if traits_df[traits_df.name == card].attachment.values[0] == 1:
+        print(">>> discard <<< ERROR - attachment not discardable -> discard host instead")
+        return
 
     # check if card HAS attachment
     attachment = traits_df[traits_df.name == card]["cur_attachment"].values[0]
-
-    # check if card IS attached to another, if so: change host
-    host = traits_df[traits_df.name == card]["cur_host"].values[0]
-    if host != 'none':
-        traits_df.loc[traits_df.name == host, "cur_attachment"] = 'none'
 
     # remove card from players traits, and attachment if neccessary
     cur_players_cards = list(player_traits[from_].get())
@@ -170,8 +169,6 @@ def btn_discard_trait(from_):
     update_hosts_current_status(card, [])
     if attachment != 'none':
         update_hosts_current_status(attachment, [])
-    if host != 'none':
-        update_hosts_current_status(host, [])
 
     # recreate trait pile & clear trait selection
     create_trait_pile(player_rb_frames[from_], from_)
@@ -183,14 +180,11 @@ def btn_discard_trait(from_):
         cur_deck_cards.append(card)
         deck_cards.set(sorted(cur_deck_cards))
 
-    print(">>> discard <<< '{}' is discarding '{}' ({} pts)"
-          .format(player_name[from_].get(), card, card_face))
+    print(">>> discard <<< '{}' is discarding '{}'"
+          .format(player_name[from_].get(), card))
     if attachment != 'none':
         print(">>> discard <<< ___ attachment '{}' is also discarded automatically"
               .format(attachment))
-    if host != 'none':
-        print(">>> discard <<< ___ host '{}' changed attachment_status"
-              .format(host))
 
     # update scoring, stars & genes
     update_scoring(from_)
@@ -205,27 +199,32 @@ def btn_discard_trait(from_):
 
 
 def btn_move_trait(from_, cbox_move_to):
-    # return if no trait selected
-    if player_trait_selected[from_].get() == "none":
-        cbox_move_to.current(0)
-        print(">>> move <<< no trait selected...")
-        return
-
-    # return if no target selected
-    if cbox_move_to.get() == " move trait to ...":
-        cbox_move_to.current(0)
-        print(">>> move <<< clicked on 'move trait to...'")
-        return
-
-    # return if from == to
-    to = defaults["names"].index(cbox_move_to.get())
-    if from_ == to:
-        cbox_move_to.current(0)
-        print(">>> move <<< 'source' and 'target' player are the same...")
-        return
-
     # get card
     card = player_trait_selected[from_].get()
+
+    # clear combobox
+    cbox_move_to.current(0)
+
+    # return, if no trait selected
+    if card == "none":
+        print(">>> move <<< ERROR - no trait selected")
+        return
+
+    # return, if no target selected
+    if cbox_move_to.get() == " move trait to ...":
+        print(">>> move <<< ERROR - clicked on 'move trait to...'")
+        return
+
+    # return, if from == to
+    to = defaults["names"].index(cbox_move_to.get())
+    if from_ == to:
+        print(">>> move <<< ERROR - 'source' and 'target' player are the same")
+        return
+
+    # return, if attachment selected
+    if traits_df[traits_df.name == card].attachment.values[0] == 1:
+        print(">>> move <<< ERROR - attachment not moveable -> move host instead")
+        return
 
     # check if card HAS attachment
     attachment = traits_df[traits_df.name == card]["cur_attachment"].values[0]
@@ -252,9 +251,6 @@ def btn_move_trait(from_, cbox_move_to):
     player_traits[to].set(sorted(to_players_cards))
 
     create_trait_pile(player_rb_frames[to], to)
-
-    # clear combobox
-    cbox_move_to.current(0)
 
     # update scoring, stars & genes
     update_scoring(from_)

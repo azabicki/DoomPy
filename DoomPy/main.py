@@ -86,6 +86,17 @@ img_techlings = Image.open(os.path.join(curdir, "images", types_set, "techlings.
 img_worlds_end = Image.open(os.path.join(curdir, "images", types_set, "worlds_end.png")
                             ).resize((size_icons, size_icons))
 
+img_noFX = Image.open(os.path.join(curdir, "images", "noFX.png")
+                      ).resize((size_icons, size_icons))
+img_noDiscard = Image.open(os.path.join(curdir, "images", "noDiscard.png")
+                           ).resize((size_icons, size_icons))
+img_noRemove = Image.open(os.path.join(curdir, "images", "noRemove.png")
+                          ).resize((size_icons, size_icons))
+img_noSteal = Image.open(os.path.join(curdir, "images", "noSteal.png")
+                         ).resize((size_icons, size_icons))
+img_noSwap = Image.open(os.path.join(curdir, "images", "noSwap.png")
+                        ).resize((size_icons, size_icons))
+
 
 # functions ##############################################################
 def btn_clear_trait_search():
@@ -1094,6 +1105,12 @@ pic_mythlings = ImageTk.PhotoImage(img_mythlings)
 pic_overlush = ImageTk.PhotoImage(img_overlush)
 pic_techlings = ImageTk.PhotoImage(img_techlings)
 pic_worlds_end = ImageTk.PhotoImage(img_worlds_end)
+
+pic_noFX = ImageTk.PhotoImage(img_noFX)
+pic_noDiscard = ImageTk.PhotoImage(img_noDiscard)
+pic_noRemove = ImageTk.PhotoImage(img_noRemove)
+pic_noSteal = ImageTk.PhotoImage(img_noSteal)
+pic_noSwap = ImageTk.PhotoImage(img_noSwap)
 
 # init variables ---------------------------------------------------------
 opt_n_player = tk.IntVar(value=defaults["n_player"])                # OPTIONS: number of players

@@ -86,16 +86,17 @@ img_techlings = Image.open(os.path.join(curdir, "images", types_set, "techlings.
 img_worlds_end = Image.open(os.path.join(curdir, "images", types_set, "worlds_end.png")
                             ).resize((size_icons, size_icons))
 
+size_icons_w = int(size_icons*1.5)
 img_noFX = Image.open(os.path.join(curdir, "images", "noFX.png")
                       ).resize((size_icons, size_icons))
 img_noDiscard = Image.open(os.path.join(curdir, "images", "noDiscard.png")
-                           ).resize((size_icons, size_icons))
+                           ).resize((size_icons_w, size_icons))
 img_noRemove = Image.open(os.path.join(curdir, "images", "noRemove.png")
-                          ).resize((size_icons, size_icons))
+                          ).resize((size_icons_w, size_icons))
 img_noSteal = Image.open(os.path.join(curdir, "images", "noSteal.png")
-                         ).resize((size_icons, size_icons))
+                         ).resize((size_icons_w, size_icons))
 img_noSwap = Image.open(os.path.join(curdir, "images", "noSwap.png")
-                        ).resize((size_icons, size_icons))
+                        ).resize((size_icons_w, size_icons))
 
 
 # functions ##############################################################
@@ -494,12 +495,12 @@ def create_trait_pile(frame_trait_overview, p):
         w.grid_forget()
 
     # loop traits in pile
-    irow = 1
+    irow = -1
     for trait in player_traits[p].get():
         ypad = (3, 0) if irow == 0 else 0
         irow += 1
 
-        # radiobutton ----------------------------------------------------
+        # ----- radiobutton ----------------------------------------------
         tk.Radiobutton(
             frame_trait_overview,
             text=" " + trait,
@@ -510,7 +511,7 @@ def create_trait_pile(frame_trait_overview, p):
             command=lambda: update_selected_trait(p, player_trait_selected[p]),
             ).grid(row=irow, column=0, padx=3, pady=ypad, sticky='nsw')
 
-        # pictues --------------------------------------------------------
+        # ----- pictues --------------------------------------------------
         frame_pics = tk.Frame(frame_trait_overview, bg=defaults["bg_trait_pile"])
         frame_pics.grid(row=irow, column=1, sticky='sw')
 
@@ -615,7 +616,74 @@ def create_trait_pile(frame_trait_overview, p):
                 bg=defaults["bg_trait_pile"]
                 ).grid(row=0, column=icol)
 
-        # add ATTACHMENT combobox if trait is attachment -----------------
+        # add SEPERATOR after _true_ icons
+        icol += 1
+        ttk.Separator(frame_pics, orient='vertical'
+                      ).grid(row=0, column=icol, padx=3, pady=3, sticky='ns')
+
+        # ----- current effects due to attachments -----------------------
+        # _current_ color
+        cur_color = traits_df[traits_df.name == trait].cur_color.values[0]
+        cc = 'c' if 'colorless' in cur_color.lower() else ''
+        cb = 'b' if 'blue' in cur_color.lower() else ''
+        cg = 'g' if 'green' in cur_color.lower() else ''
+        cp = 'p' if 'purple' in cur_color.lower() else ''
+        cr = 'r' if 'red' in cur_color.lower() else ''
+
+        if cur_color != traits_df[traits_df.name == trait]['color'].values[0]:
+            icol += 1
+            tk.Label(
+                frame_pics,
+                image=pic_colors[cc+cb+cg+cp+cr],
+                bg=defaults["bg_trait_pile"]
+                ).grid(row=0, column=icol)
+
+        # noFX
+        if 'Inactive' in traits_df[traits_df.name == trait]['cur_effect'].values[0]:
+            icol += 1
+            tk.Label(
+                frame_pics,
+                image=pic_noFX,
+                bg=defaults["bg_trait_pile"]
+                ).grid(row=0, column=icol)
+
+        # noRemove
+        if 'NoRemove' in traits_df[traits_df.name == trait]['cur_effect'].values[0]:
+            icol += 1
+            tk.Label(
+                frame_pics,
+                image=pic_noRemove,
+                bg=defaults["bg_trait_pile"]
+                ).grid(row=0, column=icol)
+
+        # noDiscard
+        if 'NoDiscard' in traits_df[traits_df.name == trait]['cur_effect'].values[0]:
+            icol += 1
+            tk.Label(
+                frame_pics,
+                image=pic_noDiscard,
+                bg=defaults["bg_trait_pile"]
+                ).grid(row=0, column=icol)
+
+        # noSteal
+        if 'NoSteal' in traits_df[traits_df.name == trait]['cur_effect'].values[0]:
+            icol += 1
+            tk.Label(
+                frame_pics,
+                image=pic_noSteal,
+                bg=defaults["bg_trait_pile"]
+                ).grid(row=0, column=icol)
+
+        # noSwap
+        if 'NoSwap' in traits_df[traits_df.name == trait]['cur_effect'].values[0]:
+            icol += 1
+            tk.Label(
+                frame_pics,
+                image=pic_noSwap,
+                bg=defaults["bg_trait_pile"]
+                ).grid(row=0, column=icol)
+
+        # ----- ATTACHMENT combobox if trait is attachment ---------------
         if traits_df[traits_df.name == trait]['attachment'].values[0] == 1:
             irow += 1
             tk.Label(
@@ -655,19 +723,19 @@ def create_player_frame(p):
     border = defaults["color_frame_width"]
 
     frame = tk.Frame(frame_playground, bg=defaults["player_frame_color"])
-    frame.columnconfigure(0, weight=1)
-    frame.rowconfigure(1, weight=1)  # traits
+    frame.columnconfigure(0, weight=1)  # stretch sub_frames to playground (=1!)
+    frame.rowconfigure(1, weight=1)  # stretch trait-pile to bottom of playground
     # frame.rowconfigure(2, weight=1)  # further actions
     frame.grid(column=p, row=0, padx=5, pady=5, sticky="nesw")  # or use nsw for non-x-streched frames!
 
     # ----- name + overview current points -------------------------------
     frame_points = tk.Frame(frame)
     frame_points.grid(row=0, column=0, padx=border, pady=border, ipady=3, sticky="nesw")
-    frame_points.columnconfigure(0, weight=1)
-    frame_points.columnconfigure(1, weight=1)
-    frame_points.columnconfigure(2, weight=2)
-    frame_points.columnconfigure(3, weight=1)
-    frame_points.columnconfigure(4, weight=1)
+    frame_points.columnconfigure(0, weight=0)
+    frame_points.columnconfigure(1, weight=0)
+    frame_points.columnconfigure(2, weight=0)
+    frame_points.columnconfigure(3, weight=0)
+    frame_points.columnconfigure(4, weight=0)
 
     # name
     ttk.Label(
@@ -734,8 +802,8 @@ def create_player_frame(p):
     frame_traits = tk.Frame(frame)
     frame_traits.grid(row=1, column=0, padx=border, pady=(0, border), sticky="nesw")
     frame_traits.rowconfigure(0, weight=1)
-    frame_traits.columnconfigure(0, weight=1)
-    frame_traits.columnconfigure(1, weight=1)
+    frame_traits.columnconfigure(0, weight=1)  # for left button under trait-pile
+    frame_traits.columnconfigure(1, weight=1)  # for right button under trait-pile
 
     player_rb_frames[p] = tk.Frame(frame_traits, bg=defaults["bg_trait_pile"])
     player_rb_frames[p].grid(row=0, column=0, columnspan=2, sticky='nesw', padx=border, pady=border)
@@ -1042,7 +1110,8 @@ def start_game():
         w.grid_forget()
 
     for i in range(defaults["max_player"]):
-        w = 1 if i+1 <= n_player.get() else 0
+        w = 0 if i >= n_player.get() else 1  # 1 => player_frames are stretchable
+        print("player {} - w={}".format(i+1, w))
         frame_playground.columnconfigure(i, weight=w)
 
     # fill _menu_ frame --------------------------------------------------
@@ -1142,8 +1211,8 @@ player_rb_frames = []       # frame containing players traits -> needed to be ab
 # create _content_ frame -------------------------------------------------
 content = tk.Frame(root, width=1200, height=800, bg=defaults["bg_content"])
 content.grid(column=0, row=0, sticky="nesw")
-content.columnconfigure(0, weight=0)
-content.columnconfigure(1, weight=1)
+content.columnconfigure(0, weight=0)  # menu on the left
+content.columnconfigure(1, weight=1)  # complete playground, set =1 to stretch it to the right side
 
 # create _menu_ frame ----------------------------------------------------
 frame_menu = tk.Frame(content, bg=defaults["menu_frame_color"])
@@ -1152,7 +1221,7 @@ frame_menu.grid(row=0, column=0, padx=5, pady=5, stick="nesw")
 # create _playground_ frame ----------------------------------------------
 frame_playground = tk.Frame(content, bg=defaults["bg_content"])
 frame_playground.grid(row=0, column=1, padx=0, pady=0, stick="nesw")
-frame_playground.rowconfigure(0, weight=1)
+frame_playground.rowconfigure(0, weight=1)  # stretch playground to bottom
 
 # (re)start game -------------------------------------------------------------
 start_game()

@@ -29,6 +29,8 @@ catastrophies_list = sorted(ages_df[ages_df["type"] == "Catastrophe"]["name"].va
 traits_df["cur_color"] = traits_df.color
 traits_df["cur_face"] = traits_df.face
 traits_df["cur_effect"] = True
+traits_df["cur_host"] = 'none'
+traits_df["cur_attachment"] = 'none'
 
 # load images ------------------------------------------------------------
 img_empty = Image.open(os.path.join(curdir, "images", "empty.png")).resize((5, 5))
@@ -127,6 +129,9 @@ def btn_discard_trait(from_):
 
     # update trait search if discarded trait matches filter
     search_trait_in_list(search_trait)
+
+    # reset current values of card
+    reset_traits_current_status(card)
 
 
 def btn_move_trait(from_, cbox_move_to):
@@ -248,6 +253,33 @@ def btn_play_catastrophe(event, c):
 
     # update genes
     update_genes()
+
+
+def reset_traits_current_status(trait):
+    # first, if 'trait' has 'attachment', reset also 'attachment'
+    attachment = traits_df[traits_df.name == trait]["cur_attachment"].values[0]
+    if attachment != 'none':
+        true_color_a = traits_df[traits_df.name == attachment]["color"].values[0]
+        true_face_a = traits_df[traits_df.name == attachment]["face"].values[0]
+
+        traits_df.loc[traits_df.name == attachment, "cur_color"] = true_color_a
+        traits_df.loc[traits_df.name == attachment, "cur_face"] = true_face_a
+        traits_df.loc[traits_df.name == attachment, "cur_effect"] = True
+        traits_df.loc[traits_df.name == attachment, "cur_host"] = 'none'
+        traits_df.loc[traits_df.name == attachment, "cur_attachment"] = 'none'
+
+    # reset 'traits' current_values
+    true_color = traits_df[traits_df.name == trait]["color"].values[0]
+    true_face = traits_df[traits_df.name == trait]["face"].values[0]
+
+    traits_df.loc[traits_df.name == trait, "cur_color"] = true_color
+    traits_df.loc[traits_df.name == trait, "cur_face"] = true_face
+    traits_df.loc[traits_df.name == trait, "cur_effect"] = True
+    traits_df.loc[traits_df.name == trait, "cur_host"] = 'none'
+    traits_df.loc[traits_df.name == trait, "cur_attachment"] = 'none'
+
+    add_txt = '' if attachment == 'none' else "+ reseting host of '" + attachment + "'"
+    print(">>> reseting <<< status of '{}' is reseted to default {}".format(trait, add_txt))
 
 
 def update_scoring(p):

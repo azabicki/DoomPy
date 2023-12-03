@@ -151,11 +151,29 @@ def btn_discard_trait(from_):
     card = player_trait_selected[from_].get()
     card_face = int(traits_df[traits_df.name == card]['face'].values[0])
 
-    # remove from players traits & clear trait selection
+    # check if card HAS attachment
+    attachment = traits_df[traits_df.name == card]["cur_attachment"].values[0]
+
+    # check if card IS attached to another, if so: change host
+    host = traits_df[traits_df.name == card]["cur_host"].values[0]
+    if host != 'none':
+        traits_df.loc[traits_df.name == host, "cur_attachment"] = 'none'
+
+    # remove card from players traits, and attachment if neccessary
     cur_players_cards = list(player_traits[from_].get())
     cur_players_cards.remove(card)
+    if attachment != 'none':
+        cur_players_cards.remove(attachment)
     player_traits[from_].set(cur_players_cards)
 
+    # update current status of card & host & attachment
+    update_hosts_current_status(card, [])
+    if attachment != 'none':
+        update_hosts_current_status(attachment, [])
+    if host != 'none':
+        update_hosts_current_status(host, [])
+
+    # recreate trait pile & clear trait selection
     create_trait_pile(player_rb_frames[from_], from_)
     player_trait_selected[from_].set("none")
 
@@ -165,8 +183,14 @@ def btn_discard_trait(from_):
         cur_deck_cards.append(card)
         deck_cards.set(sorted(cur_deck_cards))
 
-    print(">>> discard <<< {} is discarding {} ({} pts)"
+    print(">>> discard <<< '{}' is discarding '{}' ({} pts)"
           .format(player_name[from_].get(), card, card_face))
+    if attachment != 'none':
+        print(">>> discard <<< ___ attachment '{}' is also discarded automatically"
+              .format(attachment))
+    if host != 'none':
+        print(">>> discard <<< ___ host '{}' changed attachment_status"
+              .format(host))
 
     # update scoring, stars & genes
     update_scoring(from_)
@@ -299,33 +323,6 @@ def btn_play_catastrophe(event, c):
 
     # update genes
     update_genes()
-
-
-def reset_traits_current_status(trait):
-    # first, if 'trait' has 'attachment', reset also 'attachment'
-    attachment = traits_df[traits_df.name == trait]["cur_attachment"].values[0]
-    if attachment != 'none':
-        true_color_a = traits_df[traits_df.name == attachment]["color"].values[0]
-        true_face_a = traits_df[traits_df.name == attachment]["face"].values[0]
-
-        traits_df.loc[traits_df.name == attachment, "cur_color"] = true_color_a
-        traits_df.loc[traits_df.name == attachment, "cur_face"] = true_face_a
-        traits_df.loc[traits_df.name == attachment, "cur_effect"] = True
-        traits_df.loc[traits_df.name == attachment, "cur_host"] = 'none'
-        traits_df.loc[traits_df.name == attachment, "cur_attachment"] = 'none'
-
-    # reset 'traits' current_values
-    true_color = traits_df[traits_df.name == trait]["color"].values[0]
-    true_face = traits_df[traits_df.name == trait]["face"].values[0]
-
-    traits_df.loc[traits_df.name == trait, "cur_color"] = true_color
-    traits_df.loc[traits_df.name == trait, "cur_face"] = true_face
-    traits_df.loc[traits_df.name == trait, "cur_effect"] = True
-    traits_df.loc[traits_df.name == trait, "cur_host"] = 'none'
-    traits_df.loc[traits_df.name == trait, "cur_attachment"] = 'none'
-
-    add_txt = '' if attachment == 'none' else "+ reseting host of '" + attachment + "'"
-    print(">>> reseting <<< status of '{}' is reseted to default {}".format(trait, add_txt))
 
 
 def update_hosts_current_status(host, attachment):
@@ -731,11 +728,11 @@ def create_player_frame(p):
     # ----- name + overview current points -------------------------------
     frame_points = tk.Frame(frame)
     frame_points.grid(row=0, column=0, padx=border, pady=border, ipady=3, sticky="nesw")
-    frame_points.columnconfigure(0, weight=0)
-    frame_points.columnconfigure(1, weight=0)
-    frame_points.columnconfigure(2, weight=0)
-    frame_points.columnconfigure(3, weight=0)
-    frame_points.columnconfigure(4, weight=0)
+    frame_points.columnconfigure(0, weight=1)
+    frame_points.columnconfigure(1, weight=1)
+    frame_points.columnconfigure(2, weight=3)
+    frame_points.columnconfigure(3, weight=1)
+    frame_points.columnconfigure(4, weight=1)
 
     # name
     ttk.Label(

@@ -3,18 +3,12 @@ def filter_attachables(traits_df, traits_filtered, attachment):
     # get attachment-rule of attachment
     rule = traits_df[traits_df.name == attachment].effect_attachment.values[0].split()
 
-    # filter out all attachment-traits
+    # filter out all attachments, dominants & traits-with-attachments
     traits_filtered = [card for card in traits_filtered
-                       if card not in traits_df[traits_df.attachment == 1].name.values.tolist()]
-
-    # filter out all dominant
-    traits_filtered = [card for card in traits_filtered
-                       if card not in traits_df[traits_df.dominant == 1].name.values.tolist()]
-
-    # filter out traits with attachments
-    traits_filtered = [card for card in traits_filtered
-                       if traits_df[traits_df.name == card].cur_attachment.values[0] == 'none'
-                       or traits_df[traits_df.name == card].cur_attachment.values[0] == attachment]
+                       if card not in traits_df[traits_df.attachment == 1].name.values.tolist()
+                       and card not in traits_df[traits_df.dominant == 1].name.values.tolist()
+                       and (traits_df[traits_df.name == card].cur_attachment.values[0] == 'none'
+                            or traits_df[traits_df.name == card].cur_attachment.values[0] == attachment)]
 
     # filter out based on specific rules
     match rule[0]:

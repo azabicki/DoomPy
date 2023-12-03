@@ -227,12 +227,18 @@ def btn_move_trait(from_, cbox_move_to):
     # get card
     card = player_trait_selected[from_].get()
 
-    print(">>> move <<< '{}' is moved from '{}' to '{}'"
-          .format(card, player_name[from_].get(), player_name[to].get()))
+    # check if card HAS attachment
+    attachment = traits_df[traits_df.name == card]["cur_attachment"].values[0]
+
+    add_txt = "(and its attachment '{}')".format(attachment) if attachment != 'none' else ''
+    print(">>> move <<< '{}' {} is moved from '{}' to '{}'"
+          .format(card, add_txt, player_name[from_].get(), player_name[to].get()))
 
     # remove from 'giving' players traits & clear trait selection
     from_players_cards = list(player_traits[from_].get())
     from_players_cards.remove(card)
+    if attachment != 'none':
+        from_players_cards.remove(attachment)
     player_traits[from_].set(from_players_cards)
 
     create_trait_pile(player_rb_frames[from_], from_)
@@ -241,6 +247,8 @@ def btn_move_trait(from_, cbox_move_to):
     # add to 'receiving' players traits
     to_players_cards = list(player_traits[to].get())
     to_players_cards.append(card)
+    if attachment != 'none':
+        to_players_cards.append(attachment)
     player_traits[to].set(sorted(to_players_cards))
 
     create_trait_pile(player_rb_frames[to], to)

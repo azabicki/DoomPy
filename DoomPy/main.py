@@ -1,4 +1,5 @@
 import os
+import glob
 import json
 import tkinter as tk
 from tkinter import ttk
@@ -33,70 +34,37 @@ traits_df["cur_host"] = 'none'
 traits_df["cur_attachment"] = 'none'
 
 # load images ------------------------------------------------------------
-img_empty = Image.open(os.path.join(curdir, "images", "empty.png")).resize((5, 5))
+img_size_star = 30
+img_size_icons = 20
+img_size_icons_w = int(img_size_icons*1.5)
+img_colors_set = "circle"
+img_trait_properties_set = "official_setA"
 
-size_star = 30
-img_star = Image.open(os.path.join(curdir, "images", "dominant_stars", "dominant_star.png")
-                      ).resize((size_star, size_star))
-img_empty_star = Image.open(os.path.join(curdir, "images", "dominant_stars", "empty_star.png")
-                            ).resize((size_star, size_star))
+images_dict = {}
+for files in glob.glob(os.path.join(curdir, "images", "*.png")):
+    var_name = os.path.splitext(os.path.basename(files))[0]
+    images_dict[var_name] = Image.open(files).resize((img_size_icons, img_size_icons))
 
-size_icons = 20
-color_set = "colors_round"
-img_c = Image.open(os.path.join(curdir, "images", color_set, "c.png")).resize((size_icons, size_icons))
-img_b = Image.open(os.path.join(curdir, "images", color_set, "b.png")).resize((size_icons, size_icons))
-img_g = Image.open(os.path.join(curdir, "images", color_set, "g.png")).resize((size_icons, size_icons))
-img_p = Image.open(os.path.join(curdir, "images", color_set, "p.png")).resize((size_icons, size_icons))
-img_r = Image.open(os.path.join(curdir, "images", color_set, "r.png")).resize((size_icons, size_icons))
-img_bg = Image.open(os.path.join(curdir, "images", color_set, "bg.png")).resize((size_icons, size_icons))
-img_br = Image.open(os.path.join(curdir, "images", color_set, "br.png")).resize((size_icons, size_icons))
-img_bp = Image.open(os.path.join(curdir, "images", color_set, "bp.png")).resize((size_icons, size_icons))
-img_gp = Image.open(os.path.join(curdir, "images", color_set, "gp.png")).resize((size_icons, size_icons))
-img_gr = Image.open(os.path.join(curdir, "images", color_set, "gr.png")).resize((size_icons, size_icons))
-img_pr = Image.open(os.path.join(curdir, "images", color_set, "pr.png")).resize((size_icons, size_icons))
-img_bgpr = Image.open(os.path.join(curdir, "images", color_set, "bgpr.png")).resize((size_icons, size_icons))
+for files in glob.glob(os.path.join(curdir, "images", "dominant_star", "*.png")):
+    var_name = os.path.splitext(os.path.basename(files))[0]
+    images_dict[var_name] = Image.open(files).resize((img_size_star, img_size_star))
 
-types_set = 'types_official_A'
-img_action = Image.open(os.path.join(curdir, "images", types_set, "action.png")
-                        ).resize((size_icons, size_icons))
-img_attachment = Image.open(os.path.join(curdir, "images", types_set, "attachment.png")
-                            ).resize((size_icons, size_icons))
-img_classic = Image.open(os.path.join(curdir, "images", types_set, "classic.png")
-                         ).resize((size_icons, size_icons))
-img_dinolings = Image.open(os.path.join(curdir, "images", types_set, "dinolings.png")
-                           ).resize((size_icons, size_icons))
-img_dominant = Image.open(os.path.join(curdir, "images", types_set, "dominant.png")
-                          ).resize((size_icons, size_icons))
-img_drop = Image.open(os.path.join(curdir, "images", types_set, "drop.png")
-                      ).resize((size_icons, size_icons))
-img_effectless = Image.open(os.path.join(curdir, "images", types_set, "effectless.png")
-                            ).resize((size_icons, size_icons))
-img_gene_pool = Image.open(os.path.join(curdir, "images", types_set, "gene_pool.png")
-                           ).resize((size_icons, size_icons))
-img_kickstarter = Image.open(os.path.join(curdir, "images", types_set, "kickstarter.png")
-                             ).resize((size_icons, size_icons))
-img_multicolor = Image.open(os.path.join(curdir, "images", types_set, "multicolor.png")
-                            ).resize((size_icons, size_icons))
-img_mythlings = Image.open(os.path.join(curdir, "images", types_set, "mythlings.png")
-                           ).resize((size_icons, size_icons))
-img_overlush = Image.open(os.path.join(curdir, "images", types_set, "overlush.png")
-                          ).resize((size_icons, size_icons))
-img_techlings = Image.open(os.path.join(curdir, "images", types_set, "techlings.png")
-                           ).resize((size_icons, size_icons))
-img_worlds_end = Image.open(os.path.join(curdir, "images", types_set, "worlds_end.png")
-                            ).resize((size_icons, size_icons))
+for files in glob.glob(os.path.join(curdir, "images", "colors", img_colors_set, "*.png")):
+    var_name = os.path.splitext(os.path.basename(files))[0]
+    images_dict[var_name] = Image.open(files).resize((img_size_icons, img_size_icons))
 
-size_icons_w = int(size_icons*1.5)
-img_noFX = Image.open(os.path.join(curdir, "images", "noFX.png")
-                      ).resize((size_icons, size_icons))
-img_noDiscard = Image.open(os.path.join(curdir, "images", "noDiscard.png")
-                           ).resize((size_icons_w, size_icons))
-img_noRemove = Image.open(os.path.join(curdir, "images", "noRemove.png")
-                          ).resize((size_icons_w, size_icons))
-img_noSteal = Image.open(os.path.join(curdir, "images", "noSteal.png")
-                         ).resize((size_icons_w, size_icons))
-img_noSwap = Image.open(os.path.join(curdir, "images", "noSwap.png")
-                        ).resize((size_icons_w, size_icons))
+for files in glob.glob(os.path.join(curdir, "images", "trait_properties", img_trait_properties_set, "*.png")):
+    var_name = os.path.splitext(os.path.basename(files))[0]
+    images_dict[var_name] = Image.open(files).resize((img_size_icons, img_size_icons))
+
+for files in glob.glob(os.path.join(curdir, "images", "effects", "*.png")):
+    var_name = os.path.splitext(os.path.basename(files))[0]
+    images_dict[var_name] = Image.open(files)
+
+    # pay attention to w/h-ratio
+    w, h = images_dict[var_name].size
+    actual_img_w = int(w / h * img_size_icons)
+    images_dict[var_name] = images_dict[var_name].resize((actual_img_w, img_size_icons))
 
 
 # functions ##############################################################
@@ -461,12 +429,12 @@ def update_stars():
         lbl2 = frames_player[p].nametowidget(str(tmp_frame[0]) + '.!label3')
 
         # edit images
-        lbl1.configure(image=pic_empty_star)
-        lbl2.configure(image=pic_empty_star)
+        lbl1.configure(image=images['no_star'])
+        lbl2.configure(image=images['no_star'])
         if n_stars > 0:
-            lbl1.configure(image=pic_star)
+            lbl1.configure(image=images['star'])
             if n_stars > 1:
-                lbl2.configure(image=pic_star)
+                lbl2.configure(image=images['star'])
 
 
 def search_trait_in_list(inp):
@@ -534,32 +502,32 @@ def create_trait_pile(frame_trait_overview, p):
 
         tk.Label(
             frame_pics,
-            image=pic_colors[cc+cb+cg+cp+cr],
+            image=images[cc+cb+cg+cp+cr],
             bg=defaults["bg_trait_pile"]
             ).grid(row=0, column=0)
 
         # collection
         lbl_collection = tk.Label(
             frame_pics,
-            image=pic_empty_star,
+            image=images['no_star'],
             bg=defaults["bg_trait_pile"])
         lbl_collection.grid(row=0, column=1)
 
         match traits_df[traits_df.name == trait]['game'].values[0].lower():
             case 'classic':
-                lbl_collection['image'] = pic_classic
+                lbl_collection['image'] = images['classic']
             case 'kickstarter':
-                lbl_collection['image'] = pic_kickstarter
+                lbl_collection['image'] = images['kickstarter']
             case 'techlings':
-                lbl_collection['image'] = pic_techlings
+                lbl_collection['image'] = images['techlings']
             case 'mythlings':
-                lbl_collection['image'] = pic_mythlings
+                lbl_collection['image'] = images['mythlings']
             case 'dinolings':
-                lbl_collection['image'] = pic_dinolings
+                lbl_collection['image'] = images['dinolings']
             case 'multi-color':
-                lbl_collection['image'] = pic_multicolor
+                lbl_collection['image'] = images['multicolor']
             case 'overlush':
-                lbl_collection['image'] = pic_overlush
+                lbl_collection['image'] = images['overlush']
 
         # dominant
         icol = 1  # initialize column index which changes depending on card
@@ -567,7 +535,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=pic_dominant,
+                image=images['dominant'],
                 bg=defaults["bg_trait_pile"]
                 ).grid(row=0, column=icol)
 
@@ -576,7 +544,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=pic_action,
+                image=images['action'],
                 bg=defaults["bg_trait_pile"]
                 ).grid(row=0, column=icol)
 
@@ -585,7 +553,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=pic_drop,
+                image=images['drop'],
                 bg=defaults["bg_trait_pile"]
                 ).grid(row=0, column=icol)
 
@@ -594,7 +562,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=pic_gene_pool,
+                image=images['gene_pool'],
                 bg=defaults["bg_trait_pile"]
                 ).grid(row=0, column=icol)
 
@@ -603,7 +571,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=pic_worlds_end,
+                image=images['worlds_end'],
                 bg=defaults["bg_trait_pile"]
                 ).grid(row=0, column=icol)
 
@@ -612,7 +580,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=pic_effectless,
+                image=images['effectless'],
                 bg=defaults["bg_trait_pile"]
                 ).grid(row=0, column=icol)
 
@@ -621,7 +589,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=pic_attachment,
+                image=images['attachment'],
                 bg=defaults["bg_trait_pile"]
                 ).grid(row=0, column=icol)
 
@@ -643,7 +611,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=pic_colors[cc+cb+cg+cp+cr],
+                image=images[cc+cb+cg+cp+cr],
                 bg=defaults["bg_trait_pile"]
                 ).grid(row=0, column=icol)
 
@@ -652,7 +620,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=pic_noFX,
+                image=images['noFX'],
                 bg=defaults["bg_trait_pile"]
                 ).grid(row=0, column=icol)
 
@@ -661,7 +629,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=pic_noRemove,
+                image=images['noRemove'],
                 bg=defaults["bg_trait_pile"]
                 ).grid(row=0, column=icol)
 
@@ -670,7 +638,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=pic_noDiscard,
+                image=images['noDiscard'],
                 bg=defaults["bg_trait_pile"]
                 ).grid(row=0, column=icol)
 
@@ -679,7 +647,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=pic_noSteal,
+                image=images['noSteal'],
                 bg=defaults["bg_trait_pile"]
                 ).grid(row=0, column=icol)
 
@@ -688,7 +656,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=pic_noSwap,
+                image=images['noSwap'],
                 bg=defaults["bg_trait_pile"]
                 ).grid(row=0, column=icol)
 
@@ -746,8 +714,8 @@ def create_player_frame(p):
     ).grid(row=0, column=0, padx=5, pady=(0, 10), columnspan=3, sticky='ns')
 
     # stars
-    ttk.Label(frame_points, image=pic_empty_star).grid(row=0, column=3, padx=0, pady=0, sticky="nes")
-    ttk.Label(frame_points, image=pic_empty_star).grid(row=0, column=4, padx=0, pady=0, sticky="nsw")
+    ttk.Label(frame_points, image=images['no_star']).grid(row=0, column=3, padx=0, pady=0, sticky="nes")
+    ttk.Label(frame_points, image=images['no_star']).grid(row=0, column=4, padx=0, pady=0, sticky="nsw")
 
     # single points
     ttk.Label(
@@ -1145,42 +1113,9 @@ gui_style.configure("genes.TLabel", font=("", 38, "bold"), foreground="hotpink1"
 gui_style.configure("move.TCombobox", selectbackground="none")
 
 # load images ------------------------------------------------------------
-pic_empty = ImageTk.PhotoImage(img_empty)
-pic_star = ImageTk.PhotoImage(img_star)
-pic_empty_star = ImageTk.PhotoImage(img_empty_star)
-pic_colors = {"c": ImageTk.PhotoImage(img_c),
-              "b": ImageTk.PhotoImage(img_b),
-              "g": ImageTk.PhotoImage(img_g),
-              "p": ImageTk.PhotoImage(img_p),
-              "r": ImageTk.PhotoImage(img_r),
-              "bg": ImageTk.PhotoImage(img_bg),
-              "bp": ImageTk.PhotoImage(img_bp),
-              "br": ImageTk.PhotoImage(img_br),
-              "gp": ImageTk.PhotoImage(img_gp),
-              "gr": ImageTk.PhotoImage(img_gr),
-              "pr": ImageTk.PhotoImage(img_pr),
-              "bgpr": ImageTk.PhotoImage(img_bgpr)}
-
-pic_action = ImageTk.PhotoImage(img_action)
-pic_attachment = ImageTk.PhotoImage(img_attachment)
-pic_classic = ImageTk.PhotoImage(img_classic)
-pic_dinolings = ImageTk.PhotoImage(img_dinolings)
-pic_dominant = ImageTk.PhotoImage(img_dominant)
-pic_drop = ImageTk.PhotoImage(img_drop)
-pic_effectless = ImageTk.PhotoImage(img_effectless)
-pic_gene_pool = ImageTk.PhotoImage(img_gene_pool)
-pic_kickstarter = ImageTk.PhotoImage(img_kickstarter)
-pic_multicolor = ImageTk.PhotoImage(img_multicolor)
-pic_mythlings = ImageTk.PhotoImage(img_mythlings)
-pic_overlush = ImageTk.PhotoImage(img_overlush)
-pic_techlings = ImageTk.PhotoImage(img_techlings)
-pic_worlds_end = ImageTk.PhotoImage(img_worlds_end)
-
-pic_noFX = ImageTk.PhotoImage(img_noFX)
-pic_noDiscard = ImageTk.PhotoImage(img_noDiscard)
-pic_noRemove = ImageTk.PhotoImage(img_noRemove)
-pic_noSteal = ImageTk.PhotoImage(img_noSteal)
-pic_noSwap = ImageTk.PhotoImage(img_noSwap)
+images = {}
+for k, v in images_dict.items():
+    images[k] = ImageTk.PhotoImage(v)
 
 # init variables ---------------------------------------------------------
 opt_n_player = tk.IntVar(value=defaults["n_player"])                # OPTIONS: number of players

@@ -505,7 +505,7 @@ def create_trait_pile(frame_trait_overview, p):
             variable=player_trait_selected[p],
             value=trait,
             bg=defaults["bg_trait_pile"],
-            fg='black',
+            fg=defaults["font_color_trait_pile"],
             command=lambda: update_selected_trait(p, player_trait_selected[p]),
             ).grid(row=irow, column=0, padx=3, pady=ypad, sticky='nsw')
 
@@ -700,6 +700,13 @@ def create_trait_pile(frame_trait_overview, p):
         # ----- ATTACHMENT combobox if trait is attachment ---------------
         if traits_df[traits_df.name == trait]['attachment'].values[0] == 1:
             irow += 1
+            tk.Label(
+                frame_trait_overview,
+                text="attach to:",
+                bg=defaults["bg_trait_pile"],
+                fg=defaults["font_color_trait_pile"]
+                ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
+
             # filter only non-attachment-traits and check if this is already attached to a trait
             traits_filtered = rules.filter_attachables(traits_df, player_traits[p].get(), trait)
 
@@ -707,15 +714,49 @@ def create_trait_pile(frame_trait_overview, p):
             cbox_attach_to = ttk.Combobox(
                 frame_trait_overview,
                 height=len(traits_filtered)+1,
-                values=["attach to"] + traits_filtered,
+                values=[" ... "] + traits_filtered,
                 exportselection=0,
                 state="readonly",
                 width=7,
             )
-            cbox_attach_to.grid(row=irow, column=0, sticky='e')
+            cbox_attach_to.grid(row=irow, column=1, sticky='w')
             cbox_attach_to.bind(
                 "<<ComboboxSelected>>", lambda e, t=trait: btn_attach_to(p, t, e)
             )
+
+            # check if already attached to host
+            if traits_df[traits_df.name == trait]['cur_host'].values[0] == 'none':
+                cbox_attach_to.current(0)
+            else:
+                cur_host = traits_df[traits_df.name == trait]['cur_host'].values[0]
+                cbox_attach_to.current(traits_filtered.index(cur_host)+1)
+
+        # ----- WORLDS_END combobox if trait has worlds end effect -------
+        if isinstance(traits_df[traits_df.name == trait]['effect_worlds_end'].values[0], str):
+            irow += 1
+            tk.Label(
+                frame_trait_overview,
+                text="@ worlds end:",
+                bg=defaults["bg_trait_pile"],
+                fg=defaults["font_color_trait_pile"]
+                ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
+
+            # get task what to do at worlds end
+            we_task = rules.traits_WE_effects(traits_df, player_traits[p].get(), trait)
+
+            # create combobox
+            cbox_attach_to = ttk.Combobox(
+                frame_trait_overview,
+                height=len(we_task),
+                values=we_task,
+                exportselection=0,
+                state="readonly",
+                width=10,
+            )
+            cbox_attach_to.grid(row=irow, column=1, sticky='w')
+            # cbox_attach_to.bind(
+            #    "<<ComboboxSelected>>", lambda e, t=trait: btn_attach_to(p, t, e)
+            # )
 
             # check if already attached to host
             if traits_df[traits_df.name == trait]['cur_host'].values[0] == 'none':

@@ -67,6 +67,28 @@ def attachment_effects(traits_df, host, attachment):
     return effects
 
 
+def traits_WE_effects(traits_df, host, attachment):
+    # get effect of attachment
+    rule = traits_df[traits_df.name == attachment].effect_worlds_end.values[0]
+    print(rule)
+    # update current tasks based on specific rule
+    match rule:
+        case 'choose_color':
+            tasks = ['choose color:', 'blue', 'green', 'purple', 'red']
+
+        case 'is_color_of_choice':
+            tasks = ['becomes color:', 'blue', 'green', 'purple', 'red']
+
+        case 'may_change_one_color':
+            tasks = ['becomes color:',
+                     'blue -> green', 'blue -> purple', 'blue -> red',
+                     'green -> blue', 'green -> purple', 'green -> red',
+                     'purple -> blue', 'purple -> green', 'purple -> red',
+                     'red -> blue', 'red -> green', 'red -> purple']
+
+    return tasks
+
+
 def worlds_end(worlds_end, p, player_cards, traits):
     cards = player_cards[p].get()
 

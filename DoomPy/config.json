@@ -13,6 +13,7 @@
     "n_catastrophies": 4,
     "bg_content": "grey",
     "bg_trait_pile": "gray68",
+    "font_color_trait_pile": "black",
     "menu_frame_color": "#71C671",
     "player_frame_color": "lightskyblue",    
     "color_frame_width": 6

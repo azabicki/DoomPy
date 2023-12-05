@@ -499,15 +499,20 @@ def create_trait_pile(frame_trait_overview, p):
         irow += 1
 
         # ----- radiobutton ----------------------------------------------
-        tk.Radiobutton(
+        rb_trait = tk.Radiobutton(
             frame_trait_overview,
             text=" " + trait,
             variable=player_trait_selected[p],
             value=trait,
             bg=defaults["bg_trait_pile"],
             fg=defaults["font_color_trait_pile"],
-            command=lambda: update_selected_trait(p, player_trait_selected[p]),
-            ).grid(row=irow, column=0, padx=3, pady=ypad, sticky='nsw')
+            command=lambda: update_selected_trait(p, player_trait_selected[p])
+            )
+        rb_trait.grid(row=irow, column=0, padx=3, pady=ypad, sticky='nsw')
+
+        # change font color if dominant
+        if traits_df[traits_df.name == trait]['dominant'].values[0] == 1:
+            rb_trait.config(fg=defaults["font_color_trait_pile_dominant"])
 
         # ----- icons ----------------------------------------------------
         frame_pics = tk.Frame(frame_trait_overview, bg=defaults["bg_trait_pile"])
@@ -751,7 +756,7 @@ def create_trait_pile(frame_trait_overview, p):
                 values=we_task,
                 exportselection=0,
                 state="readonly",
-                width=10,
+                width=10
             )
             cbox_attach_to.grid(row=irow, column=1, sticky='w')
             # cbox_attach_to.bind(

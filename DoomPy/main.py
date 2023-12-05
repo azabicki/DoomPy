@@ -66,6 +66,28 @@ for files in glob.glob(os.path.join(curdir, "images", "effects", "*.png")):
     actual_img_w = int(w / h * img_size_icons)
     images_dict[var_name] = images_dict[var_name].resize((actual_img_w, img_size_icons))
 
+for files in glob.glob(os.path.join(curdir, "images", "face", "*.png")):
+    var_name = os.path.splitext(os.path.basename(files))[0]
+    images_dict[var_name] = Image.open(files)
+
+    # pay attention to w/h-ratio
+    w, h = images_dict[var_name].size
+    actual_img_w = int(w / h * img_size_icons)
+    images_dict[var_name] = images_dict[var_name].resize((actual_img_w, img_size_icons))
+
+# switches for icons
+show = {}
+show['color'] = True
+show['face'] = True
+show['collection'] = False
+show['dominant'] = False
+show['action'] = False
+show['drop'] = True
+show['gene_pool'] = False
+show['worlds_end'] = True
+show['effectless'] = False
+show['attachment'] = False
+
 
 # functions ##############################################################
 def btn_clear_trait_search():
@@ -244,7 +266,6 @@ def btn_play_trait(to):
             return
 
     card_n = traits_df[traits_df.name == card]['n_of_cards'].values[0]
-    card_face = int(traits_df[traits_df.name == card]['face'].values[0])
 
     # add to players traits
     cur_players_cards = list(player_traits[to].get())
@@ -263,8 +284,8 @@ def btn_play_trait(to):
         cur_deck_cards.remove(card)
         deck_cards.set(cur_deck_cards)
 
-    print(">>> play <<< '{}' is playing '{}' ({} pts), which is {} times in the deck and was played {} times"
-          .format(player_name[to].get(), card, card_face, card_n, card_played))
+    print(">>> play <<< '{}' is playing '{}', which is {} times in the deck and was played {} times"
+          .format(player_name[to].get(), card, card_n, card_played))
 
     # update scoring
     update_scoring(to)
@@ -337,7 +358,7 @@ def update_scoring(p):
     cards = player_traits[p].get()
 
     # calculate face value
-    p_face = int(sum([traits_df[traits_df.name == card]['face'].values[0] for card in cards]))
+    p_face = int(np.nansum([traits_df[traits_df.name == card]['face'].values[0] for card in cards]))
     player_points[p]['face'].set(p_face)
 
     # calculate drop points
@@ -488,50 +509,66 @@ def create_trait_pile(frame_trait_overview, p):
             command=lambda: update_selected_trait(p, player_trait_selected[p]),
             ).grid(row=irow, column=0, padx=3, pady=ypad, sticky='nsw')
 
-        # ----- pictues --------------------------------------------------
+        # ----- icons ----------------------------------------------------
         frame_pics = tk.Frame(frame_trait_overview, bg=defaults["bg_trait_pile"])
         frame_pics.grid(row=irow, column=1, sticky='sw')
+        icol = -1  # initialize column index which changes depending on card
 
         # _true_ color
-        color = traits_df[traits_df.name == trait]['color'].values[0]
-        cc = 'c' if 'colorless' in color.lower() else ''
-        cb = 'b' if 'blue' in color.lower() else ''
-        cg = 'g' if 'green' in color.lower() else ''
-        cp = 'p' if 'purple' in color.lower() else ''
-        cr = 'r' if 'red' in color.lower() else ''
+        if show['color']:
+            icol += 1
+            color = traits_df[traits_df.name == trait]['color'].values[0]
+            cc = 'c' if 'colorless' in color.lower() else ''
+            cb = 'b' if 'blue' in color.lower() else ''
+            cg = 'g' if 'green' in color.lower() else ''
+            cp = 'p' if 'purple' in color.lower() else ''
+            cr = 'r' if 'red' in color.lower() else ''
 
-        tk.Label(
-            frame_pics,
-            image=images[cc+cb+cg+cp+cr],
-            bg=defaults["bg_trait_pile"]
-            ).grid(row=0, column=0)
+            tk.Label(
+                frame_pics,
+                image=images[cc+cb+cg+cp+cr],
+                bg=defaults["bg_trait_pile"]
+                ).grid(row=0, column=icol)
+
+        # face
+        if show['face']:
+            icol += 1
+            face_value = traits_df[traits_df.name == trait]['face'].values[0]
+            face_string = str(face_value) if np.isnan(face_value) else str(int(face_value))
+
+            tk.Label(
+                frame_pics,
+                image=images[face_string],
+                bg=defaults["bg_trait_pile"]
+                ).grid(row=0, column=icol)
 
         # collection
-        lbl_collection = tk.Label(
-            frame_pics,
-            image=images['no_star'],
-            bg=defaults["bg_trait_pile"])
-        lbl_collection.grid(row=0, column=1)
+        if show['collection']:
+            icol += 1
+            lbl_collection = tk.Label(
+                frame_pics,
+                image=images['no_star'],
+                bg=defaults["bg_trait_pile"])
+            lbl_collection.grid(row=0, column=icol)
 
-        match traits_df[traits_df.name == trait]['game'].values[0].lower():
-            case 'classic':
-                lbl_collection['image'] = images['classic']
-            case 'kickstarter':
-                lbl_collection['image'] = images['kickstarter']
-            case 'techlings':
-                lbl_collection['image'] = images['techlings']
-            case 'mythlings':
-                lbl_collection['image'] = images['mythlings']
-            case 'dinolings':
-                lbl_collection['image'] = images['dinolings']
-            case 'multi-color':
-                lbl_collection['image'] = images['multicolor']
-            case 'overlush':
-                lbl_collection['image'] = images['overlush']
+            match traits_df[traits_df.name == trait]['game'].values[0].lower():
+                case 'classic':
+                    lbl_collection['image'] = images['classic']
+                case 'kickstarter':
+                    lbl_collection['image'] = images['kickstarter']
+                case 'techlings':
+                    lbl_collection['image'] = images['techlings']
+                case 'mythlings':
+                    lbl_collection['image'] = images['mythlings']
+                case 'dinolings':
+                    lbl_collection['image'] = images['dinolings']
+                case 'multi-color':
+                    lbl_collection['image'] = images['multicolor']
+                case 'overlush':
+                    lbl_collection['image'] = images['overlush']
 
         # dominant
-        icol = 1  # initialize column index which changes depending on card
-        if traits_df[traits_df.name == trait]['dominant'].values[0] == 1:
+        if show['dominant'] and traits_df[traits_df.name == trait]['dominant'].values[0] == 1:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -540,7 +577,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # action
-        if traits_df[traits_df.name == trait]['action'].values[0] == 1:
+        if show['action'] and traits_df[traits_df.name == trait]['action'].values[0] == 1:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -549,7 +586,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # drop
-        if traits_df[traits_df.name == trait]['drop'].values[0] == 1:
+        if show['drop'] and traits_df[traits_df.name == trait]['drop'].values[0] == 1:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -558,7 +595,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # gene pool
-        if traits_df[traits_df.name == trait]['gene_pool'].values[0] == 1:
+        if show['gene_pool'] and traits_df[traits_df.name == trait]['gene_pool'].values[0] == 1:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -567,7 +604,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # worlds_end
-        if traits_df[traits_df.name == trait]['worlds_end'].values[0] == 1:
+        if show['worlds_end'] and traits_df[traits_df.name == trait]['worlds_end'].values[0] == 1:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -576,7 +613,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # effectless
-        if traits_df[traits_df.name == trait]['effectless'].values[0] == 1:
+        if show['effectless'] and traits_df[traits_df.name == trait]['effectless'].values[0] == 1:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -585,7 +622,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # attachment
-        if traits_df[traits_df.name == trait]['attachment'].values[0] == 1:
+        if show['attachment'] and traits_df[traits_df.name == trait]['attachment'].values[0] == 1:
             icol += 1
             tk.Label(
                 frame_pics,

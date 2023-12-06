@@ -1,6 +1,7 @@
 import os
 import glob
 import json
+import bisect
 import tkinter as tk
 from tkinter import ttk
 from math import floor
@@ -19,12 +20,14 @@ with open("DoomPy/config.json") as json_file:
     defaults = json.load(json_file)
 
 # load cards.xlsx --------------------------------------------------------
-traits_df = pd.read_excel(os.path.join(curdir, "files", "cards.xlsx"), sheet_name="traits")
-traits_list = sorted(traits_df.name.values.tolist())
+traits_df_unsorted = pd.read_excel(os.path.join(curdir, "files", "cards.xlsx"), sheet_name="traits")
+traits_df = traits_df_unsorted.sort_values(by='trait').reset_index(drop=True)
+traits_dfi = traits_df.index.tolist()
 
-ages_df = pd.read_excel(os.path.join(curdir, "files", "cards.xlsx"), sheet_name="ages")
-ages_list = sorted(ages_df.name.values.tolist())
-catastrophies_list = sorted(ages_df[ages_df["type"] == "Catastrophe"]["name"].values.tolist())
+ages_df_unsorted = pd.read_excel(os.path.join(curdir, "files", "cards.xlsx"), sheet_name="ages")
+ages_df = ages_df_unsorted.sort_values(by='name').reset_index(drop=True)
+ages_dfi = ages_df[ages_df["type"] == "Age"].index.tolist()
+catastrophies_dfi = ages_df[ages_df["type"] == "Catastrophe"].index.tolist()
 
 # add columns to traits_df
 traits_df["cur_color"] = traits_df.color
@@ -82,163 +85,166 @@ show['face'] = True
 show['collection'] = False
 show['dominant'] = False
 show['action'] = False
-show['drop'] = True
+show['drops'] = True
 show['gene_pool'] = False
-show['worlds_end'] = True
+show['worlds_end'] = False
 show['effectless'] = False
 show['attachment'] = False
 
 
 # functions ##############################################################
 def btn_clear_trait_search():
+    global play_trait
+
     search_trait.set("")
-    lbox_cards.set(deck_cards.get())
+    lbox_cards_idx.set(deck_cards)
+    lbox_cards_str.set(traits_df.loc[deck_cards].trait.values.tolist())
     lbox_traits[0].selection_clear(0, tk.END)
-    play_trait.set("")
+    play_trait = None
 
 
-def btn_attach_to(from_, attachment, event):
-    # get host from event_data
+def btn_attach_to(from_, attachment, event, possible_hosts):
+    # get host_data from event_data
     host = event.widget.get()
+    host_idx = possible_hosts[event.widget.current()]
 
-    print(">>> attachment <<< '{}' is attaching '{}' to '{}' "
-          .format(player_name[from_].get(), attachment, host))
+    # return, if clicked on current host
+    old_host_idx = traits_df[traits_df['cur_attachment'] == attachment].index.values.tolist()
+    if host_idx in old_host_idx:
+        print(">>> attachment <<< ERROR - clicked on own host")
+        return
+
+    # print log
+    if host == ' ... ':
+        print(">>> attachment <<< '{}' is dettached from all host..."
+              .format(traits_df.loc[attachment].trait))
+    else:
+        print(">>> attachment <<< '{}' is attaching '{}' to '{}'"
+              .format(player_name[from_].get(), traits_df.loc[attachment].trait, host))
 
     # check if attachment moved from old_host
-    old_idx = traits_df.index[traits_df.cur_attachment == attachment].tolist()
-    if old_idx:
-        old_host = traits_df.at[old_idx[0], 'name']
-        print("___ OLD HOST: {}".format(old_host))
-        update_hosts_current_status(old_host, [])
-        # traits_df.loc[traits_df.cur_attachment == attachment, 'cur_attachment'] = 'none'
-    else:
-        print("no previous host....")
+    if old_host_idx:
+        print("    >>> was until now on old host: {}".format(traits_df.loc[old_host_idx[0]].trait))
+        update_hosts_current_status(old_host_idx[0], [])
 
     # check if attachment is set back to "..." (idx=0)
     if event.widget.current() == 0:
-        # set host to status_row of attachment
-        traits_df.loc[traits_df.name == attachment, 'cur_host'] = 'none'
+        # reset host='none' to status_row of attachment
+        traits_df.loc[attachment, 'cur_host'] = 'none'
     else:
-        # set host to status_row of attachment
-        traits_df.loc[traits_df.name == attachment, 'cur_host'] = host
+        # set new host_idx to status_row of attachment
+        traits_df.loc[attachment, 'cur_host'] = host_idx
 
-        # set attachment to status_row of host & update effects of attachment on host
-        traits_df.loc[traits_df.name == host, 'cur_attachment'] = attachment
-        update_hosts_current_status(host, attachment)
+        # set new attachment to status_row of host & update effects of attachment on host
+        traits_df.loc[host_idx, 'cur_attachment'] = attachment
+        update_hosts_current_status(host_idx, attachment)
 
-    # recreate trait pile & clear trait selection
+    # update trait pile & clear trait selection
     create_trait_pile(player_rb_frames[from_], from_)
 
+    # update scoring
+    update_scoring(from_)
 
 
 def btn_discard_trait(from_):
-    # get card
+    # get card & its attachment
     card = player_trait_selected[from_].get()
+    attachment = traits_df.loc[card].cur_attachment
 
     # return, if no trait selected
-    if card == "none":
+    if np.isnan(card):
         print(">>> discard <<< ERROR - no trait selected")
         return
 
     # return, if attachment selected
-    if traits_df[traits_df.name == card].attachment.values[0] == 1:
+    if traits_df.loc[card].attachment == 1:
         print(">>> discard <<< ERROR - attachment not discardable -> discard host instead")
         return
 
-    # check if card HAS attachment
-    attachment = traits_df[traits_df.name == card]["cur_attachment"].values[0]
-
-    # remove card from players traits, and attachment if neccessary
-    cur_players_cards = list(player_traits[from_].get())
-    cur_players_cards.remove(card)
+    # print log
+    print(">>> discard <<< '{}' is discarding '{}' (id:{})"
+          .format(player_name[from_].get(), traits_df.loc[card].trait, card))
     if attachment != 'none':
-        cur_players_cards.remove(attachment)
-    player_traits[from_].set(cur_players_cards)
+        print(">>> discard <<< ___ attachment '{}' (id:{}) is also discarded automatically"
+              .format(traits_df.loc[attachment].trait, attachment))
 
-    # update current status of card & host & attachment
+    # remove card(s) from player, update trait pile & clear trait selection
+    player_traits[from_].remove(card)
+    if attachment != 'none':
+        player_traits[from_].remove(attachment)
+
+    create_trait_pile(player_rb_frames[from_], from_)
+    player_trait_selected[from_].set(np.nan)
+
+    # add to deck traits & update deck_listbox
+    bisect.insort_left(deck_cards, card)
+    if attachment != 'none':
+        bisect.insort_left(deck_cards, attachment)
+    search_trait_in_list(search_trait)  # keep current str in search_entry
+
+    # reset current status of card(s)
     update_hosts_current_status(card, [])
     if attachment != 'none':
         update_hosts_current_status(attachment, [])
 
-    # recreate trait pile & clear trait selection
-    create_trait_pile(player_rb_frames[from_], from_)
-    player_trait_selected[from_].set("none")
-
-    # add to deck traits, if not there
-    if card not in list(deck_cards.get()):
-        cur_deck_cards = list(deck_cards.get())
-        cur_deck_cards.append(card)
-        deck_cards.set(sorted(cur_deck_cards))
-
-    print(">>> discard <<< '{}' is discarding '{}'"
-          .format(player_name[from_].get(), card))
-    if attachment != 'none':
-        print(">>> discard <<< ___ attachment '{}' is also discarded automatically"
-              .format(attachment))
-
     # update scoring, stars & genes
     update_scoring(from_)
     update_stars()
     update_genes()
 
-    # update trait search if discarded trait matches filter
-    search_trait_in_list(search_trait)
-
-    # reset current values of card
-    reset_traits_current_status(card)
+    print(traits_df.loc[card].tolist())
+    if attachment != 'none':
+        print(traits_df.loc[attachment].tolist())
 
 
 def btn_move_trait(from_, cbox_move_to):
-    # get card
+    # get card & its attachment
     card = player_trait_selected[from_].get()
-
-    # clear combobox
-    cbox_move_to.current(0)
-
-    # return, if no trait selected
-    if card == "none":
-        print(">>> move <<< ERROR - no trait selected")
-        return
+    attachment = traits_df.loc[card].cur_attachment
 
     # return, if no target selected
-    if cbox_move_to.get() == " move trait to ...":
+    if cbox_move_to.current() == 0:
+        cbox_move_to.current(0)
         print(">>> move <<< ERROR - clicked on 'move trait to...'")
         return
 
-    # return, if from == to
+    # return, if no trait selected
     to = defaults["names"].index(cbox_move_to.get())
+    if np.isnan(card):
+        cbox_move_to.current(0)
+        print(">>> move <<< ERROR - no trait selected")
+        return
+
+    # return, if from == to
     if from_ == to:
+        cbox_move_to.current(0)
         print(">>> move <<< ERROR - 'source' and 'target' player are the same")
         return
 
     # return, if attachment selected
-    if traits_df[traits_df.name == card].attachment.values[0] == 1:
+    if traits_df.loc[card].attachment == 1:
+        cbox_move_to.current(0)
         print(">>> move <<< ERROR - attachment not moveable -> move host instead")
         return
 
-    # check if card HAS attachment
-    attachment = traits_df[traits_df.name == card]["cur_attachment"].values[0]
+    # print log
+    add_txt = "(and its attachment '{}' (id:{}))".format(traits_df.loc[attachment].trait, attachment) \
+        if attachment != 'none' else ''
+    print(">>> move <<< '{}' (id:{}) {} is moved from '{}' to '{}'"
+          .format(traits_df.loc[card].trait, card, add_txt, player_name[from_].get(), player_name[to].get()))
 
-    add_txt = "(and its attachment '{}')".format(attachment) if attachment != 'none' else ''
-    print(">>> move <<< '{}' {} is moved from '{}' to '{}'"
-          .format(card, add_txt, player_name[from_].get(), player_name[to].get()))
-
-    # remove from 'giving' players traits & clear trait selection
-    from_players_cards = list(player_traits[from_].get())
-    from_players_cards.remove(card)
+    # remove traits(s) from 'giving' player, update trait_pile & clear trait selection
+    player_traits[from_].remove(card)
     if attachment != 'none':
-        from_players_cards.remove(attachment)
-    player_traits[from_].set(from_players_cards)
+        player_traits[from_].remove(attachment)
 
     create_trait_pile(player_rb_frames[from_], from_)
-    player_trait_selected[from_].set("none")
+    player_trait_selected[from_].set(np.nan)
 
     # add to 'receiving' players traits
-    to_players_cards = list(player_traits[to].get())
-    to_players_cards.append(card)
+    bisect.insort_left(player_traits[to], card)
     if attachment != 'none':
-        to_players_cards.append(attachment)
-    player_traits[to].set(sorted(to_players_cards))
+        bisect.insort_left(player_traits[to], attachment)
 
     create_trait_pile(player_rb_frames[to], to)
 
@@ -248,54 +254,42 @@ def btn_move_trait(from_, cbox_move_to):
     update_stars()
     update_genes()
 
+    # clear combobox
+    cbox_move_to.current(0)
+
 
 def btn_play_trait(to):
-    # get card
-    card = play_trait.get()
-
     # return, if no trait selected
-    if card == "":
+    if play_trait is None:
         print(">>> play <<< ERROR - no trait selected")
         return
 
+    # get card
+    trait_idx = play_trait
+    trait = traits_df.loc[trait_idx].trait
+
     # return, if player already has two dominants
-    if traits_df[traits_df.name == card]['dominant'].values[0] == 1:
-        if sum([1 for t in player_traits[to].get()
-                if traits_df[traits_df.name == t]['dominant'].values[0] == 1]) == 2:
+    if traits_df.loc[trait_idx]['dominant'] == 1:
+        if sum([1 for t in player_traits[to] if traits_df.loc[t].dominant == 1]) == 2:
             print(">>> play <<< ERROR - already 2 dominant traits in trait pile")
             return
 
-    card_n = traits_df[traits_df.name == card]['n_of_cards'].values[0]
+    # print log
+    print(">>> play <<< '{}' is playing '{}'"
+          .format(player_name[to].get(), trait))
 
-    # add to players traits
-    cur_players_cards = list(player_traits[to].get())
-    cur_players_cards.append(card)
-    player_traits[to].set(sorted(cur_players_cards))
-
+    # add to players traits & update trait_pile
+    bisect.insort_left(player_traits[to], trait_idx)
     create_trait_pile(player_rb_frames[to], to)
 
-    # remove from deck if all cards played
-    card_played = 0
-    for i in range(n_player.get()):
-        card_played = card_played + sum([1 for x in list(player_traits[i].get()) if x == card])
+    # remove from deck & update deck_listbox
+    deck_cards.remove(trait_idx)
+    btn_clear_trait_search()
 
-    if card_played == card_n:
-        cur_deck_cards = list(deck_cards.get())
-        cur_deck_cards.remove(card)
-        deck_cards.set(cur_deck_cards)
-
-    print(">>> play <<< '{}' is playing '{}', which is {} times in the deck and was played {} times"
-          .format(player_name[to].get(), card, card_n, card_played))
-
-    # update scoring
+    # update scoring, stars & genes
     update_scoring(to)
-
-    # update stars & genes
     update_stars()
     update_genes()
-
-    # clear trait search & update listbox & selection
-    btn_clear_trait_search()
 
 
 def btn_play_worlds_end():
@@ -303,6 +297,7 @@ def btn_play_worlds_end():
     if worlds_end.get() == " select world's end ...":
         return
 
+    # print log
     print(">>> world's end <<< '{}' is happening now...".format(worlds_end.get()))
 
     for i in range(n_player.get()):
@@ -318,7 +313,7 @@ def btn_play_catastrophe(event, c):
     played_catastrophies = [catastrophies[i].get() for i in range(n_catastrophies.get()) if catastrophies[i].get()]
     worlds_end_cbox[0]['values'] = [" select world's end ..."] + played_catastrophies
 
-    # debug outout
+    # print log
     print(">>> catastrophe <<< played catastrophe #{}: '{}'"
           .format(c+1, played_catastrophy))
 
@@ -333,37 +328,42 @@ def update_hosts_current_status(host, attachment):
         effects = rules.attachment_effects(traits_df, host, attachment)
 
         # update cur_values of host
-        traits_df.loc[traits_df.name == host, "cur_color"] = effects['color']
-        traits_df.loc[traits_df.name == host, "cur_face"] = effects['face']
-        traits_df.loc[traits_df.name == host, "cur_effect"] = effects['effect']
+        traits_df.loc[host, "cur_color"] = effects['color']
+        traits_df.loc[host, "cur_face"] = effects['face']
+        traits_df.loc[host, "cur_effect"] = effects['effect']
 
-        print(">>> cur_values <<< '{}' is updated due to effects of {}".format(host, attachment))
+        # print log
+        print(">>> current effects <<< '{}' is updated due to effects of '{}'"
+              .format(traits_df.loc[host].trait, traits_df.loc[attachment].trait))
 
     else:
         # reset host
-        true_color = traits_df[traits_df.name == host]["color"].values[0]
-        true_face = traits_df[traits_df.name == host]["face"].values[0]
+        true_color = traits_df.loc[host].color
+        true_face = traits_df.loc[host].face
 
-        traits_df.loc[traits_df.name == host, "cur_color"] = true_color
-        traits_df.loc[traits_df.name == host, "cur_face"] = true_face
-        traits_df.loc[traits_df.name == host, "cur_effect"] = 'none'
-        traits_df.loc[traits_df.name == host, "cur_host"] = 'none'
-        traits_df.loc[traits_df.name == host, "cur_attachment"] = 'none'
+        traits_df.loc[host, "cur_color"] = true_color
+        traits_df.loc[host, "cur_face"] = true_face
+        traits_df.loc[host, "cur_effect"] = 'none'
+        traits_df.loc[host, "cur_host"] = 'none'
+        traits_df.loc[host, "cur_attachment"] = 'none'
 
-        print(">>> cur_values <<< '{}' is reseted to defaults".format(host))
+        # print log
+        print(">>> current effects <<< '{}' is reseted to defaults"
+              .format(traits_df.loc[host].trait))
 
 
 def update_scoring(p):
     # get cards
-    cards = player_traits[p].get()
+    trait_pile = player_traits[p]
 
     # calculate face value
-    p_face = int(np.nansum([traits_df[traits_df.name == card]['face'].values[0] for card in cards]))
+    p_face = int(sum([traits_df.loc[trait_idx].face for trait_idx in trait_pile
+                      if not isinstance(traits_df.loc[trait_idx].face, str)]))
     player_points[p]['face'].set(p_face)
 
-    # calculate drop points
+    # calculate drops points
     p_drop = 0
-    player_points[p]['drop'].set(p_drop)
+    player_points[p]['drops'].set(p_drop)
 
     # calculate world's end points
     p_worlds_end = rules.worlds_end(worlds_end.get(), p, player_traits, traits_df)
@@ -373,6 +373,7 @@ def update_scoring(p):
     total = p_face + p_drop + p_worlds_end
     player_points[p]['total'].set(total)
 
+    # print log
     print(">>> scoring <<< current points for '{}': face = {}  |  drops = {}  |  WE = {}  |  total = {}"
           .format(player_name[p].get(), p_face, p_drop, p_worlds_end, total))
 
@@ -383,13 +384,10 @@ def update_genes():
 
     # loop players and calculate +- genes of all played traits
     for p in range(n_player.get()):
-        # get cards
-        cards = player_traits[p].get()
-
-        # loop cards
-        for card in cards:
+        # loop traits in trait_pile
+        for trait_idx in player_traits[p]:
             # get gene effect of this card
-            effect = traits_df[traits_df.name == card]['effect_gene_pool'].values[0]
+            effect = traits_df.loc[trait_idx].effect_gene_pool
 
             # if there is a rule saved as strings
             if isinstance(effect, str):
@@ -406,8 +404,9 @@ def update_genes():
                     case 'other':
                         diff_genes = [i+value if i != p else i for i in diff_genes]
 
+                # print log
                 print(">>> genes <<< '{}'s '{}' has gene effect off '{}' on '{}' -> current effect: {}"
-                      .format(player_name[p].get(), card, value, who, diff_genes))
+                      .format(player_name[p].get(), traits_df.loc[trait_idx].trait, value, who, diff_genes))
 
     # check what catastrophies were played alread
     for c in range(n_catastrophies.get()):
@@ -419,6 +418,7 @@ def update_genes():
             effect = int(ages_df[ages_df.name == card]['gene_pool'].values[0])
             diff_genes = [i + effect for i in diff_genes]
 
+            # print log
             print(">>> genes <<< catastrophe '{}' has gene effect off '{}' -> current effect: {}"
                   .format(card, effect, diff_genes))
 
@@ -432,6 +432,7 @@ def update_genes():
         else:
             player_genes[p].set(new_gp)
 
+    # print log - if genes are effected
     if any(i > 0 for i in diff_genes):
         print("   >>> total gene effect: {} -> new gene pools are {}"
               .format(diff_genes, [player_genes[i].get() for i in range(n_player.get())]))
@@ -441,8 +442,7 @@ def update_stars():
     # loop players
     for p in range(n_player.get()):
         # number of dominant traits
-        n_stars = np.nansum([traits_df[traits_df.name == card]['dominant'].values[0]
-                             for card in player_traits[p].get()])
+        n_dominant = np.nansum([traits_df.loc[trait_idx].dominant for trait_idx in player_traits[p]])
 
         # find label widgets
         tmp_frame = frames_player[p].winfo_children()
@@ -452,9 +452,9 @@ def update_stars():
         # edit images
         lbl1.configure(image=images['no_star'])
         lbl2.configure(image=images['no_star'])
-        if n_stars > 0:
+        if n_dominant > 0:
             lbl1.configure(image=images['star'])
-            if n_stars > 1:
+            if n_dominant > 1:
                 lbl2.configure(image=images['star'])
 
 
@@ -463,28 +463,39 @@ def search_trait_in_list(inp):
     lbox_traits[0].selection_clear(0, tk.END)
 
     if value == "":
-        lbox_cards.set(deck_cards.get())
+        lbox_cards_idx.set(deck_cards)
+        lbox_cards_str.set(traits_df.loc[deck_cards].trait.values.tolist())
     else:
-        lbox_cards.set([item for item in deck_cards.get() if value.lower() in item.lower()])
+        filtered_trait_str = []
+        filtered_trait_idx = []
+        for idx in deck_cards:
+            if value.lower() in traits_df.loc[idx].trait.lower():
+                filtered_trait_idx.append(idx)
+                filtered_trait_str.append(traits_df.loc[idx].trait)
+
+        lbox_cards_idx.set(filtered_trait_idx)
+        lbox_cards_str.set(filtered_trait_str)
 
 
 def update_selected_trait(where, idx):
+    # select trait in deck/listbox
     if where == "lbox":
         # trait in DECK is selected
-        if idx == ():
-            play_trait.set("")
-        else:
-            selected_card = lbox_cards.get()[int(idx[0])]
-            play_trait.set(selected_card)
+        global play_trait
+        play_trait = lbox_cards_idx.get()[idx[0]]
 
-            print(">>> select <<< handle DECK_listbox -> selected trait = '{}'"
-                  .format(play_trait.get()))
+        # print log
+        print(">>> select <<< handle DECK_listbox -> selected trait = '{}' (id:{})"
+              .format(traits_df.loc[play_trait].trait, play_trait))
 
+    # select trait in one of players trait pile
     else:
-        # trait in one of PLAYERS traits is selected, note: 'where' represents the player here
+        # note: 'where'  == 'who'
         player_trait_selected[where].set(idx.get())
-        print(">>> select <<< handle PLAYER_listbox -> selected trait = '{}' - by '{}'"
-              .format(player_trait_selected[where].get(), player_name[where].get()))
+
+        # print log
+        print(">>> select <<< handle PLAYER_listbox -> selected trait = '{}' is selecting '{}' (id:{})"
+              .format(player_name[where].get(), traits_df.loc[idx.get()].trait, idx.get()))
 
 
 def create_trait_pile(frame_trait_overview, p):
@@ -494,7 +505,11 @@ def create_trait_pile(frame_trait_overview, p):
 
     # loop traits in pile
     irow = -1
-    for trait in player_traits[p].get():
+    for trait_idx in player_traits[p]:
+        # get trait name
+        trait = traits_df.loc[trait_idx].trait
+
+        # init some vars
         ypad = (3, 0) if irow == 0 else 0
         irow += 1
 
@@ -503,15 +518,14 @@ def create_trait_pile(frame_trait_overview, p):
             frame_trait_overview,
             text=" " + trait,
             variable=player_trait_selected[p],
-            value=trait,
+            value=trait_idx,
             bg=defaults["bg_trait_pile"],
             fg=defaults["font_color_trait_pile"],
-            command=lambda: update_selected_trait(p, player_trait_selected[p])
-            )
+            command=lambda: update_selected_trait(p, player_trait_selected[p]))
         rb_trait.grid(row=irow, column=0, padx=3, pady=ypad, sticky='nsw')
 
         # change font color if dominant
-        if traits_df[traits_df.name == trait]['dominant'].values[0] == 1:
+        if traits_df.loc[trait_idx].dominant == 1:
             rb_trait.config(fg=defaults["font_color_trait_pile_dominant"])
 
         # ----- icons ----------------------------------------------------
@@ -522,7 +536,7 @@ def create_trait_pile(frame_trait_overview, p):
         # _true_ color
         if show['color']:
             icol += 1
-            color = traits_df[traits_df.name == trait]['color'].values[0]
+            color = traits_df.loc[trait_idx].color
             cc = 'c' if 'colorless' in color.lower() else ''
             cb = 'b' if 'blue' in color.lower() else ''
             cg = 'g' if 'green' in color.lower() else ''
@@ -538,8 +552,8 @@ def create_trait_pile(frame_trait_overview, p):
         # face
         if show['face']:
             icol += 1
-            face_value = traits_df[traits_df.name == trait]['face'].values[0]
-            face_string = str(face_value) if np.isnan(face_value) else str(int(face_value))
+            face_value = traits_df.loc[trait_idx].face
+            face_string = face_value if isinstance(face_value, str) else str(int(face_value))
 
             tk.Label(
                 frame_pics,
@@ -556,7 +570,7 @@ def create_trait_pile(frame_trait_overview, p):
                 bg=defaults["bg_trait_pile"])
             lbl_collection.grid(row=0, column=icol)
 
-            match traits_df[traits_df.name == trait]['game'].values[0].lower():
+            match traits_df.loc[trait_idx].game.lower():
                 case 'classic':
                     lbl_collection['image'] = images['classic']
                 case 'kickstarter':
@@ -573,7 +587,7 @@ def create_trait_pile(frame_trait_overview, p):
                     lbl_collection['image'] = images['overlush']
 
         # dominant
-        if show['dominant'] and traits_df[traits_df.name == trait]['dominant'].values[0] == 1:
+        if show['dominant'] and traits_df.loc[trait_idx].dominant == 1:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -582,7 +596,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # action
-        if show['action'] and traits_df[traits_df.name == trait]['action'].values[0] == 1:
+        if show['action'] and traits_df.loc[trait_idx].action == 1:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -590,17 +604,17 @@ def create_trait_pile(frame_trait_overview, p):
                 bg=defaults["bg_trait_pile"]
                 ).grid(row=0, column=icol)
 
-        # drop
-        if show['drop'] and traits_df[traits_df.name == trait]['drop'].values[0] == 1:
+        # drops
+        if show['drops'] and traits_df.loc[trait_idx].drops == 1:
             icol += 1
             tk.Label(
                 frame_pics,
-                image=images['drop'],
+                image=images['drops'],
                 bg=defaults["bg_trait_pile"]
                 ).grid(row=0, column=icol)
 
         # gene pool
-        if show['gene_pool'] and traits_df[traits_df.name == trait]['gene_pool'].values[0] == 1:
+        if show['gene_pool'] and traits_df.loc[trait_idx].gene_pool == 1:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -609,7 +623,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # worlds_end
-        if show['worlds_end'] and traits_df[traits_df.name == trait]['worlds_end'].values[0] == 1:
+        if show['worlds_end'] and traits_df.loc[trait_idx].worlds_end == 1:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -618,7 +632,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # effectless
-        if show['effectless'] and traits_df[traits_df.name == trait]['effectless'].values[0] == 1:
+        if show['effectless'] and traits_df.loc[trait_idx].effectless == 1:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -627,7 +641,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # attachment
-        if show['attachment'] and traits_df[traits_df.name == trait]['attachment'].values[0] == 1:
+        if show['attachment'] and traits_df.loc[trait_idx].attachment == 1:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -642,23 +656,28 @@ def create_trait_pile(frame_trait_overview, p):
 
         # ----- current effects due to attachments -----------------------
         # _current_ color
-        cur_color = traits_df[traits_df.name == trait].cur_color.values[0]
-        cc = 'c' if 'colorless' in cur_color.lower() else ''
-        cb = 'b' if 'blue' in cur_color.lower() else ''
-        cg = 'g' if 'green' in cur_color.lower() else ''
-        cp = 'p' if 'purple' in cur_color.lower() else ''
-        cr = 'r' if 'red' in cur_color.lower() else ''
-
-        if cur_color != traits_df[traits_df.name == trait]['color'].values[0]:
+        cur_color = traits_df.loc[trait_idx].cur_color
+        if cur_color != traits_df.loc[trait_idx].color:
             icol += 1
+            cc = 'c' if 'colorless' in cur_color.lower() else ''
+            cb = 'b' if 'blue' in cur_color.lower() else ''
+            cg = 'g' if 'green' in cur_color.lower() else ''
+            cp = 'p' if 'purple' in cur_color.lower() else ''
+            cr = 'r' if 'red' in cur_color.lower() else ''
+
             tk.Label(
                 frame_pics,
                 image=images[cc+cb+cg+cp+cr],
                 bg=defaults["bg_trait_pile"]
                 ).grid(row=0, column=icol)
 
+        # _current_ face
+        cur_face = traits_df.loc[trait_idx].cur_face
+        if cur_face != traits_df.loc[trait_idx].face:
+            print("_______________ add current face falue icon")
+
         # noFX
-        if 'Inactive' in traits_df[traits_df.name == trait]['cur_effect'].values[0]:
+        if 'Inactive' in traits_df.loc[trait_idx].cur_effect:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -667,7 +686,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # noRemove
-        if 'NoRemove' in traits_df[traits_df.name == trait]['cur_effect'].values[0]:
+        if 'NoRemove' in traits_df.loc[trait_idx].cur_effect:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -676,7 +695,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # noDiscard
-        if 'NoDiscard' in traits_df[traits_df.name == trait]['cur_effect'].values[0]:
+        if 'NoDiscard' in traits_df.loc[trait_idx].cur_effect:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -685,7 +704,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # noSteal
-        if 'NoSteal' in traits_df[traits_df.name == trait]['cur_effect'].values[0]:
+        if 'NoSteal' in traits_df.loc[trait_idx].cur_effect:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -694,7 +713,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # noSwap
-        if 'NoSwap' in traits_df[traits_df.name == trait]['cur_effect'].values[0]:
+        if 'NoSwap' in traits_df.loc[trait_idx].cur_effect:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -703,7 +722,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # ----- ATTACHMENT combobox if trait is attachment ---------------
-        if traits_df[traits_df.name == trait]['attachment'].values[0] == 1:
+        if traits_df.loc[trait_idx].attachment == 1:
             irow += 1
             tk.Label(
                 frame_trait_overview,
@@ -713,31 +732,32 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
 
             # filter only non-attachment-traits and check if this is already attached to a trait
-            traits_filtered = rules.filter_attachables(traits_df, player_traits[p].get(), trait)
+            traits_filtered_idx = [None] + rules.filter_attachables(traits_df, player_traits[p], trait_idx)
+            traits_filtered_str = [" ... "] + [traits_df.loc[idx].trait
+                                               for idx in traits_filtered_idx if idx is not None]
 
             # create combobox
             cbox_attach_to = ttk.Combobox(
                 frame_trait_overview,
-                height=len(traits_filtered)+1,
-                values=[" ... "] + traits_filtered,
+                height=len(traits_filtered_str),
+                values=traits_filtered_str,
                 exportselection=0,
                 state="readonly",
-                width=7,
-            )
+                width=7)
             cbox_attach_to.grid(row=irow, column=1, sticky='w')
-            cbox_attach_to.bind(
-                "<<ComboboxSelected>>", lambda e, t=trait: btn_attach_to(p, t, e)
-            )
+            cbox_attach_to.bind("<<ComboboxSelected>>",
+                                lambda e, t=trait_idx, idx=traits_filtered_idx:
+                                    btn_attach_to(p, t, e, idx))
 
             # check if already attached to host
-            if traits_df[traits_df.name == trait]['cur_host'].values[0] == 'none':
+            if traits_df.loc[trait_idx].cur_host == 'none':
                 cbox_attach_to.current(0)
             else:
-                cur_host = traits_df[traits_df.name == trait]['cur_host'].values[0]
-                cbox_attach_to.current(traits_filtered.index(cur_host)+1)
+                cur_host = traits_df.loc[trait_idx].cur_host
+                cbox_attach_to.current(traits_filtered_idx.index(cur_host))
 
         # ----- WORLDS_END combobox if trait has worlds end effect -------
-        if isinstance(traits_df[traits_df.name == trait]['effect_worlds_end'].values[0], str):
+        if isinstance(traits_df.loc[trait_idx].effect_worlds_end, str):
             irow += 1
             tk.Label(
                 frame_trait_overview,
@@ -747,7 +767,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
 
             # get task what to do at worlds end
-            we_task = rules.traits_WE_effects(traits_df, player_traits[p].get(), trait)
+            we_task = rules.traits_WE_effects(traits_df, trait_idx)
 
             # create combobox
             cbox_attach_to = ttk.Combobox(
@@ -756,19 +776,18 @@ def create_trait_pile(frame_trait_overview, p):
                 values=we_task,
                 exportselection=0,
                 state="readonly",
-                width=10
-            )
+                width=10)
             cbox_attach_to.grid(row=irow, column=1, sticky='w')
             # cbox_attach_to.bind(
-            #    "<<ComboboxSelected>>", lambda e, t=trait: btn_attach_to(p, t, e)
+            #    "<<ComboboxSelected>>", lambda e, t=trait_idx: btn_attach_to(p, t, e)
             # )
 
             # check if already attached to host
-            if traits_df[traits_df.name == trait]['cur_host'].values[0] == 'none':
+            if traits_df.loc[trait_idx].cur_host == 'none':
                 cbox_attach_to.current(0)
             else:
-                cur_host = traits_df[traits_df.name == trait]['cur_host'].values[0]
-                cbox_attach_to.current(traits_filtered.index(cur_host)+1)
+                cur_host = traits_df.loc[trait_idx].cur_host
+                cbox_attach_to.current(traits_filtered_idx.index(cur_host)+1)
 
 
 def create_player_frame(p):
@@ -822,7 +841,7 @@ def create_player_frame(p):
         frame_points, textvariable=player_points[p]['face'],
     ).grid(row=1, column=1, sticky="w")
     ttk.Label(
-        frame_points, textvariable=player_points[p]['drop'],
+        frame_points, textvariable=player_points[p]['drops'],
     ).grid(row=2, column=1, sticky="w")
     ttk.Label(
         frame_points, textvariable=player_points[p]['worlds_end'],
@@ -869,13 +888,11 @@ def create_player_frame(p):
         exportselection=0,
         state="readonly",
         width=12,
-        style="move.TCombobox"
-    )
-    cbox_move_to.current(0)
+        style="move.TCombobox")
     cbox_move_to.grid(row=1, column=0, pady=(0, border), sticky='ns')
+    cbox_move_to.current(0)
     cbox_move_to.bind(
-        "<<ComboboxSelected>>", lambda e: btn_move_trait(p, cbox_move_to)
-    )
+        "<<ComboboxSelected>>", lambda e: btn_move_trait(p, cbox_move_to))
 
     ttk.Button(
         frame_traits,
@@ -994,7 +1011,7 @@ def create_menu_frame():
     frame_menu_traits.columnconfigure(0, weight=1)
     frame_menu_traits.columnconfigure(1, weight=1)
 
-    # 'play trai' -----
+    # 'play trait' -----
     ttk.Label(
         frame_menu_traits,
         text="play trait",
@@ -1020,7 +1037,7 @@ def create_menu_frame():
     lbox_traits[0] = tk.Listbox(
         frame_menu_traits,
         height=5,
-        listvariable=lbox_cards,
+        listvariable=lbox_cards_str,
         selectmode=tk.SINGLE,
         exportselection=False
     )
@@ -1062,7 +1079,7 @@ def create_menu_frame():
     for c in range(n_catastrophies.get()):
         cbox_catastrophy = ttk.Combobox(
             frame_menu_catastrophe,
-            values=[" catastrophe {}...".format(c+1)] + catastrophies_list,
+            values=[" catastrophe {}...".format(c+1)] + ages_df.loc[catastrophies_dfi].name.values.tolist(),
             exportselection=0,
             state="readonly",
             width=18,
@@ -1132,16 +1149,18 @@ def reset_variables():
             print("   >>> use *default* name for player #{} = {}".format(i+1, player_name[i].get()))
 
         player_genes.append(tk.IntVar(value=n_genes.get()))
-        player_points.append({'face': tk.IntVar(value=0), 'drop': tk.IntVar(value=0),
+        player_points.append({'face': tk.IntVar(value=0), 'drops': tk.IntVar(value=0),
                               'worlds_end': tk.IntVar(value=0), 'MOL': tk.IntVar(value=0),
                               'total': tk.IntVar(value=0)})
-        player_traits.append(tk.Variable(value=[]))
-        player_trait_selected.append(tk.StringVar(value="none"))
+        player_traits.append([])
+        player_trait_selected.append(tk.Variable(value=np.nan))
         player_rb_frames.append(None)
 
     # reset deck/lbox card-lists
-    deck_cards.set(traits_list)
-    lbox_cards.set(traits_list)
+    deck_cards.clear()
+    deck_cards.extend(traits_dfi)   # complete list of indicies of all traits
+    lbox_cards_idx.set(traits_dfi)  # complete list of indices of traits for menu_listbox
+    lbox_cards_str.set(traits_df.loc[traits_dfi].trait.values.tolist())  # complete list of names of traits
 
     # reset occured catastrophies
     catastrophies.clear()
@@ -1162,8 +1181,7 @@ def start_game():
         w.grid_forget()
 
     for i in range(defaults["max_player"]):
-        w = 0 if i >= n_player.get() else 1  # 1 => player_frames are stretchable
-        print("player {} - w={}".format(i+1, w))
+        w = 0 if i >= n_player.get() else 1  # w=1 -> player_frames are stretchable
         frame_playground.columnconfigure(i, weight=w)
 
     # fill _menu_ frame --------------------------------------------------
@@ -1210,9 +1228,10 @@ n_genes = tk.IntVar()           # gene pool at start
 n_catastrophies = tk.IntVar()   # number of catastrophies
 
 search_trait = tk.StringVar(value="")   # searching for traits in playable deck
-deck_cards = tk.Variable(value="")      # all traits in deck (or discard pile) left to be drawn
-lbox_cards = tk.Variable(value="")      # traits >>shown<< in listbox on the left, i.e. after filtering
-play_trait = tk.StringVar(value="")     # selected trait in listbox
+deck_cards = []                         # all traits in deck (or discard pile) left to be drawn / list of idx
+lbox_cards_idx = tk.Variable(value="")  # traits >>shown<< in listbox on the left, i.e. after filtering / list of idx
+lbox_cards_str = tk.Variable(value="")  # traits >>shown<< in listbox on the left, i.e. after filtering / as string
+play_trait = None                       # selected trait (by index in traits_df) in listbox
 lbox_traits = [None]                    # listbox widget of deck cards -> needed to be able to edit selected traits
 
 catastrophies = []                  # occured catastrophies / StringVar
@@ -1220,10 +1239,10 @@ worlds_end = tk.StringVar(value="")
 worlds_end_cbox = [None]
 
 frames_player = []          # list of all players frames
-player_name = []            # current players names / StringVar
-player_genes = []           # current players gene pool / IntVar
+player_name = []            # current players names / tk.StringVar
+player_genes = []           # current players gene pool / tk.IntVar
 player_points = []          # current players points / dictionary
-player_traits = []          # current players traits played / Var 4 listbox
+player_traits = []          # current players traits played / lists
 player_trait_selected = []  # selected traits in players trait piles / StringVar
 player_rb_frames = []       # frame containing players traits -> needed to be able to edit selected traits
 

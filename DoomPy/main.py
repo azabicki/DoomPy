@@ -136,7 +136,6 @@ def btn_attach_to(from_, attachment, event, possible_hosts):
         traits_df.loc[attachment, 'cur_host'] = host_idx
 
         # set new attachment to status_row of host & update effects of attachment on host
-        traits_df.loc[host_idx, 'cur_attachment'] = attachment
         update_traits_current_status('attachment', host_idx, attachment)
 
     # update trait pile & clear trait selection

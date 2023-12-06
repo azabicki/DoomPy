@@ -67,10 +67,10 @@ def attachment_effects(traits_df, host, attachment):
     return effects
 
 
-def traits_WE_effects(traits_df, attachment):
-    # get effect of attachment
-    rule = traits_df.loc[attachment].effect_worlds_end
-    
+def traits_WE_tasks(traits_df, host):
+    # get effect of trait
+    rule = traits_df.loc[host].effect_worlds_end
+
     # update current tasks based on specific rule
     match rule:
         case 'choose_color':
@@ -87,6 +87,32 @@ def traits_WE_effects(traits_df, attachment):
                      'red -> blue', 'red -> green', 'red -> purple']
 
     return tasks
+
+
+def traits_WE_effects(traits_df, host, trait_pile):
+    rule = traits_df.loc[host].effect_worlds_end
+    effect = traits_df.loc[host].cur_worlds_end
+
+    match rule:
+        case 'is_color_of_choice':
+            if effect == 'none':
+                traits_df.loc[host, 'cur_color'] = traits_df.loc[host].color
+            else:
+                traits_df.loc[host, 'cur_color'] = effect
+
+        case 'may_change_one_color':
+            if effect != 'none':
+                # split rule to define which color will be changed to which other color
+                col_from, col_to = effect.split(' -> ')
+
+                # loop trait pile
+                for trait in trait_pile:
+                    if traits_df.loc[trait].cur_color.lower() == col_from.lower():
+                        print('__________change color at world end__________')
+                        traits_df.loc[trait, 'cur_color'] = col_to
+    # print(rule)
+    # print(effect)
+    # print(trait_pile)
 
 
 def worlds_end(worlds_end, p, player_cards, traits):

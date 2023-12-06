@@ -103,6 +103,65 @@ def btn_clear_trait_search():
     play_trait = None
 
 
+def btn_traits_world_end(from_, trait_idx, event):
+    # get trait & its WE effect
+    # trait = traits_df.loc[trait_idx].trait
+    effect = event.widget.get()
+    effect_idx = event.widget.current()
+
+    # print log
+    if effect_idx == 0:
+        print(">>> traits world end <<< resetting '{}'s worlds-end-effect..."
+              .format(traits_df.loc[trait_idx].trait))
+    else:
+        print(">>> traits world end <<< setting '{}'s worlds-end-effect to '{}'"
+              .format(traits_df.loc[trait_idx].trait, effect))
+
+    # check if effect was selected previously & if its different than the current, reset old effect
+    old_effect = traits_df.loc[trait_idx].cur_worlds_end
+
+    if old_effect != 'none' and old_effect != effect:
+        for trait in player_traits[from_]:
+            # skip current worlds-end-trait
+            if trait == trait_idx:
+                continue
+
+            # get current status before reseting
+            attachment = traits_df.loc[trait].cur_attachment
+            host = traits_df.loc[trait].cur_host
+            we_effect = traits_df.loc[trait].cur_worlds_end
+
+            # reset trait
+            update_traits_current_status('reset', trait, False)
+
+            # redo attachment effects
+            if attachment != 'none':
+                update_traits_current_status('attachment', trait, attachment)
+
+            # restore host in attachment
+            traits_df.loc[trait, 'cur_host'] = host
+
+            # redo worlds_end effects
+            if we_effect != 'none':
+                traits_df.loc[trait, 'cur_worlds_end'] = we_effect
+                update_traits_current_status('worlds_end', trait, player_traits[from_])
+
+    # set WE-effect to status_row of trait
+    if effect_idx == 0:
+        traits_df.loc[trait_idx, 'cur_worlds_end'] = 'none'
+    else:
+        traits_df.loc[trait_idx, 'cur_worlds_end'] = effect
+
+    # apply WE-effect and update current_values
+    update_traits_current_status('worlds_end', trait_idx, player_traits[from_])
+
+    # update trait pile & clear trait selection
+    create_trait_pile(player_rb_frames[from_], from_)
+
+    # update scoring
+    update_scoring(from_)
+
+
 def btn_attach_to(from_, attachment, event, possible_hosts):
     # get host_data from event_data
     host = event.widget.get()
@@ -782,27 +841,27 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
 
             # get task what to do at worlds end
-            we_task = rules.traits_WE_effects(traits_df, trait_idx)
+            we_effect = rules.traits_WE_tasks(traits_df, trait_idx)
 
             # create combobox
             cbox_attach_to = ttk.Combobox(
                 frame_trait_overview,
-                height=len(we_task),
-                values=we_task,
+                height=len(we_effect),
+                values=we_effect,
                 exportselection=0,
                 state="readonly",
                 width=10)
             cbox_attach_to.grid(row=irow, column=1, sticky='w')
-            # cbox_attach_to.bind(
-            #    "<<ComboboxSelected>>", lambda e, t=trait_idx: btn_attach_to(p, t, e)
-            # )
+            cbox_attach_to.bind(
+               "<<ComboboxSelected>>", lambda e, t=trait_idx: btn_traits_world_end(p, t, e)
+            )
 
-            # check if already attached to host
-            if traits_df.loc[trait_idx].cur_host == 'none':
+            # check if effect already selected
+            if traits_df.loc[trait_idx].cur_worlds_end == 'none':
                 cbox_attach_to.current(0)
             else:
-                cur_host = traits_df.loc[trait_idx].cur_host
-                cbox_attach_to.current(traits_filtered_idx.index(cur_host)+1)
+                cur_effect = traits_df.loc[trait_idx].cur_worlds_end
+                cbox_attach_to.current(we_effect.index(cur_effect))
 
 
 def create_player_frame(p):

@@ -750,6 +750,15 @@ def create_trait_pile(frame_trait_overview, p):
         if cur_face != traits_df.loc[trait_idx].face:
             print("_______________ add current face falue icon")
 
+        # has attachment
+        if traits_df.loc[trait_idx].cur_attachment != 'none':
+            icol += 1
+            tk.Label(
+                frame_pics,
+                image=images['attachment'],
+                bg=defaults["bg_trait_pile"]
+                ).grid(row=0, column=icol)
+
         # noFX
         if 'Inactive' in traits_df.loc[trait_idx].cur_effect:
             icol += 1

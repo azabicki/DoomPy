@@ -125,7 +125,7 @@ def btn_attach_to(from_, attachment, event, possible_hosts):
     # check if attachment moved from old_host
     if old_host_idx:
         print("    >>> was until now on old host: {}".format(traits_df.loc[old_host_idx[0]].trait))
-        update_hosts_current_status(old_host_idx[0], [])
+        update_traits_current_status('reset', old_host_idx[0], [])
 
     # check if attachment is set back to "..." (idx=0)
     if event.widget.current() == 0:
@@ -137,7 +137,7 @@ def btn_attach_to(from_, attachment, event, possible_hosts):
 
         # set new attachment to status_row of host & update effects of attachment on host
         traits_df.loc[host_idx, 'cur_attachment'] = attachment
-        update_hosts_current_status(host_idx, attachment)
+        update_traits_current_status('attachment', host_idx, attachment)
 
     # update trait pile & clear trait selection
     create_trait_pile(player_rb_frames[from_], from_)
@@ -183,9 +183,9 @@ def btn_discard_trait(from_):
     search_trait_in_list(search_trait)  # keep current str in search_entry
 
     # reset current status of card(s)
-    update_hosts_current_status(card, [])
+    update_traits_current_status('reset', card, [])
     if attachment != 'none':
-        update_hosts_current_status(attachment, [])
+        update_traits_current_status('reset', attachment, [])
 
     # update scoring, stars & genes
     update_scoring(from_)
@@ -321,35 +321,51 @@ def btn_play_catastrophe(event, c):
     update_genes()
 
 
-def update_hosts_current_status(host, attachment):
-    # if 'attachment' is empty, host will be reseted
-    if attachment:
-        # get effects of attachments from rules.py
-        effects = rules.attachment_effects(traits_df, host, attachment)
+def update_traits_current_status(todo, *args):
+    match todo:
+        case 'reset':
+            trait = args[0]
+            log = args[-1]
 
-        # update cur_values of host
-        traits_df.loc[host, "cur_color"] = effects['color']
-        traits_df.loc[host, "cur_face"] = effects['face']
-        traits_df.loc[host, "cur_effect"] = effects['effect']
+            # reset trait
+            true_color = traits_df.loc[trait].color
+            true_face = traits_df.loc[trait].face
 
-        # print log
-        print(">>> current effects <<< '{}' is updated due to effects of '{}'"
-              .format(traits_df.loc[host].trait, traits_df.loc[attachment].trait))
+            traits_df.loc[trait, "cur_color"] = true_color
+            traits_df.loc[trait, "cur_face"] = true_face
+            traits_df.loc[trait, "cur_effect"] = 'none'
+            traits_df.loc[trait, "cur_host"] = 'none'
+            traits_df.loc[trait, "cur_attachment"] = 'none'
+            traits_df.loc[trait, "cur_worlds_end"] = 'none'
 
-    else:
-        # reset host
-        true_color = traits_df.loc[host].color
-        true_face = traits_df.loc[host].face
+            # print log
+            if log:
+                print(">>> current effects <<< '{}' is reseted to defaults"
+                      .format(traits_df.loc[trait].trait))
 
-        traits_df.loc[host, "cur_color"] = true_color
-        traits_df.loc[host, "cur_face"] = true_face
-        traits_df.loc[host, "cur_effect"] = 'none'
-        traits_df.loc[host, "cur_host"] = 'none'
-        traits_df.loc[host, "cur_attachment"] = 'none'
+        case 'attachment':
+            host = args[0]
+            attachment = args[1]
 
-        # print log
-        print(">>> current effects <<< '{}' is reseted to defaults"
-              .format(traits_df.loc[host].trait))
+            # save attachment to host
+            traits_df.loc[host, 'cur_attachment'] = attachment
+
+            # get effects of attachments from rules.py & update current status of host
+            effects = rules.attachment_effects(traits_df, host, attachment)
+            traits_df.loc[host, "cur_color"] = effects['color']
+            traits_df.loc[host, "cur_face"] = effects['face']
+            traits_df.loc[host, "cur_effect"] = effects['effect']
+
+            # print log
+            print(">>> current effects <<< '{}' is updated due to effects of '{}'"
+                  .format(traits_df.loc[host].trait, traits_df.loc[attachment].trait))
+
+        case 'worlds_end':
+            trait_idx = args[0]
+            trait_pile = args[1]
+
+            # call rules_function to update other current_values due to current effect
+            rules.traits_WE_effects(traits_df, trait_idx, trait_pile)
 
 
 def update_scoring(p):

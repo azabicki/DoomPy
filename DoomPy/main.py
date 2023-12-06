@@ -671,8 +671,8 @@ def create_trait_pile(frame_trait_overview, p):
 
         # ----- current effects due to attachments -----------------------
         # _current_ color
-        cur_color = traits_df.loc[trait_idx].cur_color
-        if cur_color != traits_df.loc[trait_idx].color:
+        cur_color = traits_df.loc[trait_idx].cur_color.lower()
+        if cur_color != traits_df.loc[trait_idx].color.lower():
             icol += 1
             cc = 'c' if 'colorless' in cur_color.lower() else ''
             cb = 'b' if 'blue' in cur_color.lower() else ''

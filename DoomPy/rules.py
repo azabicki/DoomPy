@@ -110,12 +110,6 @@ def drop_points(traits_df, player_traits, p, gene_pool):
                     if sum(tmp) > 0:
                         dp = sum(tmp)
 
-#                    cc2 = int(sum('green' in c.lower()
-#                                  for c in traits_df.iloc[tp].cur_color.tolist()
-#                                  for tp in player_traits
-#                                  if tp == player_traits[p]) / 2)
-#                    print(cc2)
-
                 case 'Brave (1)':
                     # load drop value from traits_df, because it was set manually, if its not nan
                     if not np.isnan(traits_df.loc[trait].cur_drops):
@@ -143,9 +137,6 @@ def drop_points(traits_df, player_traits, p, gene_pool):
                                        for pile in traits_df.iloc[player_traits[p]].cur_color.tolist()))
                     if all(tmp):
                         dp = 4
-
-#                    cc = [col in pile.lower() for col in colors for pile in pile_colors]
-#                    print(cc)
 
                 case 'Egg Clusters':
                     dp = sum('blue' in color.lower()

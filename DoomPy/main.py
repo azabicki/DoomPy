@@ -901,7 +901,7 @@ def create_trait_pile(frame_trait_overview, p):
             irow += 1
             tk.Label(
                 frame_trait_overview,
-                text="attach to:",
+                text="Attach to:",
                 bg=defaults["bg_trait_pile"],
                 fg=defaults["font_color_trait_pile"]
                 ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
@@ -936,7 +936,7 @@ def create_trait_pile(frame_trait_overview, p):
             irow += 1
             tk.Label(
                 frame_trait_overview,
-                text="@ worlds end:",
+                text="Worlds End:",
                 bg=defaults["bg_trait_pile"],
                 fg=defaults["font_color_trait_pile"]
                 ).grid(row=irow, column=0, padx=(40, 0), sticky='e')

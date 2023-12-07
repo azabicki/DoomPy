@@ -97,7 +97,9 @@ def drop_points(traits_df, player_traits, p, gene_pool):
                     dp = 2*n if traits_df.loc[trait].cur_attachment != 'none' else n
 
                 case 'Boredom (~)':
-                    pass
+                    # load drop value from traits_df, because it was set manually, if its not nan
+                    if not np.isnan(traits_df.loc[trait].cur_drops):
+                        dp = int(traits_df.loc[trait].cur_drops)
 
                 case 'Branches':
                     tmp = []
@@ -115,16 +117,24 @@ def drop_points(traits_df, player_traits, p, gene_pool):
 #                    print(cc2)
 
                 case 'Brave (1)':
-                    pass
+                    # load drop value from traits_df, because it was set manually, if its not nan
+                    if not np.isnan(traits_df.loc[trait].cur_drops):
+                        dp = int(traits_df.loc[trait].cur_drops)
 
                 case 'Camouflage (1)':
-                    pass
+                    # load drop value from traits_df, because it was set manually, if its not nan
+                    if not np.isnan(traits_df.loc[trait].cur_drops):
+                        dp = int(traits_df.loc[trait].cur_drops)
 
                 case 'Camouflage (2)':
-                    pass
+                    # load drop value from traits_df, because it was set manually, if its not nan
+                    if not np.isnan(traits_df.loc[trait].cur_drops):
+                        dp = int(traits_df.loc[trait].cur_drops)
 
                 case 'Cranial Crest':
-                    pass
+                    # load drop value from traits_df, because it was set manually, if its not nan
+                    if not np.isnan(traits_df.loc[trait].cur_drops):
+                        dp = int(traits_df.loc[trait].cur_drops)
 
                 case 'Dragon Heart':
                     tmp = []
@@ -146,7 +156,9 @@ def drop_points(traits_df, player_traits, p, gene_pool):
                              for tp in player_traits for t in tp)
 
                 case 'Fortunate (~)':
-                    pass
+                    # load drop value from traits_df, because it was set manually, if its not nan
+                    if not np.isnan(traits_df.loc[trait].cur_drops):
+                        dp = int(traits_df.loc[trait].cur_drops)
 
                 case 'Fortunate (1)':
                     n = []
@@ -229,7 +241,9 @@ def drop_points(traits_df, player_traits, p, gene_pool):
                     dp = gene_pool[p].get()
 
                 case 'Saudade (1)':
-                    pass
+                    # load drop value from traits_df, because it was set manually, if its not nan
+                    if not np.isnan(traits_df.loc[trait].cur_drops):
+                        dp = int(traits_df.loc[trait].cur_drops)
 
                 case 'Sentience':
                     we = traits_df.loc[trait].cur_worlds_end
@@ -238,7 +252,9 @@ def drop_points(traits_df, player_traits, p, gene_pool):
                                  for color in traits_df.iloc[player_traits[p]].cur_color.tolist())
 
                 case 'Serrated Teeth':
-                    pass
+                    # load drop value from traits_df, because it was set manually, if its not nan
+                    if not np.isnan(traits_df.loc[trait].cur_drops):
+                        dp = int(traits_df.loc[trait].cur_drops)
 
                 case 'Sticky Secretions':
                     dp = sum('purple' in color.lower()
@@ -263,7 +279,9 @@ def drop_points(traits_df, player_traits, p, gene_pool):
                     dp = -1 * len(player_traits[p])
 
                 case 'Tiny Arms':
-                    pass
+                    # load drop value from traits_df, because it was set manually, if its not nan
+                    if not np.isnan(traits_df.loc[trait].cur_drops):
+                        dp = int(traits_df.loc[trait].cur_drops)
 
                 case 'Viral':
                     pass

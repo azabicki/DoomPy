@@ -416,6 +416,24 @@ def btn_play_catastrophe(event, c):
         create_trait_pile(player_rb_frames[p], p)
 
 
+def update_manual_drops(event, trait, p):
+    value = event.widget.get()
+
+    # check if input is numeric
+    if value.isnumeric():
+        # save manually calculkated drop value to main traits_df
+        traits_df.loc[trait, 'cur_drops'] = int(value)
+    else:
+        manual_drops[trait].set('')
+        traits_df.loc[trait, 'cur_drops'] = np.nan
+
+    # update scoring
+    update_scoring()
+
+    # update this players trait pile
+    create_trait_pile(player_rb_frames[p], p)
+
+
 def update_traits_current_status(todo, *args):
     match todo:
         case 'reset':
@@ -859,6 +877,25 @@ def create_trait_pile(frame_trait_overview, p):
                 bg=defaults["bg_trait_pile"]
                 ).grid(row=0, column=icol)
 
+        # ----- manual DROP points entry ---------------------------------
+        cur_drop_eff = traits_df.loc[trait_idx].effect_drop
+        if (isinstance(cur_drop_eff, str) and ('own_hand' in traits_df.loc[trait_idx].effect_drop or
+                                               'discarded' in traits_df.loc[trait_idx].effect_drop)):
+            irow += 1
+            tk.Label(
+                frame_trait_overview,
+                text="Drop of Life:",
+                bg=defaults["bg_trait_pile"],
+                fg=defaults["font_color_trait_pile"]
+                ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
+
+            drop_entry = ttk.Entry(
+                frame_trait_overview,
+                width=3,
+                textvariable=manual_drops[trait_idx])
+            drop_entry.grid(row=irow, column=1, sticky='w')
+            drop_entry.bind("<KeyRelease>", lambda e, t=trait_idx: update_manual_drops(e, t, p))
+
         # ----- ATTACHMENT combobox if trait is attachment ---------------
         if traits_df.loc[trait_idx].attachment == 1:
             irow += 1
@@ -1294,6 +1331,11 @@ def reset_variables():
     lbox_cards_idx.set(traits_dfi)  # complete list of indices of traits for menu_listbox
     lbox_cards_str.set(traits_df.loc[traits_dfi].trait.values.tolist())  # complete list of names of traits
 
+    # reset manually calculated drop values
+    manual_drops.clear()
+    for i in range(len(traits_dfi)):
+        manual_drops.append(tk.StringVar(value='-'))
+
     # reset occured catastrophies
     catastrophies.clear()
     for i in range(n_catastrophies.get()):
@@ -1374,6 +1416,7 @@ lbox_cards_idx = tk.Variable(value="")  # traits >>shown<< in listbox on the lef
 lbox_cards_str = tk.Variable(value="")  # traits >>shown<< in listbox on the left, i.e. after filtering / as string
 play_trait = None                       # selected trait (by index in traits_df) in listbox
 lbox_traits = [None]                    # listbox widget of deck cards -> needed to be able to edit selected traits
+manual_drops = []                       # list to save manual drop entries to
 
 catastrophies = []                  # occured catastrophies / StringVar
 worlds_end = tk.StringVar(value="")

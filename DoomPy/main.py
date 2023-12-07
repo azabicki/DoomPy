@@ -170,11 +170,12 @@ def btn_traits_world_end(from_, trait_idx, event):
     # apply WE-effect and update current_values
     update_traits_current_status('worlds_end', trait_idx, player_traits[from_])
 
-    # update trait pile & clear trait selection
-    create_trait_pile(player_rb_frames[from_], from_)
-
     # update scoring
     update_scoring()
+
+    # update all trait piles
+    for p in range(n_player.get()):
+        create_trait_pile(player_rb_frames[p], p)
 
 
 def btn_attach_to(from_, attachment, event, possible_hosts):
@@ -212,11 +213,12 @@ def btn_attach_to(from_, attachment, event, possible_hosts):
         # set new attachment to status_row of host & update effects of attachment on host
         update_traits_current_status('attachment', host_idx, attachment)
 
-    # update trait pile & clear trait selection
-    create_trait_pile(player_rb_frames[from_], from_)
-
     # update scoring
     update_scoring()
+
+    # update all trait piles
+    for p in range(n_player.get()):
+        create_trait_pile(player_rb_frames[p], p)
 
 
 def btn_discard_trait(from_):
@@ -241,12 +243,10 @@ def btn_discard_trait(from_):
         print(">>> discard <<< ___ attachment '{}' (id:{}) is also discarded automatically"
               .format(traits_df.loc[attachment].trait, attachment))
 
-    # remove card(s) from player, update trait pile & clear trait selection
+    # remove card(s) from player & clear trait selection
     player_traits[from_].remove(card)
     if attachment != 'none':
         player_traits[from_].remove(attachment)
-
-    create_trait_pile(player_rb_frames[from_], from_)
     player_trait_selected[from_].set(np.nan)
 
     # add to deck traits & update deck_listbox
@@ -264,6 +264,10 @@ def btn_discard_trait(from_):
     update_scoring()
     update_stars()
     update_genes()
+
+    # update all trait piles
+    for p in range(n_player.get()):
+        create_trait_pile(player_rb_frames[p], p)
 
     print(traits_df.loc[card].tolist())
     if attachment != 'none':
@@ -319,12 +323,14 @@ def btn_move_trait(from_, cbox_move_to):
     if attachment != 'none':
         bisect.insort_left(player_traits[to], attachment)
 
-    create_trait_pile(player_rb_frames[to], to)
-
     # update scoring, stars & genes
     update_scoring()
     update_stars()
     update_genes()
+
+    # update all trait piles
+    for p in range(n_player.get()):
+        create_trait_pile(player_rb_frames[p], p)
 
     # clear combobox
     cbox_move_to.current(0)
@@ -352,7 +358,6 @@ def btn_play_trait(to):
 
     # add to players traits & update trait_pile
     bisect.insort_left(player_traits[to], trait_idx)
-    create_trait_pile(player_rb_frames[to], to)
 
     # remove from deck & update deck_listbox
     deck_cards.remove(trait_idx)
@@ -362,6 +367,10 @@ def btn_play_trait(to):
     update_scoring()
     update_stars()
     update_genes()
+
+    # update all trait piles
+    for p in range(n_player.get()):
+        create_trait_pile(player_rb_frames[p], p)
 
     # play sound bites
     play(trait)
@@ -375,7 +384,12 @@ def btn_play_worlds_end():
     # print log
     print(">>> world's end <<< '{}' is happening now...".format(worlds_end.get()))
 
+    # update scoring
     update_scoring()
+
+    # update all trait piles
+    for p in range(n_player.get()):
+        create_trait_pile(player_rb_frames[p], p)
 
 
 def btn_play_catastrophe(event, c):

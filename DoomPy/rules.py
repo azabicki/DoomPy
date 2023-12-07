@@ -94,13 +94,26 @@ def total_drop_points(traits_df, player_traits, p, gene_pool):
                         dp = 4
 
                 case 'Bionic Arm':
-                    pass
+                    n = sum([traits_df.loc[t].game == 'Techlings' for t in player_traits[p]])
+                    dp = 2*n if traits_df.loc[trait].cur_attachment != 'none' else n
 
                 case 'Boredom (~)':
                     pass
 
                 case 'Branches':
-                    pass
+                    tmp = []
+                    for tp in player_traits:
+                        tmp.append(int(sum('green' in c.lower()
+                                           for c in traits_df.iloc[tp].cur_color.tolist()) / 2))
+                    tmp.pop(p)
+                    if sum(tmp) > 0:
+                        dp = sum(tmp)
+
+#                    cc2 = int(sum('green' in c.lower()
+#                                  for c in traits_df.iloc[tp].cur_color.tolist()
+#                                  for tp in player_traits
+#                                  if tp == player_traits[p]) / 2)
+#                    print(cc2)
 
                 case 'Brave (1)':
                     pass
@@ -115,19 +128,34 @@ def total_drop_points(traits_df, player_traits, p, gene_pool):
                     pass
 
                 case 'Dragon Heart':
-                    pass
+                    tmp = []
+                    for col in colors:
+                        tmp.append(any(col in pile.lower()
+                                       for pile in traits_df.iloc[player_traits[p]].cur_color.tolist()))
+                    if all(tmp):
+                        dp = 4
+
+#                    cc = [col in pile.lower() for col in colors for pile in pile_colors]
+#                    print(cc)
 
                 case 'Egg Clusters':
-                    pass
+                    dp = sum('blue' in color.lower()
+                             for color in traits_df.iloc[player_traits[p]].cur_color.tolist())
 
                 case 'Elven Ears':
-                    pass
+                    dp = sum(traits_df.loc[t].game == 'Mythlings'
+                             for tp in player_traits for t in tp)
 
                 case 'Fortunate (~)':
                     pass
 
                 case 'Fortunate (1)':
-                    pass
+                    n = []
+                    for col in colors:
+                        n.append(sum(col in color.lower()
+                                     for color in traits_df.iloc[player_traits[p]].cur_color.tolist()))
+                    if n.index(max(n)) == colors.index('green') and n.count(max(n)) == 1:
+                        dp = 2
 
                 case 'GMO':
                     host = traits_df.loc[trait].cur_host
@@ -141,16 +169,24 @@ def total_drop_points(traits_df, player_traits, p, gene_pool):
                                 dp += sum(col in i.lower() for i in pile_colors)
 
                 case 'Gratitude':
-                    pass
+                    tmp = []
+                    for col in colors:
+                        tmp.append(any(col in pile.lower()
+                                       for pile in traits_df.iloc[player_traits[p]].cur_color.tolist()))
+                    if sum(tmp) > 0:
+                        dp = sum(tmp)
 
                 case 'Heat Vision':
-                    pass
+                    dp = sum('red' in color.lower()
+                             for color in traits_df.iloc[player_traits[p]].cur_color.tolist())
 
                 case 'Hypermyelination':
-                    pass
+                    dp = max(gp.get() for gp in gene_pool)
 
                 case 'Immunity':
-                    pass
+                    dp = sum(face < 0
+                             for face in traits_df.iloc[player_traits[p]].face.tolist()
+                             if not isinstance(face, str)) * 2
 
                 case 'Kidney':
                     # calc Kidneys in own trait pile
@@ -158,47 +194,74 @@ def total_drop_points(traits_df, player_traits, p, gene_pool):
                               for t in player_traits[p]])
 
                 case 'Mecha':
-                    pass
+                    host = traits_df.loc[trait].cur_host
+                    if host != 'none':
+                        dp = int(np.nansum(traits_df.iloc[player_traits[p]].effectless.tolist()))
 
                 case 'Mindful':
-                    pass
+                    dp = sum('colorless' in color.lower()
+                             for color in traits_df.iloc[player_traits[p]].cur_color.tolist())
 
                 case 'Nano':
-                    pass
+                    host = traits_df.loc[trait].cur_host
+                    if host != 'none':
+                        if not isinstance(traits_df.loc[host].cur_face, str):
+                            dp = traits_df.loc[host].cur_face
 
                 case 'Overgrowth':
-                    pass
+                    dp = sum('green' in color.lower()
+                             for color in traits_df.iloc[player_traits[p]].cur_color.tolist())
 
                 case 'Pack Behavior':
-                    pass
+                    tmp = []
+                    for col in colors:
+                        tmp.append(int(sum(col in color.lower()
+                                           for color in traits_df.iloc[player_traits[p]].cur_color.tolist()) / 2))
+                    print(tmp)
+                    if sum(tmp) > 0:
+                        dp = sum(tmp)
 
                 case 'Pollination':
-                    pass
+                    dp = sum(fv == 1
+                             for fv in traits_df.iloc[player_traits[p]].cur_face.tolist())
 
                 case 'Random Fertilization':
-                    pass
+                    # own gene pool
+                    dp = gene_pool[p].get()
 
                 case 'Saudade (1)':
                     pass
 
                 case 'Sentience':
-                    pass
+                    we = traits_df.loc[trait].cur_worlds_end
+                    if we != 'none':
+                        dp = sum(we in color.lower()
+                                 for color in traits_df.iloc[player_traits[p]].cur_color.tolist())
 
                 case 'Serrated Teeth':
                     pass
 
                 case 'Sticky Secretions':
-                    pass
+                    dp = sum('purple' in color.lower()
+                             for color in traits_df.iloc[player_traits[p]].cur_color.tolist())
 
                 case 'Swarm':
                     # calc all swarms in all trait piles
-                    dp = sum([1 for tp in player_traits for t in tp if traits_df.loc[t].trait == 'Swarm'])
+                    dp = sum([traits_df.loc[t].trait == 'Swarm'
+                              for tp in player_traits
+                              for t in tp])
 
                 case 'Symbiosis':
-                    pass
+                    n = []
+                    for col in colors:
+                        n.append(sum(col in color.lower()
+                                     for color in traits_df.iloc[player_traits[p]].cur_color.tolist()))
+                    n = [i for i in n if i > 0]
+                    if len(n) >= 2:
+                        dp = min(n) * 2
 
                 case 'Tiny':
-                    pass
+                    dp = -1 * len(player_traits[p])
 
                 case 'Tiny Arms':
                     pass
@@ -207,11 +270,12 @@ def total_drop_points(traits_df, player_traits, p, gene_pool):
                     pass
 
             # set current drop value & update total
+            traits_df.loc[trait, 'cur_drops'] = dp
             if not np.isnan(dp):
-                traits_df.loc[trait, 'cur_drops'] = dp
+                print("____ {} drop points by '{}'".format(dp, traits_df.loc[trait].trait))
                 total += dp
 
-    print("_________ total drop count: {}".format(total))
+#    print("_________ total drop count: {}".format(total))
 
     return total
 

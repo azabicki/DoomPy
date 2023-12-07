@@ -90,16 +90,16 @@ for files in glob.glob(os.path.join(curdir, "sounds", "*.mp3")):
 
 # switches for icons -----------------------------------------------------
 show = {}
-show['color'] = True
-show['face'] = True
-show['collection'] = False
-show['dominant'] = False
-show['action'] = False
-show['drops'] = True
-show['gene_pool'] = False
-show['worlds_end'] = False
-show['effectless'] = False
-show['attachment'] = False
+show['color'] = True        # default: True
+show['face'] = True         # default: True
+show['collection'] = False  # default: False
+show['dominant'] = False    # default: False
+show['action'] = False      # default: False
+show['drops'] = True        # default: True
+show['gene_pool'] = False   # default: False
+show['worlds_end'] = False  # default: False
+show['effectless'] = False  # default: False
+show['attachment'] = False  # default: False
 
 
 # functions ##############################################################
@@ -670,8 +670,6 @@ def create_trait_pile(frame_trait_overview, p):
             text=" " + trait,
             variable=player_trait_selected[p],
             value=trait_idx,
-            bg=defaults["bg_trait_pile"],
-            fg=defaults["font_color_trait_pile"],
             command=lambda: update_selected_trait(p, player_trait_selected[p]))
         rb_trait.grid(row=irow, column=0, padx=3, pady=ypad, sticky='nsw')
 
@@ -680,7 +678,7 @@ def create_trait_pile(frame_trait_overview, p):
             rb_trait.config(fg=defaults["font_color_trait_pile_dominant"])
 
         # ----- icons ----------------------------------------------------
-        frame_pics = tk.Frame(frame_trait_overview, bg=defaults["bg_trait_pile"])
+        frame_pics = tk.Frame(frame_trait_overview)
         frame_pics.grid(row=irow, column=1, sticky='sw')
         icol = -1  # initialize column index which changes depending on card
 
@@ -696,8 +694,7 @@ def create_trait_pile(frame_trait_overview, p):
 
             tk.Label(
                 frame_pics,
-                image=images[cc+cb+cg+cp+cr],
-                bg=defaults["bg_trait_pile"]
+                image=images[cc+cb+cg+cp+cr]
                 ).grid(row=0, column=icol)
 
         # face
@@ -708,8 +705,7 @@ def create_trait_pile(frame_trait_overview, p):
 
             tk.Label(
                 frame_pics,
-                image=images[face_string],
-                bg=defaults["bg_trait_pile"]
+                image=images[face_string]
                 ).grid(row=0, column=icol)
 
         # collection
@@ -718,7 +714,7 @@ def create_trait_pile(frame_trait_overview, p):
             lbl_collection = tk.Label(
                 frame_pics,
                 image=images['no_star'],
-                bg=defaults["bg_trait_pile"])
+                )
             lbl_collection.grid(row=0, column=icol)
 
             match traits_df.loc[trait_idx].game.lower():
@@ -742,8 +738,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=images['dominant'],
-                bg=defaults["bg_trait_pile"]
+                image=images['dominant']
                 ).grid(row=0, column=icol)
 
         # action
@@ -751,8 +746,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=images['action'],
-                bg=defaults["bg_trait_pile"]
+                image=images['action']
                 ).grid(row=0, column=icol)
 
         # drops
@@ -760,8 +754,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=images['drops'],
-                bg=defaults["bg_trait_pile"]
+                image=images['drops']
                 ).grid(row=0, column=icol)
 
         # gene pool
@@ -769,8 +762,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=images['gene_pool'],
-                bg=defaults["bg_trait_pile"]
+                image=images['gene_pool']
                 ).grid(row=0, column=icol)
 
         # worlds_end
@@ -778,8 +770,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=images['worlds_end'],
-                bg=defaults["bg_trait_pile"]
+                image=images['worlds_end']
                 ).grid(row=0, column=icol)
 
         # effectless
@@ -787,8 +778,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=images['effectless'],
-                bg=defaults["bg_trait_pile"]
+                image=images['effectless']
                 ).grid(row=0, column=icol)
 
         # attachment
@@ -796,8 +786,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=images['attachment'],
-                bg=defaults["bg_trait_pile"]
+                image=images['attachment']
                 ).grid(row=0, column=icol)
 
         # add SEPERATOR after _true_ icons
@@ -818,8 +807,7 @@ def create_trait_pile(frame_trait_overview, p):
 
             tk.Label(
                 frame_pics,
-                image=images[cc+cb+cg+cp+cr],
-                bg=defaults["bg_trait_pile"]
+                image=images[cc+cb+cg+cp+cr]
                 ).grid(row=0, column=icol)
 
         # drop value
@@ -830,8 +818,7 @@ def create_trait_pile(frame_trait_overview, p):
 
             tk.Label(
                 frame_pics,
-                image=images[drop_string],
-                bg=defaults["bg_trait_pile"]
+                image=images[drop_string]
                 ).grid(row=0, column=icol)
 
         # has attachment
@@ -839,8 +826,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=images['attachment'],
-                bg=defaults["bg_trait_pile"]
+                image=images['attachment']
                 ).grid(row=0, column=icol)
 
         # noFX
@@ -848,8 +834,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=images['noFX'],
-                bg=defaults["bg_trait_pile"]
+                image=images['noFX']
                 ).grid(row=0, column=icol)
 
         # noRemove
@@ -857,8 +842,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=images['noRemove'],
-                bg=defaults["bg_trait_pile"]
+                image=images['noRemove']
                 ).grid(row=0, column=icol)
 
         # noDiscard
@@ -866,8 +850,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=images['noDiscard'],
-                bg=defaults["bg_trait_pile"]
+                image=images['noDiscard']
                 ).grid(row=0, column=icol)
 
         # noSteal
@@ -875,8 +858,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=images['noSteal'],
-                bg=defaults["bg_trait_pile"]
+                image=images['noSteal']
                 ).grid(row=0, column=icol)
 
         # noSwap
@@ -884,8 +866,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(
                 frame_pics,
-                image=images['noSwap'],
-                bg=defaults["bg_trait_pile"]
+                image=images['noSwap']
                 ).grid(row=0, column=icol)
 
         # ----- manual DROP points entry ---------------------------------
@@ -895,9 +876,7 @@ def create_trait_pile(frame_trait_overview, p):
             irow += 1
             tk.Label(
                 frame_trait_overview,
-                text="Drop of Life:",
-                bg=defaults["bg_trait_pile"],
-                fg=defaults["font_color_trait_pile"]
+                text="Drop of Life:"
                 ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
 
             drop_entry = ttk.Entry(
@@ -912,9 +891,7 @@ def create_trait_pile(frame_trait_overview, p):
             irow += 1
             tk.Label(
                 frame_trait_overview,
-                text="Attach to:",
-                bg=defaults["bg_trait_pile"],
-                fg=defaults["font_color_trait_pile"]
+                text="Attach to:"
                 ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
 
             # filter only non-attachment-traits and check if this is already attached to a trait
@@ -947,9 +924,7 @@ def create_trait_pile(frame_trait_overview, p):
             irow += 1
             tk.Label(
                 frame_trait_overview,
-                text="Worlds End:",
-                bg=defaults["bg_trait_pile"],
-                fg=defaults["font_color_trait_pile"]
+                text="Worlds End:"
                 ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
 
             # get task what to do at worlds end
@@ -987,23 +962,21 @@ def create_trait_pile(frame_trait_overview, p):
                       ).grid(row=irow+1, column=0, columnspan=2, padx=5, pady=10, sticky='we')
 
         # create separate frame
-        frame_viral = tk.Frame(frame_trait_overview, bg=defaults["bg_trait_pile"])
+        frame_viral = tk.Frame(frame_trait_overview)
         frame_viral.grid(row=irow+2, column=0, columnspan=2, sticky='we')
 
         # add label & drop icon
         tk.Label(
             frame_viral,
             text="Viral",
-            bg=defaults["bg_trait_pile"],
             fg="mediumorchid1"
             ).grid(row=1, column=0, padx=(20, 0), sticky='e')
         tk.Label(
             frame_viral,
             text=" punishes ",
             image=images["drops"],
-            bg=defaults["bg_trait_pile"],
             compound=tk.LEFT
-            ).grid(row=1, column=1)
+            ).grid(row=1, column=1, sticky='w')
 
         # check if worlds end effect was chosen
         we_viral = traits_df.loc[viral_idx].cur_worlds_end
@@ -1013,14 +986,12 @@ def create_trait_pile(frame_trait_overview, p):
             # add color icon
             tk.Label(
                 frame_viral,
-                image=images[we_viral[0]],
-                bg=defaults["bg_trait_pile"]
+                image=images[we_viral[0]]
                 ).grid(row=1, column=2)
             # add points icono
             tk.Label(
                 frame_viral,
-                image=images[vp_s[p]],
-                bg=defaults["bg_trait_pile"]
+                image=images[vp_s[p]]
                 ).grid(row=1, column=3)
 
             print("Viral acts on '{}' traits in '{}'s trait pile -> drop points = {}"
@@ -1114,7 +1085,7 @@ def create_player_frame(p):
     frame_traits.columnconfigure(0, weight=1)  # for left button under trait-pile
     frame_traits.columnconfigure(1, weight=1)  # for right button under trait-pile
 
-    player_rb_frames[p] = tk.Frame(frame_traits, bg=defaults["bg_trait_pile"])
+    player_rb_frames[p] = tk.Frame(frame_traits)
     player_rb_frames[p].grid(row=0, column=0, columnspan=2, sticky='nesw', padx=border, pady=border)
     create_trait_pile(player_rb_frames[p], p)
 

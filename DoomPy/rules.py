@@ -1,3 +1,6 @@
+import numpy as np
+
+
 # rules for filtering attachable traits depending on trait_pile and attachment
 def filter_attachables(traits_df, traits_filtered, attachment):
     # get attachment-rule of attachment

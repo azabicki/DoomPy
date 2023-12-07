@@ -205,7 +205,7 @@ def btn_attach_to(from_, attachment, event, possible_hosts):
     # check if attachment is set back to "..." (idx=0)
     if event.widget.current() == 0:
         # reset host='none' to status_row of attachment
-        traits_df.loc[attachment, 'cur_host'] = 'none'
+        update_traits_current_status('reset', attachment, [])
     else:
         # set new host_idx to status_row of attachment
         traits_df.loc[attachment, 'cur_host'] = host_idx
@@ -405,8 +405,13 @@ def btn_play_catastrophe(event, c):
     print(">>> catastrophe <<< played catastrophe #{}: '{}'"
           .format(c+1, played_catastrophy))
 
-    # update genes
+    # update genes & scoring
     update_genes()
+    update_scoring()
+
+    # update all trait piles
+    for p in range(n_player.get()):
+        create_trait_pile(player_rb_frames[p], p)
 
 
 def update_traits_current_status(todo, *args):
@@ -473,7 +478,7 @@ def update_scoring():
                           if not isinstance(traits_df.loc[trait_idx].face, str)]))
 
         # calculate drops points
-        p_drop = rules.total_drop_points(traits_df, player_traits, p)
+        p_drop = rules.total_drop_points(traits_df, player_traits, p, player_genes)
 
         # calculate world's end points
         p_worlds_end = rules.worlds_end(worlds_end.get(), p, player_traits, traits_df)

@@ -459,29 +459,38 @@ def update_traits_current_status(todo, *args):
 
 def update_scoring():
     for p in range(n_player.get()):
+        # get current points
+        old_points = [player_points[p]['face'].get(),
+                      player_points[p]['drops'].get(),
+                      player_points[p]['worlds_end'].get(),
+                      player_points[p]['total'].get()]
+
         # get cards
         trait_pile = player_traits[p]
 
         # calculate face value
         p_face = int(sum([traits_df.loc[trait_idx].face for trait_idx in trait_pile
                           if not isinstance(traits_df.loc[trait_idx].face, str)]))
-        player_points[p]['face'].set(p_face)
 
         # calculate drops points
-        p_drop = rules.total_drop_points(traits_df, trait_pile)
-        player_points[p]['drops'].set(p_drop)
+        p_drop = rules.total_drop_points(traits_df, player_traits, p)
 
         # calculate world's end points
         p_worlds_end = rules.worlds_end(worlds_end.get(), p, player_traits, traits_df)
-        player_points[p]['worlds_end'].set(p_worlds_end)
 
         # calculate total score
         total = p_face + p_drop + p_worlds_end
+
+        # update points
+        player_points[p]['face'].set(p_face)
+        player_points[p]['drops'].set(p_drop)
+        player_points[p]['worlds_end'].set(p_worlds_end)
         player_points[p]['total'].set(total)
 
-        # print log
-        print(">>> scoring <<< current points for '{}': face = {}  |  drops = {}  |  WE = {}  |  total = {}"
-              .format(player_name[p].get(), p_face, p_drop, p_worlds_end, total))
+        # print log, only if points changed
+        if old_points != [p_face, p_drop, p_worlds_end, total]:
+            print(">>> scoring <<< current points for '{}': face = {}  |  drops = {}  |  WE = {}  |  total = {}"
+                  .format(player_name[p].get(), p_face, p_drop, p_worlds_end, total))
 
 
 def update_genes():

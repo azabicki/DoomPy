@@ -67,6 +67,33 @@ def attachment_effects(traits_df, host, attachment):
     return effects
 
 
+def total_drop_points(traits_df, player_traits, p):
+    print("___ calculate total drop score...")
+
+    total = 0
+    # loop trait pile and apply drop-rules
+    for trait in player_traits[p]:
+        # only if drop
+        if traits_df.loc[trait].drops == 1:
+            # match trait _name_
+            match traits_df.loc[trait].trait:
+                case 'Swarm':
+                    # calc all swarms in all trait piles
+                    n = sum([1 for tp in player_traits for t in tp if traits_df.loc[t].trait == 'Swarm'])
+
+                    # set current drop value
+                    traits_df.loc[trait, 'cur_drops'] = n
+
+                    # update total
+                    total += n
+
+                    print("___ {} Swarms played ___".format(n))
+
+    print("_________ total drop count: {}".format(total))
+
+    return total
+
+
 def traits_WE_tasks(traits_df, host):
     # get effect of trait
     rule = traits_df.loc[host].effect_worlds_end

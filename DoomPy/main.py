@@ -173,7 +173,7 @@ def btn_traits_world_end(from_, trait_idx, event):
     create_trait_pile(player_rb_frames[from_], from_)
 
     # update scoring
-    update_scoring(from_)
+    update_scoring()
 
 
 def btn_attach_to(from_, attachment, event, possible_hosts):
@@ -215,7 +215,7 @@ def btn_attach_to(from_, attachment, event, possible_hosts):
     create_trait_pile(player_rb_frames[from_], from_)
 
     # update scoring
-    update_scoring(from_)
+    update_scoring()
 
 
 def btn_discard_trait(from_):
@@ -260,7 +260,7 @@ def btn_discard_trait(from_):
         update_traits_current_status('reset', attachment, [])
 
     # update scoring, stars & genes
-    update_scoring(from_)
+    update_scoring()
     update_stars()
     update_genes()
 
@@ -321,8 +321,7 @@ def btn_move_trait(from_, cbox_move_to):
     create_trait_pile(player_rb_frames[to], to)
 
     # update scoring, stars & genes
-    update_scoring(from_)
-    update_scoring(to)
+    update_scoring()
     update_stars()
     update_genes()
 
@@ -359,7 +358,7 @@ def btn_play_trait(to):
     btn_clear_trait_search()
 
     # update scoring, stars & genes
-    update_scoring(to)
+    update_scoring()
     update_stars()
     update_genes()
 
@@ -375,8 +374,7 @@ def btn_play_worlds_end():
     # print log
     print(">>> world's end <<< '{}' is happening now...".format(worlds_end.get()))
 
-    for i in range(n_player.get()):
-        update_scoring(i)
+    update_scoring()
 
 
 def btn_play_catastrophe(event, c):
@@ -443,30 +441,31 @@ def update_traits_current_status(todo, *args):
             rules.traits_WE_effects(traits_df, trait_idx, trait_pile)
 
 
-def update_scoring(p):
-    # get cards
-    trait_pile = player_traits[p]
+def update_scoring():
+    for p in range(n_player.get()):
+        # get cards
+        trait_pile = player_traits[p]
 
-    # calculate face value
-    p_face = int(sum([traits_df.loc[trait_idx].face for trait_idx in trait_pile
-                      if not isinstance(traits_df.loc[trait_idx].face, str)]))
-    player_points[p]['face'].set(p_face)
+        # calculate face value
+        p_face = int(sum([traits_df.loc[trait_idx].face for trait_idx in trait_pile
+                          if not isinstance(traits_df.loc[trait_idx].face, str)]))
+        player_points[p]['face'].set(p_face)
 
-    # calculate drops points
-    p_drop = 0
-    player_points[p]['drops'].set(p_drop)
+        # calculate drops points
+        p_drop = rules.total_drop_points(traits_df, trait_pile)
+        player_points[p]['drops'].set(p_drop)
 
-    # calculate world's end points
-    p_worlds_end = rules.worlds_end(worlds_end.get(), p, player_traits, traits_df)
-    player_points[p]['worlds_end'].set(p_worlds_end)
+        # calculate world's end points
+        p_worlds_end = rules.worlds_end(worlds_end.get(), p, player_traits, traits_df)
+        player_points[p]['worlds_end'].set(p_worlds_end)
 
-    # calculate total score
-    total = p_face + p_drop + p_worlds_end
-    player_points[p]['total'].set(total)
+        # calculate total score
+        total = p_face + p_drop + p_worlds_end
+        player_points[p]['total'].set(total)
 
-    # print log
-    print(">>> scoring <<< current points for '{}': face = {}  |  drops = {}  |  WE = {}  |  total = {}"
-          .format(player_name[p].get(), p_face, p_drop, p_worlds_end, total))
+        # print log
+        print(">>> scoring <<< current points for '{}': face = {}  |  drops = {}  |  WE = {}  |  total = {}"
+              .format(player_name[p].get(), p_face, p_drop, p_worlds_end, total))
 
 
 def update_genes():

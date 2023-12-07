@@ -317,9 +317,10 @@ def traits_WE_effects(traits_df, host, trait_pile):
 
                 # loop trait pile
                 for trait in trait_pile:
-                    if traits_df.loc[trait].cur_color.lower() == col_from.lower():
-                        print('__________change color at world end__________')
-                        traits_df.loc[trait, 'cur_color'] = col_to
+                    if col_from.lower() in traits_df.loc[trait].cur_color.lower():
+                        old_colors = traits_df.loc[trait].cur_color.lower()
+                        new_colors = old_colors.replace(col_from, col_to)
+                        traits_df.loc[trait, 'cur_color'] = new_colors
 
 
 def worlds_end(worlds_end, p, player_cards, traits):

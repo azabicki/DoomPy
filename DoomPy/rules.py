@@ -75,19 +75,136 @@ def total_drop_points(traits_df, player_traits, p):
     for trait in player_traits[p]:
         # only if drop
         if traits_df.loc[trait].drops == 1:
+            dp = np.nan
+
             # match trait _name_
             match traits_df.loc[trait].trait:
+
+                case 'Altruistic':
+                    # own gene_pool
+                    dp = gene_pool[p].get()
+
+                case 'Apex Predator':
+                    n = [len(i) for i in player_traits]
+                    if n.index(max(n)) == p and np.unique(n).size == len(n):
+                        dp = 4
+
+                case 'Bionic Arm':
+                    pass
+
+                case 'Boredom (~)':
+                    pass
+
+                case 'Branches':
+                    pass
+
+                case 'Brave (1)':
+                    pass
+
+                case 'Camouflage (1)':
+                    pass
+
+                case 'Camouflage (2)':
+                    pass
+
+                case 'Cranial Crest':
+                    pass
+
+                case 'Dragon Heart':
+                    pass
+
+                case 'Egg Clusters':
+                    pass
+
+                case 'Elven Ears':
+                    pass
+
+                case 'Fortunate (~)':
+                    pass
+
+                case 'Fortunate (1)':
+                    pass
+
+                case 'GMO':
+                    host = traits_df.loc[trait].cur_host
+                    if host != 'none':
+                        host_color = traits_df.loc[host].color
+                        pile_colors = traits_df.iloc[player_traits[p]].cur_color.tolist()
+
+                        dp = 0
+                        for col in ['blue', 'green', 'purple', 'red']:
+                            if col in host_color.lower():
+                                dp += sum(col in i.lower() for i in pile_colors)
+
+                case 'Gratitude':
+                    pass
+
+                case 'Heat Vision':
+                    pass
+
+                case 'Hypermyelination':
+                    pass
+
+                case 'Immunity':
+                    pass
+
+                case 'Kidney':
+                    # calc Kidneys in own trait pile
+                    dp = sum([1 for t in player_traits[p] if traits_df.loc[t].trait == 'Kidney'])
+
+                case 'Mecha':
+                    pass
+
+                case 'Mindful':
+                    pass
+
+                case 'Nano':
+                    pass
+
+                case 'Overgrowth':
+                    pass
+
+                case 'Pack Behavior':
+                    pass
+
+                case 'Pollination':
+                    pass
+
+                case 'Random Fertilization':
+                    pass
+
+                case 'Saudade (1)':
+                    pass
+
+                case 'Sentience':
+                    pass
+
+                case 'Serrated Teeth':
+                    pass
+
+                case 'Sticky Secretions':
+                    pass
+
                 case 'Swarm':
                     # calc all swarms in all trait piles
-                    n = sum([1 for tp in player_traits for t in tp if traits_df.loc[t].trait == 'Swarm'])
+                    dp = sum([1 for tp in player_traits for t in tp if traits_df.loc[t].trait == 'Swarm'])
 
-                    # set current drop value
-                    traits_df.loc[trait, 'cur_drops'] = n
+                case 'Symbiosis':
+                    pass
 
-                    # update total
-                    total += n
+                case 'Tiny':
+                    pass
 
-                    print("___ {} Swarms played ___".format(n))
+                case 'Tiny Arms':
+                    pass
+
+                case 'Viral':
+                    pass
+
+            # set current drop value & update total
+            if not np.isnan(dp):
+                traits_df.loc[trait, 'cur_drops'] = dp
+                total += dp
 
     print("_________ total drop count: {}".format(total))
 
@@ -137,9 +254,6 @@ def traits_WE_effects(traits_df, host, trait_pile):
                     if traits_df.loc[trait].cur_color.lower() == col_from.lower():
                         print('__________change color at world end__________')
                         traits_df.loc[trait, 'cur_color'] = col_to
-    # print(rule)
-    # print(effect)
-    # print(trait_pile)
 
 
 def worlds_end(worlds_end, p, player_cards, traits):

@@ -224,7 +224,8 @@ def btn_attach_to(from_, attachment, event, possible_hosts):
 def btn_discard_trait(from_):
     # get card & its attachment
     card = player_trait_selected[from_].get()
-    attachment = traits_df.loc[card].cur_attachment
+    if not np.isnan(card):
+        attachment = traits_df.loc[card].cur_attachment
 
     # return, if no trait selected
     if np.isnan(card):
@@ -277,7 +278,8 @@ def btn_discard_trait(from_):
 def btn_move_trait(from_, cbox_move_to):
     # get card & its attachment
     card = player_trait_selected[from_].get()
-    attachment = traits_df.loc[card].cur_attachment
+    if not np.isnan(card):
+        attachment = traits_df.loc[card].cur_attachment
 
     # return, if no target selected
     if cbox_move_to.current() == 0:
@@ -879,7 +881,7 @@ def create_trait_pile(frame_trait_overview, p):
                 values=traits_filtered_str,
                 exportselection=0,
                 state="readonly",
-                width=7)
+                width=8)
             cbox_attach_to.grid(row=irow, column=1, sticky='w')
             cbox_attach_to.bind("<<ComboboxSelected>>",
                                 lambda e, t=trait_idx, idx=traits_filtered_idx:

@@ -1298,6 +1298,15 @@ def reset_variables():
     for i in range(n_catastrophies.get()):
         catastrophies.append(tk.StringVar(value=""))
 
+    # reset current status
+    traits_df["cur_color"] = traits_df.color
+    traits_df["cur_face"] = traits_df.face
+    traits_df["cur_drops"] = np.nan
+    traits_df["cur_effect"] = 'none'
+    traits_df["cur_host"] = 'none'
+    traits_df["cur_attachment"] = 'none'
+    traits_df["cur_worlds_end"] = 'none'
+
 
 def start_game():
     # reset variables ----------------------------------------------------

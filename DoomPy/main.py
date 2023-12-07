@@ -261,9 +261,9 @@ def btn_discard_trait(from_):
         update_traits_current_status('reset', attachment, [])
 
     # update scoring, stars & genes
-    update_scoring()
     update_stars()
     update_genes()
+    update_scoring()
 
     # update all trait piles
     for p in range(n_player.get()):
@@ -324,9 +324,9 @@ def btn_move_trait(from_, cbox_move_to):
         bisect.insort_left(player_traits[to], attachment)
 
     # update scoring, stars & genes
-    update_scoring()
     update_stars()
     update_genes()
+    update_scoring()
 
     # update all trait piles
     for p in range(n_player.get()):
@@ -364,9 +364,9 @@ def btn_play_trait(to):
     btn_clear_trait_search()
 
     # update scoring, stars & genes
-    update_scoring()
     update_stars()
     update_genes()
+    update_scoring()
 
     # update all trait piles
     for p in range(n_player.get()):

@@ -10,6 +10,7 @@ import pandas as pd
 import numpy as np
 from PIL import Image, ImageTk
 import rules as rules
+from pygame import mixer
 
 
 # system settings ########################################################
@@ -79,7 +80,14 @@ for files in glob.glob(os.path.join(curdir, "images", "face", "*.png")):
     actual_img_w = int(w / h * img_size_icons)
     images_dict[var_name] = images_dict[var_name].resize((actual_img_w, img_size_icons))
 
-# switches for icons
+# init mixer 4 playing sounds & preload files ----------------------------
+mixer.init()
+sounds = {}
+for files in glob.glob(os.path.join(curdir, "sounds", "*.mp3")):
+    var_name = os.path.splitext(os.path.basename(files))[0].lower()
+    sounds[var_name] = mixer.Sound(files)
+
+# switches for icons -----------------------------------------------------
 show = {}
 show['color'] = True
 show['face'] = True
@@ -94,6 +102,11 @@ show['attachment'] = False
 
 
 # functions ##############################################################
+def play(trait):
+    if trait.lower() in sounds:
+        sounds[trait.lower()].play()
+
+
 def btn_clear_trait_search():
     global play_trait
 
@@ -349,6 +362,9 @@ def btn_play_trait(to):
     update_scoring(to)
     update_stars()
     update_genes()
+
+    # play sound bites
+    play(trait)
 
 
 def btn_play_worlds_end():

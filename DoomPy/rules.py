@@ -70,8 +70,9 @@ def attachment_effects(traits_df, host, attachment):
     return effects
 
 
-def total_drop_points(traits_df, player_traits, p):
-    print("___ calculate total drop score...")
+def total_drop_points(traits_df, player_traits, p, gene_pool):
+    colors = ['blue', 'green', 'purple', 'red']
+#    print("___ calculate total drop score...")
 
     total = 0
     # loop trait pile and apply drop-rules
@@ -89,7 +90,7 @@ def total_drop_points(traits_df, player_traits, p):
 
                 case 'Apex Predator':
                     n = [len(i) for i in player_traits]
-                    if n.index(max(n)) == p and np.unique(n).size == len(n):
+                    if n.index(max(n)) == p and n.count(max(n)) == 1:
                         dp = 4
 
                 case 'Bionic Arm':
@@ -135,7 +136,7 @@ def total_drop_points(traits_df, player_traits, p):
                         pile_colors = traits_df.iloc[player_traits[p]].cur_color.tolist()
 
                         dp = 0
-                        for col in ['blue', 'green', 'purple', 'red']:
+                        for col in colors:
                             if col in host_color.lower():
                                 dp += sum(col in i.lower() for i in pile_colors)
 
@@ -153,7 +154,8 @@ def total_drop_points(traits_df, player_traits, p):
 
                 case 'Kidney':
                     # calc Kidneys in own trait pile
-                    dp = sum([1 for t in player_traits[p] if traits_df.loc[t].trait == 'Kidney'])
+                    dp = sum([traits_df.loc[t].trait == 'Kidney'
+                              for t in player_traits[p]])
 
                 case 'Mecha':
                     pass

@@ -480,7 +480,7 @@ def update_scoring():
                           if not isinstance(traits_df.loc[trait_idx].face, str)]))
 
         # calculate drops points
-        p_drop = rules.total_drop_points(traits_df, player_traits, p, player_genes)
+        p_drop = rules.drop_points(traits_df, player_traits, p, player_genes)
 
         # calculate world's end points
         p_worlds_end = rules.worlds_end(worlds_end.get(), p, player_traits, traits_df)

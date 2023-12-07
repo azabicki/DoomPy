@@ -70,9 +70,8 @@ def attachment_effects(traits_df, host, attachment):
     return effects
 
 
-def total_drop_points(traits_df, player_traits, p, gene_pool):
+def drop_points(traits_df, player_traits, p, gene_pool):
     colors = ['blue', 'green', 'purple', 'red']
-#    print("___ calculate total drop score...")
 
     total = 0
     # loop trait pile and apply drop-rules
@@ -274,8 +273,6 @@ def total_drop_points(traits_df, player_traits, p, gene_pool):
             if not np.isnan(dp):
                 print("____ {} drop points by '{}'".format(dp, traits_df.loc[trait].trait))
                 total += dp
-
-#    print("_________ total drop count: {}".format(total))
 
     return total
 

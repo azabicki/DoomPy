@@ -33,6 +33,7 @@ catastrophies_dfi = ages_df[ages_df["type"] == "Catastrophe"].index.tolist()
 # add columns to traits_df
 traits_df["cur_color"] = traits_df.color
 traits_df["cur_face"] = traits_df.face
+traits_df["cur_drops"] = np.nan
 traits_df["cur_effect"] = 'none'
 traits_df["cur_host"] = 'none'
 traits_df["cur_attachment"] = 'none'
@@ -406,6 +407,7 @@ def update_traits_current_status(todo, *args):
 
             traits_df.loc[trait, "cur_color"] = true_color
             traits_df.loc[trait, "cur_face"] = true_face
+            traits_df.loc[trait, "cur_drops"] = np.nan
             traits_df.loc[trait, "cur_effect"] = 'none'
             traits_df.loc[trait, "cur_host"] = 'none'
             traits_df.loc[trait, "cur_attachment"] = 'none'
@@ -761,10 +763,17 @@ def create_trait_pile(frame_trait_overview, p):
                 bg=defaults["bg_trait_pile"]
                 ).grid(row=0, column=icol)
 
-        # _current_ face
-        cur_face = traits_df.loc[trait_idx].cur_face
-        if cur_face != traits_df.loc[trait_idx].face:
-            print("_______________ add current face falue icon")
+        # drop value
+        cur_drops = traits_df.loc[trait_idx].cur_drops
+        if not np.isnan(cur_drops):
+            icol += 1
+            drop_string = str(int(cur_drops))
+
+            tk.Label(
+                frame_pics,
+                image=images[drop_string],
+                bg=defaults["bg_trait_pile"]
+                ).grid(row=0, column=icol)
 
         # has attachment
         if traits_df.loc[trait_idx].cur_attachment != 'none':

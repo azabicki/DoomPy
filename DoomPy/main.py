@@ -170,6 +170,17 @@ def btn_traits_world_end(from_, trait_idx, event):
     # apply WE-effect and update current_values
     update_traits_current_status('worlds_end', trait_idx, player_traits[from_])
 
+    # *** !!! ***   viral specific effect   *** !!! ************************
+    # -> save list as string which will save drop points for each player
+    if traits_df.loc[trait_idx].trait == 'Viral':
+        if effect_idx == 0:
+            traits_df.loc[trait_idx, "cur_effect"] = 'none'
+        else:
+            vp = [np.nan] * n_player.get()
+            vp_s = ' '.join(str(x) for x in vp)
+            traits_df.loc[trait_idx, "cur_effect"] = vp_s
+    # *** !!! ***   viral specific effect   *** !!! ************************
+
     # update scoring
     update_scoring()
 
@@ -962,6 +973,59 @@ def create_trait_pile(frame_trait_overview, p):
             else:
                 cur_effect = traits_df.loc[trait_idx].cur_worlds_end
                 cbox_attach_to.current(we_effect.index(cur_effect))
+
+    # *** !!! *** special, individual case *** !!! ***********************
+    # since 'VIRAL's Drop-of-Life-Effect is affecting other players, hence it needs to be shown on
+    # each other players trait pile, allowing there to enter individual drop values, while giving
+    # the host only the oppurtunity to perform worlds end effect first, find viral index, and check
+    # if it is in another trait pile
+    viral_idx = traits_df.index[traits_df.trait == 'Viral'].tolist()[0]
+
+    # add passive viral to this trait pile
+    if any([viral_idx in tp for tp in player_traits]) and viral_idx not in player_traits[p]:
+        ttk.Separator(frame_trait_overview, orient='horizontal'
+                      ).grid(row=irow+1, column=0, columnspan=2, padx=5, pady=10, sticky='we')
+
+        # create separate frame
+        frame_viral = tk.Frame(frame_trait_overview, bg=defaults["bg_trait_pile"])
+        frame_viral.grid(row=irow+2, column=0, columnspan=2, sticky='we')
+
+        # add label & drop icon
+        tk.Label(
+            frame_viral,
+            text="Viral",
+            bg=defaults["bg_trait_pile"],
+            fg="mediumorchid1"
+            ).grid(row=1, column=0, padx=(20, 0), sticky='e')
+        tk.Label(
+            frame_viral,
+            text=" punishes ",
+            image=images["drops"],
+            bg=defaults["bg_trait_pile"],
+            compound=tk.LEFT
+            ).grid(row=1, column=1)
+
+        # check if worlds end effect was chosen
+        we_viral = traits_df.loc[viral_idx].cur_worlds_end
+        if we_viral != 'none':
+            vp_s = traits_df.loc[viral_idx].cur_effect.split()
+
+            # add color icon
+            tk.Label(
+                frame_viral,
+                image=images[we_viral[0]],
+                bg=defaults["bg_trait_pile"]
+                ).grid(row=1, column=2)
+            # add points icono
+            tk.Label(
+                frame_viral,
+                image=images[vp_s[p]],
+                bg=defaults["bg_trait_pile"]
+                ).grid(row=1, column=3)
+
+            print("Viral acts on '{}' traits in '{}'s trait pile -> drop points = {}"
+                  .format(we_viral, player_name[p].get(), vp_s[p]))
+    # *** !!! *** special, individual case *** !!! ***********************
 
 
 def create_player_frame(p):

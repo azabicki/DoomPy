@@ -283,6 +283,25 @@ def drop_points(traits_df, player_traits, p, gene_pool):
                 print("____ {} drop points by '{}'".format(dp, traits_df.loc[trait].trait))
                 total += dp
 
+    # *** !!! *** VIRAL *** !!! *** if Viral was played by another player **************
+    viral_idx = traits_df.index[traits_df.trait == 'Viral'].tolist()[0]
+    vp_s = traits_df.loc[viral_idx].cur_effect
+    if viral_idx not in player_traits[p] and vp_s != 'none':
+        # load current drop values for all players & Viral's 'cur_effect'
+        vp = [int(i) if i.lstrip('-').isnumeric() else np.nan for i in vp_s.split()]
+        vp_col = traits_df.loc[viral_idx].cur_worlds_end
+
+        # calculate drop points
+        vp[p] = sum([vp_col in color.lower()
+                     for color in traits_df.iloc[player_traits[p]].cur_color.tolist()]) * -1
+
+        # update total & save updated points to Viral's 'cur_effect'
+        if not np.isnan(vp[p]):
+            total += vp[p]
+            traits_df.loc[viral_idx, "cur_effect"] = ' '.join(str(x) for x in vp)
+            print('---- ', vp)
+    # *** !!! *** VIRAL *** !!! *** if Viral was played by another player **************
+
     return total
 
 

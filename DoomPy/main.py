@@ -917,8 +917,7 @@ def create_trait_pile(frame_trait_overview, p):
                 width=10)
             cbox_attach_to.grid(row=irow, column=1, sticky='w')
             cbox_attach_to.bind(
-               "<<ComboboxSelected>>", lambda e, t=trait_idx: btn_traits_world_end(p, t, e)
-            )
+               "<<ComboboxSelected>>", lambda e, t=trait_idx: btn_traits_world_end(p, t, e))
 
             # check if effect already selected
             if traits_df.loc[trait_idx].cur_worlds_end == 'none':
@@ -1160,8 +1159,7 @@ def create_menu_frame():
     trait_ent = ttk.Entry(
         frame_menu_traits,
         width=10,
-        textvariable=search_trait,
-    )
+        textvariable=search_trait)
     trait_ent.grid(row=1, column=0, padx=(10, 0), sticky="w")
     trait_ent.bind("<KeyRelease>", lambda e: search_trait_in_list(search_trait))
     ttk.Button(
@@ -1177,12 +1175,10 @@ def create_menu_frame():
         height=5,
         listvariable=lbox_cards_str,
         selectmode=tk.SINGLE,
-        exportselection=False
-    )
+        exportselection=False)
     lbox_traits[0].grid(row=2, column=0, columnspan=2, padx=10)
     lbox_traits[0].bind(
-        "<<ListboxSelect>>", lambda e: update_selected_trait("lbox", lbox_traits[0].curselection())
-    )
+        "<<ListboxSelect>>", lambda e: update_selected_trait("lbox", lbox_traits[0].curselection()))
 
     # 'who gets it?' -----
     ttk.Label(
@@ -1221,8 +1217,7 @@ def create_menu_frame():
             exportselection=0,
             state="readonly",
             width=18,
-            style="move.TCombobox"
-        )
+            style="move.TCombobox")
         cbox_catastrophy.current(0)
         cbox_catastrophy.grid(row=c+1, column=0, columnspan=2, padx=4, sticky='ns')
         cbox_catastrophy.bind("<<ComboboxSelected>>", lambda ev, c=c: btn_play_catastrophe(ev, c))
@@ -1241,8 +1236,7 @@ def create_menu_frame():
         state="readonly",
         width=18,
         style="move.TCombobox",
-        textvariable=worlds_end
-    )
+        textvariable=worlds_end)
     worlds_end_cbox[0].current(0)
     worlds_end_cbox[0].grid(row=n_catastrophies.get()+2, column=0, columnspan=2, padx=4, pady=(0, 5), sticky='ns')
     worlds_end_cbox[0].bind("<<ComboboxSelected>>", lambda e: btn_play_worlds_end())

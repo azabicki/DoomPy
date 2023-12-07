@@ -35,6 +35,7 @@ traits_df["cur_face"] = traits_df.face
 traits_df["cur_effect"] = 'none'
 traits_df["cur_host"] = 'none'
 traits_df["cur_attachment"] = 'none'
+traits_df["cur_worlds_end"] = 'none'
 
 # load images ------------------------------------------------------------
 img_size_star = 30

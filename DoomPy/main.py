@@ -442,8 +442,10 @@ def btn_play_catastrophe(event, c):
 
     # update possible catastrophies for later ones
     for i in range(1, n_catastrophies.get()):
+        # reset possible's
         catastrophies_possible[i] = catastrophies_dfi.copy()
 
+        # remove previous catastrophies from possible's
         for prev in range(0, i):
             if catastrophies_played[prev] is not None:
                 catastrophies_possible[i].remove(catastrophies_played[prev])
@@ -451,6 +453,17 @@ def btn_play_catastrophe(event, c):
                 pos_cat_values = [" catastrophe {}...".format(1+1)] + \
                     ages_df.loc[catastrophies_possible[i]].name.values.tolist()
                 catastrophies_cbox[i].configure(values=pos_cat_values)
+
+                # check if current catastrophie was selected by a next one
+                if catastrophies_played[prev] == catastrophies_played[i]:
+                    # reset i'th catastrophe
+                    catastrophies_played[i] = None
+                    catastrophies_cbox[i].current(0)
+
+                    # disable forthcoming catastrophies & worlds end
+                    for z in range(i+1, n_catastrophies.get()):
+                        catastrophies_cbox[z].configure(state="disabled")
+                        worlds_end_cbox[0].configure(state="disabled")
 
     # enable next catastrophe
     if c < n_catastrophies.get()-1:

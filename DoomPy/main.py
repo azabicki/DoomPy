@@ -437,6 +437,11 @@ def update_manual_drops(event, trait, p):
 
     # check if input is numeric
     if value.isnumeric():
+        # check limit of (hord-coded) 20
+        if int(value) > 20:
+            value = '20'
+            manual_drops[trait].set('20')
+
         # save manually calculkated drop value to main traits_df
         traits_df.loc[trait, 'cur_drops'] = int(value)
     else:

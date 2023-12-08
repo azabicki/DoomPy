@@ -393,15 +393,17 @@ def worlds_end(traits_df, we_catastrophe, player_traits, p, genes):
 
         case "Ancient Corruption":
             # -1 each_action
-            points = 0
+            points = -1 * sum(traits_df.loc[trait].action == 1 for trait in traits)
 
         case "Ashlands":
             # -4 if_<=2_purple_traits
-            points = 0
+            if sum('purple' in color.lower()
+                   for color in traits_df.iloc[traits].cur_color.tolist()) <= 2:
+                points = -4
 
         case "Bioengineered Plague":
             # discard_one_highest_color_count
-            points = 0
+            pass
 
         case "Choking Vines":
             # 1 each_green_in_left_trait_pile
@@ -411,55 +413,66 @@ def worlds_end(traits_df, we_catastrophe, player_traits, p, genes):
 
         case "Deus ex Machina":
             # draw_card_add_face_value
+            print('_____MANUAL ENTRY NEEDED_____')
             points = 0
 
         case "Deus ex Machina (max.5)":
             # draw_card_add_face_value_max.5
+            print('_____MANUAL ENTRY NEEDED_____')
             points = 0
 
         case "Ecological Collapse":
-            # 2 each_negative_face
-            points = 0
+            # +2 each_negative_face
+            points = sum(traits_df.loc[trait].cur_face < 0 for trait in traits) * 2
 
         case "Endless Monsoon":
             # -1 hand
+            print('_____MANUAL ENTRY NEEDED_____')
             points = 0
 
         case "Eyes Open from Behind the Stars":
             # discard_highest_face_value
-            points = 0
+            pass
 
         case "Glacial Meltdown":
             # discard_one_blue
-            points = 0
+            pass
 
         case "Great Deluge":
             # -4 if_<=2_blue_traits
-            points = 0
+            if sum('blue' in color.lower()
+                   for color in traits_df.iloc[traits].cur_color.tolist()) <= 2:
+                points = -4
 
         case "Grey Goo":
             # -5 most_traits
-            points = 0
+            n = [len(tp) for tp in player_traits]
+            if len(traits) == max(n):
+                points = -5
 
         case "Ice Age":
             # -1 each_red
-            points = 0
+            points = -1 * sum('red' in traits_df.loc[trait].cur_color.lower()
+                              for trait in traits)
 
         case "Impact Event":
             # -1 each_trait_>=3_face
-            points = 0
+            points = -1 * sum(traits_df.loc[trait].cur_face >= 3 for trait in traits)
 
         case "Invasive Species":
             # add_max7_face_from_hand
+            print('_____MANUAL ENTRY NEEDED_____')
             points = 0
 
         case "Jungle Rot":
             # -4 if_<=2_green_traits
-            points = 0
+            if sum('green' in color.lower()
+                   for color in traits_df.iloc[traits].cur_color.tolist()) <= 2:
+                points = -4
 
         case "Mass Extinction":
             # discard_one_green
-            points = 0
+            pass
 
         case "Mega Tsunami":
             # discard_one_red
@@ -474,7 +487,7 @@ def worlds_end(traits_df, we_catastrophe, player_traits, p, genes):
             points = 0
 
         case "Overpopulation":
-            # 4 fewest_traits
+            # +4 if fewest_traits
             points = 0
 
         case "Planetary Deforestation":
@@ -487,15 +500,19 @@ def worlds_end(traits_df, we_catastrophe, player_traits, p, genes):
 
         case "Retrovirus":
             # -1 each_green
-            points = 0
+            points = -1 * sum('green' in traits_df.loc[trait].cur_color.lower()
+                              for trait in traits)
 
         case "Sacrifice":
             # -4 if_<=2_red_traits
-            points = 0
+            if sum('red' in color.lower()
+                   for color in traits_df.iloc[traits].cur_color.tolist()) <= 2:
+                points = -4
 
         case "Solar Flare":
             # -1 each_purple
-            points = 0
+            points = -1 * sum('purple' in traits_df.loc[trait].cur_color.lower()
+                              for trait in traits)
 
         case "Strange Matter":
             # -2 each_drop
@@ -503,7 +520,8 @@ def worlds_end(traits_df, we_catastrophe, player_traits, p, genes):
 
         case "Super Volcano":
             # -1 each_blue
-            points = 0
+            points = -1 * sum('blue' in traits_df.loc[trait].cur_color.lower()
+                              for trait in traits)
 
         case "The Big One":
             # -2 per_each_missing_color

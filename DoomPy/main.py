@@ -738,12 +738,6 @@ def update_traits_current_status(todo, *args):
 
 def update_scoring():
     for p in range(n_player.get()):
-        # get current points
-        old_points = [player_points[p]['face'].get(),
-                      player_points[p]['drops'].get(),
-                      player_points[p]['worlds_end'].get(),
-                      player_points[p]['total'].get()]
-
         # get cards
         trait_pile = player_traits[p]
 
@@ -767,9 +761,8 @@ def update_scoring():
         player_points[p]['total'].set(total)
 
         # print log, only if points changed
-        if old_points != [p_face, p_drop, p_worlds_end, total]:
-            print(">>> scoring <<< current points for '{}': face = {}  |  drops = {}  |  WE = {}  |  total = {}"
-                  .format(player_name[p].get(), p_face, p_drop, p_worlds_end, total))
+        print(">>> scoring <<< current points for '{}': face = {}  |  drops = {}  |  WE = {}  |  total = {}"
+              .format(player_name[p].get(), p_face, p_drop, p_worlds_end, total))
 
 
 def update_genes():

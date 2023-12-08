@@ -626,16 +626,18 @@ def update_genes():
     # check what catastrophies were played alread
     for c in range(n_catastrophies.get()):
         # get card & effect
-        card = catastrophies_played[c]
+        c_idx = catastrophies_played[c]
+
         # check if catastrophy was played
-        if card in ages_df.name.values.tolist():
+        if c_idx is not None:
+            c_str = ages_df.loc[c_idx, "name"]
             # get effect and apply it
-            effect = int(ages_df[ages_df.name == card]['gene_pool'].values[0])
+            effect = int(ages_df.loc[c_idx].gene_pool)
             diff_genes = [i + effect for i in diff_genes]
 
             # print log
             print(">>> genes <<< catastrophe '{}' has gene effect off '{}' -> current effect: {}"
-                  .format(card, effect, diff_genes))
+                  .format(c_str, effect, diff_genes))
 
     # update gene values
     for p in range(n_player.get()):

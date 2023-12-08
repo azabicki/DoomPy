@@ -169,7 +169,7 @@ def drop_points(traits_df, player_traits, p, gene_pool):
                 case 'GMO':
                     host = traits_df.loc[trait].cur_host
                     if host != 'none':
-                        host_color = traits_df.loc[host].color
+                        host_color = traits_df.loc[host].cur_color
                         pile_colors = traits_df.iloc[player_traits[p]].cur_color.tolist()
 
                         dp = 0
@@ -307,7 +307,6 @@ def drop_points(traits_df, player_traits, p, gene_pool):
         if not np.isnan(vp[p]):
             total += vp[p]
             traits_df.loc[viral_idx, "cur_effect"] = ' '.join(str(x) for x in vp)
-            print('---- ', vp)
     # *** !!! *** VIRAL *** !!! *** if Viral was played by another player **************
 
     return total

@@ -94,24 +94,197 @@ for files in glob.glob(os.path.join(curdir, "sounds", "*.mp3")):
     var_name = os.path.splitext(os.path.basename(files))[0].lower()
     sounds[var_name] = mixer.Sound(files)
 
-# switches for icons -----------------------------------------------------
-show = {}
-show['color'] = True        # default: True
-show['face'] = True         # default: True
-show['collection'] = False  # default: False
-show['dominant'] = False    # default: False
-show['action'] = False      # default: False
-show['drops'] = True        # default: True
-show['gene_pool'] = False   # default: False
-show['worlds_end'] = False  # default: False
-show['effectless'] = False  # default: False
-show['attachment'] = False  # default: False
-
 
 # functions ##############################################################
+# simulating some rounds...
+def pre_play():
+    global play_trait
+
+    start_game()
+    pre_play_set = 1
+
+    if pre_play_set == 1:
+        play_trait = 1
+        btn_play_trait(0)
+        play_trait = 39
+        btn_play_trait(0)
+        play_trait = 158
+        btn_play_trait(0)
+        play_trait = 211
+        btn_play_trait(0)
+        play_trait = 140
+        btn_play_trait(0)
+        play_trait = 141
+        btn_play_trait(0)
+        play_trait = 142
+        btn_play_trait(0)
+
+        play_trait = 0
+        btn_play_trait(1)
+        play_trait = 74
+        btn_play_trait(1)
+        play_trait = 167
+        btn_play_trait(1)
+        play_trait = 36
+        btn_play_trait(1)
+        play_trait = 35
+        btn_play_trait(1)
+
+        play_trait = 204
+        btn_play_trait(2)
+        play_trait = 30
+        btn_play_trait(2)
+        play_trait = 26
+        btn_play_trait(2)
+        play_trait = 150
+        btn_play_trait(2)
+
+        play_trait = 116
+        btn_play_trait(3)
+        play_trait = 23
+        btn_play_trait(3)
+        play_trait = 196
+        btn_play_trait(3)
+        play_trait = 160
+        btn_play_trait(3)
+
+    if pre_play_set == 2:
+        play_trait = 0
+        btn_play_trait(0)
+
+        play_trait = 1
+        btn_play_trait(0)
+        play_trait = 6
+        btn_play_trait(0)
+        play_trait = 16
+        btn_play_trait(0)
+        play_trait = 17
+        btn_play_trait(0)
+        play_trait = 18
+        btn_play_trait(0)
+        play_trait = 29
+        btn_play_trait(0)
+        play_trait = 37
+        btn_play_trait(0)
+        play_trait = 41
+        btn_play_trait(0)
+        play_trait = 42
+        btn_play_trait(0)
+        play_trait = 78
+        btn_play_trait(0)
+        play_trait = 85
+        btn_play_trait(0)
+        play_trait = 109
+        btn_play_trait(0)
+        play_trait = 118
+        btn_play_trait(0)
+        play_trait = 177
+        btn_play_trait(0)
+        play_trait = 207
+        btn_play_trait(0)
+
+        play_trait = 19
+        btn_play_trait(1)
+        play_trait = 35
+        btn_play_trait(1)
+        play_trait = 46
+        btn_play_trait(1)
+        play_trait = 68
+        btn_play_trait(1)
+        play_trait = 91
+        btn_play_trait(1)
+        play_trait = 111
+        btn_play_trait(1)
+        play_trait = 121
+        btn_play_trait(1)
+        play_trait = 129
+        btn_play_trait(1)
+        play_trait = 155
+        btn_play_trait(1)
+        play_trait = 174
+        btn_play_trait(1)
+        play_trait = 184
+        btn_play_trait(1)
+        play_trait = 199
+        btn_play_trait(1)
+
+        play_trait = 166
+        btn_play_trait(2)
+        play_trait = 204
+        btn_play_trait(2)
+
+        play_trait = 3
+        btn_play_trait(3)
+        play_trait = 5
+        btn_play_trait(3)
+        play_trait = 7
+        btn_play_trait(3)
+        play_trait = 9
+        btn_play_trait(3)
+        play_trait = 33
+        btn_play_trait(3)
+        play_trait = 34
+        btn_play_trait(3)
+        play_trait = 36
+        btn_play_trait(3)
+        play_trait = 64
+        btn_play_trait(3)
+        play_trait = 76
+        btn_play_trait(3)
+        play_trait = 89
+        btn_play_trait(3)
+        play_trait = 203
+        btn_play_trait(3)
+        play_trait = 205
+        btn_play_trait(3)
+        play_trait = 209
+        btn_play_trait(3)
+        play_trait = 211
+        btn_play_trait(3)
+
+    catastrophies_cbox[0].current(21)
+    catastrophies_cbox[0].event_generate("<<ComboboxSelected>>")
+    catastrophies_cbox[1].current(21)
+    catastrophies_cbox[1].event_generate("<<ComboboxSelected>>")
+    catastrophies_cbox[2].current(21)
+    catastrophies_cbox[2].event_generate("<<ComboboxSelected>>")
+    catastrophies_cbox[3].current(21)
+    catastrophies_cbox[3].event_generate("<<ComboboxSelected>>")
+
+
+def switch_icons():
+    global show_icons
+
+    if icons_onoff.get():
+        print(' icons switched on')
+        show_icons['color'] = True          # default: True
+        show_icons['face'] = True           # default: True
+        show_icons['collection'] = True     # default: False
+        show_icons['dominant'] = True       # default: False
+        show_icons['action'] = True         # default: False
+        show_icons['drops'] = True          # default: True
+        show_icons['gene_pool'] = True      # default: False
+        show_icons['worlds_end'] = True     # default: False
+        show_icons['effectless'] = True     # default: False
+        show_icons['attachment'] = True     # default: False
+    else:
+        print(' icons switched off')
+        show_icons['color'] = True        # default: True
+        show_icons['face'] = True         # default: True
+        show_icons['collection'] = False  # default: False
+        show_icons['dominant'] = False    # default: False
+        show_icons['action'] = False      # default: False
+        show_icons['drops'] = True        # default: True
+        show_icons['gene_pool'] = False   # default: False
+        show_icons['worlds_end'] = False  # default: False
+        show_icons['effectless'] = False  # default: False
+        show_icons['attachment'] = False  # default: False
+
+
 def play(trait):
-    if trait.lower() in sounds:
-        sounds[trait.lower()].play()
+    if music_onoff.get():
+        if trait.lower() in sounds:
+            sounds[trait.lower()].play()
 
 
 def btn_clear_trait_search():
@@ -755,7 +928,7 @@ def create_trait_pile(frame_trait_overview, p):
         icol = -1  # initialize column index which changes depending on card
 
         # _true_ color
-        if show['color']:
+        if show_icons['color']:
             icol += 1
             color = traits_df.loc[trait_idx].color
             cc = 'c' if 'colorless' in color.lower() else ''
@@ -770,7 +943,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # face
-        if show['face'] and 'face' not in traits_df.loc[trait_idx].cur_worlds_end_effect.lower():
+        if show_icons['face'] and 'face' not in traits_df.loc[trait_idx].cur_worlds_end_effect.lower():
             icol += 1
             face_value = traits_df.loc[trait_idx].face
             face_string = face_value if isinstance(face_value, str) else str(int(face_value))
@@ -781,7 +954,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # collection
-        if show['collection']:
+        if show_icons['collection']:
             icol += 1
             lbl_collection = tk.Label(
                 frame_pics,
@@ -806,7 +979,7 @@ def create_trait_pile(frame_trait_overview, p):
                     lbl_collection['image'] = images['overlush']
 
         # dominant
-        if show['dominant'] and traits_df.loc[trait_idx].dominant == 1:
+        if show_icons['dominant'] and traits_df.loc[trait_idx].dominant == 1:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -814,7 +987,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # action
-        if show['action'] and traits_df.loc[trait_idx].action == 1:
+        if show_icons['action'] and traits_df.loc[trait_idx].action == 1:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -822,7 +995,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # drops
-        if show['drops'] and traits_df.loc[trait_idx].drops == 1:
+        if show_icons['drops'] and traits_df.loc[trait_idx].drops == 1:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -830,7 +1003,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # gene pool
-        if show['gene_pool'] and traits_df.loc[trait_idx].gene_pool == 1:
+        if show_icons['gene_pool'] and traits_df.loc[trait_idx].gene_pool == 1:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -838,7 +1011,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # worlds_end
-        if show['worlds_end'] and traits_df.loc[trait_idx].worlds_end == 1:
+        if show_icons['worlds_end'] and traits_df.loc[trait_idx].worlds_end == 1:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -846,7 +1019,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # effectless
-        if show['effectless'] and traits_df.loc[trait_idx].effectless == 1:
+        if show_icons['effectless'] and traits_df.loc[trait_idx].effectless == 1:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -854,7 +1027,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # attachment
-        if show['attachment'] and traits_df.loc[trait_idx].attachment == 1:
+        if show_icons['attachment'] and traits_df.loc[trait_idx].attachment == 1:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -1419,12 +1592,34 @@ def create_menu_frame():
     frame_menu_controls = tk.Frame(frame_menu)
     frame_menu_controls.grid(row=4, column=0, padx=border, pady=(0, border), sticky="nesw")
     frame_menu_controls.columnconfigure(0, weight=1)
+    frame_menu_controls.columnconfigure(1, weight=1)
+    frame_menu_controls.columnconfigure(2, weight=1)
+
+    ttk.Button(frame_menu_controls,
+               text="quit",
+               command=root.quit
+               ).grid(row=0, column=0, columnspan=3, padx=10, pady=5, sticky="we")
+
+    ttk.Checkbutton(
+        frame_menu_controls,
+        image=images['note'],
+        variable=music_onoff
+        ).grid(row=1, column=0, padx=(5, 0), pady=(0, 5))
+
+    ttk.Checkbutton(
+        frame_menu_controls,
+        image=images['requirement'],
+        variable=icons_onoff,
+        command=switch_icons,
+        ).grid(row=1, column=1, padx=0, pady=(0, 5))
 
     ttk.Button(
         frame_menu_controls,
-        text="quit",
-        command=root.quit,
-    ).grid(padx=10, pady=5, sticky="we")
+        # text="preplay",
+        image=images['no_star'],
+        command=pre_play,
+        width=2
+        ).grid(row=1, column=2, padx=0, pady=(0, 5))
 
 
 def reset_variables():
@@ -1528,7 +1723,7 @@ def start_game():
 # create a window --------------------------------------------------------
 root = tk.Tk()
 root.title("LIVE Doomlings Calculator")
-root.geometry("1600x900")
+root.geometry("1600x1000")
 root.configure(background="grey")
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
@@ -1548,6 +1743,11 @@ for k, v in images_dict.items():
     images[k] = ImageTk.PhotoImage(v)
 
 # init variables ---------------------------------------------------------
+music_onoff = tk.IntVar(value=0)
+icons_onoff = tk.IntVar(value=0)
+show_icons = {}
+switch_icons()
+
 opt_n_player = tk.IntVar(value=defaults["n_player"])                # OPTIONS: number of players
 opt_n_genes = tk.IntVar(value=defaults["n_genes"])                  # OPTIONS: gene pool at beginning
 opt_n_catastrophies = tk.IntVar(value=defaults["n_catastrophies"])  # OPTIONS: number of catastrophies

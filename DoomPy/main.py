@@ -187,6 +187,7 @@ def btn_traits_world_end(from_, trait_idx, event):
     # *** !!! ***   viral specific effect   *** !!! ************************
 
     # update scoring
+    update_genes()
     update_scoring()
 
     # update all trait piles
@@ -230,6 +231,7 @@ def btn_attach_to(from_, attachment, event, possible_hosts):
         update_traits_current_status('attachment', host_idx, attachment)
 
     # update scoring
+    update_genes()
     update_scoring()
 
     # update all trait piles

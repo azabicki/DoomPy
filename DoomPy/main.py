@@ -1189,6 +1189,23 @@ def create_menu_frame():
         command=start_game,
     ).grid(row=4, column=0, columnspan=2, padx=10, pady=5, sticky="we")
 
+    # info current game -----
+    ttk.Label(
+        frame_menu_options,
+        text="running game",
+        font="'' 12 underline",
+    ).grid(row=5, column=0, columnspan=2)
+    ttk.Label(
+        frame_menu_options,
+        text="gene pool startet at {}".format(n_genes.get()),
+        style="game_info.TLabel",
+    ).grid(row=6, column=0, columnspan=2)
+    ttk.Label(
+        frame_menu_options,
+        text="{} catastrophies".format(n_catastrophies.get()),
+        style="game_info.TLabel",
+    ).grid(row=7, column=0, columnspan=2, pady=(0, 5))
+
     # ----- frame 4 player names --------------------------------------------------------
     frame_menu_names = tk.Frame(frame_menu)
     frame_menu_names.grid(row=1, column=0, padx=border, pady=(0, border), ipady=4, sticky="nesw")
@@ -1435,6 +1452,7 @@ root.rowconfigure(0, weight=1)
 gui_style = ttk.Style()
 gui_style.configure("total.TLabel", font=("", 72, "bold"), foreground="orangered1")
 gui_style.configure("genes.TLabel", font=("", 38, "bold"), foreground="hotpink1")
+gui_style.configure("game_info.TLabel", font=("", 10, "italic"))
 gui_style.configure("move.TCombobox", selectbackground="none")
 
 # load images ------------------------------------------------------------

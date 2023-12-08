@@ -631,7 +631,7 @@ def search_trait_in_list(inp):
 def update_selected_trait(where, idx):
     # select trait in deck/listbox
     if where == "lbox":
-        # trait in DECK is selected
+        # trait in DECK is selected as 'play_trait'
         global play_trait
         play_trait = lbox_cards_idx.get()[idx[0]]
 
@@ -1234,6 +1234,10 @@ def create_menu_frame():
         textvariable=search_trait)
     trait_ent.grid(row=1, column=0, padx=(10, 0), sticky="w")
     trait_ent.bind("<KeyRelease>", lambda e: search_trait_in_list(search_trait))
+    trait_ent.bind('<Down>', lambda e: lbox_traits[0].focus(), add='+')         # down arrow key is pressed
+    trait_ent.bind('<Down>', lambda e: lbox_traits[0].selection_set(0), add='+')
+    trait_ent.bind('<Down>', lambda e: update_selected_trait("lbox", lbox_traits[0].curselection()), add='+')
+
     ttk.Button(
         frame_menu_traits,
         text="clear",
@@ -1246,11 +1250,13 @@ def create_menu_frame():
         frame_menu_traits,
         height=5,
         listvariable=lbox_cards_str,
-        selectmode=tk.SINGLE,
         exportselection=False)
     lbox_traits[0].grid(row=2, column=0, columnspan=2, padx=10)
-    lbox_traits[0].bind(
-        "<<ListboxSelect>>", lambda e: update_selected_trait("lbox", lbox_traits[0].curselection()))
+    lbox_traits[0].bind("<<ListboxSelect>>",
+                        lambda e: update_selected_trait("lbox", lbox_traits[0].curselection()))
+    # create key bindings to play trait into player's trait pile by hitting number on keyboard
+    for p in range(n_player.get()):
+        lbox_traits[0].bind('{}'.format(p+1), lambda e, pp=p: btn_play_trait(pp))
 
     # 'who gets it?' -----
     ttk.Label(

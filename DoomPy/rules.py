@@ -244,7 +244,7 @@ def drop_points(traits_df, player_traits, p, gene_pool):
                         dp = int(traits_df.loc[trait].cur_drops)
 
                 case 'Sentience':
-                    we = traits_df.loc[trait].cur_worlds_end
+                    we = traits_df.loc[trait].cur_worlds_end_trait
                     if we != 'none':
                         dp = sum(we in color.lower()
                                  for color in traits_df.iloc[player_traits[p]].cur_color.tolist())
@@ -282,6 +282,7 @@ def drop_points(traits_df, player_traits, p, gene_pool):
                         dp = int(traits_df.loc[trait].cur_drops)
 
                 case 'Viral':
+                    # see further down, viral is an exception since it affects others
                     pass
 
             # set current drop value & update total
@@ -296,7 +297,7 @@ def drop_points(traits_df, player_traits, p, gene_pool):
     if viral_idx not in player_traits[p] and vp_s != 'none':
         # load current drop values for all players & Viral's 'cur_effect'
         vp = [int(i) if i.lstrip('-').isnumeric() else np.nan for i in vp_s.split()]
-        vp_col = traits_df.loc[viral_idx].cur_worlds_end
+        vp_col = traits_df.loc[viral_idx].cur_worlds_end_trait
 
         # calculate drop points
         vp[p] = sum([vp_col in color.lower()
@@ -336,7 +337,7 @@ def traits_WE_tasks(traits_df, host):
 
 def traits_WE_effects(traits_df, host, trait_pile):
     rule = traits_df.loc[host].effect_worlds_end
-    effect = traits_df.loc[host].cur_worlds_end
+    effect = traits_df.loc[host].cur_worlds_end_trait
 
     match rule:
         case 'is_color_of_choice':

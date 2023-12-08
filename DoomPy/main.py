@@ -37,7 +37,7 @@ traits_df["cur_drops"] = np.nan
 traits_df["cur_effect"] = 'none'
 traits_df["cur_host"] = 'none'
 traits_df["cur_attachment"] = 'none'
-traits_df["cur_worlds_end"] = 'none'
+traits_df["cur_worlds_end_trait"] = 'none'
 
 # load images ------------------------------------------------------------
 img_size_star = 30
@@ -138,7 +138,7 @@ def btn_traits_world_end(from_, trait_idx, event):
               .format(traits_df.loc[trait_idx].trait, effect))
 
     # check if effect was selected previously & if its different than the current, reset old effect
-    old_effect = traits_df.loc[trait_idx].cur_worlds_end
+    old_effect = traits_df.loc[trait_idx].cur_worlds_end_trait
 
     if old_effect != 'none' and old_effect != effect:
         for trait in player_traits[from_]:
@@ -149,7 +149,7 @@ def btn_traits_world_end(from_, trait_idx, event):
             # get current status before reseting
             attachment = traits_df.loc[trait].cur_attachment
             host = traits_df.loc[trait].cur_host
-            we_effect = traits_df.loc[trait].cur_worlds_end
+            we_effect = traits_df.loc[trait].cur_worlds_end_trait
 
             # reset trait
             update_traits_current_status('reset', trait, False)
@@ -163,14 +163,14 @@ def btn_traits_world_end(from_, trait_idx, event):
 
             # redo worlds_end effects
             if we_effect != 'none':
-                traits_df.loc[trait, 'cur_worlds_end'] = we_effect
+                traits_df.loc[trait, 'cur_worlds_end_trait'] = we_effect
                 update_traits_current_status('worlds_end', trait, player_traits[from_])
 
     # set WE-effect to status_row of trait
     if effect_idx == 0:
-        traits_df.loc[trait_idx, 'cur_worlds_end'] = 'none'
+        traits_df.loc[trait_idx, 'cur_worlds_end_trait'] = 'none'
     else:
-        traits_df.loc[trait_idx, 'cur_worlds_end'] = effect
+        traits_df.loc[trait_idx, 'cur_worlds_end_trait'] = effect
 
     # apply WE-effect and update current_values
     update_traits_current_status('worlds_end', trait_idx, player_traits[from_])
@@ -525,7 +525,7 @@ def update_traits_current_status(todo, *args):
             traits_df.loc[trait, "cur_effect"] = 'none'
             traits_df.loc[trait, "cur_host"] = 'none'
             traits_df.loc[trait, "cur_attachment"] = 'none'
-            traits_df.loc[trait, "cur_worlds_end"] = 'none'
+            traits_df.loc[trait, "cur_worlds_end_trait"] = 'none'
 
             # print log
             if log:
@@ -1009,10 +1009,10 @@ def create_trait_pile(frame_trait_overview, p):
                "<<ComboboxSelected>>", lambda e, t=trait_idx: btn_traits_world_end(p, t, e))
 
             # check if effect already selected
-            if traits_df.loc[trait_idx].cur_worlds_end == 'none':
+            if traits_df.loc[trait_idx].cur_worlds_end_trait == 'none':
                 cbox_attach_to.current(0)
             else:
-                cur_effect = traits_df.loc[trait_idx].cur_worlds_end
+                cur_effect = traits_df.loc[trait_idx].cur_worlds_end_trait
                 cbox_attach_to.current(we_effect.index(cur_effect))
 
     # *** !!! *** special, individual case *** !!! ***********************
@@ -1045,7 +1045,7 @@ def create_trait_pile(frame_trait_overview, p):
             ).grid(row=1, column=1, sticky='w')
 
         # check if worlds end effect was chosen
-        we_viral = traits_df.loc[viral_idx].cur_worlds_end
+        we_viral = traits_df.loc[viral_idx].cur_worlds_end_trait
         if we_viral != 'none':
             vp_s = traits_df.loc[viral_idx].cur_effect.split()
 
@@ -1461,7 +1461,7 @@ def reset_variables():
     traits_df["cur_effect"] = 'none'
     traits_df["cur_host"] = 'none'
     traits_df["cur_attachment"] = 'none'
-    traits_df["cur_worlds_end"] = 'none'
+    traits_df["cur_worlds_end_trait"] = 'none'
 
 
 def start_game():
@@ -1537,8 +1537,8 @@ manual_drops = []                       # list to save manual drop entries to
 catastrophies_possible = []                  # occured catastrophies / StringVar
 catastrophies_played = []                  # occured catastrophies / StringVar
 catastrophies_cbox = []             # comboxes containing possible catastrophies
-worlds_end = tk.StringVar(value="")
 worlds_end_cbox = [None]
+worlds_end = tk.StringVar(value="")
 
 frames_player = []          # list of all players frames
 player_name = []            # current players names / tk.StringVar

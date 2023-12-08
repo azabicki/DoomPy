@@ -41,6 +41,7 @@ traits_df["cur_worlds_end"] = 'none'
 
 # load images ------------------------------------------------------------
 img_size_star = 30
+img_size_scoreboard = 25
 img_size_icons = 20
 img_size_icons_w = int(img_size_icons*1.5)
 img_colors_set = "circle"
@@ -62,6 +63,10 @@ for files in glob.glob(os.path.join(curdir, "images", "colors", img_colors_set, 
 for files in glob.glob(os.path.join(curdir, "images", "trait_properties", img_trait_properties_set, "*.png")):
     var_name = os.path.splitext(os.path.basename(files))[0]
     images_dict[var_name] = Image.open(files).resize((img_size_icons, img_size_icons))
+
+for files in glob.glob(os.path.join(curdir, "images", "trait_properties", img_trait_properties_set, "*.png")):
+    var_name = os.path.splitext(os.path.basename(files))[0] + '_sb'
+    images_dict[var_name] = Image.open(files).resize((img_size_scoreboard, img_size_scoreboard))
 
 for files in glob.glob(os.path.join(curdir, "images", "effects", "*.png")):
     var_name = os.path.splitext(os.path.basename(files))[0]
@@ -1013,70 +1018,54 @@ def create_player_frame(p):
     frame_points.grid(row=0, column=0, padx=border, pady=border, ipady=3, sticky="nesw")
     frame_points.columnconfigure(0, weight=1)
     frame_points.columnconfigure(1, weight=1)
-    frame_points.columnconfigure(2, weight=3)
+    frame_points.columnconfigure(2, weight=1)
     frame_points.columnconfigure(3, weight=1)
-    frame_points.columnconfigure(4, weight=1)
+    frame_points.columnconfigure(4, weight=4)
+    frame_points.columnconfigure(5, weight=1)
+    frame_points.columnconfigure(6, weight=1)
 
     # name
     ttk.Label(
         frame_points,
         textvariable=player_name[p],
-        font='"Comic Sans MS" 36 italic',
-    ).grid(row=0, column=0, padx=5, pady=(0, 10), columnspan=3, sticky='ns')
+        font='"Comic Sans MS" 36 italic'
+        ).grid(row=0, column=0, padx=5, pady=(5, 0), columnspan=5, sticky='ns')
 
     # stars
-    ttk.Label(frame_points, image=images['no_star']).grid(row=0, column=3, padx=0, pady=0, sticky="nes")
-    ttk.Label(frame_points, image=images['no_star']).grid(row=0, column=4, padx=0, pady=0, sticky="nsw")
+    ttk.Label(frame_points, image=images['no_star']
+              ).grid(row=0, column=5, padx=0, pady=0, sticky="nes")
+    ttk.Label(frame_points, image=images['no_star']
+              ).grid(row=0, column=6, padx=0, pady=0, sticky="nsw")
 
     # single points
-    ttk.Label(
-        frame_points,
-        text="Face:",
-    ).grid(row=1, column=0, sticky="e")
-    ttk.Label(
-        frame_points,
-        text="Drops:",
-    ).grid(row=2, column=0, sticky="e")
-    ttk.Label(
-        frame_points,
-        text="World's End:",
-    ).grid(row=3, column=0, sticky="e")
-    ttk.Label(
-        frame_points,
-        text="MOL:",
-    ).grid(row=4, column=0, sticky="e")
+    ttk.Label(frame_points, image=images['blank_sb']
+              ).grid(row=1, column=0, sticky="se")
+    ttk.Label(frame_points, image=images['drops_sb']
+              ).grid(row=1, column=2, sticky="se")
+    ttk.Label(frame_points, image=images['worlds_end_sb']
+              ).grid(row=2, column=0, sticky="e")
+    ttk.Label(frame_points, image=images['MOL_sb']
+              ).grid(row=2, column=2, sticky="e")
 
-    ttk.Label(
-        frame_points, textvariable=player_points[p]['face'],
-    ).grid(row=1, column=1, sticky="w")
-    ttk.Label(
-        frame_points, textvariable=player_points[p]['drops'],
-    ).grid(row=2, column=1, sticky="w")
-    ttk.Label(
-        frame_points, textvariable=player_points[p]['worlds_end'],
-    ).grid(row=3, column=1, sticky="w")
-    ttk.Label(
-        frame_points, textvariable=player_points[p]['MOL'],
-    ).grid(row=4, column=1, sticky="w")
+    ttk.Label(frame_points, textvariable=player_points[p]['face'], style="points.TLabel"
+              ).grid(row=1, column=1, sticky="sw")
+    ttk.Label(frame_points, textvariable=player_points[p]['drops'], style="points.TLabel"
+              ).grid(row=1, column=3, sticky="sw")
+    ttk.Label(frame_points, textvariable=player_points[p]['worlds_end'], style="points.TLabel"
+              ).grid(row=2, column=1, sticky="w")
+    ttk.Label(frame_points, textvariable=player_points[p]['MOL'], style="points.TLabel"
+              ).grid(row=2, column=3, sticky="w")
 
     # total points
-    ttk.Label(
-        frame_points,
-        textvariable=player_points[p]['total'],
-        style="total.TLabel",
-    ).grid(row=1, column=2, rowspan=4, padx=0, pady=0, sticky='ns')
+    ttk.Label(frame_points, textvariable=player_points[p]['total'], style="total.TLabel"
+              ).grid(row=1, column=4, rowspan=2, padx=0, pady=0, sticky='ns')
 
     # gene pool
-    ttk.Label(
-        frame_points,
-        text="gene pool",
-    ).grid(row=1, column=3, columnspan=2, padx=0, pady=0, sticky='ns')
+    ttk.Label(frame_points, text="gene pool"
+              ).grid(row=1, column=5, columnspan=2, padx=0, pady=0, sticky='s')
 
-    ttk.Label(
-        frame_points,
-        textvariable=player_genes[p],
-        style="genes.TLabel",
-    ).grid(row=2, column=3, rowspan=3, columnspan=2, padx=0, pady=0, sticky='n')
+    ttk.Label(frame_points, textvariable=player_genes[p], style="genes.TLabel"
+              ).grid(row=2, column=5, columnspan=2, padx=0, pady=0, sticky='n')
 
     # ----- list of traits played ----------------------------------------
     frame_traits = tk.Frame(frame)
@@ -1450,7 +1439,8 @@ root.rowconfigure(0, weight=1)
 
 # styling ----------------------------------------------------------------
 gui_style = ttk.Style()
-gui_style.configure("total.TLabel", font=("", 72, "bold"), foreground="orangered1")
+gui_style.configure("total.TLabel", font=("", 100, "bold"), foreground="orangered1")
+gui_style.configure("points.TLabel", font=("", 20))
 gui_style.configure("genes.TLabel", font=("", 38, "bold"), foreground="hotpink1")
 gui_style.configure("game_info.TLabel", font=("", 10, "italic"))
 gui_style.configure("move.TCombobox", selectbackground="none")

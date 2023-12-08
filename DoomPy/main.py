@@ -413,17 +413,56 @@ def btn_play_worlds_end():
 
 
 def btn_play_catastrophe(event, c):
-    # get & set played catastrophe
-    played_catastrophy = event.widget.get()
-    catastrophies[c].set(played_catastrophy)
+    # get played catastrophe
+    cbox_idx = event.widget.current()
+    played_str = event.widget.get()
+    played_before = catastrophies_played[c]
+    if cbox_idx > 0:
+        played_idx = catastrophies_possible[c][cbox_idx-1]
 
-    # update worlds end combobox
-    played_catastrophies = [catastrophies[i].get() for i in range(n_catastrophies.get()) if catastrophies[i].get()]
-    worlds_end_cbox[0]['values'] = [" select world's end ..."] + played_catastrophies
+    # return, if no catastrophe was selected
+    if cbox_idx == 0:
+        if played_before is not None:
+            old_cbox_idx = catastrophies_possible[c].index(played_before) + 1
+            catastrophies_cbox[c].current(old_cbox_idx)
+        print(">>> catastrophe <<< ERROR - no catastrophe selected")
+        return
+
+    # return, if same catastrophe selected
+    if played_before == played_idx:
+        print(">>> catastrophe <<< ERROR - same catastrophe selected as before")
+        return
 
     # print log
-    print(">>> catastrophe <<< played catastrophe #{}: '{}'"
-          .format(c+1, played_catastrophy))
+    print(">>> catastrophe <<< played catastrophe #{}: '{}' (id:{})"
+          .format(c+1, played_str, played_idx))
+
+    # set played catastrophe
+    catastrophies_played[c] = played_idx
+
+    # update possible catastrophies for later ones
+    for i in range(1, n_catastrophies.get()):
+        catastrophies_possible[i] = catastrophies_dfi.copy()
+
+        for prev in range(0, i):
+            if catastrophies_played[prev] is not None:
+                catastrophies_possible[i].remove(catastrophies_played[prev])
+
+                pos_cat_values = [" catastrophe {}...".format(1+1)] + \
+                    ages_df.loc[catastrophies_possible[i]].name.values.tolist()
+                catastrophies_cbox[i].configure(values=pos_cat_values)
+
+    # enable next catastrophe
+    if c < n_catastrophies.get()-1:
+        catastrophies_cbox[c+1].configure(state="readonly")
+    else:
+        worlds_end_cbox[0].configure(state="readonly")
+
+    # update worlds end combobox
+    played_catastrophies = [ages_df.loc[catastrophies_played[i], "name"]
+                            for i in range(n_catastrophies.get())
+                            if catastrophies_played[i] is not None]
+    worlds_end_cbox[0]['values'] = [" select world's end ..."] + played_catastrophies
 
     # update genes & scoring
     update_genes()
@@ -574,7 +613,7 @@ def update_genes():
     # check what catastrophies were played alread
     for c in range(n_catastrophies.get()):
         # get card & effect
-        card = catastrophies[c].get()
+        card = catastrophies_played[c]
         # check if catastrophy was played
         if card in ages_df.name.values.tolist():
             # get effect and apply it
@@ -1299,16 +1338,19 @@ def create_menu_frame():
         font="'' 18",
     ).grid(row=0, column=0, columnspan=2, pady=(5, 0))
     for c in range(n_catastrophies.get()):
-        cbox_catastrophy = ttk.Combobox(
+        pos_cat_values = [" catastrophe {}...".format(c+1)] + \
+            ages_df.loc[catastrophies_possible[c]].name.values.tolist()
+
+        catastrophies_cbox[c] = ttk.Combobox(
             frame_menu_catastrophe,
-            values=[" catastrophe {}...".format(c+1)] + ages_df.loc[catastrophies_dfi].name.values.tolist(),
+            values=pos_cat_values,
             exportselection=0,
-            state="readonly",
+            state="readonly" if c == 0 else "disabled",
             width=18,
             style="move.TCombobox")
-        cbox_catastrophy.current(0)
-        cbox_catastrophy.grid(row=c+1, column=0, columnspan=2, padx=4, sticky='ns')
-        cbox_catastrophy.bind("<<ComboboxSelected>>", lambda ev, c=c: btn_play_catastrophe(ev, c))
+        catastrophies_cbox[c].current(0)
+        catastrophies_cbox[c].grid(row=c+1, column=0, columnspan=2, padx=4, sticky='ns')
+        catastrophies_cbox[c].bind("<<ComboboxSelected>>", lambda ev, c=c: btn_play_catastrophe(ev, c))
 
     # world's end -----
     ttk.Label(
@@ -1321,7 +1363,7 @@ def create_menu_frame():
         frame_menu_catastrophe,
         values=[" select world's end ..."],
         exportselection=0,
-        state="readonly",
+        state="disabled",
         width=18,
         style="move.TCombobox",
         textvariable=worlds_end)
@@ -1388,9 +1430,14 @@ def reset_variables():
         manual_drops.append(tk.StringVar(value='-'))
 
     # reset occured catastrophies
-    catastrophies.clear()
+    catastrophies_possible.clear()
+    catastrophies_played.clear()
+    catastrophies_cbox.clear()
     for i in range(n_catastrophies.get()):
-        catastrophies.append(tk.StringVar(value=""))
+        catastrophies_possible.append(catastrophies_dfi.copy())
+        catastrophies_played.append(None)
+        catastrophies_cbox.append([])
+    worlds_end_cbox[0] = None
 
     # reset current status
     traits_df["cur_color"] = traits_df.color
@@ -1472,7 +1519,9 @@ play_trait = None                       # selected trait (by index in traits_df)
 lbox_traits = [None]                    # listbox widget of deck cards -> needed to be able to edit selected traits
 manual_drops = []                       # list to save manual drop entries to
 
-catastrophies = []                  # occured catastrophies / StringVar
+catastrophies_possible = []                  # occured catastrophies / StringVar
+catastrophies_played = []                  # occured catastrophies / StringVar
+catastrophies_cbox = []             # comboxes containing possible catastrophies
 worlds_end = tk.StringVar(value="")
 worlds_end_cbox = [None]
 

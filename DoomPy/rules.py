@@ -364,7 +364,7 @@ def worlds_end(traits_df, we_catastrophe, player_traits, p, genes):
 
     # init variable
     points = 0
-    # colors = ['blue', 'green', 'purple', 'red']
+    colors = ['blue', 'green', 'purple', 'red']
     traits = player_traits[p]
 
     match we_catastrophe:
@@ -488,11 +488,13 @@ def worlds_end(traits_df, we_catastrophe, player_traits, p, genes):
 
         case "Overpopulation":
             # +4 if fewest_traits
-            points = 0
+            n = [len(tp) for tp in player_traits]
+            if len(traits) == min(n):
+                points = 4
 
         case "Planetary Deforestation":
             # -gene_pool
-            points = 0
+            points = -1 * genes[p].get()
 
         case "Pulse Event":
             # discard_one_purple
@@ -516,7 +518,7 @@ def worlds_end(traits_df, we_catastrophe, player_traits, p, genes):
 
         case "Strange Matter":
             # -2 each_drop
-            points = 0
+            points = -2 * sum(traits_df.loc[trait].drops == 1 for trait in traits)
 
         case "Super Volcano":
             # -1 each_blue
@@ -525,7 +527,11 @@ def worlds_end(traits_df, we_catastrophe, player_traits, p, genes):
 
         case "The Big One":
             # -2 per_each_missing_color
-            points = 0
+            ncol = []
+            for col in colors:
+                ncol.append(all([col not in traits_df.loc[trait].cur_color.lower()
+                            for trait in traits]))
+            points = -2 * sum(ncol)
 
         case "The Four Horsemen":
             # discard_one_trait_>=4_face

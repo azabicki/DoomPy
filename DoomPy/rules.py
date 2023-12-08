@@ -359,6 +359,9 @@ def traits_WE_effects(traits_df, host, trait_pile):
 
 
 def worlds_end(traits_df, we_catastrophe, player_traits, p, genes):
+    if "select world's end" in we_catastrophe:
+        return 0
+
     # init variable
     points = 0
     # colors = ['blue', 'green', 'purple', 'red']

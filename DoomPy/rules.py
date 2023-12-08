@@ -1,4 +1,20 @@
 import numpy as np
+import tkinter as tk
+
+
+# create new window and show instructions of Worlds-End-Effects
+def show_message(msg):
+    secondary_window = tk.Toplevel()
+    secondary_window.title("Worlds End")
+    secondary_window.config(width=300, height=200)
+
+    # Create a button to close (destroy) this window.
+    button_close = tk.Button(
+        secondary_window,
+        text=msg,
+        font=("", 30, "bold"),
+        command=secondary_window.destroy)
+    button_close.grid(row=0, column=0, stick='nesw')
 
 
 # rules for filtering attachable traits depending on trait_pile and attachment
@@ -226,7 +242,6 @@ def drop_points(traits_df, player_traits, p, gene_pool):
                     for col in colors:
                         tmp.append(int(sum(col in color.lower()
                                            for color in traits_df.iloc[player_traits[p]].cur_color.tolist()) / 2))
-                    print(tmp)
                     if sum(tmp) > 0:
                         dp = sum(tmp)
 
@@ -403,7 +418,9 @@ def worlds_end(traits_df, we_catastrophe, player_traits, p, genes):
 
         case "Bioengineered Plague":
             # discard_one_highest_color_count
-            pass
+            if p+1 == len(genes):
+                show_message("Discard 1 random trait from your\nhighest color count from your trait pile.\
+                             \n(If 2 or more colors are tied, pick 1.)from your trait pile\nat random.")
 
         case "Choking Vines":
             # 1 each_green_in_left_trait_pile
@@ -432,11 +449,18 @@ def worlds_end(traits_df, we_catastrophe, player_traits, p, genes):
 
         case "Eyes Open from Behind the Stars":
             # discard_highest_face_value
-            pass
+            if p+1 == len(genes):
+                show_message("Discard your highest face value\ntrait from your trait pile\nto the Old God.")
 
         case "Glacial Meltdown":
             # discard_one_blue
-            pass
+            if p+1 == len(genes):
+                show_message("Discard 1 blue trait\nfrom your trait pile\nat random.")
+
+        case "Glacial Meltdown (random)":
+            # discard_one_blue
+            if p+1 == len(genes):
+                show_message("Discard 1 blue trait\nfrom your trait pile\nat random.")
 
         case "Great Deluge":
             # -4 if_<=2_blue_traits
@@ -472,19 +496,28 @@ def worlds_end(traits_df, we_catastrophe, player_traits, p, genes):
 
         case "Mass Extinction":
             # discard_one_green
-            pass
+            if p+1 == len(genes):
+                show_message("Discard 1 green trait\nfrom your trait pile.")
 
         case "Mega Tsunami":
             # discard_one_red
-            points = 0
+            if p+1 == len(genes):
+                show_message("Discard 1 red trait\nfrom your trait pile.")
+
+        case "Mega Tsunami (random)":
+            # discard_one_red
+            if p+1 == len(genes):
+                show_message("Discard 1 red trait\nfrom your trait pile at random.")
 
         case "Nuclear Winter (-1)":
             # discard_one_colorless
-            points = 0
+            if p+1 == len(genes):
+                show_message("Discard 1 colorless trait\nfrom your trait pile.")
 
         case "Nuclear Winter (-2)":
             # discard_one_colorless
-            points = 0
+            if p+1 == len(genes):
+                show_message("Discard 1 colorless trait\nfrom your trait pile.")
 
         case "Overpopulation":
             # +4 if fewest_traits
@@ -498,7 +531,8 @@ def worlds_end(traits_df, we_catastrophe, player_traits, p, genes):
 
         case "Pulse Event":
             # discard_one_purple
-            points = 0
+            if p+1 == len(genes):
+                show_message("Discard 1 purple trait\nfrom your trait pile.")
 
         case "Retrovirus":
             # -1 each_green
@@ -535,11 +569,13 @@ def worlds_end(traits_df, we_catastrophe, player_traits, p, genes):
 
         case "The Four Horsemen":
             # discard_one_trait_>=4_face
-            points = 0
+            if p+1 == len(genes):
+                show_message("Discard 1 purple trait from\nyour trait pile with a\nface value of 4 or higher.")
 
         case "Tragedy of the Commons":
             # discard_one_drop
-            points = 0
+            if p+1 == len(genes):
+                show_message("Discard a Drop of Life\nfrom your trait pile.")
 
         case "Tropical Superstorm":
             # 1 each_purple_in_left_trait_pile

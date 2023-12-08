@@ -76,9 +76,16 @@ def drop_points(traits_df, player_traits, p, gene_pool):
     total = 0
     # loop trait pile and apply drop-rules
     for trait in player_traits[p]:
-        # only if drop
+        # only if drop & not 'inactive'
         if traits_df.loc[trait].drops == 1:
+            # default dop points
             dp = np.nan
+
+            # first, if effects present which affect drops
+            if ('inactive' in traits_df.loc[trait].cur_effect.lower() or
+                    'inactive' in traits_df.loc[trait].cur_worlds_end_effect.lower()):
+                traits_df.loc[trait, 'cur_drops'] = dp
+                continue
 
             # match trait _name_
             match traits_df.loc[trait].trait:

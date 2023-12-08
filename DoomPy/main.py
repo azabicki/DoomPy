@@ -150,6 +150,7 @@ def btn_traits_world_end(from_, trait_idx, event):
             attachment = traits_df.loc[trait].cur_attachment
             host = traits_df.loc[trait].cur_host
             we_effect = traits_df.loc[trait].cur_worlds_end_trait
+            cur_drops = traits_df.loc[trait].cur_drops
 
             # reset trait
             update_traits_current_status('reset', trait, False)
@@ -160,6 +161,9 @@ def btn_traits_world_end(from_, trait_idx, event):
 
             # restore host in attachment
             traits_df.loc[trait, 'cur_host'] = host
+
+            # restore cur_drop points
+            traits_df.loc[trait, 'cur_drops'] = cur_drops
 
             # redo worlds_end effects
             if we_effect != 'none':

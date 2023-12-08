@@ -359,27 +359,35 @@ def traits_WE_effects(traits_df, host, trait_pile):
                         traits_df.loc[trait, 'cur_color'] = new_colors
 
 
-def worlds_end(worlds_end, p, player_cards, traits):
-    cards = player_cards[p]
+def worlds_end(traits_df, we_catastrophe, player_traits, p, genes):
+    # init variable
+    points = 0
+    # colors = ['blue', 'green', 'purple', 'red']
+    traits = player_traits[p]
 
-    match worlds_end:
+    match we_catastrophe:
         case "AI Takeover":
             # 2 colorless_worth ignore_colorless_effects
-            colors = [traits[traits.name == card]['color'].values[0] for card in cards]
-            n_colorless = sum([1 for col in colors if "Colorless" in col])
-
-            if n_colorless > 100:
-                points = 100
-            else:
-                points = 0
+            #   --> change cur_face + cur_effect
+            for trait in traits:
+                if 'colorless' in traits_df.loc[trait].cur_color.lower():
+                    traits_df.loc[trait, 'cur_face'] = 2
+                    traits_df.loc[trait, 'cur_worlds_end_effect'] = 'Face_Inactive'
 
         case "AI Takeover (excl. dominant)":
             # 2 colorless_worth ignore_colorless_effects noDominant
-            points = 0
+            #   --> change cur_face + cur_effect
+            for trait in traits:
+                if ('colorless' in traits_df.loc[trait].cur_color and
+                        traits_df.loc[trait].dominant != 1):
+                    traits_df.loc[trait, 'cur_face'] = 2
+                    traits_df.loc[trait, 'cur_worlds_end_effect'] = 'Face_Inactive'
 
         case "Algal Superbloom":
             # 1 each_blue_in_left_trait_pile
-            points = 0
+            traits_left = player_traits[p+1] if p+1 < len(player_traits) else player_traits[0]
+            points = sum('blue' in color.lower()
+                         for color in traits_df.iloc[traits_left].cur_color.tolist())
 
         case "Ancient Corruption":
             # -1 each_action
@@ -395,7 +403,9 @@ def worlds_end(worlds_end, p, player_cards, traits):
 
         case "Choking Vines":
             # 1 each_green_in_left_trait_pile
-            points = 0
+            traits_left = player_traits[p+1] if p+1 < len(player_traits) else player_traits[0]
+            points = sum('green' in color.lower()
+                         for color in traits_df.iloc[traits_left].cur_color.tolist())
 
         case "Deus ex Machina":
             # draw_card_add_face_value
@@ -507,11 +517,15 @@ def worlds_end(worlds_end, p, player_cards, traits):
 
         case "Tropical Superstorm":
             # 1 each_purple_in_left_trait_pile
-            points = 0
+            traits_left = player_traits[p+1] if p+1 < len(player_traits) else player_traits[0]
+            points = sum('purple' in color.lower()
+                         for color in traits_df.iloc[traits_left].cur_color.tolist())
 
         case "Volcanic Winter":
             # 1 each_red_in_left_trait_pile
-            points = 0
+            traits_left = player_traits[p+1] if p+1 < len(player_traits) else player_traits[0]
+            points = sum('red' in color.lower()
+                         for color in traits_df.iloc[traits_left].cur_color.tolist())
 
         case _:
             points = 0

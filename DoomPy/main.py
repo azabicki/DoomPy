@@ -38,6 +38,7 @@ traits_df["cur_effect"] = 'none'
 traits_df["cur_host"] = 'none'
 traits_df["cur_attachment"] = 'none'
 traits_df["cur_worlds_end_trait"] = 'none'
+traits_df["cur_worlds_end_effect"] = np.nan
 
 # load images ------------------------------------------------------------
 img_size_star = 30
@@ -402,7 +403,8 @@ def btn_play_trait(to):
 
 def btn_play_worlds_end():
     # do nothing if no catastrophy selected
-    if worlds_end.get() == " select world's end ...":
+    if worlds_end_cbox[0].current() == 0:
+        print(">>> world's end <<< ERROR - no event selected")
         return
 
     # print log
@@ -572,15 +574,15 @@ def update_scoring():
         # get cards
         trait_pile = player_traits[p]
 
+        # calculate world's end points
+        p_worlds_end = rules.worlds_end(traits_df, worlds_end.get(), player_traits, p, player_genes)
+
         # calculate face value
-        p_face = int(sum([traits_df.loc[trait_idx].face for trait_idx in trait_pile
-                          if not isinstance(traits_df.loc[trait_idx].face, str)]))
+        p_face = int(sum([traits_df.loc[trait_idx].cur_face for trait_idx in trait_pile
+                          if not isinstance(traits_df.loc[trait_idx].cur_face, str)]))
 
         # calculate drops points
         p_drop = rules.drop_points(traits_df, player_traits, p, player_genes)
-
-        # calculate world's end points
-        p_worlds_end = rules.worlds_end(worlds_end.get(), p, player_traits, traits_df)
 
         # calculate total score
         total = p_face + p_drop + p_worlds_end
@@ -768,7 +770,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # face
-        if show['face']:
+        if show['face'] and 'face' not in traits_df.loc[trait_idx].cur_worlds_end_effect.lower():
             icol += 1
             face_value = traits_df.loc[trait_idx].face
             face_string = face_value if isinstance(face_value, str) else str(int(face_value))
@@ -938,6 +940,29 @@ def create_trait_pile(frame_trait_overview, p):
                 frame_pics,
                 image=images['noSwap']
                 ).grid(row=0, column=icol)
+
+        # ----- current effects due to WORLDS END ------------------------
+        if traits_df.loc[trait_idx].cur_worlds_end_effect != 'none':
+            icol += 1
+            tk.Label(
+                frame_pics,
+                image=images['worlds_end']
+                ).grid(row=0, column=icol)
+
+            if 'face' in traits_df.loc[trait_idx].cur_worlds_end_effect.lower():
+                icol += 1
+                we_face_string = str(int(traits_df.loc[trait_idx].cur_face))
+                tk.Label(
+                    frame_pics,
+                    image=images[we_face_string]
+                    ).grid(row=0, column=icol)
+
+            if 'inactive' in traits_df.loc[trait_idx].cur_worlds_end_effect.lower():
+                icol += 1
+                tk.Label(
+                    frame_pics,
+                    image=images['noFX']
+                    ).grid(row=0, column=icol)
 
         # ----- manual DROP points entry ---------------------------------
         cur_drop_eff = traits_df.loc[trait_idx].effect_drop
@@ -1466,6 +1491,7 @@ def reset_variables():
     traits_df["cur_host"] = 'none'
     traits_df["cur_attachment"] = 'none'
     traits_df["cur_worlds_end_trait"] = 'none'
+    traits_df["cur_worlds_end_effect"] = 'none'
 
 
 def start_game():

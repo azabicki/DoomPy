@@ -41,7 +41,7 @@ traits_df["cur_worlds_end"] = 'none'
 
 # load images ------------------------------------------------------------
 img_size_star = 30
-img_size_scoreboard = 25
+img_size_scoreboard = 24
 img_size_icons = 20
 img_size_icons_w = int(img_size_icons*1.5)
 img_colors_set = "circle"
@@ -1020,16 +1020,13 @@ def create_player_frame(p):
     frame_points.columnconfigure(1, weight=1)
     frame_points.columnconfigure(2, weight=1)
     frame_points.columnconfigure(3, weight=1)
-    frame_points.columnconfigure(4, weight=4)
+    frame_points.columnconfigure(4, weight=3)
     frame_points.columnconfigure(5, weight=1)
     frame_points.columnconfigure(6, weight=1)
 
     # name
-    ttk.Label(
-        frame_points,
-        textvariable=player_name[p],
-        font='"Comic Sans MS" 36 italic'
-        ).grid(row=0, column=0, padx=5, pady=(5, 0), columnspan=5, sticky='ns')
+    ttk.Label(frame_points, textvariable=player_name[p], style="name.TLabel"
+              ).grid(row=0, column=0, padx=5, pady=(5, 0), columnspan=5, sticky='ns')
 
     # stars
     ttk.Label(frame_points, image=images['no_star']
@@ -1439,10 +1436,11 @@ root.rowconfigure(0, weight=1)
 
 # styling ----------------------------------------------------------------
 gui_style = ttk.Style()
-gui_style.configure("total.TLabel", font=("", 100, "bold"), foreground="orangered1")
-gui_style.configure("points.TLabel", font=("", 20))
-gui_style.configure("genes.TLabel", font=("", 38, "bold"), foreground="hotpink1")
 gui_style.configure("game_info.TLabel", font=("", 10, "italic"))
+gui_style.configure("name.TLabel", font=("Comic Sans MS", 36, "bold"))
+gui_style.configure("points.TLabel", font=("", 20))
+gui_style.configure("total.TLabel", font=("", 80, "bold"), foreground="orangered1")
+gui_style.configure("genes.TLabel", font=("", 38, "bold"), foreground="hotpink1")
 gui_style.configure("move.TCombobox", selectbackground="none")
 
 # load images ------------------------------------------------------------

@@ -251,9 +251,16 @@ def pre_play():
     catastrophies_cbox[3].event_generate("<<ComboboxSelected>>")
 
 
-def switch_icons():
-    global show_icons
+def switch_music():
+    if music_onoff.get():
+        music_onoff.set(0)
+        music_lbl[0].configure(image=images['note_off'])
+    else:
+        music_onoff.set(1)
+        music_lbl[0].configure(image=images['note_on'])
 
+
+def switch_icons():
     if icons_onoff.get():
         print(' icons switched on')
         show_icons['color'] = True          # default: True
@@ -278,6 +285,11 @@ def switch_icons():
         show_icons['worlds_end'] = False  # default: False
         show_icons['effectless'] = False  # default: False
         show_icons['attachment'] = False  # default: False
+
+    # update all trait piles
+    for p in range(n_player.get()):
+        if player_rb_frames[p] is not None:
+            create_trait_pile(player_rb_frames[p], p)
 
 
 def play(trait):
@@ -1377,11 +1389,21 @@ def create_menu_frame():
     frame_menu_options.columnconfigure(1, weight=1)
 
     # title -----
+    frame_title = tk.Frame(frame_menu_options)
+    frame_title.grid(row=0, column=0, columnspan=2, sticky="nesw")
+    frame_title.columnconfigure(0, weight=3)
+
     ttk.Label(
-        frame_menu_options,
+        frame_title,
         text="OPTIONS",
-        font="'' 24",
-    ).grid(row=0, column=0, columnspan=2, pady=(5, 5))
+        font="'' 24"
+        ).grid(row=0, column=0, pady=(5, 5))
+    music_lbl[0] = ttk.Label(
+        frame_title,
+        image=images['note_off'],
+        cursor="heart")
+    music_lbl[0].grid(row=0, column=1, padx=(0, 10))
+    music_lbl[0].bind("<Button-1>", lambda e: switch_music())
 
     # nr players -----
     ttk.Label(
@@ -1671,6 +1693,7 @@ def start_game():
     # reset variables ----------------------------------------------------
     print(">>> initialize <<< reset variables")
     reset_variables()
+    switch_icons()
 
     # update frame_configurations settings -------------------------------
     for w in frame_menu.grid_slaves():
@@ -1722,9 +1745,9 @@ for k, v in images_dict.items():
 
 # init variables ---------------------------------------------------------
 music_onoff = tk.IntVar(value=0)
+music_lbl = [None]
 icons_onoff = tk.IntVar(value=0)
 show_icons = {}
-switch_icons()
 
 opt_n_player = tk.IntVar(value=defaults["n_player"])                # OPTIONS: number of players
 opt_n_genes = tk.IntVar(value=defaults["n_genes"])                  # OPTIONS: gene pool at beginning

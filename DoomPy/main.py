@@ -96,7 +96,6 @@ for files in glob.glob(os.path.join(curdir, "sounds", "*.mp3")):
 
 
 # functions ##############################################################
-# simulating some rounds...
 def pre_play():
     global play_trait
 
@@ -242,13 +241,13 @@ def pre_play():
         play_trait = 211
         btn_play_trait(3)
 
-    catastrophies_cbox[0].current(21)
+    catastrophies_cbox[0].current(9)
     catastrophies_cbox[0].event_generate("<<ComboboxSelected>>")
-    catastrophies_cbox[1].current(21)
+    catastrophies_cbox[1].current(9)
     catastrophies_cbox[1].event_generate("<<ComboboxSelected>>")
-    catastrophies_cbox[2].current(21)
+    catastrophies_cbox[2].current(10)
     catastrophies_cbox[2].event_generate("<<ComboboxSelected>>")
-    catastrophies_cbox[3].current(21)
+    catastrophies_cbox[3].current(17)
     catastrophies_cbox[3].event_generate("<<ComboboxSelected>>")
 
 
@@ -1219,25 +1218,27 @@ def create_trait_pile(frame_trait_overview, p):
 
     # add passive viral to this trait pile
     if any([viral_idx in tp for tp in player_traits]) and viral_idx not in player_traits[p]:
+        irow += 1
         ttk.Separator(frame_trait_overview, orient='horizontal'
-                      ).grid(row=irow+1, column=0, columnspan=2, padx=5, pady=10, sticky='we')
+                      ).grid(row=irow, column=0, columnspan=2, padx=5, pady=10, sticky='we')
 
         # create separate frame
+        irow += 1
         frame_viral = tk.Frame(frame_trait_overview)
-        frame_viral.grid(row=irow+2, column=0, columnspan=2, sticky='we')
+        frame_viral.grid(row=irow, column=0, columnspan=2, sticky='we')
 
         # add label & drop icon
         tk.Label(
             frame_viral,
             text="Viral",
             fg="mediumorchid1"
-            ).grid(row=1, column=0, padx=(20, 0), sticky='e')
+            ).grid(row=0, column=0, padx=(20, 0), sticky='e')
         tk.Label(
             frame_viral,
             text=" punishes ",
             image=images["drops"],
             compound=tk.LEFT
-            ).grid(row=1, column=1, sticky='w')
+            ).grid(row=0, column=1, sticky='w')
 
         # check if worlds end effect was chosen
         we_viral = traits_df.loc[viral_idx].cur_worlds_end_trait
@@ -1248,12 +1249,12 @@ def create_trait_pile(frame_trait_overview, p):
             tk.Label(
                 frame_viral,
                 image=images[we_viral[0]]
-                ).grid(row=1, column=2)
+                ).grid(row=0, column=2)
             # add points icono
             tk.Label(
                 frame_viral,
                 image=images[vp_s[p]]
-                ).grid(row=1, column=3)
+                ).grid(row=0, column=3)
 
             print("Viral acts on '{}' traits in '{}'s trait pile -> drop points = {}"
                   .format(we_viral, player_name[p].get(), vp_s[p]))
@@ -1266,7 +1267,7 @@ def create_player_frame(p):
     frame = tk.Frame(frame_playground, bg=defaults["player_frame_color"])
     frame.columnconfigure(0, weight=1)  # stretch sub_frames to playground (=1!)
     frame.rowconfigure(1, weight=1)  # stretch trait-pile to bottom of playground
-    # frame.rowconfigure(2, weight=1)  # further actions
+    # frame.rowconfigure(2, weight=1)  # MOL
     frame.grid(column=p, row=0, padx=5, pady=5, sticky="nesw")  # or use nsw for non-x-streched frames!
 
     # ----- name + overview current points -------------------------------
@@ -1351,7 +1352,7 @@ def create_player_frame(p):
         command=partial(btn_discard_trait, p),
     ).grid(row=1, column=1, pady=(0, border), sticky='ns')
 
-    # ----- action buttons -------------------------------------
+    # ----- Meaning of Life -------------------------------------
 #    frame_actions = tk.Frame(frame)
 #    frame_actions.grid(row=2, column=0, padx=border, pady=(0, border), sticky="nesw")
 #    frame_actions.columnconfigure(0, weight=1)
@@ -1439,14 +1440,10 @@ def create_menu_frame():
     ).grid(row=5, column=0, columnspan=2)
     ttk.Label(
         frame_menu_options,
-        text="gene pool startet at {}".format(n_genes.get()),
+        text="{} catastrophies + {} genes at start"
+        .format(n_catastrophies.get(), n_genes.get()),
         style="game_info.TLabel",
-    ).grid(row=6, column=0, columnspan=2)
-    ttk.Label(
-        frame_menu_options,
-        text="{} catastrophies".format(n_catastrophies.get()),
-        style="game_info.TLabel",
-    ).grid(row=7, column=0, columnspan=2, pady=(0, 5))
+    ).grid(row=6, column=0, columnspan=2, pady=(0, 5))
 
     # ----- frame 4 player names --------------------------------------------------------
     frame_menu_names = tk.Frame(frame_menu)
@@ -1507,7 +1504,7 @@ def create_menu_frame():
     # listbox with (filtered) deck-cards -----
     lbox_traits[0] = tk.Listbox(
         frame_menu_traits,
-        height=5,
+        height=4,
         listvariable=lbox_cards_str,
         exportselection=False)
     lbox_traits[0].grid(row=2, column=0, columnspan=2, padx=10)
@@ -1584,35 +1581,23 @@ def create_menu_frame():
     # ----- frame for control buttons ---------------------------------------------------
     frame_menu_controls = tk.Frame(frame_menu)
     frame_menu_controls.grid(row=4, column=0, padx=border, pady=(0, border), sticky="nesw")
-    frame_menu_controls.columnconfigure(0, weight=1)
+    frame_menu_controls.columnconfigure(0, weight=0)
+    frame_menu_controls.columnconfigure(1, weight=0)
     frame_menu_controls.columnconfigure(1, weight=1)
-    frame_menu_controls.columnconfigure(2, weight=1)
 
+    ttk.Checkbutton(frame_menu_controls,
+                    variable=icons_onoff,
+                    command=switch_icons
+                    ).grid(row=0, column=0, padx=(10, 0))
+    ttk.Button(frame_menu_controls,
+               image=images['no_star'],
+               command=pre_play,
+               width=2
+               ).grid(row=0, column=1, padx=5)
     ttk.Button(frame_menu_controls,
                text="quit",
                command=root.quit
-               ).grid(row=0, column=0, columnspan=3, padx=10, pady=5, sticky="we")
-
-    ttk.Checkbutton(
-        frame_menu_controls,
-        image=images['note'],
-        variable=music_onoff
-        ).grid(row=1, column=0, padx=(5, 0), pady=(0, 5))
-
-    ttk.Checkbutton(
-        frame_menu_controls,
-        image=images['requirement'],
-        variable=icons_onoff,
-        command=switch_icons,
-        ).grid(row=1, column=1, padx=0, pady=(0, 5))
-
-    ttk.Button(
-        frame_menu_controls,
-        # text="preplay",
-        image=images['no_star'],
-        command=pre_play,
-        width=2
-        ).grid(row=1, column=2, padx=0, pady=(0, 5))
+               ).grid(row=0, column=2, padx=(0, 10), pady=5, sticky="we")
 
 
 def reset_variables():
@@ -1716,7 +1701,7 @@ def start_game():
 # create a window --------------------------------------------------------
 root = tk.Tk()
 root.title("LIVE Doomlings Calculator")
-root.geometry("1600x1000")
+root.geometry("1600x900")
 root.configure(background="grey")
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)

@@ -676,6 +676,26 @@ def btn_play_catastrophe(event, c):
         create_trait_pile(player_rb_frames[p], p)
 
 
+def update_manual_we(event, p):
+    value = event.widget.get()
+
+    # check if input is numeric
+    if (value.isnumeric() or (len(value) > 1 and value.lstrip('-').isnumeric())):
+        # check limit of (hard-coded) 20
+        if int(value) > 20:
+            value = '20'
+            player_we_effects[p].set(value)
+        if int(value) < -20:
+            value = '-20'
+            player_we_effects[p].set(value)
+
+        # update scoring
+        update_scoring()
+
+        # update this players trait pile
+        create_trait_pile(player_rb_frames[p], p)
+
+
 def update_manual_drops(event, trait, p):
     value = event.widget.get()
 
@@ -753,7 +773,7 @@ def update_scoring():
         trait_pile = player_traits[p]
 
         # calculate world's end points
-        p_worlds_end = rules.worlds_end(traits_df, worlds_end.get(), player_traits, p, player_genes)
+        p_worlds_end = rules.worlds_end(traits_df, worlds_end.get(), player_traits, p, player_genes, player_we_effects)
 
         # calculate face value
         p_face = int(sum([traits_df.loc[trait_idx].cur_face for trait_idx in trait_pile
@@ -1272,6 +1292,59 @@ def create_trait_pile(frame_trait_overview, p):
                   .format(we_viral, player_name[p].get(), vp_s[p]))
     # *** !!! *** special, individual case *** !!! ***********************
 
+    # ------ worlds end -> manual entries --------------------------------
+    if "select world's end" not in worlds_end.get():
+        irow += 1
+        ttk.Separator(frame_trait_overview, orient='horizontal'
+                      ).grid(row=irow, column=0, columnspan=2, padx=5, pady=10, sticky='we')
+
+        # get world's end name & index
+        we = worlds_end.get()
+        we_idx = ages_df[ages_df['name'] == we].index.values[0]
+        we_eff = ages_df.loc[we_idx].worlds_end
+
+        # create separate frame for WE_TITLE
+        irow += 1
+        frame_weA = tk.Frame(frame_trait_overview)
+        frame_weA.grid(row=irow, column=0, columnspan=2, sticky='we')
+
+        # add label & drop icon
+        tk.Label(frame_weA,
+                 image=images["catastrophe"],
+                 ).grid(row=0, column=0, padx=(20, 0), sticky='e')
+        tk.Label(frame_weA,
+                 text=" " + we + " ",
+                 fg="#FF3030",
+                 font="'', 14"
+                 ).grid(row=0, column=1, sticky='ns')
+        tk.Label(frame_weA,
+                 image=images["catastrophe"],
+                 ).grid(row=0, column=2, padx=(0, 20), sticky='w')
+
+        # create separate frame for WE_EFFECTS
+        irow += 1
+        frame_weB = tk.Frame(frame_trait_overview)
+        frame_weB.grid(row=irow, column=0, columnspan=2, sticky='we')
+        frame_weB.columnconfigure(0, weight=1)
+        frame_weB.columnconfigure(1, weight=0)
+        frame_weB.columnconfigure(2, weight=1)
+
+        tk.Label(frame_weB, text=">>>").grid(row=0, column=0, sticky='e')
+        tk.Label(frame_weB, text="<<<").grid(row=0, column=2, sticky='w')
+
+        if isinstance(we_eff, str) and ('hand' in we_eff or 'draw' in we_eff):
+            we_entry = ttk.Entry(frame_weB,
+                                 textvariable=player_we_effects[p],
+                                 justify=tk.CENTER,
+                                 width=3)
+            we_entry.grid(row=0, column=1)
+            we_entry.bind("<KeyRelease>", lambda e: update_manual_we(e, p))
+
+        else:
+            we_points = str(player_points[p]['worlds_end'].get())
+            tk.Label(frame_weB, image=images[we_points],
+                     ).grid(row=0, column=1, sticky='w')
+
 
 def create_player_frame(p):
     border = defaults["color_frame_width"]
@@ -1639,6 +1712,7 @@ def reset_variables():
     player_traits.clear()
     player_trait_selected.clear()
     player_rb_frames.clear()
+    player_we_effects.clear()
 
     # fill variables
     for i in range(n_player.get()):
@@ -1656,6 +1730,7 @@ def reset_variables():
         player_traits.append([])
         player_trait_selected.append(tk.Variable(value=np.nan))
         player_rb_frames.append(None)
+        player_we_effects.append(tk.StringVar(value='0'))
 
     # reset deck/lbox card-lists
     deck_cards.clear()
@@ -1778,6 +1853,7 @@ player_points = []          # current players points / dictionary
 player_traits = []          # current players traits played / lists
 player_trait_selected = []  # selected traits in players trait piles / StringVar
 player_rb_frames = []       # frame containing players traits -> needed to be able to edit selected traits
+player_we_effects = []       # frame containing players traits -> needed to be able to edit selected traits
 
 # create _content_ frame -------------------------------------------------
 content = tk.Frame(root, width=1200, height=800, bg=defaults["bg_content"])

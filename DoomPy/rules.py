@@ -373,7 +373,8 @@ def traits_WE_effects(traits_df, host, trait_pile):
                         traits_df.loc[trait, 'cur_color'] = new_colors
 
 
-def worlds_end(traits_df, we_catastrophe, player_traits, p, genes):
+def worlds_end(traits_df, we_catastrophe, player_traits, p, genes, player_we_effects):
+    # return, if worlds end did not happen yet
     if "select world's end" in we_catastrophe:
         return 0
 
@@ -428,15 +429,13 @@ def worlds_end(traits_df, we_catastrophe, player_traits, p, genes):
             points = sum('green' in color.lower()
                          for color in traits_df.iloc[traits_left].cur_color.tolist())
 
-        case "Deus ex Machina":
+        case "Deus Ex Machina":
             # draw_card_add_face_value
-            print('_____MANUAL ENTRY NEEDED_____')
-            points = 0
+            points = int(player_we_effects[p].get())
 
-        case "Deus ex Machina (max.5)":
+        case "Deus Ex Machina (max.5)":
             # draw_card_add_face_value_max.5
-            print('_____MANUAL ENTRY NEEDED_____')
-            points = 0
+            points = int(player_we_effects[p].get())
 
         case "Ecological Collapse":
             # +2 each_negative_face
@@ -444,8 +443,7 @@ def worlds_end(traits_df, we_catastrophe, player_traits, p, genes):
 
         case "Endless Monsoon":
             # -1 hand
-            print('_____MANUAL ENTRY NEEDED_____')
-            points = 0
+            points = int(player_we_effects[p].get())
 
         case "Eyes Open from Behind the Stars":
             # discard_highest_face_value
@@ -485,8 +483,7 @@ def worlds_end(traits_df, we_catastrophe, player_traits, p, genes):
 
         case "Invasive Species":
             # add_max7_face_from_hand
-            print('_____MANUAL ENTRY NEEDED_____')
-            points = 0
+            points = int(player_we_effects[p].get())
 
         case "Jungle Rot":
             # -4 if_<=2_green_traits

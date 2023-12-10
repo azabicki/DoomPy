@@ -867,7 +867,25 @@ def update_genes():
             print(">>> genes <<< catastrophe '{}' has gene effect off '{}' -> current effect: {}"
                   .format(c_str, effect, diff_genes))
 
-    # update gene values
+    # check for special effects by specific traits --------------------------------------
+    # Spores
+    sprs_idx = traits_df.index[traits_df.trait == 'Spores'].tolist()[0]
+    sprs_eff = traits_df.loc[sprs_idx].cur_effect
+    if sprs_eff != 'none':
+        if '_' in sprs_eff:
+            sprs_eff = sprs_eff.split('_')
+
+        for eff in sprs_eff:
+            if eff.isnumeric() and int(eff) < n_player.get():
+                p = int(eff)
+                diff_genes[p] += 1
+
+                # print log
+                print(">>> genes <<< 'Spores' (id:{}) has an gene effect (+1) on '{}' -> current effect: {}"
+                      .format(sprs_idx, player_name[p].get(), diff_genes))
+
+
+    # update gene values ----------------------------------------------------------------
     for p in range(n_player.get()):
         new_gp = n_genes.get() + diff_genes[p]
         if new_gp > 8:

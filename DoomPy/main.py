@@ -1658,6 +1658,7 @@ def create_player_frame(p):
 
     player_rb_frames[p] = tk.Frame(frame_traits)
     player_rb_frames[p].grid(row=0, column=0, columnspan=2, sticky='nesw', padx=border, pady=border)
+    player_rb_frames[p].columnconfigure(1, weight=1)  # for left button under trait-pile
     create_trait_pile(player_rb_frames[p], p)
 
     # action buttons -----

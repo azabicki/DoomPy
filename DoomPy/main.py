@@ -1163,7 +1163,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
 
             # filter only non-attachment-traits and check if this is already attached to a trait
-            traits_filtered_idx = [None] + rules.filter_attachables(traits_df, player_traits[p], trait_idx)
+            traits_filtered_idx = [None] + at_rules.filter_attachables(traits_df, player_traits[p], trait_idx)
             traits_filtered_str = [" ... "] + [traits_df.loc[idx].trait
                                                for idx in traits_filtered_idx if idx is not None]
 
@@ -1196,7 +1196,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
 
             # get task what to do at worlds end
-            we_effect = rules.traits_WE_tasks(traits_df, trait_idx)
+            we_effect = twe_rules.traits_WE_tasks(traits_df, trait_idx)
 
             # create combobox
             cbox_attach_to = ttk.Combobox(

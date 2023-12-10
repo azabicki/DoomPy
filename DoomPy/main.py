@@ -1756,25 +1756,39 @@ def create_menu_frame():
         wrap=False
     ).grid(row=3, column=1, sticky='w')
 
+    # nr MOLs -----
+    ttk.Label(
+        frame_menu_options,
+        text="# MOLs: ",
+    ).grid(row=4, column=0, sticky='e')
+    ttk.Spinbox(
+        frame_menu_options,
+        from_=0,
+        to=4,
+        width=3,
+        textvariable=opt_n_MOLs,
+        wrap=False
+    ).grid(row=4, column=1, sticky='w')
+
     # restart button -----
     ttk.Button(
         frame_menu_options,
         text="restart game",
         command=start_game,
-    ).grid(row=4, column=0, columnspan=2, padx=10, pady=5, sticky="we")
+    ).grid(row=5, column=0, columnspan=2, padx=10, pady=5, sticky="we")
 
     # info current game -----
     ttk.Label(
         frame_menu_options,
         text="running game",
         font="'' 12 underline",
-    ).grid(row=5, column=0, columnspan=2)
+    ).grid(row=6, column=0, columnspan=2)
     ttk.Label(
         frame_menu_options,
-        text="{} catastrophies + {} genes at start"
-        .format(n_catastrophies.get(), n_genes.get()),
+        text="{} catastrophies + {} genes + {} MOLs"
+        .format(n_catastrophies.get(), n_genes.get(), n_MOLs.get()),
         style="game_info.TLabel",
-    ).grid(row=6, column=0, columnspan=2, pady=(0, 5))
+    ).grid(row=7, column=0, columnspan=2, pady=(0, 5))
 
     # ----- frame 4 player names --------------------------------------------------------
     frame_menu_names = tk.Frame(frame_menu)
@@ -1936,6 +1950,7 @@ def reset_variables():
     n_player.set(opt_n_player.get())
     n_genes.set(opt_n_genes.get())
     n_catastrophies.set(opt_n_catastrophies.get())
+    n_MOLs.set(opt_n_MOLs.get())
 
     # save previous names
     last_names = player_name.copy()
@@ -1949,6 +1964,7 @@ def reset_variables():
     player_trait_selected.clear()
     player_rb_frames.clear()
     player_we_effects.clear()
+    player_MOLs.clear()
 
     neoteny_checkbutton.clear()
     sleepy_spinbox.clear()
@@ -1970,8 +1986,12 @@ def reset_variables():
         player_trait_selected.append(tk.Variable(value=np.nan))
         player_rb_frames.append(None)
         player_we_effects.append(tk.StringVar(value='0'))
+        player_MOLs.append([])
         neoteny_checkbutton.append(tk.IntVar(value=0))
         sleepy_spinbox.append(tk.IntVar(value=0))
+
+        for m in range(n_MOLs.get()):
+            player_MOLs[i].append([])
 
     # reset deck/lbox card-lists
     deck_cards.clear()
@@ -2068,10 +2088,12 @@ show_icons = {}
 opt_n_player = tk.IntVar(value=defaults["n_player"])                # OPTIONS: number of players
 opt_n_genes = tk.IntVar(value=defaults["n_genes"])                  # OPTIONS: gene pool at beginning
 opt_n_catastrophies = tk.IntVar(value=defaults["n_catastrophies"])  # OPTIONS: number of catastrophies
+opt_n_MOLs = tk.IntVar(value=defaults["n_MOLs"])                    # OPTIONS: number of MOLs
 
 n_player = tk.IntVar()          # number of current players
 n_genes = tk.IntVar()           # gene pool at start
 n_catastrophies = tk.IntVar()   # number of catastrophies
+n_MOLs = tk.IntVar()            # number of MOLs
 
 search_trait = tk.StringVar(value="")   # searching for traits in playable deck
 deck_cards = []                         # all traits in deck (or discard pile) left to be drawn / list of idx
@@ -2094,7 +2116,8 @@ player_points = []          # current players points / dictionary
 player_traits = []          # current players traits played / lists
 player_trait_selected = []  # selected traits in players trait piles / StringVar
 player_rb_frames = []       # frame containing players traits -> needed to be able to edit selected traits
-player_we_effects = []       # frame containing players traits -> needed to be able to edit selected traits
+player_we_effects = []      # frame containing players traits -> needed to be able to edit selected traits
+player_MOLs = []            # list of lists containing MOLs for each player
 
 neoteny_checkbutton = []
 sleepy_spinbox = []

@@ -820,7 +820,7 @@ def update_genes():
     # init vars
     diff_genes = [0] * n_player.get()
 
-    # loop players and calculate +- genes of all played traits
+    # loop players and calculate +- genes of all played traits --------------------------
     for p in range(n_player.get()):
         # loop traits in trait_pile
         for trait_idx in player_traits[p]:
@@ -851,7 +851,7 @@ def update_genes():
                 print(">>> genes <<< '{}'s '{}' has gene effect off '{}' on '{}' -> current effect: {}"
                       .format(player_name[p].get(), traits_df.loc[trait_idx].trait, value, who, diff_genes))
 
-    # check what catastrophies were played alread
+    # check what catastrophies were played alread ---------------------------------------
     for c in range(n_catastrophies.get()):
         # get card & effect
         c_idx = catastrophies_played[c]

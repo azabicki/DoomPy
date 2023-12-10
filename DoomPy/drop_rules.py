@@ -366,7 +366,7 @@ def drop_points(traits_df, player_traits, p, gene_pool):
             # set current drop value & update total
             traits_df.loc[trait, 'cur_drops'] = dp
             if not np.isnan(dp):
-                print("____ {} drop points by '{}'".format(dp, traits_df.loc[trait].trait))
+                # print("____ {} drop points by '{}'".format(dp, traits_df.loc[trait].trait))
                 total += dp
 
     # *** section for drop-effects in other trait piles, which could affect this player ***

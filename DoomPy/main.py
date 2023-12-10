@@ -339,7 +339,7 @@ def btn_traits_world_end(from_, trait_idx, event):
     # apply WE-effect and update current_values
     update_traits_current_status('worlds_end', trait_idx, player_traits[from_])
 
-    # *** !!! ***   viral specific effect   *** !!! ************************
+    # *** !!! ***   VIRAL specific effect   *** !!! ************************
     # -> save list as string which will save drop points for each player
     if traits_df.loc[trait_idx].trait == 'Viral':
         if effect_idx == 0:
@@ -909,7 +909,7 @@ def create_trait_pile(frame_trait_overview, p):
         ypad = (3, 0) if irow == 0 else 0
         irow += 1
 
-        # ----- radiobutton ----------------------------------------------
+        # ----- radiobutton -----------------------------------------------------------------------
         rb_trait = tk.Radiobutton(
             frame_trait_overview,
             text=" " + trait,
@@ -922,7 +922,7 @@ def create_trait_pile(frame_trait_overview, p):
         if traits_df.loc[trait_idx].dominant == 1:
             rb_trait.config(fg=defaults["font_color_trait_pile_dominant"])
 
-        # ----- icons ----------------------------------------------------
+        # ----- icons -----------------------------------------------------------------------------
         frame_pics = tk.Frame(frame_trait_overview)
         frame_pics.grid(row=irow, column=1, sticky='sw')
         icol = -1  # initialize column index which changes depending on card
@@ -1039,8 +1039,8 @@ def create_trait_pile(frame_trait_overview, p):
         ttk.Separator(frame_pics, orient='vertical'
                       ).grid(row=0, column=icol, padx=3, pady=3, sticky='ns')
 
-        # ----- current effects due to attachments -----------------------
-        # _current_ color
+        # ----- current effects due to attachments ------------------------------------------------
+        # _current_ color ----------
         cur_color = traits_df.loc[trait_idx].cur_color.lower()
         if cur_color != traits_df.loc[trait_idx].color.lower():
             icol += 1
@@ -1055,7 +1055,7 @@ def create_trait_pile(frame_trait_overview, p):
                 image=images[cc+cb+cg+cp+cr]
                 ).grid(row=0, column=icol)
 
-        # drop value
+        # drop value ----------
         cur_drops = traits_df.loc[trait_idx].cur_drops
         if not np.isnan(cur_drops):
             icol += 1
@@ -1066,7 +1066,7 @@ def create_trait_pile(frame_trait_overview, p):
                 image=images[drop_string]
                 ).grid(row=0, column=icol)
 
-        # has attachment
+        # has attachment ----------
         if traits_df.loc[trait_idx].cur_attachment != 'none':
             icol += 1
             tk.Label(
@@ -1074,7 +1074,7 @@ def create_trait_pile(frame_trait_overview, p):
                 image=images['attachment']
                 ).grid(row=0, column=icol)
 
-        # noFX
+        # noFX ----------
         if 'Inactive' in traits_df.loc[trait_idx].cur_effect:
             icol += 1
             tk.Label(
@@ -1082,7 +1082,7 @@ def create_trait_pile(frame_trait_overview, p):
                 image=images['noFX']
                 ).grid(row=0, column=icol)
 
-        # noRemove
+        # noRemove ----------
         if 'NoRemove' in traits_df.loc[trait_idx].cur_effect:
             icol += 1
             tk.Label(
@@ -1090,7 +1090,7 @@ def create_trait_pile(frame_trait_overview, p):
                 image=images['noRemove']
                 ).grid(row=0, column=icol)
 
-        # noDiscard
+        # noDiscard ----------
         if 'NoDiscard' in traits_df.loc[trait_idx].cur_effect:
             icol += 1
             tk.Label(
@@ -1098,7 +1098,7 @@ def create_trait_pile(frame_trait_overview, p):
                 image=images['noDiscard']
                 ).grid(row=0, column=icol)
 
-        # noSteal
+        # noSteal ----------
         if 'NoSteal' in traits_df.loc[trait_idx].cur_effect:
             icol += 1
             tk.Label(
@@ -1106,7 +1106,7 @@ def create_trait_pile(frame_trait_overview, p):
                 image=images['noSteal']
                 ).grid(row=0, column=icol)
 
-        # noSwap
+        # noSwap ----------
         if 'NoSwap' in traits_df.loc[trait_idx].cur_effect:
             icol += 1
             tk.Label(
@@ -1114,7 +1114,7 @@ def create_trait_pile(frame_trait_overview, p):
                 image=images['noSwap']
                 ).grid(row=0, column=icol)
 
-        # ----- current effects due to WORLDS END ------------------------
+        # ----- current effects due to WORLDS END -------------------------------------------------
         if traits_df.loc[trait_idx].cur_worlds_end_effect != 'none':
             icol += 1
             tk.Label(
@@ -1154,7 +1154,7 @@ def create_trait_pile(frame_trait_overview, p):
             drop_entry.grid(row=irow, column=1, sticky='w')
             drop_entry.bind("<KeyRelease>", lambda e, t=trait_idx: update_manual_drops(e, t, p))
 
-        # ----- ATTACHMENT combobox if trait is attachment ---------------
+        # ----- ATTACHMENT combobox if trait is attachment ----------------------------------------
         if traits_df.loc[trait_idx].attachment == 1:
             irow += 1
             tk.Label(
@@ -1174,7 +1174,7 @@ def create_trait_pile(frame_trait_overview, p):
                 values=traits_filtered_str,
                 exportselection=0,
                 state="readonly",
-                width=8)
+                width=10)
             cbox_attach_to.grid(row=irow, column=1, sticky='w')
             cbox_attach_to.bind("<<ComboboxSelected>>",
                                 lambda e, t=trait_idx, idx=traits_filtered_idx:
@@ -1187,7 +1187,7 @@ def create_trait_pile(frame_trait_overview, p):
                 cur_host = traits_df.loc[trait_idx].cur_host
                 cbox_attach_to.current(traits_filtered_idx.index(cur_host))
 
-        # ----- WORLDS_END combobox if trait has worlds end effect -------
+        # ----- WORLDS_END combobox if trait has worlds end effect --------------------------------
         if isinstance(traits_df.loc[trait_idx].effect_worlds_end, str):
             irow += 1
             tk.Label(
@@ -1217,19 +1217,18 @@ def create_trait_pile(frame_trait_overview, p):
                 cur_effect = traits_df.loc[trait_idx].cur_worlds_end_trait
                 cbox_attach_to.current(we_effect.index(cur_effect))
 
-    # *** !!! *** special, individual case *** !!! ***********************
+    # *** !!! *** special, individual case *** !!! *************************************************
     # since 'VIRAL's Drop-of-Life-Effect is affecting other players, hence it needs to be shown on
     # each other players trait pile, allowing there to enter individual drop values, while giving
     # the host only the oppurtunity to perform worlds end effect first, find viral index, and check
     # if it is in another trait pile
+    irow += 1
+    ttk.Separator(frame_trait_overview, orient='horizontal'
+                  ).grid(row=irow, column=0, columnspan=2, padx=5, pady=10, sticky='nesw')
+
+    # --- VIRAL --- add passively Viral to this trait pile ---------------
     viral_idx = traits_df.index[traits_df.trait == 'Viral'].tolist()[0]
-
-    # add passive viral to this trait pile
     if any([viral_idx in tp for tp in player_traits]) and viral_idx not in player_traits[p]:
-        irow += 1
-        ttk.Separator(frame_trait_overview, orient='horizontal'
-                      ).grid(row=irow, column=0, columnspan=2, padx=5, pady=10, sticky='we')
-
         # create separate frame
         irow += 1
         frame_viral = tk.Frame(frame_trait_overview)

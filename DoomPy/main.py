@@ -110,7 +110,7 @@ def pre_play():
         for play_trait in lisa:
             btn_play_trait(0)
 
-        julia = [137, 162, 163, 164, 175, 203, 208]
+        julia = [137, 162, 163, 164, 175, 208]
         for play_trait in julia:
             btn_play_trait(1)
 
@@ -747,6 +747,30 @@ def update_traits_current_status(todo, *args):
 
             # call rules_function to update other current_values due to current effect
             twe_rules.traits_WE_effects(traits_df, trait_idx, trait_pile)
+
+        case 'neoteny':
+            neoteny_idx = traits_df.index[traits_df.trait == 'Neoteny'].tolist()[0]
+            p = args[0]
+
+            # set other player to 0
+            for i in range(n_player.get()):
+                if i != p:
+                    neoteny_checkbutton[i].set(0)
+
+            # update 'cur_effect'
+            if not any([i.get() for i in neoteny_checkbutton]):
+                print('_no one_')
+                traits_df.loc[neoteny_idx, "cur_effect"] = 'none'
+            else:
+                print('_that one: {} _'.format(p))
+                traits_df.loc[neoteny_idx, "cur_effect"] = str(p)
+
+            # update scoreboard
+            update_scoring()
+
+            # update all trait piles
+            for p in range(n_player.get()):
+                create_trait_pile(player_rb_frames[p], p)
 
 
 def update_scoring():
@@ -1389,6 +1413,42 @@ def create_trait_pile(frame_trait_overview, p):
 
         print("Shiny acts on 'colorless' traits in '{}'s trait pile -> drop points = {}"
               .format(player_name[p].get(), vp_s[p]))
+
+    # --- NEOTENY --- check button if Neoteny is in your hand ------------
+    # is NEOTENY in your hand? asked via checkbox? But only if its not pöayed
+    neoteny_idx = traits_df.index[traits_df.trait == 'Neoteny'].tolist()[0]
+    if "select world's end" not in worlds_end.get() and all(neoteny_idx not in tp for tp in player_traits):
+        # only if no one has it or this player has it
+        neoteny_effect = traits_df.loc[neoteny_idx].cur_effect
+        if neoteny_effect == 'none' or neoteny_effect == str(p):
+            # create separate frame for WE_TITLE
+            irow += 1
+            frame_neoteny = tk.Frame(frame_trait_overview)
+            frame_neoteny.grid(row=irow, column=0, columnspan=2, sticky='we')
+
+            tk.Label(frame_neoteny,
+                     text="NEOTENY",
+                     fg="#1C86EE"
+                     ).grid(row=0, column=0, padx=(20, 0), sticky='e')
+            if neoteny_checkbutton[p].get() == 1:
+                ttk.Checkbutton(frame_neoteny,
+                                variable=neoteny_checkbutton[p],
+                                text=' got it!',
+                                command=lambda: update_traits_current_status('neoteny', int(p))
+                                ).grid(row=0, column=1, padx=(0, 0))
+                ttk.Label(frame_neoteny,
+                          image=images['drops']
+                          ).grid(row=0, column=2)
+                tk.Label(frame_neoteny,
+                         image=images['4']
+                         ).grid(row=0, column=3)
+            else:
+                ttk.Checkbutton(frame_neoteny,
+                                variable=neoteny_checkbutton[p],
+                                text=' in my hand???',
+                                command=lambda: update_traits_current_status('neoteny', int(p))
+                                ).grid(row=0, column=1, padx=(0, 0))
+
     # ******* !!! *** special, individual case *** !!! *******************
 
     # **********************************************************************************************
@@ -1814,6 +1874,8 @@ def reset_variables():
     player_rb_frames.clear()
     player_we_effects.clear()
 
+    neoteny_checkbutton.clear()
+
     # fill variables
     for i in range(n_player.get()):
         if len(last_names) >= i+1:
@@ -1831,6 +1893,7 @@ def reset_variables():
         player_trait_selected.append(tk.Variable(value=np.nan))
         player_rb_frames.append(None)
         player_we_effects.append(tk.StringVar(value='0'))
+        neoteny_checkbutton.append(tk.IntVar(value=0))
 
     # reset deck/lbox card-lists
     deck_cards.clear()
@@ -1954,6 +2017,8 @@ player_traits = []          # current players traits played / lists
 player_trait_selected = []  # selected traits in players trait piles / StringVar
 player_rb_frames = []       # frame containing players traits -> needed to be able to edit selected traits
 player_we_effects = []       # frame containing players traits -> needed to be able to edit selected traits
+
+neoteny_checkbutton = []
 
 # create _content_ frame -------------------------------------------------
 content = tk.Frame(root, width=1200, height=800, bg=defaults["bg_content"])

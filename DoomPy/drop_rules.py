@@ -460,4 +460,10 @@ def drop_points(traits_df, player_traits, p, gene_pool):
             total += vp[p]
             traits_df.loc[viral_idx, "cur_effect"] = ' '.join(str(x) for x in vp)
 
+    # ----- NEOTENY ----- if Neoteny is in Hand after Worlds End --------------
+    neoteny_idx = traits_df.index[traits_df.trait == 'Neoteny'].tolist()[0]
+    neoteny_player_id = traits_df.loc[neoteny_idx].cur_effect
+    if neoteny_player_id == str(p):
+        total += 4
+
     return total

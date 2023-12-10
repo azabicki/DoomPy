@@ -832,15 +832,20 @@ def update_genes():
                 tmp = effect.split()
                 value = int(tmp[0])
                 who = tmp[1]
+                if len(tmp) > 2:
+                    restriction = tmp[2]
+                else:
+                    restriction = False
 
-                # apply rule
-                match who:
-                    case 'all':
-                        diff_genes = [i + value for i in diff_genes]
-                    case 'self':
-                        diff_genes[p] += value
-                    case 'other':
-                        diff_genes = [i+value if i != p else i for i in diff_genes]
+                # apply rule, only if no restrictions
+                if not restriction:
+                    match who:
+                        case 'all':
+                            diff_genes = [i + value for i in diff_genes]
+                        case 'self':
+                            diff_genes[p] += value
+                        case 'other':
+                            diff_genes = [i+value if i != p else i for i in diff_genes]
 
                 # print log
                 print(">>> genes <<< '{}'s '{}' has gene effect off '{}' on '{}' -> current effect: {}"

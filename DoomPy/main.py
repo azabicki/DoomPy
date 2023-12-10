@@ -106,49 +106,21 @@ def pre_play():
     pre_play_set = 1
 
     if pre_play_set == 1:
-        play_trait = 1
-        btn_play_trait(0)
-        play_trait = 39
-        btn_play_trait(0)
-        play_trait = 158
-        btn_play_trait(0)
-        play_trait = 211
-        btn_play_trait(0)
-        play_trait = 140
-        btn_play_trait(0)
-        play_trait = 141
-        btn_play_trait(0)
-        play_trait = 142
-        btn_play_trait(0)
+        lisa = [5, 16, 22, 25, 64, 98, 160, 161]
+        for play_trait in lisa:
+            btn_play_trait(0)
 
-        play_trait = 0
-        btn_play_trait(1)
-        play_trait = 74
-        btn_play_trait(1)
-        play_trait = 167
-        btn_play_trait(1)
-        play_trait = 36
-        btn_play_trait(1)
-        play_trait = 35
-        btn_play_trait(1)
+        julia = [137, 162, 163, 164, 175, 203, 208]
+        for play_trait in julia:
+            btn_play_trait(1)
 
-        play_trait = 204
-        btn_play_trait(2)
-        play_trait = 30
-        btn_play_trait(2)
-        play_trait = 26
-        btn_play_trait(2)
-        play_trait = 150
-        btn_play_trait(2)
+        anton = [196, 209, 232, 277, 278, 287, 290, 311, 312, 313, 314]
+        for play_trait in anton:
+            btn_play_trait(2)
 
-        play_trait = 116
-        btn_play_trait(3)
-        play_trait = 23
-        btn_play_trait(3)
-        play_trait = 196
-        btn_play_trait(3)
-        play_trait = 160
-        btn_play_trait(3)
+        adam = [235, 246, 315, 317, 318, 324, 352]
+        for play_trait in adam:
+            btn_play_trait(3)
 
     if pre_play_set == 2:
         play_trait = 0
@@ -244,13 +216,13 @@ def pre_play():
         play_trait = 211
         btn_play_trait(3)
 
-    catastrophies_cbox[0].current(9)
+    catastrophies_cbox[0].current(3)
     catastrophies_cbox[0].event_generate("<<ComboboxSelected>>")
-    catastrophies_cbox[1].current(9)
+    catastrophies_cbox[1].current(15)
     catastrophies_cbox[1].event_generate("<<ComboboxSelected>>")
-    catastrophies_cbox[2].current(10)
+    catastrophies_cbox[2].current(18)
     catastrophies_cbox[2].event_generate("<<ComboboxSelected>>")
-    catastrophies_cbox[3].current(17)
+    catastrophies_cbox[3].current(24)
     catastrophies_cbox[3].event_generate("<<ComboboxSelected>>")
 
 

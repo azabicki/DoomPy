@@ -348,7 +348,14 @@ def btn_traits_world_end(from_, trait_idx, event):
             vp = [np.nan] * n_player.get()
             vp_s = ' '.join(str(x) for x in vp)
             traits_df.loc[trait_idx, "cur_effect"] = vp_s
-    # *** !!! ***   viral specific effect   *** !!! ************************
+
+    # *** !!! ***   AMATOXINS specific effect   *** !!! ************************
+    # -> save number of discarded different colors into string
+    if traits_df.loc[trait_idx].trait == 'Amatoxins':
+        if effect_idx == 0:
+            traits_df.loc[trait_idx, "cur_effect"] = 'none'
+        else:
+            traits_df.loc[trait_idx, "cur_effect"] = effect
 
     # update scoring
     update_genes()
@@ -1137,10 +1144,11 @@ def create_trait_pile(frame_trait_overview, p):
                     image=images['noFX']
                     ).grid(row=0, column=icol)
 
-        # ----- manual DROP points entry ---------------------------------
-        cur_drop_eff = traits_df.loc[trait_idx].effect_drop
-        if (isinstance(cur_drop_eff, str) and ('own_hand' in traits_df.loc[trait_idx].effect_drop or
-                                               'discarded' in traits_df.loc[trait_idx].effect_drop)):
+        # ----- manual DROP points entry ----------------------------------------------------------
+        cur_drop_eff = traits_df.loc[trait_idx].effect_drop 
+        if (isinstance(cur_drop_eff, str) and not isinstance(traits_df.loc[trait_idx].effect_worlds_end, str)
+            and ('own_hand' in traits_df.loc[trait_idx].effect_drop
+                 or 'discarded' in traits_df.loc[trait_idx].effect_drop)):
             irow += 1
             tk.Label(
                 frame_trait_overview,
@@ -1265,9 +1273,126 @@ def create_trait_pile(frame_trait_overview, p):
 
             print("Viral acts on '{}' traits in '{}'s trait pile -> drop points = {}"
                   .format(we_viral, player_name[p].get(), vp_s[p]))
-    # *** !!! *** special, individual case *** !!! ***********************
 
-    # ------ worlds end -> manual entries --------------------------------
+    # --- AMATOXINS --- add passively Amatoxins to this trait pile ---------------
+    amatoxins_idx = traits_df.index[traits_df.trait == 'Amatoxins'].tolist()[0]
+    if any([amatoxins_idx in tp for tp in player_traits]) and amatoxins_idx not in player_traits[p]:
+        # create separate frame
+        irow += 1
+        frame_amatoxins = tk.Frame(frame_trait_overview)
+        frame_amatoxins.grid(row=irow, column=0, columnspan=2, sticky='we')
+
+        # add label & drop icon
+        tk.Label(
+            frame_amatoxins,
+            text="Amatoxins",
+            fg="mediumorchid1"
+            ).grid(row=0, column=0, padx=(20, 0), sticky='e')
+        tk.Label(
+            frame_amatoxins,
+            text=" discarded",
+            image=images["drops"],
+            compound=tk.LEFT
+            ).grid(row=0, column=1, sticky='w')
+        # add color icon
+        tk.Label(
+            frame_amatoxins,
+            image=images['bgpr']
+            ).grid(row=0, column=2)
+
+        # check if worlds end effect was chosen
+        we_amatoxins = traits_df.loc[amatoxins_idx].cur_worlds_end_trait
+        if we_amatoxins != 'none':
+            vp_s = str(int(traits_df.loc[amatoxins_idx].cur_effect) * -2)
+
+            # add points icono
+            tk.Label(
+                frame_amatoxins,
+                image=images[vp_s]
+                ).grid(row=0, column=3)
+
+            print("Amatoxins' effect is based on amount of discraded colors -> drop points = {}"
+                  .format(vp_s))
+
+    # --- PROWLER --- add passively Prowler to this trait pile ---------------
+    prowler_idx = traits_df.index[traits_df.trait == 'Prowler'].tolist()[0]
+    if any([prowler_idx in tp for tp in player_traits]) and prowler_idx not in player_traits[p]:
+        # create separate frame
+        irow += 1
+        frame_prowler = tk.Frame(frame_trait_overview)
+        frame_prowler.grid(row=irow, column=0, columnspan=2, sticky='we')
+
+        # add label & drop icon
+        tk.Label(
+            frame_prowler,
+            text="Prowler",
+            fg="mediumorchid1"
+            ).grid(row=0, column=0, padx=(20, 0), sticky='e')
+        tk.Label(
+            frame_prowler,
+            text=" less",
+            image=images["drops"],
+            compound=tk.LEFT
+            ).grid(row=0, column=1, sticky='w')
+
+        # add color icon
+        tk.Label(
+            frame_prowler,
+            image=images['bgpr']
+            ).grid(row=0, column=2)
+        tk.Label(
+            frame_prowler,
+            text=" as host",
+            ).grid(row=0, column=3, sticky='w')
+        # add points icono
+        vp_s = traits_df.loc[prowler_idx].cur_effect.split()
+        tk.Label(
+            frame_prowler,
+            image=images[vp_s[p]]
+            ).grid(row=0, column=4)
+
+        print("Viral acts on 'color_count' in '{}'s trait pile -> drop points = {}"
+              .format(player_name[p].get(), vp_s[p]))
+
+    # --- SHINY --- add passively Shiny to this trait pile ---------------
+    shiny_idx = traits_df.index[traits_df.trait == 'Shiny'].tolist()[0]
+    if any([shiny_idx in tp for tp in player_traits]) and shiny_idx not in player_traits[p]:
+        # create separate frame
+        irow += 1
+        frame_shiny = tk.Frame(frame_trait_overview)
+        frame_shiny.grid(row=irow, column=0, columnspan=2, sticky='we')
+
+        # add label & drop icon
+        tk.Label(
+            frame_shiny,
+            text="Shiny",
+            fg="#228B22"
+            ).grid(row=0, column=0, padx=(20, 0), sticky='e')
+        tk.Label(
+            frame_shiny,
+            text=" punishes ",
+            image=images["drops"],
+            compound=tk.LEFT
+            ).grid(row=0, column=1, sticky='w')
+
+        # add color icon
+        tk.Label(
+            frame_shiny,
+            image=images['c']
+            ).grid(row=0, column=2)
+        # add points icon
+        vp_s = traits_df.loc[shiny_idx].cur_effect.split()
+        tk.Label(
+            frame_shiny,
+            image=images[vp_s[p]]
+            ).grid(row=0, column=3)
+
+        print("Shiny acts on 'colorless' traits in '{}'s trait pile -> drop points = {}"
+              .format(player_name[p].get(), vp_s[p]))
+    # ******* !!! *** special, individual case *** !!! *******************
+
+    # **********************************************************************************************
+    # ------ worlds end -> manual entries ---------------------------------------------------------
     if "select world's end" not in worlds_end.get():
         irow += 1
         ttk.Separator(frame_trait_overview, orient='horizontal'

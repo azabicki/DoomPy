@@ -11,6 +11,7 @@
     "max_player": 6,
     "n_genes": 6,
     "n_catastrophies": 4,
+    "n_MOLs": 2,
     "bg_content": "grey",
     "font_color_trait_pile_dominant": "#E3CF57",
     "menu_frame_color": "#71C671",

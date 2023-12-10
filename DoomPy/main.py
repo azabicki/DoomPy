@@ -811,18 +811,25 @@ def update_scoring():
         # calculate drops points
         p_drop = dr_rules.drop_points(traits_df, player_traits, p, player_genes)
 
+        # calculate drops points
+        p_MOL = 0
+        for x in [x.get() for x in player_MOLs[p]]:
+            if x.isnumeric():
+                p_MOL += int(x)
+
         # calculate total score
-        total = p_face + p_drop + p_worlds_end
+        total = p_face + p_drop + p_worlds_end + p_MOL
 
         # update points
         player_points[p]['face'].set(p_face)
         player_points[p]['drops'].set(p_drop)
         player_points[p]['worlds_end'].set(p_worlds_end)
+        player_points[p]['MOL'].set(p_MOL)
         player_points[p]['total'].set(total)
 
         # print log, only if points changed
-        print(">>> scoring <<< current points for '{}': face = {}  |  drops = {}  |  WE = {}  |  total = {}"
-              .format(player_name[p].get(), p_face, p_drop, p_worlds_end, total))
+        print(">>> scoring <<< current points 4 '{}': face = {}  |  drops = {}  |  WE = {}  |  MOL = {}  |  total = {}"
+              .format(player_name[p].get(), p_face, p_drop, p_worlds_end, p_MOL, total))
 
 
 def update_genes():
@@ -1412,7 +1419,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=3)
 
             print("Amatoxins' effect is based on amount of discraded colors -> drop points = {}"
-                  .format(vp_s))
+                  .format(we_drops))
 
     # --- PROWLER --- add passively Prowler to this trait pile ---------------
     prowler_idx = traits_df.index[traits_df.trait == 'Prowler'].tolist()[0]
@@ -1645,7 +1652,7 @@ def create_player_frame(p):
     # ----- list of traits played ----------------------------------------
     frame_traits = tk.Frame(frame)
     frame_traits.grid(row=1, column=0, padx=border, pady=(0, border), sticky="nesw")
-    frame_traits.rowconfigure(0, weight=1)
+    frame_traits.rowconfigure(2, weight=1)
     frame_traits.columnconfigure(0, weight=1)  # for left button under trait-pile
     frame_traits.columnconfigure(1, weight=1)  # for right button under trait-pile
 
@@ -1654,6 +1661,10 @@ def create_player_frame(p):
     create_trait_pile(player_rb_frames[p], p)
 
     # action buttons -----
+    ttk.Separator(
+        frame_traits, orient='horizontal'
+        ).grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky='we')
+
     cbox_move_to = ttk.Combobox(
         frame_traits,
         height=n_player,
@@ -1662,7 +1673,7 @@ def create_player_frame(p):
         state="readonly",
         width=12,
         style="move.TCombobox")
-    cbox_move_to.grid(row=1, column=0, pady=(0, border), sticky='ns')
+    cbox_move_to.grid(row=2, column=0, pady=(0, border), sticky='n')
     cbox_move_to.current(0)
     cbox_move_to.bind(
         "<<ComboboxSelected>>", lambda e: btn_move_trait(p, cbox_move_to))
@@ -1671,14 +1682,27 @@ def create_player_frame(p):
         frame_traits,
         text="discard trait",
         command=partial(btn_discard_trait, p),
-    ).grid(row=1, column=1, pady=(0, border), sticky='ns')
+    ).grid(row=2, column=1, pady=(0, border), sticky='n')
 
     # ----- Meaning of Life -------------------------------------
-#    frame_actions = tk.Frame(frame)
-#    frame_actions.grid(row=2, column=0, padx=border, pady=(0, border), sticky="nesw")
-#    frame_actions.columnconfigure(0, weight=1)
-#    frame_actions.columnconfigure(1, weight=1)
+    frame_MOL = tk.Frame(frame)
+    frame_MOL.grid(row=2, column=0, padx=border, pady=(0, border), sticky="nesw")
 
+    ttk.Label(frame_MOL, text="Meaning of Life", font="'' 18"
+              ).grid(row=0, column=0, padx=5, columnspan=2*n_MOLs.get(), sticky='ns')
+
+    for m in range(n_MOLs.get()):
+        frame_MOL.columnconfigure(2*m, weight=1)
+        frame_MOL.columnconfigure(2*m+1, weight=1)
+
+        ttk.Label(frame_MOL,
+                  text="MOL #{}:".format(m+1)
+                  ).grid(row=1, column=2*m, sticky='e')
+        MOL_ent = ttk.Entry(frame_MOL,
+                            width=4,
+                            textvariable=player_MOLs[p][m])
+        MOL_ent.grid(row=1, column=2*m+1, sticky='w')
+        MOL_ent.bind("<KeyRelease>", lambda e: update_scoring())
     return frame
 
 
@@ -1991,7 +2015,7 @@ def reset_variables():
         sleepy_spinbox.append(tk.IntVar(value=0))
 
         for m in range(n_MOLs.get()):
-            player_MOLs[i].append([])
+            player_MOLs[i].append(tk.StringVar(value="0"))  # for now, manually editing MOL points in entries
 
     # reset deck/lbox card-lists
     deck_cards.clear()

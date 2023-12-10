@@ -1169,7 +1169,7 @@ def create_trait_pile(frame_trait_overview, p):
                     ).grid(row=0, column=icol)
 
         # ----- manual DROP points entry ----------------------------------------------------------
-        cur_drop_eff = traits_df.loc[trait_idx].effect_drop 
+        cur_drop_eff = traits_df.loc[trait_idx].effect_drop
         if (isinstance(cur_drop_eff, str) and not isinstance(traits_df.loc[trait_idx].effect_worlds_end, str)
             and ('own_hand' in traits_df.loc[trait_idx].effect_drop
                  or 'discarded' in traits_df.loc[trait_idx].effect_drop)):
@@ -1269,7 +1269,7 @@ def create_trait_pile(frame_trait_overview, p):
         # add label & drop icon
         tk.Label(
             frame_viral,
-            text="Viral",
+            text="VIRAL",
             fg="mediumorchid1"
             ).grid(row=0, column=0, padx=(20, 0), sticky='e')
         tk.Label(
@@ -1309,7 +1309,7 @@ def create_trait_pile(frame_trait_overview, p):
         # add label & drop icon
         tk.Label(
             frame_amatoxins,
-            text="Amatoxins",
+            text="AMATOXINS",
             fg="mediumorchid1"
             ).grid(row=0, column=0, padx=(20, 0), sticky='e')
         tk.Label(
@@ -1349,7 +1349,7 @@ def create_trait_pile(frame_trait_overview, p):
         # add label & drop icon
         tk.Label(
             frame_prowler,
-            text="Prowler",
+            text="PROWLER",
             fg="mediumorchid1"
             ).grid(row=0, column=0, padx=(20, 0), sticky='e')
         tk.Label(
@@ -1389,7 +1389,7 @@ def create_trait_pile(frame_trait_overview, p):
         # add label & drop icon
         tk.Label(
             frame_shiny,
-            text="Shiny",
+            text="SHINY",
             fg="#228B22"
             ).grid(row=0, column=0, padx=(20, 0), sticky='e')
         tk.Label(

@@ -9,8 +9,11 @@ from functools import partial
 import pandas as pd
 import numpy as np
 from PIL import Image, ImageTk
-import rules as rules
 from pygame import mixer
+import attachment_rules as at_rules
+import drop_rules as dr_rules
+import traits_worlds_end_rules as twe_rules
+import worlds_end_rules as we_rules
 
 
 # system settings ########################################################
@@ -750,7 +753,7 @@ def update_traits_current_status(todo, *args):
             traits_df.loc[host, 'cur_attachment'] = attachment
 
             # get effects of attachments from rules.py & update current status of host
-            effects = rules.attachment_effects(traits_df, host, attachment)
+            effects = at_rules.attachment_effects(traits_df, host, attachment)
             traits_df.loc[host, "cur_color"] = effects['color']
             traits_df.loc[host, "cur_face"] = effects['face']
             traits_df.loc[host, "cur_effect"] = effects['effect']
@@ -764,7 +767,7 @@ def update_traits_current_status(todo, *args):
             trait_pile = args[1]
 
             # call rules_function to update other current_values due to current effect
-            rules.traits_WE_effects(traits_df, trait_idx, trait_pile)
+            twe_rules.traits_WE_effects(traits_df, trait_idx, trait_pile)
 
 
 def update_scoring():
@@ -773,14 +776,15 @@ def update_scoring():
         trait_pile = player_traits[p]
 
         # calculate world's end points
-        p_worlds_end = rules.worlds_end(traits_df, worlds_end.get(), player_traits, p, player_genes, player_we_effects)
+        p_worlds_end = we_rules.worlds_end(traits_df, worlds_end.get(), player_traits,
+                                           p, player_genes, player_we_effects)
 
         # calculate face value
         p_face = int(sum([traits_df.loc[trait_idx].cur_face for trait_idx in trait_pile
                           if not isinstance(traits_df.loc[trait_idx].cur_face, str)]))
 
         # calculate drops points
-        p_drop = rules.drop_points(traits_df, player_traits, p, player_genes)
+        p_drop = dr_rules.drop_points(traits_df, player_traits, p, player_genes)
 
         # calculate total score
         total = p_face + p_drop + p_worlds_end

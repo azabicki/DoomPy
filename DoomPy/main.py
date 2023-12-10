@@ -11,6 +11,7 @@ import numpy as np
 from PIL import Image, ImageTk
 from pygame import mixer
 import attachment_rules as at_rules
+import discard_rules as di_rules
 import drop_rules as dr_rules
 import traits_worlds_end_rules as twe_rules
 import worlds_end_rules as we_rules
@@ -445,8 +446,11 @@ def btn_discard_trait(from_):
         bisect.insort_left(deck_cards, attachment)
     search_trait_in_list(search_trait)  # keep current str in search_entry
 
+    # in case that trait have a special "discard-rule"
+    special_rule = di_rules.check_trait(traits_df, card, from_)
+
     # reset current status of card(s)
-    update_traits_current_status('reset', card, [])
+    update_traits_current_status('reset', card, special_rule, [])
     if attachment != 'none':
         update_traits_current_status('reset', attachment, [])
 
@@ -705,7 +709,11 @@ def update_traits_current_status(todo, *args):
     match todo:
         case 'reset':
             trait = args[0]
+            rule = args[1]
             log = args[-1]
+
+            # backup current state
+            bkp = traits_df.loc[trait].copy()
 
             # reset trait
             true_color = traits_df.loc[trait].color
@@ -718,6 +726,11 @@ def update_traits_current_status(todo, *args):
             traits_df.loc[trait, "cur_host"] = 'none'
             traits_df.loc[trait, "cur_attachment"] = 'none'
             traits_df.loc[trait, "cur_worlds_end_trait"] = 'none'
+
+            # apply rule after resetting
+            match rule:
+                case "keep_cur_effect":
+                    traits_df.loc[trait, "cur_effect"] = bkp.cur_effect
 
             # print log
             if log:

@@ -785,6 +785,15 @@ def update_traits_current_status(todo, *args):
             for p in range(n_player.get()):
                 create_trait_pile(player_rb_frames[p], p)
 
+        case 'update_all':
+            update_stars()
+            update_genes()
+            update_scoring()
+
+            # update all trait piles
+            for p in range(n_player.get()):
+                create_trait_pile(player_rb_frames[p], p)
+
 
 def update_scoring():
     for p in range(n_player.get()):
@@ -884,6 +893,18 @@ def update_genes():
                 print(">>> genes <<< 'Spores' (id:{}) has an gene effect (+1) on '{}' -> current effect: {}"
                       .format(sprs_idx, player_name[p].get(), diff_genes))
 
+    # Sleepy
+    slp_idx = traits_df.index[traits_df.trait == 'Sleepy'].tolist()[0]
+    if any(slp_idx in tp for tp in player_traits):
+        slp_eff = [i.get() for i in sleepy_spinbox]
+        diff_genes = [diff_genes[x]+slp_eff[x] for x in range(len(diff_genes))]
+        if any(slp_eff):
+            p = [i for i, e in enumerate(slp_eff) if e != 0]
+            print(">>> genes <<< 'Sleepy' (id:?) has an gene effect on '{}' by {} -> current effect: {}"
+                  .format(player_name[p[0]].get(), slp_eff[p[0]], diff_genes))
+    else:  # sleepy in no trait pile -> reset values
+        for i in range(n_player.get()):
+            sleepy_spinbox[i].set(0)
 
     # update gene values ----------------------------------------------------------------
     for p in range(n_player.get()):
@@ -1284,6 +1305,25 @@ def create_trait_pile(frame_trait_overview, p):
             else:
                 cur_effect = traits_df.loc[trait_idx].cur_worlds_end_trait
                 cbox_attach_to.current(we_effect.index(cur_effect))
+
+        # ----- SLEEPY may affect gene pool ?!?!  -------------------------------------------------
+        if traits_df.loc[trait_idx].trait == 'Sleepy':
+            irow += 1
+            tk.Label(
+                frame_trait_overview,
+                text="gene effect:"
+                ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
+
+            # create combobox
+            ttk.Spinbox(
+                frame_trait_overview,
+                from_=-1,
+                to=1,
+                width=3,
+                textvariable=sleepy_spinbox[p],
+                wrap=False,
+                command=lambda: update_traits_current_status('update_all')
+            ).grid(row=irow, column=1, sticky='w')
 
     # *** !!! *** special, individual case *** !!! *************************************************
     # since 'VIRAL's Drop-of-Life-Effect is affecting other players, hence it needs to be shown on
@@ -1911,6 +1951,7 @@ def reset_variables():
     player_we_effects.clear()
 
     neoteny_checkbutton.clear()
+    sleepy_spinbox.clear()
 
     # fill variables
     for i in range(n_player.get()):
@@ -1930,6 +1971,7 @@ def reset_variables():
         player_rb_frames.append(None)
         player_we_effects.append(tk.StringVar(value='0'))
         neoteny_checkbutton.append(tk.IntVar(value=0))
+        sleepy_spinbox.append(tk.IntVar(value=0))
 
     # reset deck/lbox card-lists
     deck_cards.clear()
@@ -2055,6 +2097,7 @@ player_rb_frames = []       # frame containing players traits -> needed to be ab
 player_we_effects = []       # frame containing players traits -> needed to be able to edit selected traits
 
 neoteny_checkbutton = []
+sleepy_spinbox = []
 
 # create _content_ frame -------------------------------------------------
 content = tk.Frame(root, width=1200, height=800, bg=defaults["bg_content"])

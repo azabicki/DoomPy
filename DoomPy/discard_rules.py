@@ -2,11 +2,6 @@ def check_trait(traits_df, trait_idx, from_):
     trait = traits_df.loc[trait_idx].trait
 
     match trait:
-        case 'Sleepy':
-            print('_')
-
-            return None
-
         case 'Spores':
             cur_eff = traits_df.loc[trait_idx].cur_effect
             if cur_eff == 'none':

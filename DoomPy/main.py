@@ -1327,12 +1327,12 @@ def create_trait_pile(frame_trait_overview, p):
         # check if worlds end effect was chosen
         we_amatoxins = traits_df.loc[amatoxins_idx].cur_worlds_end_trait
         if we_amatoxins != 'none':
-            vp_s = str(int(traits_df.loc[amatoxins_idx].cur_effect) * -2)
+            we_drops = str(int(traits_df.loc[amatoxins_idx].cur_effect) * -2)
 
             # add points icono
             tk.Label(
                 frame_amatoxins,
-                image=images[vp_s]
+                image=images[we_drops]
                 ).grid(row=0, column=3)
 
             print("Amatoxins' effect is based on amount of discraded colors -> drop points = {}"

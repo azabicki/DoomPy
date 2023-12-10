@@ -371,21 +371,11 @@ def drop_points(traits_df, player_traits, p, gene_pool):
 
     # *** section for drop-effects in other trait piles, which could affect this player ***
     # ----- AMATOXINS ----- if Amatoxins was played by another player -----------------
-    # amatoxins_idx = traits_df.index[traits_df.trait == 'Amatoxins'].tolist()[0]
-    # vp_s = traits_df.loc[amatoxins_idx].cur_effect
-    # if amatoxins_idx not in traits and vp_s != 'none':
-    #     # load current drop values for all players & Amatoxins' 'cur_effect'
-    #     vp = [int(i) if i.lstrip('-').isnumeric() else np.nan for i in vp_s.split()]
-    #     vp_col = traits_df.loc[amatoxins_idx].cur_worlds_end_trait
-
-    #     # calculate drop points
-    #     vp[p] = sum([vp_col in color.lower()
-    #                  for color in traits_df.iloc[traits].cur_color.tolist()]) * -1
-
-    #     # update total & save updated points to Amatoxins' 'cur_effect'
-    #     if not np.isnan(vp[p]):
-    #         total += vp[p]
-    #         traits_df.loc[amatoxins_idx, "cur_effect"] = ' '.join(str(x) for x in vp)
+    amatoxins_idx = traits_df.index[traits_df.trait == 'Amatoxins'].tolist()[0]
+    we_amatoxins = traits_df.loc[amatoxins_idx].cur_worlds_end_trait
+    if amatoxins_idx not in traits and we_amatoxins != 'none':
+        # calculate drop points
+        total += int(traits_df.loc[amatoxins_idx].cur_effect) * -2
 
     # ----- PROWLER ----- if Prowler was played by another player -----------------
     prowler_idx = traits_df.index[traits_df.trait == 'Prowler'].tolist()[0]

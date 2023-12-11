@@ -270,8 +270,8 @@ def switch_icons():
 
 def play(trait):
     if music_onoff.get():
-        if trait.lower() in sounds:
-            sounds[trait.lower()].play()
+        if trait.replace(' ', '_').lower() in sounds:
+            sounds[trait.replace(' ', '_').lower()].play()
 
 
 def btn_clear_trait_search():

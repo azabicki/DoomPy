@@ -860,7 +860,7 @@ def update_genes():
                             diff_genes = [i + value for i in diff_genes]
                         case 'self':
                             diff_genes[p] += value
-                        case 'other':
+                        case 'opponents':
                             diff_genes = [i+value if i != p else i for i in diff_genes]
 
                 # print log

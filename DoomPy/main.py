@@ -104,7 +104,7 @@ def pre_play():
     global play_trait
 
     start_game()
-    pre_play_set = 1
+    pre_play_set = 2
 
     if pre_play_set == 1:
         lisa = [5, 16, 22, 25, 64, 98, 160, 161]
@@ -124,98 +124,38 @@ def pre_play():
             btn_play_trait(3)
 
     if pre_play_set == 2:
-        play_trait = 0
-        btn_play_trait(0)
+        p0 = list(np.random.randint(low=0, high=len(traits_df), size=12))
+        for play_trait in p0:
+            btn_play_trait(0)
 
-        play_trait = 1
-        btn_play_trait(0)
-        play_trait = 6
-        btn_play_trait(0)
-        play_trait = 16
-        btn_play_trait(0)
-        play_trait = 17
-        btn_play_trait(0)
-        play_trait = 18
-        btn_play_trait(0)
-        play_trait = 29
-        btn_play_trait(0)
-        play_trait = 37
-        btn_play_trait(0)
-        play_trait = 41
-        btn_play_trait(0)
-        play_trait = 42
-        btn_play_trait(0)
-        play_trait = 78
-        btn_play_trait(0)
-        play_trait = 85
-        btn_play_trait(0)
-        play_trait = 109
-        btn_play_trait(0)
-        play_trait = 118
-        btn_play_trait(0)
-        play_trait = 177
-        btn_play_trait(0)
-        play_trait = 207
-        btn_play_trait(0)
+        p1 = list(np.random.randint(low=0, high=len(traits_df), size=10))
+        for play_trait in p1:
+            btn_play_trait(1)
 
-        play_trait = 19
-        btn_play_trait(1)
-        play_trait = 35
-        btn_play_trait(1)
-        play_trait = 46
-        btn_play_trait(1)
-        play_trait = 68
-        btn_play_trait(1)
-        play_trait = 91
-        btn_play_trait(1)
-        play_trait = 111
-        btn_play_trait(1)
-        play_trait = 121
-        btn_play_trait(1)
-        play_trait = 129
-        btn_play_trait(1)
-        play_trait = 155
-        btn_play_trait(1)
-        play_trait = 174
-        btn_play_trait(1)
-        play_trait = 184
-        btn_play_trait(1)
-        play_trait = 199
-        btn_play_trait(1)
+        p2 = list(np.random.randint(low=0, high=len(traits_df), size=7))
+        for play_trait in p2:
+            btn_play_trait(2)
 
-        play_trait = 166
-        btn_play_trait(2)
-        play_trait = 204
-        btn_play_trait(2)
+        p3 = list(np.random.randint(low=0, high=len(traits_df), size=9))
+        for play_trait in p3:
+            btn_play_trait(3)
 
-        play_trait = 3
-        btn_play_trait(3)
-        play_trait = 5
-        btn_play_trait(3)
-        play_trait = 7
-        btn_play_trait(3)
-        play_trait = 9
-        btn_play_trait(3)
-        play_trait = 33
-        btn_play_trait(3)
-        play_trait = 34
-        btn_play_trait(3)
-        play_trait = 36
-        btn_play_trait(3)
-        play_trait = 64
-        btn_play_trait(3)
-        play_trait = 76
-        btn_play_trait(3)
-        play_trait = 89
-        btn_play_trait(3)
-        play_trait = 203
-        btn_play_trait(3)
-        play_trait = 205
-        btn_play_trait(3)
-        play_trait = 209
-        btn_play_trait(3)
-        play_trait = 211
-        btn_play_trait(3)
+    if pre_play_set == 3:
+        lisa = [5, 27]
+        for play_trait in lisa:
+            btn_play_trait(0)
+
+        julia = [54, 175]
+        for play_trait in julia:
+            btn_play_trait(1)
+
+        anton = [202, 240]
+        for play_trait in anton:
+            btn_play_trait(2)
+
+        adam = [241, 293, 302]
+        for play_trait in adam:
+            btn_play_trait(3)
 
     catastrophies_cbox[0].current(3)
     catastrophies_cbox[0].event_generate("<<ComboboxSelected>>")
@@ -223,8 +163,6 @@ def pre_play():
     catastrophies_cbox[1].event_generate("<<ComboboxSelected>>")
     catastrophies_cbox[2].current(18)
     catastrophies_cbox[2].event_generate("<<ComboboxSelected>>")
-    catastrophies_cbox[3].current(24)
-    catastrophies_cbox[3].event_generate("<<ComboboxSelected>>")
 
 
 def switch_music():
@@ -2164,6 +2102,8 @@ frame_playground.rowconfigure(0, weight=1)  # stretch playground to bottom
 
 # (re)start game -------------------------------------------------------------
 start_game()
+
+# pre_play()
 
 # ----- run --------------------------------------------------------------
 root.mainloop()

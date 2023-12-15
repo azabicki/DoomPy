@@ -484,7 +484,7 @@ def btn_play_trait(to):
     # return, if player already has two dominants
     if traits_df.loc[trait_idx]['dominant'] == 1:
         if sum([1 for t in player_traits[to] if traits_df.loc[t].dominant == 1]) == 2:
-            print(">>> play <<< ERROR - already 2 dominant traits in trait pile")
+            write_log(logfile, ['play', 'error_2dominants'])
             return
 
     # print log
@@ -1649,6 +1649,8 @@ def create_player_frame(p):
 
 
 def create_menu_frame():
+    global trait_ent
+
     border = defaults["color_frame_width"]
 
     frame_menu.columnconfigure(0, weight=1)

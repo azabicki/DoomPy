@@ -343,7 +343,7 @@ def btn_remove_trait(from_):
         create_trait_pile(player_rb_frames[p], p)
 
     # focus back to search field
-    trait_ent.focus_set()
+    ent_trait_search[0].focus_set()
 
 
 def btn_move_trait(from_, cbox_move_to):
@@ -409,7 +409,7 @@ def btn_move_trait(from_, cbox_move_to):
     cbox_move_to.current(0)
 
     # focus back to search field
-    trait_ent.focus_set()
+    ent_trait_search[0].focus_set()
 
 
 def btn_play_trait(to):
@@ -451,7 +451,7 @@ def btn_play_trait(to):
     play(trait)
 
     # focus back to search field
-    trait_ent.focus_set()
+    ent_trait_search[0].focus_set()
 
 
 def btn_play_worlds_end():
@@ -544,7 +544,7 @@ def btn_play_catastrophe(event, c):
         create_trait_pile(player_rb_frames[p], p)
 
     # focus back to search field
-    trait_ent.focus_set()
+    ent_trait_search[0].focus_set()
 
 
 def update_manual_we(event, p):
@@ -1613,12 +1613,12 @@ def create_menu_frame():
         text="OPTIONS",
         font="'' 24"
         ).grid(row=0, column=0, pady=(5, 5))
-    music_switch_image[0] = ttk.Label(
+    lbl_music_switch[0] = ttk.Label(
         frame_title,
         image=images['note_on'],
         cursor="heart")
-    music_switch_image[0].grid(row=0, column=1, padx=(0, 10))
-    music_switch_image[0].bind("<Button-1>", lambda e: switch_music())
+    lbl_music_switch[0].grid(row=0, column=1, padx=(0, 10))
+    lbl_music_switch[0].bind("<Button-1>", lambda e: switch_music(music_onoff))
 
     # nr players -----
     ttk.Label(
@@ -1735,15 +1735,15 @@ def create_menu_frame():
     ).grid(row=0, column=0, columnspan=2, pady=(5, 0))
 
     # search field -----
-    trait_ent[0] = ttk.Entry(
+    ent_trait_search[0] = ttk.Entry(
         frame_menu_traits,
         width=10,
         textvariable=search_trait)
-    trait_ent[0].grid(row=1, column=0, padx=(10, 0), sticky="w")
-    trait_ent[0].bind("<KeyRelease>", lambda e: search_trait_in_list(search_trait))
-    trait_ent[0].bind('<Down>', lambda e: lbox_traits[0].focus(), add='+')         # down arrow key is pressed
-    trait_ent[0].bind('<Down>', lambda e: lbox_traits[0].selection_set(0), add='+')
-    trait_ent[0].bind('<Down>', lambda e: update_selected_trait("lbox", lbox_traits[0].curselection()), add='+')
+    ent_trait_search[0].grid(row=1, column=0, padx=(10, 0), sticky="w")
+    ent_trait_search[0].bind("<KeyRelease>", lambda e: search_trait_in_list(search_trait))
+    ent_trait_search[0].bind('<Down>', lambda e: lbox_traits[0].focus(), add='+')         # down arrow key is pressed
+    ent_trait_search[0].bind('<Down>', lambda e: lbox_traits[0].selection_set(0), add='+')
+    ent_trait_search[0].bind('<Down>', lambda e: update_selected_trait("lbox", lbox_traits[0].curselection()), add='+')
 
     ttk.Button(
         frame_menu_traits,
@@ -1836,12 +1836,12 @@ def create_menu_frame():
     frame_menu_controls.columnconfigure(1, weight=0)
     frame_menu_controls.columnconfigure(1, weight=1)
 
-    icons_switch_image[0] = ttk.Label(
+    lbl_icons_switch[0] = ttk.Label(
         frame_menu_controls,
         image=images['icons_on'],
-        cursor="heart")
-    icons_switch_image[0].grid(row=0, column=0, padx=(10, 0))
-    icons_switch_image[0].bind("<Button-1>", lambda e: switch_icons())
+        cursor="target")
+    lbl_icons_switch[0].grid(row=0, column=0, padx=(10, 0))
+    lbl_icons_switch[0].bind("<Button-1>", lambda e: switch_icons())
     ttk.Button(frame_menu_controls,
                image=images['no_star'],
                command=pre_play,
@@ -2002,10 +2002,9 @@ for k, v in images_dict.items():
     images[k] = ImageTk.PhotoImage(v)
 
 # init variables ---------------------------------------------------------
-music_switch_image = [None]
-icons_switch_image = [None]
-trait_ent = [None]
-
+lbl_music_switch = [None]
+lbl_icons_switch = [None]
+ent_trait_search = [None]
 
 opt_n_player = tk.IntVar(value=cfg["n_player"])                # OPTIONS: number of players
 opt_n_genes = tk.IntVar(value=cfg["n_genes"])                  # OPTIONS: gene pool at beginning

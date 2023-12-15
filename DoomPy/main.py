@@ -1949,6 +1949,21 @@ root.configure(background=cfg["bg_content"])
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
 
+# create _content_ frame -------------------------------------------------
+content = tk.Frame(root, width=1200, height=800, bg=cfg["bg_content"])
+content.grid(column=0, row=0, sticky="nesw")
+content.columnconfigure(0, weight=0)  # menu on the left
+content.columnconfigure(1, weight=1)  # complete playground, set =1 to stretch it to the right side
+
+# create _menu_ frame ----------------------------------------------------
+frame_menu = tk.Frame(content, bg=cfg["menu_frame_color"])
+frame_menu.grid(row=0, column=0, padx=5, pady=5, stick="nesw")
+
+# create _playground_ frame ----------------------------------------------
+frame_playground = tk.Frame(content, bg=cfg["bg_content"])
+frame_playground.grid(row=0, column=1, padx=0, pady=0, stick="nesw")
+frame_playground.rowconfigure(0, weight=1)  # stretch playground to bottom
+
 # styling ----------------------------------------------------------------
 gui_style = ttk.Style()
 gui_style.configure("game_info.TLabel", font=("", 10, "italic"))
@@ -1958,7 +1973,7 @@ gui_style.configure("total.TLabel", font=("", 80, "bold"), foreground="orangered
 gui_style.configure("genes.TLabel", font=("", 38, "bold"), foreground="hotpink1")
 gui_style.configure("move.TCombobox", selectbackground="none")
 
-# load images ------------------------------------------------------------
+# load tk-images ------------------------------------------------------------
 images = {}
 for k, v in images_dict.items():
     images[k] = ImageTk.PhotoImage(v)
@@ -2008,25 +2023,8 @@ player_MOLs = []            # list of lists containing MOLs for each player
 neoteny_checkbutton = []
 sleepy_spinbox = []
 
-# create _content_ frame -------------------------------------------------
-content = tk.Frame(root, width=1200, height=800, bg=defaults["bg_content"])
-content.grid(column=0, row=0, sticky="nesw")
-content.columnconfigure(0, weight=0)  # menu on the left
-content.columnconfigure(1, weight=1)  # complete playground, set =1 to stretch it to the right side
-
-# create _menu_ frame ----------------------------------------------------
-frame_menu = tk.Frame(content, bg=defaults["menu_frame_color"])
-frame_menu.grid(row=0, column=0, padx=5, pady=5, stick="nesw")
-
-# create _playground_ frame ----------------------------------------------
-frame_playground = tk.Frame(content, bg=defaults["bg_content"])
-frame_playground.grid(row=0, column=1, padx=0, pady=0, stick="nesw")
-frame_playground.rowconfigure(0, weight=1)  # stretch playground to bottom
-
 # (re)start game -------------------------------------------------------------
 start_game()
-
-# pre_play()
 
 # ----- run --------------------------------------------------------------
 root.mainloop()

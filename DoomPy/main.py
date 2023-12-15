@@ -1667,7 +1667,7 @@ def create_menu_frame():
         ).grid(row=0, column=0, pady=(5, 5))
     music_lbl[0] = ttk.Label(
         frame_title,
-        image=images['note_off'],
+        image=images['note_on'],
         cursor="heart")
     music_lbl[0].grid(row=0, column=1, padx=(0, 10))
     music_lbl[0].bind("<Button-1>", lambda e: switch_music())
@@ -2038,7 +2038,7 @@ for k, v in images_dict.items():
     images[k] = ImageTk.PhotoImage(v)
 
 # init variables ---------------------------------------------------------
-music_onoff = tk.IntVar(value=0)
+music_onoff = tk.IntVar(value=1)
 music_lbl = [None]
 icons_onoff = tk.IntVar(value=0)
 show_icons = {}

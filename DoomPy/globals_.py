@@ -12,24 +12,27 @@ import tkinter as tk
 
 # loading stuff ####################################################################################
 curdir = os.path.dirname(__file__)
+dir_log = os.path.join(curdir, "logs")
+dir_files = os.path.join(curdir, "files")
+dir_images = os.path.join(curdir, "images")
 
 # load config file ---------------------------------------------------------------------------------
 global cfg
-with open("DoomPy/config.json") as json_file:
+with open(os.path.join(curdir, "config.json")) as json_file:
     cfg = json.load(json_file)
 
 # logfile to store debug lines ---------------------------------------------------------------------
 global logfile
-logfile = os.path.join(curdir, "logs", "DoomPyLog_" + time.strftime("%Y%m%d-%H%M%S") + ".txt")
+logfile = os.path.join(dir_log, "DoomPyLog_" + time.strftime("%Y%m%d-%H%M%S") + ".txt")
 
 # load cards.xlsx ----------------------------------------------------------------------------------
 global traits_df, traits_dfi, ages_df, catastrophies_dfi
 
-traits_df_unsorted = pd.read_excel(os.path.join(curdir, "files", "cards.xlsx"), sheet_name="traits")
+traits_df_unsorted = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="traits")
 traits_df = traits_df_unsorted.sort_values(by='trait').reset_index(drop=True)
 traits_dfi = traits_df.index.tolist()
 
-ages_df_unsorted = pd.read_excel(os.path.join(curdir, "files", "cards.xlsx"), sheet_name="ages")
+ages_df_unsorted = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="ages")
 ages_df = ages_df_unsorted.sort_values(by='name').reset_index(drop=True)
 catastrophies_dfi = ages_df[ages_df["type"] == "Catastrophe"].index.tolist()
 
@@ -51,32 +54,32 @@ img_size_scoreboard = 24
 img_size_icons = 20
 
 # basic
-for files in glob.glob(os.path.join(curdir, "images", "*.png")):
+for files in glob.glob(os.path.join(dir_images, "*.png")):
     var_name = os.path.splitext(os.path.basename(files))[0]
     images_dict[var_name] = Image.open(files).resize((img_size_icons, img_size_icons))
 
 # dominant-star
-for files in glob.glob(os.path.join(curdir, "images", "dominant_star", "*.png")):
+for files in glob.glob(os.path.join(dir_images, "dominant_star", "*.png")):
     var_name = os.path.splitext(os.path.basename(files))[0]
     images_dict[var_name] = Image.open(files).resize((img_size_star, img_size_star))
 
 # color icons
-for files in glob.glob(os.path.join(curdir, "images", "colors", cfg["img_colors_set"], "*.png")):
+for files in glob.glob(os.path.join(dir_images, "colors", cfg["img_colors_set"], "*.png")):
     var_name = os.path.splitext(os.path.basename(files))[0]
     images_dict[var_name] = Image.open(files).resize((img_size_icons, img_size_icons))
 
 # trait porperties
-for files in glob.glob(os.path.join(curdir, "images", "trait_properties", cfg["img_trait_properties_set"], "*.png")):
+for files in glob.glob(os.path.join(dir_images, "trait_properties", cfg["img_trait_properties_set"], "*.png")):
     var_name = os.path.splitext(os.path.basename(files))[0]
     images_dict[var_name] = Image.open(files).resize((img_size_icons, img_size_icons))
 
 # scoreboard icons
-for files in glob.glob(os.path.join(curdir, "images", "trait_properties", cfg["img_trait_properties_set"], "*.png")):
+for files in glob.glob(os.path.join(dir_images, "trait_properties", cfg["img_trait_properties_set"], "*.png")):
     var_name = os.path.splitext(os.path.basename(files))[0] + '_sb'
     images_dict[var_name] = Image.open(files).resize((img_size_scoreboard, img_size_scoreboard))
 
 # effects on traits
-for files in glob.glob(os.path.join(curdir, "images", "effects", "*.png")):
+for files in glob.glob(os.path.join(dir_images, "effects", "*.png")):
     var_name = os.path.splitext(os.path.basename(files))[0]
     images_dict[var_name] = Image.open(files)
 
@@ -86,7 +89,7 @@ for files in glob.glob(os.path.join(curdir, "images", "effects", "*.png")):
     images_dict[var_name] = images_dict[var_name].resize((actual_img_w, img_size_icons))
 
 # points
-for files in glob.glob(os.path.join(curdir, "images", "points", "*.png")):
+for files in glob.glob(os.path.join(dir_images, "points", "*.png")):
     var_name = os.path.splitext(os.path.basename(files))[0]
     images_dict[var_name] = Image.open(files)
 

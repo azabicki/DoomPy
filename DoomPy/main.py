@@ -401,9 +401,6 @@ def btn_remove_trait(from_):
     for p in range(n_player.get()):
         create_trait_pile(player_rb_frames[p], p)
 
-    print(traits_df.loc[card].tolist())
-    if attachment != 'none':
-        print(traits_df.loc[attachment].tolist())
     # focus back to search field
     trait_ent.focus_set()
 
@@ -1444,7 +1441,8 @@ def create_trait_pile(frame_trait_overview, p):
     # --- NEOTENY --- check button if Neoteny is in your hand ------------
     # is NEOTENY in your hand? asked via checkbox? But only if its not pöayed
     neoteny_idx = traits_df.index[traits_df.trait == 'Neoteny'].tolist()[0]
-    if "select world's end" not in worlds_end.get() and all(neoteny_idx not in tp for tp in player_traits):
+    if ("select world's end" not in worlds_end.get() and
+            all(neoteny_idx not in tp for tp in player_traits)):
         # only if no one has it or this player has it
         neoteny_effect = traits_df.loc[neoteny_idx].cur_effect
         if neoteny_effect == 'none' or neoteny_effect == str(p):
@@ -1526,7 +1524,6 @@ def create_trait_pile(frame_trait_overview, p):
                                  width=3)
             we_entry.grid(row=0, column=1)
             we_entry.bind("<KeyRelease>", lambda e: update_manual_we(e, p))
-
         else:
             we_points = str(player_points[p]['worlds_end'].get())
             tk.Label(frame_weB, image=images[we_points],

@@ -1567,8 +1567,6 @@ def create_player_frame(p):
 
 
 def create_menu_frame():
-    global trait_ent
-
     border = cfg["color_frame_width"]
 
     frame_menu.columnconfigure(0, weight=1)
@@ -1715,15 +1713,15 @@ def create_menu_frame():
     ).grid(row=0, column=0, columnspan=2, pady=(5, 0))
 
     # search field -----
-    trait_ent = ttk.Entry(
+    trait_ent[0] = ttk.Entry(
         frame_menu_traits,
         width=10,
         textvariable=search_trait)
-    trait_ent.grid(row=1, column=0, padx=(10, 0), sticky="w")
-    trait_ent.bind("<KeyRelease>", lambda e: search_trait_in_list(search_trait))
-    trait_ent.bind('<Down>', lambda e: lbox_traits[0].focus(), add='+')         # down arrow key is pressed
-    trait_ent.bind('<Down>', lambda e: lbox_traits[0].selection_set(0), add='+')
-    trait_ent.bind('<Down>', lambda e: update_selected_trait("lbox", lbox_traits[0].curselection()), add='+')
+    trait_ent[0].grid(row=1, column=0, padx=(10, 0), sticky="w")
+    trait_ent[0].bind("<KeyRelease>", lambda e: search_trait_in_list(search_trait))
+    trait_ent[0].bind('<Down>', lambda e: lbox_traits[0].focus(), add='+')         # down arrow key is pressed
+    trait_ent[0].bind('<Down>', lambda e: lbox_traits[0].selection_set(0), add='+')
+    trait_ent[0].bind('<Down>', lambda e: update_selected_trait("lbox", lbox_traits[0].curselection()), add='+')
 
     ttk.Button(
         frame_menu_traits,
@@ -1970,6 +1968,8 @@ music_onoff = tk.IntVar(value=1)
 music_lbl = [None]
 icons_onoff = tk.IntVar(value=0)
 show_icons = {}
+trait_ent = [None]
+
 
 opt_n_player = tk.IntVar(value=cfg["n_player"])                # OPTIONS: number of players
 opt_n_genes = tk.IntVar(value=cfg["n_genes"])                  # OPTIONS: gene pool at beginning

@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 from pygame import mixer
-import tkinter as tk
 
 
 # loading stuff ####################################################################################
@@ -108,7 +107,7 @@ for files in glob.glob(os.path.join(curdir, "sounds", "*.mp3")):
     sounds[var_name] = mixer.Sound(files)
 
 
-# design variables #################################################################################
+# switches #########################################################################################
 global music_onoff, icons_onoff, show_icons
 music_onoff = 'on'
 icons_onoff = 'on'

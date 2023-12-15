@@ -1936,11 +1936,11 @@ def reset_variables():
 
 
 def start_game():
-    # reset variables ----------------------------------------------------
+    # reset variables ------------------------------------------------------------------------------
     write_log(['init', 'variables'])
     reset_variables()
 
-    # update frame_configurations settings -------------------------------
+    # update frame_configurations settings ---------------------------------------------------------
     for w in frame_menu.grid_slaves():
         w.grid_forget()
 
@@ -1951,25 +1951,25 @@ def start_game():
         w = 0 if i >= game['n_player'] else 1  # 'else 1' => player_frames are stretchable
         frame_playground.columnconfigure(i, weight=w)
 
-    # fill _menu_ frame --------------------------------------------------
+    # fill _menu_ frame ----------------------------------------------------------------------------
     write_log(['init', 'menu'])
     create_menu_frame()
 
-    # fill _playground_ frame with _player_ frames -----------------------
+    # fill _playground_ frame with _player_ frames -------------------------------------------------
     write_log(['init', 'playground'])
     for i in range(game['n_player']):
         # frame_playground.columnconfigure(i, weight=1)
         frames_player.append(create_player_frame(i))
 
-    # clear traits listbox -----------------------------------------------
+    # clear traits listbox -------------------------------------------------------------------------
     btn_clear_trait_search()
 
 
-# _tkinter_ #########################################################################
-# create a window --------------------------------------------------------
 # init system ######################################################################################
 mixer.init()
 
+# _tkinter_ ########################################################################################
+# create a window ----------------------------------------------------------------------------------
 root = tk.Tk()
 root.title("LIVE Doomlings Calculator")
 root.geometry("1600x900")
@@ -1977,22 +1977,22 @@ root.configure(background=cfg["bg_content"])
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
 
-# create _content_ frame -------------------------------------------------
+# create _content_ frame ---------------------------------------------------------------------------
 content = tk.Frame(root, width=1200, height=800, bg=cfg["bg_content"])
 content.grid(column=0, row=0, sticky="nesw")
 content.columnconfigure(0, weight=0)  # menu on the left
 content.columnconfigure(1, weight=1)  # complete playground, set =1 to stretch it to the right side
 
-# create _menu_ frame ----------------------------------------------------
+# create _menu_ frame ------------------------------------------------------------------------------
 frame_menu = tk.Frame(content, bg=cfg["menu_frame_color"])
 frame_menu.grid(row=0, column=0, padx=5, pady=5, stick="nesw")
 
-# create _playground_ frame ----------------------------------------------
+# create _playground_ frame ------------------------------------------------------------------------
 frame_playground = tk.Frame(content, bg=cfg["bg_content"])
 frame_playground.grid(row=0, column=1, padx=0, pady=0, stick="nesw")
 frame_playground.rowconfigure(0, weight=1)  # stretch playground to bottom
 
-# styling ----------------------------------------------------------------
+# styling ------------------------------------------------------------------------------------------
 gui_style = ttk.Style()
 gui_style.configure("game_info.TLabel", font=("", 10, "italic"))
 gui_style.configure("name.TLabel", font=("Comic Sans MS", 36, "bold"))
@@ -2042,8 +2042,8 @@ player_MOLs = []            # list of lists containing MOLs for each player
 neoteny_checkbutton = []
 sleepy_spinbox = []
 
-# (re)start game -------------------------------------------------------------
+# (re)start game -----------------------------------------------------------------------------------
 start_game()
 
-# ----- run --------------------------------------------------------------
+# ----- run ----------------------------------------------------------------------------------------
 root.mainloop()

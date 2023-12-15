@@ -13,11 +13,10 @@ import traits_worlds_end_rules as twe_rules
 import worlds_end_rules as we_rules
 from log import write_log
 
-from globals_ import cfg, show_icons, images_dict, sounds
+from globals_ import cfg, show_icons, images_dict, sounds, music_onoff, icons_onoff
 from globals_ import traits_df, traits_dfi, ages_df, catastrophies_dfi
 
-
-# init variables ----------------------------
+# init system ----------------------------
 mixer.init()
 
 
@@ -87,22 +86,11 @@ def pre_play():
     catastrophies_cbox[2].event_generate("<<ComboboxSelected>>")
 
 
-def switch_music():
-    if music_onoff.get() == 0:
-        write_log(['music', 'on'])
-        music_onoff.set(1)
-        music_switch_image[0].configure(image=images['note_on'])
-    else:
-        write_log(['music', 'off'])
-        music_onoff.set(0)
-        music_switch_image[0].configure(image=images['note_off'])
-
-
 def switch_icons():
-    if icons_onoff.get() == 0:
+    if icons_onoff.get() == 'off':
+        icons_onoff.set('on')
+        lbl_icons_switch[0].configure(image=images['icons_on'])
         write_log(['icons', 'on'])
-        icons_onoff.set(1)
-        icons_switch_image[0].configure(image=images['icons_on'])
 
         show_icons['color'] = True        # default: True
         show_icons['face'] = True         # default: True
@@ -115,10 +103,10 @@ def switch_icons():
         show_icons['effectless'] = False  # default: False
         show_icons['attachment'] = False  # default: False
 
-    elif icons_onoff.get() == 1:
+    elif icons_onoff.get() == 'on':
+        icons_onoff.set('full')
+        lbl_icons_switch[0].configure(image=images['icons_full'])
         write_log(['icons', 'full'])
-        icons_onoff.set(2)
-        icons_switch_image[0].configure(image=images['icons_full'])
 
         show_icons['color'] = True          # default: True
         show_icons['face'] = True           # default: True
@@ -132,9 +120,9 @@ def switch_icons():
         show_icons['attachment'] = True     # default: False
 
     else:
+        icons_onoff.set('off')
+        lbl_icons_switch[0].configure(image=images['icons_off'])
         write_log(['icons', 'off'])
-        icons_onoff.set(0)
-        icons_switch_image[0].configure(image=images['icons_off'])
 
         show_icons['color'] = False       # default: True
         show_icons['face'] = False        # default: True
@@ -153,8 +141,19 @@ def switch_icons():
             create_trait_pile(player_rb_frames[p], p)
 
 
+def switch_music():
+    if music_onoff.get() == 'off':
+        music_onoff.set('on')
+        lbl_music_switch[0].configure(image=images['note_on'])
+        write_log(['music', 'on'])
+    else:
+        music_onoff.set('off')
+        lbl_music_switch[0].configure(image=images['note_off'])
+        write_log(['music', 'off'])
+
+
 def play(trait):
-    if music_onoff.get():
+    if music_onoff.get() == 'on':
         if trait.replace(' ', '_').lower() in sounds:
             sounds[trait.replace(' ', '_').lower()].play()
             write_log(['music', 'play'], trait)
@@ -2003,9 +2002,6 @@ for k, v in images_dict.items():
     images[k] = ImageTk.PhotoImage(v)
 
 # init variables ---------------------------------------------------------
-music_onoff = tk.IntVar(value=1)
-icons_onoff = tk.IntVar(value=1)
-
 music_switch_image = [None]
 icons_switch_image = [None]
 trait_ent = [None]

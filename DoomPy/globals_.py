@@ -7,24 +7,24 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 from pygame import mixer
+import tkinter as tk
 
 
-# define globals ###################################################################################
-global cfg, logfile, images_dict, sounds, \
-    traits_df, traits_dfi, ages_df, catastrophies_dfi
-
-
-# load files #######################################################################################
+# loading stuff ####################################################################################
 curdir = os.path.dirname(__file__)
 
 # load config file ---------------------------------------------------------------------------------
+global cfg
 with open("DoomPy/config.json") as json_file:
     cfg = json.load(json_file)
 
 # logfile to store debug lines ---------------------------------------------------------------------
+global logfile
 logfile = os.path.join(curdir, "logs", "DoomPyLog_" + time.strftime("%Y%m%d-%H%M%S") + ".txt")
 
 # load cards.xlsx ----------------------------------------------------------------------------------
+global traits_df, traits_dfi, ages_df, catastrophies_dfi
+
 traits_df_unsorted = pd.read_excel(os.path.join(curdir, "files", "cards.xlsx"), sheet_name="traits")
 traits_df = traits_df_unsorted.sort_values(by='trait').reset_index(drop=True)
 traits_dfi = traits_df.index.tolist()
@@ -44,6 +44,7 @@ traits_df["cur_worlds_end_trait"] = 'none'
 traits_df["cur_worlds_end_effect"] = np.nan
 
 # load images --------------------------------------------------------------------------------------
+global images_dict
 images_dict = {}
 img_size_star = 30
 img_size_scoreboard = 24
@@ -95,6 +96,7 @@ for files in glob.glob(os.path.join(curdir, "images", "points", "*.png")):
     images_dict[var_name] = images_dict[var_name].resize((actual_img_w, img_size_icons))
 
 # load sounds --------------------------------------------------------------------------------------
+global sounds
 sounds = {}
 mixer.init()
 
@@ -103,7 +105,22 @@ for files in glob.glob(os.path.join(curdir, "sounds", "*.mp3")):
     sounds[var_name] = mixer.Sound(files)
 
 
-# design varibles
+# design variables #################################################################################
+global music_onoff, icons_onoff, show_icons
+music_onoff = tk.StringVar(value='on')
+icons_onoff = tk.StringVar(value='on')
+
 show_icons = {}
+show_icons['color'] = True        # default: True
+show_icons['face'] = True         # default: True
+show_icons['collection'] = False  # default: False
+show_icons['dominant'] = False    # default: False
+show_icons['action'] = False      # default: False
+show_icons['drops'] = True        # default: True
+show_icons['gene_pool'] = False   # default: False
+show_icons['worlds_end'] = False  # default: False
+show_icons['effectless'] = False  # default: False
+show_icons['attachment'] = False  # default: False
+
 
 # define game variables ############################################################################

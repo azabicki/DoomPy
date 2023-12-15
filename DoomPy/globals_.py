@@ -110,8 +110,8 @@ for files in glob.glob(os.path.join(curdir, "sounds", "*.mp3")):
 
 # design variables #################################################################################
 global music_onoff, icons_onoff, show_icons
-music_onoff = tk.StringVar(value='on')
-icons_onoff = tk.StringVar(value='on')
+music_onoff = 'on'
+icons_onoff = 'on'
 
 show_icons = {}
 show_icons['color'] = True        # default: True

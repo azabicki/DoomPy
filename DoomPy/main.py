@@ -13,11 +13,10 @@ import traits_worlds_end_rules as twe_rules
 import worlds_end_rules as we_rules
 from log import write_log
 
-from globals_ import cfg, show_icons, images_dict, sounds, music_onoff, icons_onoff
+from globals_ import cfg, images_dict, sounds, music_onoff, icons_onoff, show_icons  # noqa: F401
 from globals_ import traits_df, traits_dfi, ages_df, catastrophies_dfi
-
-# init system ----------------------------
-mixer.init()
+from globals_ import lbl_music_switch, lbl_icons_switch, ent_trait_search
+from globals_ import game
 
 
 # functions ##############################################################
@@ -87,8 +86,10 @@ def pre_play():
 
 
 def switch_icons():
-    if icons_onoff.get() == 'off':
-        icons_onoff.set('on')
+    global icons_onoff
+
+    if icons_onoff == 'off':
+        icons_onoff = 'on'
         lbl_icons_switch[0].configure(image=images['icons_on'])
         write_log(['icons', 'on'])
 
@@ -102,9 +103,8 @@ def switch_icons():
         show_icons['worlds_end'] = False  # default: False
         show_icons['effectless'] = False  # default: False
         show_icons['attachment'] = False  # default: False
-
-    elif icons_onoff.get() == 'on':
-        icons_onoff.set('full')
+    elif icons_onoff == 'on':
+        icons_onoff = 'full'
         lbl_icons_switch[0].configure(image=images['icons_full'])
         write_log(['icons', 'full'])
 
@@ -118,9 +118,8 @@ def switch_icons():
         show_icons['worlds_end'] = True     # default: False
         show_icons['effectless'] = True     # default: False
         show_icons['attachment'] = True     # default: False
-
     else:
-        icons_onoff.set('off')
+        icons_onoff = 'off'
         lbl_icons_switch[0].configure(image=images['icons_off'])
         write_log(['icons', 'off'])
 
@@ -142,12 +141,14 @@ def switch_icons():
 
 
 def switch_music():
-    if music_onoff.get() == 'off':
-        music_onoff.set('on')
+    global music_onoff
+
+    if music_onoff == 'off':
+        music_onoff = 'on'
         lbl_music_switch[0].configure(image=images['note_on'])
         write_log(['music', 'on'])
     else:
-        music_onoff.set('off')
+        music_onoff = 'off'
         lbl_music_switch[0].configure(image=images['note_off'])
         write_log(['music', 'off'])
 
@@ -1618,7 +1619,7 @@ def create_menu_frame():
         image=images['note_on'],
         cursor="heart")
     lbl_music_switch[0].grid(row=0, column=1, padx=(0, 10))
-    lbl_music_switch[0].bind("<Button-1>", lambda e: switch_music(music_onoff))
+    lbl_music_switch[0].bind("<Button-1>", lambda e: switch_music())
 
     # nr players -----
     ttk.Label(

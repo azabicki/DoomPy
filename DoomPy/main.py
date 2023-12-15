@@ -154,7 +154,7 @@ def switch_music():
 
 
 def play(trait):
-    if music_onoff.get() == 'on':
+    if music_onoff == 'on':
         if trait.replace(' ', '_').lower() in sounds:
             sounds[trait.replace(' ', '_').lower()].play()
             write_log(['music', 'play'], trait)

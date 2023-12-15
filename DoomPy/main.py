@@ -351,7 +351,7 @@ def btn_attach_to(from_, attachment, event, possible_hosts):
         create_trait_pile(player_rb_frames[p], p)
 
 
-def btn_discard_trait(from_):
+def btn_remove_trait(from_):
     # get card & its attachment
     card = player_trait_selected[from_].get()
     if not np.isnan(card):
@@ -1614,8 +1614,8 @@ def create_player_frame(p):
 
     ttk.Button(
         frame_traits,
-        text="discard trait",
-        command=partial(btn_discard_trait, p),
+        text="remove trait",
+        command=partial(btn_remove_trait, p),
     ).grid(row=2, column=1, pady=(0, border), sticky='n')
 
     # ----- Meaning of Life -------------------------------------

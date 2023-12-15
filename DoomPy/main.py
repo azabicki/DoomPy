@@ -1946,7 +1946,7 @@ def start_game():
         w.grid_forget()
 
     for i in range(cfg["max_player"]):
-        w = 0 if i >= n_player.get() else 1  # w=1 -> player_frames are stretchable
+        w = 0 if i >= n_player.get() else 1  # 'else 1' => player_frames are stretchable
         frame_playground.columnconfigure(i, weight=w)
 
     # fill _menu_ frame --------------------------------------------------
@@ -1963,7 +1963,7 @@ def start_game():
     btn_clear_trait_search()
 
 
-##########################################################################
+# _tkinter_ #########################################################################
 # create a window --------------------------------------------------------
 root = tk.Tk()
 root.title("LIVE Doomlings Calculator")

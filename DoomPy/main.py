@@ -1,6 +1,7 @@
 import os
 import glob
 import json
+import time
 import bisect
 import tkinter as tk
 from tkinter import ttk
@@ -15,10 +16,12 @@ import discard_rules as di_rules
 import drop_rules as dr_rules
 import traits_worlds_end_rules as twe_rules
 import worlds_end_rules as we_rules
-
+from log import write_log
 
 # system settings ########################################################
 curdir = os.path.dirname(__file__)
+logfile = os.path.join(curdir, "logs", "DoomPyLog_" + time.strftime("%Y%m%d-%H%M%S") + ".txt")
+# logfile = open(logfile_file, 'a')
 
 # load defaults ----------------------------------------------------------
 with open("DoomPy/config.json") as json_file:
@@ -167,16 +170,18 @@ def pre_play():
 
 def switch_music():
     if music_onoff.get():
+        write_log(logfile, ['music', 'off'])
         music_onoff.set(0)
         music_lbl[0].configure(image=images['note_off'])
     else:
+        write_log(logfile, ['music', 'on'])
         music_onoff.set(1)
         music_lbl[0].configure(image=images['note_on'])
 
 
 def switch_icons():
     if icons_onoff.get():
-        print(' icons switched on')
+        write_log(logfile, ['icons', 'on'])
         show_icons['color'] = True          # default: True
         show_icons['face'] = True           # default: True
         show_icons['collection'] = True     # default: False
@@ -188,7 +193,7 @@ def switch_icons():
         show_icons['effectless'] = True     # default: False
         show_icons['attachment'] = True     # default: False
     else:
-        print(' icons switched off')
+        write_log(logfile, ['icons', 'off'])
         show_icons['color'] = True        # default: True
         show_icons['face'] = True         # default: True
         show_icons['collection'] = False  # default: False
@@ -210,6 +215,7 @@ def play(trait):
     if music_onoff.get():
         if trait.replace(' ', '_').lower() in sounds:
             sounds[trait.replace(' ', '_').lower()].play()
+            write_log(logfile, ['music', 'play'], trait)
 
 
 def btn_clear_trait_search():
@@ -230,11 +236,9 @@ def btn_traits_world_end(from_, trait_idx, event):
 
     # print log
     if effect_idx == 0:
-        print(">>> traits world end <<< resetting '{}'s worlds-end-effect..."
-              .format(traits_df.loc[trait_idx].trait))
+        write_log(logfile, ['traits_WE', 'reset'], traits_df.loc[trait_idx].trait)
     else:
-        print(">>> traits world end <<< setting '{}'s worlds-end-effect to '{}'"
-              .format(traits_df.loc[trait_idx].trait, effect))
+        write_log(logfile, ['traits_WE', 'set'], traits_df.loc[trait_idx].trait, effect)
 
     # check if effect was selected previously & if its different than the current, reset old effect
     old_effect = traits_df.loc[trait_idx].cur_worlds_end_trait
@@ -313,20 +317,18 @@ def btn_attach_to(from_, attachment, event, possible_hosts):
     # return, if clicked on current host
     old_host_idx = traits_df[traits_df['cur_attachment'] == attachment].index.values.tolist()
     if host_idx in old_host_idx:
-        print(">>> attachment <<< ERROR - clicked on own host")
+        write_log(logfile, ['attach_to', 'error_host'])
         return
 
     # print log
     if host == ' ... ':
-        print(">>> attachment <<< '{}' is dettached from all host..."
-              .format(traits_df.loc[attachment].trait))
+        write_log(logfile, ['attach_to', 'detached'], traits_df.loc[attachment].trait)
     else:
-        print(">>> attachment <<< '{}' is attaching '{}' to '{}'"
-              .format(player_name[from_].get(), traits_df.loc[attachment].trait, host))
+        write_log(logfile, ['attach_to', 'attached'], player_name[from_].get(), traits_df.loc[attachment].trait, host)
 
     # check if attachment moved from old_host
     if old_host_idx:
-        print("    >>> was until now on old host: {}".format(traits_df.loc[old_host_idx[0]].trait))
+        write_log(logfile, ['attach_to', 'change_host'], traits_df.loc[attachment].trait)
         update_traits_current_status('reset', old_host_idx[0], [])
 
     # check if attachment is set back to "..." (idx=0)
@@ -357,20 +359,18 @@ def btn_discard_trait(from_):
 
     # return, if no trait selected
     if np.isnan(card):
-        print(">>> discard <<< ERROR - no trait selected")
+        write_log(logfile, ['remove', 'error_no_trait'])
         return
 
     # return, if attachment selected
     if traits_df.loc[card].attachment == 1:
-        print(">>> discard <<< ERROR - attachment not discardable -> discard host instead")
+        write_log(logfile, ['remove', 'error_attachment_selected'])
         return
 
     # print log
-    print(">>> discard <<< '{}' is discarding '{}' (id:{})"
-          .format(player_name[from_].get(), traits_df.loc[card].trait, card))
+    write_log(logfile, ['remove', 'error_no_trait'], player_name[from_].get(), traits_df.loc[card].trait, card)
     if attachment != 'none':
-        print(">>> discard <<< ___ attachment '{}' (id:{}) is also discarded automatically"
-              .format(traits_df.loc[attachment].trait, attachment))
+        write_log(logfile, ['remove', 'error_no_trait'], traits_df.loc[attachment].trait, attachment)
 
     # remove card(s) from player & clear trait selection
     player_traits[from_].remove(card)
@@ -415,33 +415,33 @@ def btn_move_trait(from_, cbox_move_to):
     # return, if no target selected
     if cbox_move_to.current() == 0:
         cbox_move_to.current(0)
-        print(">>> move <<< ERROR - clicked on 'move trait to...'")
+        write_log(logfile, ['move', 'error_move_to'])
         return
 
     # return, if no trait selected
     to = defaults["names"].index(cbox_move_to.get())
     if np.isnan(card):
         cbox_move_to.current(0)
-        print(">>> move <<< ERROR - no trait selected")
+        write_log(logfile, ['move', 'error_no_trait'])
         return
 
     # return, if from == to
     if from_ == to:
         cbox_move_to.current(0)
-        print(">>> move <<< ERROR - 'source' and 'target' player are the same")
+        write_log(logfile, ['move', 'error_source_target'])
         return
 
     # return, if attachment selected
     if traits_df.loc[card].attachment == 1:
         cbox_move_to.current(0)
-        print(">>> move <<< ERROR - attachment not moveable -> move host instead")
+        write_log(logfile, ['move', 'error_attachment'])
         return
 
     # print log
     add_txt = "(and its attachment '{}' (id:{}))".format(traits_df.loc[attachment].trait, attachment) \
         if attachment != 'none' else ''
-    print(">>> move <<< '{}' (id:{}) {} is moved from '{}' to '{}'"
-          .format(traits_df.loc[card].trait, card, add_txt, player_name[from_].get(), player_name[to].get()))
+    write_log(logfile, ['move', 'move_to'],
+              traits_df.loc[card].trait, card, add_txt, player_name[from_].get(), player_name[to].get())
 
     # remove traits(s) from 'giving' player, update trait_pile & clear trait selection
     player_traits[from_].remove(card)
@@ -472,7 +472,7 @@ def btn_move_trait(from_, cbox_move_to):
 def btn_play_trait(to):
     # return, if no trait selected
     if play_trait is None:
-        print(">>> play <<< ERROR - no trait selected")
+        write_log(logfile, ['play', 'error_no_trait'])
         return
 
     # get card
@@ -486,8 +486,8 @@ def btn_play_trait(to):
             return
 
     # print log
-    print(">>> play <<< '{}' is playing '{}'"
-          .format(player_name[to].get(), trait))
+    write_log(logfile, ['play', 'play'], player_name[to].get(), trait)
+
 
     # add to players traits & update trait_pile
     bisect.insort_left(player_traits[to], trait_idx)
@@ -512,11 +512,11 @@ def btn_play_trait(to):
 def btn_play_worlds_end():
     # do nothing if no catastrophy selected
     if worlds_end_cbox[0].current() == 0:
-        print(">>> world's end <<< ERROR - no event selected")
+        write_log(logfile, ['worlds_end', 'error_no_event'])
         return
 
     # print log
-    print(">>> world's end <<< '{}' is happening now...".format(worlds_end.get()))
+    write_log(logfile, ['worlds_end', 'game_over'], worlds_end.get())
 
     # update scoring
     update_scoring()
@@ -539,17 +539,16 @@ def btn_play_catastrophe(event, c):
         if played_before is not None:
             old_cbox_idx = catastrophies_possible[c].index(played_before) + 1
             catastrophies_cbox[c].current(old_cbox_idx)
-        print(">>> catastrophe <<< ERROR - no catastrophe selected")
+        write_log(logfile, ['catastrophe', 'error_no_catastrophe'])
         return
 
     # return, if same catastrophe selected
     if played_before == played_idx:
-        print(">>> catastrophe <<< ERROR - same catastrophe selected as before")
+        write_log(logfile, ['catastrophe', 'error_same_catastrophe'])
         return
 
     # print log
-    print(">>> catastrophe <<< played catastrophe #{}: '{}' (id:{})"
-          .format(c+1, played_str, played_idx))
+    write_log(logfile, ['catastrophe', 'catastrophe'], c+1, played_str, played_idx)
 
     # set played catastrophe
     catastrophies_played[c] = played_idx
@@ -672,12 +671,12 @@ def update_traits_current_status(todo, *args):
 
             # print log
             if log:
-                print(">>> current effects <<< '{}' is reseted to defaults"
-                      .format(traits_df.loc[trait].trait))
+                write_log(logfile, ['update_trait_status', 'reset'], traits_df.loc[trait].trait)
 
         case 'attachment':
             host = args[0]
             attachment = args[1]
+            log = args[-1]
 
             # save attachment to host
             traits_df.loc[host, 'cur_attachment'] = attachment
@@ -689,8 +688,9 @@ def update_traits_current_status(todo, *args):
             traits_df.loc[host, "cur_effect"] = effects['effect']
 
             # print log
-            print(">>> current effects <<< '{}' is updated due to effects of '{}'"
-                  .format(traits_df.loc[host].trait, traits_df.loc[attachment].trait))
+            if log:
+                write_log(logfile, ['update_trait_status', 'attachment'],
+                          traits_df.loc[host].trait, traits_df.loc[attachment].trait)
 
         case 'worlds_end':
             trait_idx = args[0]
@@ -702,6 +702,7 @@ def update_traits_current_status(todo, *args):
         case 'neoteny':
             neoteny_idx = traits_df.index[traits_df.trait == 'Neoteny'].tolist()[0]
             p = args[0]
+            log = args[-1]
 
             # set other player to 0
             for i in range(n_player.get()):
@@ -710,11 +711,13 @@ def update_traits_current_status(todo, *args):
 
             # update 'cur_effect'
             if not any([i.get() for i in neoteny_checkbutton]):
-                print('_no one_')
                 traits_df.loc[neoteny_idx, "cur_effect"] = 'none'
+                if log:
+                    write_log(logfile, ['update_trait_status', 'neoteny_no_one'])
             else:
-                print('_that one: {} _'.format(p))
                 traits_df.loc[neoteny_idx, "cur_effect"] = str(p)
+                if log:
+                    write_log(logfile, ['update_trait_status', 'neoteny_that_one'], p)
 
             # update scoreboard
             update_scoring()
@@ -766,8 +769,7 @@ def update_scoring():
         player_points[p]['total'].set(total)
 
         # print log, only if points changed
-        print(">>> scoring <<< current points 4 '{}': face = {}  |  drops = {}  |  WE = {}  |  MOL = {}  |  total = {}"
-              .format(player_name[p].get(), p_face, p_drop, p_worlds_end, p_MOL, total))
+        write_log(logfile, ['scoring', 'update'], player_name[p].get(), p_face, p_drop, p_worlds_end, p_MOL, total)
 
 
 def update_genes():
@@ -802,8 +804,8 @@ def update_genes():
                             diff_genes = [i+value if i != p else i for i in diff_genes]
 
                 # print log
-                print(">>> genes <<< '{}'s '{}' has gene effect off '{}' on '{}' -> current effect: {}"
-                      .format(player_name[p].get(), traits_df.loc[trait_idx].trait, value, who, diff_genes))
+                write_log(logfile, ['genes', 'trait'],
+                          player_name[p].get(), traits_df.loc[trait_idx].trait, value, who, diff_genes)
 
     # check what catastrophies were played alread ---------------------------------------
     for c in range(n_catastrophies.get()):
@@ -818,8 +820,7 @@ def update_genes():
             diff_genes = [i + effect for i in diff_genes]
 
             # print log
-            print(">>> genes <<< catastrophe '{}' has gene effect off '{}' -> current effect: {}"
-                  .format(c_str, effect, diff_genes))
+            write_log(logfile, ['genes', 'catastrophe'], c_str, effect, diff_genes)
 
     # check for special effects by specific traits --------------------------------------
     # Spores
@@ -835,8 +836,7 @@ def update_genes():
                 diff_genes[p] += 1
 
                 # print log
-                print(">>> genes <<< 'Spores' (id:{}) has an gene effect (+1) on '{}' -> current effect: {}"
-                      .format(sprs_idx, player_name[p].get(), diff_genes))
+                write_log(logfile, ['genes', 'spores'], sprs_idx, player_name[p].get(), diff_genes)
 
     # Sleepy
     slp_idx = traits_df.index[traits_df.trait == 'Sleepy'].tolist()[0]
@@ -845,8 +845,7 @@ def update_genes():
         diff_genes = [diff_genes[x]+slp_eff[x] for x in range(len(diff_genes))]
         if any(slp_eff):
             p = [i for i, e in enumerate(slp_eff) if e != 0]
-            print(">>> genes <<< 'Sleepy' (id:?) has an gene effect on '{}' by {} -> current effect: {}"
-                  .format(player_name[p[0]].get(), slp_eff[p[0]], diff_genes))
+            write_log(logfile, ['genes', 'sleepy'], player_name[p[0]].get(), slp_eff[p[0]], diff_genes)
     else:  # sleepy in no trait pile -> reset values
         for i in range(n_player.get()):
             sleepy_spinbox[i].set(0)
@@ -863,8 +862,8 @@ def update_genes():
 
     # print log - if genes are effected
     if any(i > 0 for i in diff_genes):
-        print("   >>> total gene effect: {} -> new gene pools are {}"
-              .format(diff_genes, [player_genes[i].get() for i in range(n_player.get())]))
+        write_log(logfile, ['genes', 'total_effect'],
+                  diff_genes, [player_genes[i].get() for i in range(n_player.get())])
 
 
 def update_stars():
@@ -914,8 +913,8 @@ def update_selected_trait(where, idx):
         play_trait = lbox_cards_idx.get()[idx[0]]
 
         # print log
-        print(">>> select <<< handle DECK_listbox -> selected trait = '{}' (id:{})"
-              .format(traits_df.loc[play_trait].trait, play_trait))
+        write_log(logfile, ['select', 'deck'],
+                  traits_df.loc[play_trait].trait, play_trait)
 
     # select trait in one of players trait pile
     else:
@@ -923,8 +922,8 @@ def update_selected_trait(where, idx):
         player_trait_selected[where].set(idx.get())
 
         # print log
-        print(">>> select <<< handle PLAYER_listbox -> selected trait = '{}' is selecting '{}' (id:{})"
-              .format(player_name[where].get(), traits_df.loc[idx.get()].trait, idx.get()))
+        write_log(logfile, ['select', 'trait_pile'],
+                  player_name[where].get(), traits_df.loc[idx.get()].trait, idx.get())
 
 
 def create_trait_pile(frame_trait_overview, p):
@@ -1316,8 +1315,7 @@ def create_trait_pile(frame_trait_overview, p):
                 image=images[vp_s[p]]
                 ).grid(row=0, column=3)
 
-            print("Viral acts on '{}' traits in '{}'s trait pile -> drop points = {}"
-                  .format(we_viral, player_name[p].get(), vp_s[p]))
+            write_log(logfile, ['trait_effects', 'viral'], we_viral, player_name[p].get(), vp_s[p])
 
     # --- AMATOXINS --- add passively Amatoxins to this trait pile ---------------
     amatoxins_idx = traits_df.index[traits_df.trait == 'Amatoxins'].tolist()[0]
@@ -1356,8 +1354,7 @@ def create_trait_pile(frame_trait_overview, p):
                 image=images[we_drops]
                 ).grid(row=0, column=3)
 
-            print("Amatoxins' effect is based on amount of discraded colors -> drop points = {}"
-                  .format(we_drops))
+            write_log(logfile, ['trait_effects', 'amatoxins'], we_drops)
 
     # --- PROWLER --- add passively Prowler to this trait pile ---------------
     prowler_idx = traits_df.index[traits_df.trait == 'Prowler'].tolist()[0]
@@ -1396,8 +1393,7 @@ def create_trait_pile(frame_trait_overview, p):
             image=images[vp_s[p]]
             ).grid(row=0, column=4)
 
-        print("Viral acts on 'color_count' in '{}'s trait pile -> drop points = {}"
-              .format(player_name[p].get(), vp_s[p]))
+        write_log(logfile, ['trait_effects', 'prowler'], player_name[p].get(), vp_s[p])
 
     # --- SHINY --- add passively Shiny to this trait pile ---------------
     shiny_idx = traits_df.index[traits_df.trait == 'Shiny'].tolist()[0]
@@ -1432,8 +1428,7 @@ def create_trait_pile(frame_trait_overview, p):
             image=images[vp_s[p]]
             ).grid(row=0, column=3)
 
-        print("Shiny acts on 'colorless' traits in '{}'s trait pile -> drop points = {}"
-              .format(player_name[p].get(), vp_s[p]))
+        write_log(logfile, ['trait_effects', 'shiny'], player_name[p].get(), vp_s[p])
 
     # --- NEOTENY --- check button if Neoteny is in your hand ------------
     # is NEOTENY in your hand? asked via checkbox? But only if its not pöayed
@@ -1936,10 +1931,10 @@ def reset_variables():
     for i in range(n_player.get()):
         if len(last_names) >= i+1:
             player_name.append(tk.StringVar(value=last_names[i].get()))
-            print("   >>> use *previous* name for player #{} = {}".format(i+1, player_name[i].get()))
+            write_log(logfile, ['init', 'previous_names'], i+1, player_name[i].get())
         else:
             player_name.append(tk.StringVar(value=defaults["names"][i]))
-            print("   >>> use *default* name for player #{} = {}".format(i+1, player_name[i].get()))
+            write_log(logfile, ['init', 'default_names'], i+1, player_name[i].get())
 
         player_genes.append(tk.IntVar(value=n_genes.get()))
         player_points.append({'face': tk.IntVar(value=0), 'drops': tk.IntVar(value=0),
@@ -1990,7 +1985,7 @@ def reset_variables():
 
 def start_game():
     # reset variables ----------------------------------------------------
-    print(">>> initialize <<< reset variables")
+    write_log(logfile, ['init', 'variables'])
     reset_variables()
     switch_icons()
 
@@ -2006,11 +2001,11 @@ def start_game():
         frame_playground.columnconfigure(i, weight=w)
 
     # fill _menu_ frame --------------------------------------------------
-    print(">>> initialize <<< create menu")
+    write_log(logfile, ['init', 'menu'])
     create_menu_frame()
 
     # fill _playground_ frame with _player_ frames -----------------------
-    print(">>> initialize <<< create playground")
+    write_log(logfile, ['init', 'playground'])
     for i in range(n_player.get()):
         # frame_playground.columnconfigure(i, weight=1)
         frames_player.append(create_player_frame(i))

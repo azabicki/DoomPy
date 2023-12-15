@@ -88,19 +88,38 @@ def pre_play():
 
 
 def switch_music():
-    if music_onoff.get():
-        write_log(logfile, ['music', 'off'])
-        music_onoff.set(0)
-        music_lbl[0].configure(image=images['note_off'])
-    else:
-        write_log(logfile, ['music', 'on'])
+    if music_onoff.get() == 0:
+        write_log(['music', 'on'])
         music_onoff.set(1)
-        music_lbl[0].configure(image=images['note_on'])
+        music_switch_image[0].configure(image=images['note_on'])
+    else:
+        write_log(['music', 'off'])
+        music_onoff.set(0)
+        music_switch_image[0].configure(image=images['note_off'])
 
 
 def switch_icons():
-    if icons_onoff.get():
-        write_log(logfile, ['icons', 'on'])
+    if icons_onoff.get() == 0:
+        write_log(['icons', 'on'])
+        icons_onoff.set(1)
+        icons_switch_image[0].configure(image=images['icons_on'])
+
+        show_icons['color'] = True        # default: True
+        show_icons['face'] = True         # default: True
+        show_icons['collection'] = False  # default: False
+        show_icons['dominant'] = False    # default: False
+        show_icons['action'] = False      # default: False
+        show_icons['drops'] = True        # default: True
+        show_icons['gene_pool'] = False   # default: False
+        show_icons['worlds_end'] = False  # default: False
+        show_icons['effectless'] = False  # default: False
+        show_icons['attachment'] = False  # default: False
+
+    elif icons_onoff.get() == 1:
+        write_log(['icons', 'full'])
+        icons_onoff.set(2)
+        icons_switch_image[0].configure(image=images['icons_full'])
+
         show_icons['color'] = True          # default: True
         show_icons['face'] = True           # default: True
         show_icons['collection'] = True     # default: False
@@ -111,14 +130,18 @@ def switch_icons():
         show_icons['worlds_end'] = True     # default: False
         show_icons['effectless'] = True     # default: False
         show_icons['attachment'] = True     # default: False
+
     else:
-        write_log(logfile, ['icons', 'off'])
-        show_icons['color'] = True        # default: True
-        show_icons['face'] = True         # default: True
+        write_log(['icons', 'off'])
+        icons_onoff.set(0)
+        icons_switch_image[0].configure(image=images['icons_off'])
+
+        show_icons['color'] = False       # default: True
+        show_icons['face'] = False        # default: True
         show_icons['collection'] = False  # default: False
         show_icons['dominant'] = False    # default: False
         show_icons['action'] = False      # default: False
-        show_icons['drops'] = True        # default: True
+        show_icons['drops'] = False       # default: True
         show_icons['gene_pool'] = False   # default: False
         show_icons['worlds_end'] = False  # default: False
         show_icons['effectless'] = False  # default: False
@@ -1591,12 +1614,12 @@ def create_menu_frame():
         text="OPTIONS",
         font="'' 24"
         ).grid(row=0, column=0, pady=(5, 5))
-    music_lbl[0] = ttk.Label(
+    music_switch_image[0] = ttk.Label(
         frame_title,
         image=images['note_on'],
         cursor="heart")
-    music_lbl[0].grid(row=0, column=1, padx=(0, 10))
-    music_lbl[0].bind("<Button-1>", lambda e: switch_music())
+    music_switch_image[0].grid(row=0, column=1, padx=(0, 10))
+    music_switch_image[0].bind("<Button-1>", lambda e: switch_music())
 
     # nr players -----
     ttk.Label(
@@ -1814,10 +1837,12 @@ def create_menu_frame():
     frame_menu_controls.columnconfigure(1, weight=0)
     frame_menu_controls.columnconfigure(1, weight=1)
 
-    ttk.Checkbutton(frame_menu_controls,
-                    variable=icons_onoff,
-                    command=switch_icons
-                    ).grid(row=0, column=0, padx=(10, 0))
+    icons_switch_image[0] = ttk.Label(
+        frame_menu_controls,
+        image=images['icons_on'],
+        cursor="heart")
+    icons_switch_image[0].grid(row=0, column=0, padx=(10, 0))
+    icons_switch_image[0].bind("<Button-1>", lambda e: switch_icons())
     ttk.Button(frame_menu_controls,
                image=images['no_star'],
                command=pre_play,
@@ -1913,7 +1938,6 @@ def start_game():
     # reset variables ----------------------------------------------------
     write_log(['init', 'variables'])
     reset_variables()
-    switch_icons()
 
     # update frame_configurations settings -------------------------------
     for w in frame_menu.grid_slaves():
@@ -1980,9 +2004,10 @@ for k, v in images_dict.items():
 
 # init variables ---------------------------------------------------------
 music_onoff = tk.IntVar(value=1)
-music_lbl = [None]
-icons_onoff = tk.IntVar(value=0)
-show_icons = {}
+icons_onoff = tk.IntVar(value=1)
+
+music_switch_image = [None]
+icons_switch_image = [None]
 trait_ent = [None]
 
 

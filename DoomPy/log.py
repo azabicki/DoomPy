@@ -275,4 +275,8 @@ def write_log(what, *args):
                     print(">>> icons <<< turned on")
                     f.write(">>> icons <<< turned on\n")
 
+                case 'full':
+                    print(">>> icons <<< turned full")
+                    f.write(">>> icons <<< turned full\n")
+
     f.close()

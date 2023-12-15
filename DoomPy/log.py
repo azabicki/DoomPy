@@ -1,5 +1,8 @@
-def write_log(file, what, *args):
-    f = open(file, 'a')
+from globals_ import logfile
+
+
+def write_log(what, *args):
+    f = open(logfile, 'a')
 
     match what[0]:
         case 'init':  # initialize

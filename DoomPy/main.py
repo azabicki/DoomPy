@@ -1,15 +1,10 @@
-import os
-import glob
-import json
-import time
 import bisect
 import tkinter as tk
 from tkinter import ttk
 from math import floor
 from functools import partial
-import pandas as pd
 import numpy as np
-from PIL import Image, ImageTk
+from PIL import ImageTk
 from pygame import mixer
 import attachment_rules as at_rules
 import discard_rules as di_rules
@@ -18,88 +13,12 @@ import traits_worlds_end_rules as twe_rules
 import worlds_end_rules as we_rules
 from log import write_log
 
-# system settings ########################################################
-curdir = os.path.dirname(__file__)
-logfile = os.path.join(curdir, "logs", "DoomPyLog_" + time.strftime("%Y%m%d-%H%M%S") + ".txt")
-# logfile = open(logfile_file, 'a')
+from globals_ import cfg, show_icons, images_dict, sounds
+from globals_ import traits_df, traits_dfi, ages_df, catastrophies_dfi
 
-# load defaults ----------------------------------------------------------
-with open("DoomPy/config.json") as json_file:
-    defaults = json.load(json_file)
 
-# load cards.xlsx --------------------------------------------------------
-traits_df_unsorted = pd.read_excel(os.path.join(curdir, "files", "cards.xlsx"), sheet_name="traits")
-traits_df = traits_df_unsorted.sort_values(by='trait').reset_index(drop=True)
-traits_dfi = traits_df.index.tolist()
-
-ages_df_unsorted = pd.read_excel(os.path.join(curdir, "files", "cards.xlsx"), sheet_name="ages")
-ages_df = ages_df_unsorted.sort_values(by='name').reset_index(drop=True)
-ages_dfi = ages_df[ages_df["type"] == "Age"].index.tolist()
-catastrophies_dfi = ages_df[ages_df["type"] == "Catastrophe"].index.tolist()
-
-# add columns to traits_df
-traits_df["cur_color"] = traits_df.color
-traits_df["cur_face"] = traits_df.face
-traits_df["cur_drops"] = np.nan
-traits_df["cur_effect"] = 'none'
-traits_df["cur_host"] = 'none'
-traits_df["cur_attachment"] = 'none'
-traits_df["cur_worlds_end_trait"] = 'none'
-traits_df["cur_worlds_end_effect"] = np.nan
-
-# load images ------------------------------------------------------------
-img_size_star = 30
-img_size_scoreboard = 24
-img_size_icons = 20
-img_size_icons_w = int(img_size_icons*1.5)
-img_colors_set = "circle"
-img_trait_properties_set = "official_setA"
-
-images_dict = {}
-for files in glob.glob(os.path.join(curdir, "images", "*.png")):
-    var_name = os.path.splitext(os.path.basename(files))[0]
-    images_dict[var_name] = Image.open(files).resize((img_size_icons, img_size_icons))
-
-for files in glob.glob(os.path.join(curdir, "images", "dominant_star", "*.png")):
-    var_name = os.path.splitext(os.path.basename(files))[0]
-    images_dict[var_name] = Image.open(files).resize((img_size_star, img_size_star))
-
-for files in glob.glob(os.path.join(curdir, "images", "colors", img_colors_set, "*.png")):
-    var_name = os.path.splitext(os.path.basename(files))[0]
-    images_dict[var_name] = Image.open(files).resize((img_size_icons, img_size_icons))
-
-for files in glob.glob(os.path.join(curdir, "images", "trait_properties", img_trait_properties_set, "*.png")):
-    var_name = os.path.splitext(os.path.basename(files))[0]
-    images_dict[var_name] = Image.open(files).resize((img_size_icons, img_size_icons))
-
-for files in glob.glob(os.path.join(curdir, "images", "trait_properties", img_trait_properties_set, "*.png")):
-    var_name = os.path.splitext(os.path.basename(files))[0] + '_sb'
-    images_dict[var_name] = Image.open(files).resize((img_size_scoreboard, img_size_scoreboard))
-
-for files in glob.glob(os.path.join(curdir, "images", "effects", "*.png")):
-    var_name = os.path.splitext(os.path.basename(files))[0]
-    images_dict[var_name] = Image.open(files)
-
-    # pay attention to w/h-ratio
-    w, h = images_dict[var_name].size
-    actual_img_w = int(w / h * img_size_icons)
-    images_dict[var_name] = images_dict[var_name].resize((actual_img_w, img_size_icons))
-
-for files in glob.glob(os.path.join(curdir, "images", "face", "*.png")):
-    var_name = os.path.splitext(os.path.basename(files))[0]
-    images_dict[var_name] = Image.open(files)
-
-    # pay attention to w/h-ratio
-    w, h = images_dict[var_name].size
-    actual_img_w = int(w / h * img_size_icons)
-    images_dict[var_name] = images_dict[var_name].resize((actual_img_w, img_size_icons))
-
-# init mixer 4 playing sounds & preload files ----------------------------
+# init variables ----------------------------
 mixer.init()
-sounds = {}
-for files in glob.glob(os.path.join(curdir, "sounds", "*.mp3")):
-    var_name = os.path.splitext(os.path.basename(files))[0].lower()
-    sounds[var_name] = mixer.Sound(files)
 
 
 # functions ##############################################################
@@ -215,7 +134,7 @@ def play(trait):
     if music_onoff.get():
         if trait.replace(' ', '_').lower() in sounds:
             sounds[trait.replace(' ', '_').lower()].play()
-            write_log(logfile, ['music', 'play'], trait)
+            write_log(['music', 'play'], trait)
 
 
 def btn_clear_trait_search():
@@ -236,9 +155,9 @@ def btn_traits_world_end(from_, trait_idx, event):
 
     # print log
     if effect_idx == 0:
-        write_log(logfile, ['traits_WE', 'reset'], traits_df.loc[trait_idx].trait)
+        write_log(['traits_WE', 'reset'], traits_df.loc[trait_idx].trait)
     else:
-        write_log(logfile, ['traits_WE', 'set'], traits_df.loc[trait_idx].trait, effect)
+        write_log(['traits_WE', 'set'], traits_df.loc[trait_idx].trait, effect)
 
     # check if effect was selected previously & if its different than the current, reset old effect
     old_effect = traits_df.loc[trait_idx].cur_worlds_end_trait
@@ -317,18 +236,18 @@ def btn_attach_to(from_, attachment, event, possible_hosts):
     # return, if clicked on current host
     old_host_idx = traits_df[traits_df['cur_attachment'] == attachment].index.values.tolist()
     if host_idx in old_host_idx:
-        write_log(logfile, ['attach_to', 'error_host'])
+        write_log(['attach_to', 'error_host'])
         return
 
     # print log
     if host == ' ... ':
-        write_log(logfile, ['attach_to', 'detached'], traits_df.loc[attachment].trait)
+        write_log(['attach_to', 'detached'], traits_df.loc[attachment].trait)
     else:
-        write_log(logfile, ['attach_to', 'attached'], player_name[from_].get(), traits_df.loc[attachment].trait, host)
+        write_log(['attach_to', 'attached'], player_name[from_].get(), traits_df.loc[attachment].trait, host)
 
     # check if attachment moved from old_host
     if old_host_idx:
-        write_log(logfile, ['attach_to', 'change_host'], traits_df.loc[attachment].trait)
+        write_log(['attach_to', 'change_host'], traits_df.loc[attachment].trait)
         update_traits_current_status('reset', old_host_idx[0], [])
 
     # check if attachment is set back to "..." (idx=0)
@@ -359,18 +278,18 @@ def btn_remove_trait(from_):
 
     # return, if no trait selected
     if np.isnan(card):
-        write_log(logfile, ['remove', 'error_no_trait'])
+        write_log(['remove', 'error_no_trait'])
         return
 
     # return, if attachment selected
     if traits_df.loc[card].attachment == 1:
-        write_log(logfile, ['remove', 'error_attachment_selected'])
+        write_log(['remove', 'error_attachment_selected'])
         return
 
     # print log
-    write_log(logfile, ['remove', 'error_no_trait'], player_name[from_].get(), traits_df.loc[card].trait, card)
+    write_log(['remove', 'error_no_trait'], player_name[from_].get(), traits_df.loc[card].trait, card)
     if attachment != 'none':
-        write_log(logfile, ['remove', 'error_no_trait'], traits_df.loc[attachment].trait, attachment)
+        write_log(['remove', 'error_no_trait'], traits_df.loc[attachment].trait, attachment)
 
     # remove card(s) from player & clear trait selection
     player_traits[from_].remove(card)
@@ -414,32 +333,32 @@ def btn_move_trait(from_, cbox_move_to):
     # return, if no target selected
     if cbox_move_to.current() == 0:
         cbox_move_to.current(0)
-        write_log(logfile, ['move', 'error_move_to'])
+        write_log(['move', 'error_move_to'])
         return
 
     # return, if no trait selected
-    to = defaults["names"].index(cbox_move_to.get())
+    to = cfg["names"].index(cbox_move_to.get())
     if np.isnan(card):
         cbox_move_to.current(0)
-        write_log(logfile, ['move', 'error_no_trait'])
+        write_log(['move', 'error_no_trait'])
         return
 
     # return, if from == to
     if from_ == to:
         cbox_move_to.current(0)
-        write_log(logfile, ['move', 'error_source_target'])
+        write_log(['move', 'error_source_target'])
         return
 
     # return, if attachment selected
     if traits_df.loc[card].attachment == 1:
         cbox_move_to.current(0)
-        write_log(logfile, ['move', 'error_attachment'])
+        write_log(['move', 'error_attachment'])
         return
 
     # print log
     add_txt = "(and its attachment '{}' (id:{}))".format(traits_df.loc[attachment].trait, attachment) \
         if attachment != 'none' else ''
-    write_log(logfile, ['move', 'move_to'],
+    write_log(['move', 'move_to'],
               traits_df.loc[card].trait, card, add_txt, player_name[from_].get(), player_name[to].get())
 
     # remove traits(s) from 'giving' player, update trait_pile & clear trait selection
@@ -474,7 +393,7 @@ def btn_move_trait(from_, cbox_move_to):
 def btn_play_trait(to):
     # return, if no trait selected
     if play_trait is None:
-        write_log(logfile, ['play', 'error_no_trait'])
+        write_log(['play', 'error_no_trait'])
         return
 
     # get card
@@ -484,12 +403,11 @@ def btn_play_trait(to):
     # return, if player already has two dominants
     if traits_df.loc[trait_idx]['dominant'] == 1:
         if sum([1 for t in player_traits[to] if traits_df.loc[t].dominant == 1]) == 2:
-            write_log(logfile, ['play', 'error_2dominants'])
+            write_log(['play', 'error_2dominants'])
             return
 
     # print log
-    write_log(logfile, ['play', 'play'], player_name[to].get(), trait)
-
+    write_log(['play', 'play'], player_name[to].get(), trait)
 
     # add to players traits & update trait_pile
     bisect.insort_left(player_traits[to], trait_idx)
@@ -517,11 +435,11 @@ def btn_play_trait(to):
 def btn_play_worlds_end():
     # do nothing if no catastrophy selected
     if worlds_end_cbox[0].current() == 0:
-        write_log(logfile, ['worlds_end', 'error_no_event'])
+        write_log(['worlds_end', 'error_no_event'])
         return
 
     # print log
-    write_log(logfile, ['worlds_end', 'game_over'], worlds_end.get())
+    write_log(['worlds_end', 'game_over'], worlds_end.get())
 
     # update scoring
     update_scoring()
@@ -544,16 +462,16 @@ def btn_play_catastrophe(event, c):
         if played_before is not None:
             old_cbox_idx = catastrophies_possible[c].index(played_before) + 1
             catastrophies_cbox[c].current(old_cbox_idx)
-        write_log(logfile, ['catastrophe', 'error_no_catastrophe'])
+        write_log(['catastrophe', 'error_no_catastrophe'])
         return
 
     # return, if same catastrophe selected
     if played_before == played_idx:
-        write_log(logfile, ['catastrophe', 'error_same_catastrophe'])
+        write_log(['catastrophe', 'error_same_catastrophe'])
         return
 
     # print log
-    write_log(logfile, ['catastrophe', 'catastrophe'], c+1, played_str, played_idx)
+    write_log(['catastrophe', 'catastrophe'], c+1, played_str, played_idx)
 
     # set played catastrophe
     catastrophies_played[c] = played_idx
@@ -679,7 +597,7 @@ def update_traits_current_status(todo, *args):
 
             # print log
             if log:
-                write_log(logfile, ['update_trait_status', 'reset'], traits_df.loc[trait].trait)
+                write_log(['update_trait_status', 'reset'], traits_df.loc[trait].trait)
 
         case 'attachment':
             host = args[0]
@@ -697,7 +615,7 @@ def update_traits_current_status(todo, *args):
 
             # print log
             if log:
-                write_log(logfile, ['update_trait_status', 'attachment'],
+                write_log(['update_trait_status', 'attachment'],
                           traits_df.loc[host].trait, traits_df.loc[attachment].trait)
 
         case 'worlds_end':
@@ -721,11 +639,11 @@ def update_traits_current_status(todo, *args):
             if not any([i.get() for i in neoteny_checkbutton]):
                 traits_df.loc[neoteny_idx, "cur_effect"] = 'none'
                 if log:
-                    write_log(logfile, ['update_trait_status', 'neoteny_no_one'])
+                    write_log(['update_trait_status', 'neoteny_no_one'])
             else:
                 traits_df.loc[neoteny_idx, "cur_effect"] = str(p)
                 if log:
-                    write_log(logfile, ['update_trait_status', 'neoteny_that_one'], p)
+                    write_log(['update_trait_status', 'neoteny_that_one'], p)
 
             # update scoreboard
             update_scoring()
@@ -777,7 +695,7 @@ def update_scoring():
         player_points[p]['total'].set(total)
 
         # print log, only if points changed
-        write_log(logfile, ['scoring', 'update'], player_name[p].get(), p_face, p_drop, p_worlds_end, p_MOL, total)
+        write_log(['scoring', 'update'], player_name[p].get(), p_face, p_drop, p_worlds_end, p_MOL, total)
 
 
 def update_genes():
@@ -812,7 +730,7 @@ def update_genes():
                             diff_genes = [i+value if i != p else i for i in diff_genes]
 
                 # print log
-                write_log(logfile, ['genes', 'trait'],
+                write_log(['genes', 'trait'],
                           player_name[p].get(), traits_df.loc[trait_idx].trait, value, who, diff_genes)
 
     # check what catastrophies were played alread ---------------------------------------
@@ -828,7 +746,7 @@ def update_genes():
             diff_genes = [i + effect for i in diff_genes]
 
             # print log
-            write_log(logfile, ['genes', 'catastrophe'], c_str, effect, diff_genes)
+            write_log(['genes', 'catastrophe'], c_str, effect, diff_genes)
 
     # check for special effects by specific traits --------------------------------------
     # Spores
@@ -844,7 +762,7 @@ def update_genes():
                 diff_genes[p] += 1
 
                 # print log
-                write_log(logfile, ['genes', 'spores'], sprs_idx, player_name[p].get(), diff_genes)
+                write_log(['genes', 'spores'], sprs_idx, player_name[p].get(), diff_genes)
 
     # Sleepy
     slp_idx = traits_df.index[traits_df.trait == 'Sleepy'].tolist()[0]
@@ -853,7 +771,7 @@ def update_genes():
         diff_genes = [diff_genes[x]+slp_eff[x] for x in range(len(diff_genes))]
         if any(slp_eff):
             p = [i for i, e in enumerate(slp_eff) if e != 0]
-            write_log(logfile, ['genes', 'sleepy'], player_name[p[0]].get(), slp_eff[p[0]], diff_genes)
+            write_log(['genes', 'sleepy'], player_name[p[0]].get(), slp_eff[p[0]], diff_genes)
     else:  # sleepy in no trait pile -> reset values
         for i in range(n_player.get()):
             sleepy_spinbox[i].set(0)
@@ -870,7 +788,7 @@ def update_genes():
 
     # print log - if genes are effected
     if any(i > 0 for i in diff_genes):
-        write_log(logfile, ['genes', 'total_effect'],
+        write_log(['genes', 'total_effect'],
                   diff_genes, [player_genes[i].get() for i in range(n_player.get())])
 
 
@@ -921,7 +839,7 @@ def update_selected_trait(where, idx):
         play_trait = lbox_cards_idx.get()[idx[0]]
 
         # print log
-        write_log(logfile, ['select', 'deck'],
+        write_log(['select', 'deck'],
                   traits_df.loc[play_trait].trait, play_trait)
 
     # select trait in one of players trait pile
@@ -930,7 +848,7 @@ def update_selected_trait(where, idx):
         player_trait_selected[where].set(idx.get())
 
         # print log
-        write_log(logfile, ['select', 'trait_pile'],
+        write_log(['select', 'trait_pile'],
                   player_name[where].get(), traits_df.loc[idx.get()].trait, idx.get())
 
 
@@ -960,7 +878,7 @@ def create_trait_pile(frame_trait_overview, p):
 
         # change font color if dominant
         if traits_df.loc[trait_idx].dominant == 1:
-            rb_trait.config(fg=defaults["font_color_trait_pile_dominant"])
+            rb_trait.config(fg=cfg["font_color_trait_pile_dominant"])
 
         # ----- icons -----------------------------------------------------------------------------
         frame_pics = tk.Frame(frame_trait_overview)
@@ -1323,7 +1241,7 @@ def create_trait_pile(frame_trait_overview, p):
                 image=images[vp_s[p]]
                 ).grid(row=0, column=3)
 
-            write_log(logfile, ['trait_effects', 'viral'], we_viral, player_name[p].get(), vp_s[p])
+            write_log(['trait_effects', 'viral'], we_viral, player_name[p].get(), vp_s[p])
 
     # --- AMATOXINS --- add passively Amatoxins to this trait pile ---------------
     amatoxins_idx = traits_df.index[traits_df.trait == 'Amatoxins'].tolist()[0]
@@ -1362,7 +1280,7 @@ def create_trait_pile(frame_trait_overview, p):
                 image=images[we_drops]
                 ).grid(row=0, column=3)
 
-            write_log(logfile, ['trait_effects', 'amatoxins'], we_drops)
+            write_log(['trait_effects', 'amatoxins'], we_drops)
 
     # --- PROWLER --- add passively Prowler to this trait pile ---------------
     prowler_idx = traits_df.index[traits_df.trait == 'Prowler'].tolist()[0]
@@ -1401,7 +1319,7 @@ def create_trait_pile(frame_trait_overview, p):
             image=images[vp_s[p]]
             ).grid(row=0, column=4)
 
-        write_log(logfile, ['trait_effects', 'prowler'], player_name[p].get(), vp_s[p])
+        write_log(['trait_effects', 'prowler'], player_name[p].get(), vp_s[p])
 
     # --- SHINY --- add passively Shiny to this trait pile ---------------
     shiny_idx = traits_df.index[traits_df.trait == 'Shiny'].tolist()[0]
@@ -1436,7 +1354,7 @@ def create_trait_pile(frame_trait_overview, p):
             image=images[vp_s[p]]
             ).grid(row=0, column=3)
 
-        write_log(logfile, ['trait_effects', 'shiny'], player_name[p].get(), vp_s[p])
+        write_log(['trait_effects', 'shiny'], player_name[p].get(), vp_s[p])
 
     # --- NEOTENY --- check button if Neoteny is in your hand ------------
     # is NEOTENY in your hand? asked via checkbox? But only if its not pöayed
@@ -1531,9 +1449,9 @@ def create_trait_pile(frame_trait_overview, p):
 
 
 def create_player_frame(p):
-    border = defaults["color_frame_width"]
+    border = cfg["color_frame_width"]
 
-    frame = tk.Frame(frame_playground, bg=defaults["player_frame_color"])
+    frame = tk.Frame(frame_playground, bg=cfg["player_frame_color"])
     frame.columnconfigure(0, weight=1)  # stretch sub_frames to playground (=1!)
     frame.rowconfigure(1, weight=1)  # stretch trait-pile to bottom of playground
     # frame.rowconfigure(2, weight=1)  # MOL
@@ -1610,7 +1528,7 @@ def create_player_frame(p):
     cbox_move_to = ttk.Combobox(
         frame_traits,
         height=n_player,
-        values=[" move trait to ..."] + defaults["names"][:n_player.get()],
+        values=[" move trait to ..."] + cfg["names"][:n_player.get()],
         exportselection=0,
         state="readonly",
         width=12,
@@ -1651,7 +1569,7 @@ def create_player_frame(p):
 def create_menu_frame():
     global trait_ent
 
-    border = defaults["color_frame_width"]
+    border = cfg["color_frame_width"]
 
     frame_menu.columnconfigure(0, weight=1)
     frame_menu.rowconfigure(0, weight=1)
@@ -1690,7 +1608,7 @@ def create_menu_frame():
     ttk.Spinbox(
         frame_menu_options,
         from_=2,
-        to=defaults["max_player"],
+        to=cfg["max_player"],
         width=3,
         textvariable=opt_n_player,
         wrap=False,
@@ -1941,10 +1859,10 @@ def reset_variables():
     for i in range(n_player.get()):
         if len(last_names) >= i+1:
             player_name.append(tk.StringVar(value=last_names[i].get()))
-            write_log(logfile, ['init', 'previous_names'], i+1, player_name[i].get())
+            write_log(['init', 'previous_names'], i+1, player_name[i].get())
         else:
-            player_name.append(tk.StringVar(value=defaults["names"][i]))
-            write_log(logfile, ['init', 'default_names'], i+1, player_name[i].get())
+            player_name.append(tk.StringVar(value=cfg["names"][i]))
+            write_log(['init', 'default_names'], i+1, player_name[i].get())
 
         player_genes.append(tk.IntVar(value=n_genes.get()))
         player_points.append({'face': tk.IntVar(value=0), 'drops': tk.IntVar(value=0),
@@ -1995,7 +1913,7 @@ def reset_variables():
 
 def start_game():
     # reset variables ----------------------------------------------------
-    write_log(logfile, ['init', 'variables'])
+    write_log(['init', 'variables'])
     reset_variables()
     switch_icons()
 
@@ -2006,16 +1924,16 @@ def start_game():
     for w in frame_playground.grid_slaves():
         w.grid_forget()
 
-    for i in range(defaults["max_player"]):
+    for i in range(cfg["max_player"]):
         w = 0 if i >= n_player.get() else 1  # w=1 -> player_frames are stretchable
         frame_playground.columnconfigure(i, weight=w)
 
     # fill _menu_ frame --------------------------------------------------
-    write_log(logfile, ['init', 'menu'])
+    write_log(['init', 'menu'])
     create_menu_frame()
 
     # fill _playground_ frame with _player_ frames -----------------------
-    write_log(logfile, ['init', 'playground'])
+    write_log(['init', 'playground'])
     for i in range(n_player.get()):
         # frame_playground.columnconfigure(i, weight=1)
         frames_player.append(create_player_frame(i))
@@ -2029,7 +1947,7 @@ def start_game():
 root = tk.Tk()
 root.title("LIVE Doomlings Calculator")
 root.geometry("1600x900")
-root.configure(background="grey")
+root.configure(background=cfg["bg_content"])
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
 
@@ -2053,10 +1971,10 @@ music_lbl = [None]
 icons_onoff = tk.IntVar(value=0)
 show_icons = {}
 
-opt_n_player = tk.IntVar(value=defaults["n_player"])                # OPTIONS: number of players
-opt_n_genes = tk.IntVar(value=defaults["n_genes"])                  # OPTIONS: gene pool at beginning
-opt_n_catastrophies = tk.IntVar(value=defaults["n_catastrophies"])  # OPTIONS: number of catastrophies
-opt_n_MOLs = tk.IntVar(value=defaults["n_MOLs"])                    # OPTIONS: number of MOLs
+opt_n_player = tk.IntVar(value=cfg["n_player"])                # OPTIONS: number of players
+opt_n_genes = tk.IntVar(value=cfg["n_genes"])                  # OPTIONS: gene pool at beginning
+opt_n_catastrophies = tk.IntVar(value=cfg["n_catastrophies"])  # OPTIONS: number of catastrophies
+opt_n_MOLs = tk.IntVar(value=cfg["n_MOLs"])                    # OPTIONS: number of MOLs
 
 n_player = tk.IntVar()          # number of current players
 n_genes = tk.IntVar()           # gene pool at start

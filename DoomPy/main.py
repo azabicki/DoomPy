@@ -135,7 +135,7 @@ def switch_icons():
         show_icons['attachment'] = False  # default: False
 
     # update all trait piles
-    for p in range(n_player.get()):
+    for p in range(game['n_player']):
         if player_rb_frames[p] is not None:
             create_trait_pile(player_rb_frames[p], p)
 
@@ -230,7 +230,7 @@ def btn_traits_world_end(from_, trait_idx, event):
         if effect_idx == 0:
             traits_df.loc[trait_idx, "cur_effect"] = 'none'
         else:
-            vp = [np.nan] * n_player.get()
+            vp = [np.nan] * game['n_player']
             vp_s = ' '.join(str(x) for x in vp)
             traits_df.loc[trait_idx, "cur_effect"] = vp_s
 
@@ -247,7 +247,7 @@ def btn_traits_world_end(from_, trait_idx, event):
     update_scoring()
 
     # update all trait piles
-    for p in range(n_player.get()):
+    for p in range(game['n_player']):
         create_trait_pile(player_rb_frames[p], p)
 
 
@@ -289,7 +289,7 @@ def btn_attach_to(from_, attachment, event, possible_hosts):
     update_scoring()
 
     # update all trait piles
-    for p in range(n_player.get()):
+    for p in range(game['n_player']):
         create_trait_pile(player_rb_frames[p], p)
 
 
@@ -340,7 +340,7 @@ def btn_remove_trait(from_):
     update_scoring()
 
     # update all trait piles
-    for p in range(n_player.get()):
+    for p in range(game['n_player']):
         create_trait_pile(player_rb_frames[p], p)
 
     # focus back to search field
@@ -403,7 +403,7 @@ def btn_move_trait(from_, cbox_move_to):
     update_scoring()
 
     # update all trait piles
-    for p in range(n_player.get()):
+    for p in range(game['n_player']):
         create_trait_pile(player_rb_frames[p], p)
 
     # clear combobox
@@ -445,7 +445,7 @@ def btn_play_trait(to):
     update_scoring()
 
     # update all trait piles
-    for p in range(n_player.get()):
+    for p in range(game['n_player']):
         create_trait_pile(player_rb_frames[p], p)
 
     # play sound bites
@@ -468,7 +468,7 @@ def btn_play_worlds_end():
     update_scoring()
 
     # update all trait piles
-    for p in range(n_player.get()):
+    for p in range(game['n_player']):
         create_trait_pile(player_rb_frames[p], p)
 
 
@@ -500,7 +500,7 @@ def btn_play_catastrophe(event, c):
     catastrophies_played[c] = played_idx
 
     # update possible catastrophies for later ones
-    for i in range(1, n_catastrophies.get()):
+    for i in range(1, game['n_catastrophies']):
         # reset possible's
         catastrophies_possible[i] = catastrophies_dfi.copy()
 
@@ -520,19 +520,19 @@ def btn_play_catastrophe(event, c):
                     catastrophies_cbox[i].current(0)
 
                     # disable forthcoming catastrophies & worlds end
-                    for z in range(i+1, n_catastrophies.get()):
+                    for z in range(i+1, game['n_catastrophies']):
                         catastrophies_cbox[z].configure(state="disabled")
                         worlds_end_cbox[0].configure(state="disabled")
 
     # enable next catastrophe
-    if c < n_catastrophies.get()-1:
+    if c < game['n_catastrophies']-1:
         catastrophies_cbox[c+1].configure(state="readonly")
     else:
         worlds_end_cbox[0].configure(state="readonly")
 
     # update worlds end combobox
     played_catastrophies = [ages_df.loc[catastrophies_played[i], "name"]
-                            for i in range(n_catastrophies.get())
+                            for i in range(game['n_catastrophies'])
                             if catastrophies_played[i] is not None]
     worlds_end_cbox[0]['values'] = [" select world's end ..."] + played_catastrophies
 
@@ -541,7 +541,7 @@ def btn_play_catastrophe(event, c):
     update_scoring()
 
     # update all trait piles
-    for p in range(n_player.get()):
+    for p in range(game['n_player']):
         create_trait_pile(player_rb_frames[p], p)
 
     # focus back to search field
@@ -654,7 +654,7 @@ def update_traits_current_status(todo, *args):
             log = args[-1]
 
             # set other player to 0
-            for i in range(n_player.get()):
+            for i in range(game['n_player']):
                 if i != p:
                     neoteny_checkbutton[i].set(0)
 
@@ -672,7 +672,7 @@ def update_traits_current_status(todo, *args):
             update_scoring()
 
             # update all trait piles
-            for p in range(n_player.get()):
+            for p in range(game['n_player']):
                 create_trait_pile(player_rb_frames[p], p)
 
         case 'update_all':
@@ -681,12 +681,12 @@ def update_traits_current_status(todo, *args):
             update_scoring()
 
             # update all trait piles
-            for p in range(n_player.get()):
+            for p in range(game['n_player']):
                 create_trait_pile(player_rb_frames[p], p)
 
 
 def update_scoring():
-    for p in range(n_player.get()):
+    for p in range(game['n_player']):
         # get cards
         trait_pile = player_traits[p]
 
@@ -723,10 +723,10 @@ def update_scoring():
 
 def update_genes():
     # init vars
-    diff_genes = [0] * n_player.get()
+    diff_genes = [0] * game['n_player']
 
     # loop players and calculate +- genes of all played traits --------------------------
-    for p in range(n_player.get()):
+    for p in range(game['n_player']):
         # loop traits in trait_pile
         for trait_idx in player_traits[p]:
             # get gene effect of this card
@@ -757,7 +757,7 @@ def update_genes():
                           player_name[p].get(), traits_df.loc[trait_idx].trait, value, who, diff_genes)
 
     # check what catastrophies were played alread ---------------------------------------
-    for c in range(n_catastrophies.get()):
+    for c in range(game['n_catastrophies']):
         # get card & effect
         c_idx = catastrophies_played[c]
 
@@ -780,7 +780,7 @@ def update_genes():
             sprs_eff = sprs_eff.split('_')
 
         for eff in sprs_eff:
-            if eff.isnumeric() and int(eff) < n_player.get():
+            if eff.isnumeric() and int(eff) < game['n_player']:
                 p = int(eff)
                 diff_genes[p] += 1
 
@@ -796,12 +796,12 @@ def update_genes():
             p = [i for i, e in enumerate(slp_eff) if e != 0]
             write_log(['genes', 'sleepy'], player_name[p[0]].get(), slp_eff[p[0]], diff_genes)
     else:  # sleepy in no trait pile -> reset values
-        for i in range(n_player.get()):
+        for i in range(game['n_player']):
             sleepy_spinbox[i].set(0)
 
     # update gene values ----------------------------------------------------------------
-    for p in range(n_player.get()):
-        new_gp = n_genes.get() + diff_genes[p]
+    for p in range(game['n_player']):
+        new_gp = game['n_genes'] + diff_genes[p]
         if new_gp > 8:
             player_genes[p].set(8)
         elif new_gp < 1:
@@ -812,12 +812,12 @@ def update_genes():
     # print log - if genes are effected
     if any(i > 0 for i in diff_genes):
         write_log(['genes', 'total_effect'],
-                  diff_genes, [player_genes[i].get() for i in range(n_player.get())])
+                  diff_genes, [player_genes[i].get() for i in range(game['n_player'])])
 
 
 def update_stars():
     # loop players
-    for p in range(n_player.get()):
+    for p in range(game['n_player']):
         # number of dominant traits
         n_dominant = np.nansum([traits_df.loc[trait_idx].dominant for trait_idx in player_traits[p]])
 
@@ -1550,8 +1550,8 @@ def create_player_frame(p):
 
     cbox_move_to = ttk.Combobox(
         frame_traits,
-        height=n_player,
-        values=[" move trait to ..."] + cfg["names"][:n_player.get()],
+        height=game['n_player'],
+        values=[" move trait to ..."] + cfg["names"][:game['n_player']],
         exportselection=0,
         state="readonly",
         width=12,
@@ -1572,9 +1572,9 @@ def create_player_frame(p):
     frame_MOL.grid(row=2, column=0, padx=border, pady=(0, border), sticky="nesw")
 
     ttk.Label(frame_MOL, text="Meaning of Life", font="'' 18"
-              ).grid(row=0, column=0, padx=5, columnspan=2*n_MOLs.get(), sticky='ns')
+              ).grid(row=0, column=0, padx=5, columnspan=2*game['n_MOLs'], sticky='ns')
 
-    for m in range(n_MOLs.get()):
+    for m in range(game['n_MOLs']):
         frame_MOL.columnconfigure(2*m, weight=1)
         frame_MOL.columnconfigure(2*m+1, weight=1)
 
@@ -1631,7 +1631,7 @@ def create_menu_frame():
         from_=2,
         to=cfg["max_player"],
         width=3,
-        textvariable=opt_n_player,
+        textvariable=options['n_player'],
         wrap=False,
     ).grid(row=1, column=1, sticky='w')
 
@@ -1645,7 +1645,7 @@ def create_menu_frame():
         from_=3,
         to=8,
         width=3,
-        textvariable=opt_n_genes,
+        textvariable=options['n_genes'],
         wrap=False
     ).grid(row=2, column=1, sticky='w')
 
@@ -1659,7 +1659,7 @@ def create_menu_frame():
         from_=2,
         to=8,
         width=3,
-        textvariable=opt_n_catastrophies,
+        textvariable=options['n_catastrophies'],
         wrap=False
     ).grid(row=3, column=1, sticky='w')
 
@@ -1673,7 +1673,7 @@ def create_menu_frame():
         from_=0,
         to=4,
         width=3,
-        textvariable=opt_n_MOLs,
+        textvariable=options['n_MOLs'],
         wrap=False
     ).grid(row=4, column=1, sticky='w')
 
@@ -1693,7 +1693,7 @@ def create_menu_frame():
     ttk.Label(
         frame_menu_options,
         text="{} catastrophies + {} genes + {} MOLs"
-        .format(n_catastrophies.get(), n_genes.get(), n_MOLs.get()),
+        .format(game['n_catastrophies'], game['n_genes'], game['n_MOLs']),
         style="game_info.TLabel",
     ).grid(row=7, column=0, columnspan=2, pady=(0, 5))
 
@@ -1711,7 +1711,7 @@ def create_menu_frame():
     ).grid(row=0, column=0, columnspan=2, pady=(5, 5))
 
     # name entries ---
-    for i in range(n_player.get()):
+    for i in range(game['n_player']):
         ttk.Label(
             frame_menu_names,
             text="player {}: ".format(i+1),
@@ -1763,7 +1763,7 @@ def create_menu_frame():
     lbox_traits[0].bind("<<ListboxSelect>>",
                         lambda e: update_selected_trait("lbox", lbox_traits[0].curselection()))
     # create key bindings to play trait into player's trait pile by hitting number on keyboard
-    for p in range(n_player.get()):
+    for p in range(game['n_player']):
         lbox_traits[0].bind('{}'.format(p+1), lambda e, pp=p: btn_play_trait(pp))
 
     # 'who gets it?' -----
@@ -1776,8 +1776,8 @@ def create_menu_frame():
     # player buttons -----
     frame_menu_buttons = tk.Frame(frame_menu_traits)
     frame_menu_buttons.grid(row=4, column=0, columnspan=2, pady=(0, 5))
-    for i in range(n_player.get()):
-        clspn = int(i + 1 == n_player.get() and (i + 1) % 2 == 1) + 1
+    for i in range(game['n_player']):
+        clspn = int(i + 1 == game['n_player'] and (i + 1) % 2 == 1) + 1
         ttk.Button(
             frame_menu_buttons,
             textvariable=player_name[i],
@@ -1796,7 +1796,7 @@ def create_menu_frame():
         text="Catastrophies",
         font="'' 18",
     ).grid(row=0, column=0, columnspan=2, pady=(5, 0))
-    for c in range(n_catastrophies.get()):
+    for c in range(game['n_catastrophies']):
         pos_cat_values = [" catastrophe {}...".format(c+1)] + \
             ages_df.loc[catastrophies_possible[c]].name.values.tolist()
 
@@ -1816,7 +1816,7 @@ def create_menu_frame():
         frame_menu_catastrophe,
         text="World's End",
         font="'' 18",
-    ).grid(row=n_catastrophies.get()+1, column=0, columnspan=2, pady=(5, 0))
+    ).grid(row=game['n_catastrophies']+1, column=0, columnspan=2, pady=(5, 0))
 
     worlds_end_cbox[0] = ttk.Combobox(
         frame_menu_catastrophe,
@@ -1827,7 +1827,8 @@ def create_menu_frame():
         style="move.TCombobox",
         textvariable=worlds_end)
     worlds_end_cbox[0].current(0)
-    worlds_end_cbox[0].grid(row=n_catastrophies.get()+2, column=0, columnspan=2, padx=4, pady=(0, 5), sticky='ns')
+    worlds_end_cbox[0].grid(row=game['n_catastrophies']+2, column=0, columnspan=2,
+                            padx=4, pady=(0, 5), sticky='ns')
     worlds_end_cbox[0].bind("<<ComboboxSelected>>", lambda e: btn_play_worlds_end())
 
     # ----- frame for control buttons ---------------------------------------------------
@@ -1856,10 +1857,10 @@ def create_menu_frame():
 
 def reset_variables():
     # update current settings
-    n_player.set(opt_n_player.get())
-    n_genes.set(opt_n_genes.get())
-    n_catastrophies.set(opt_n_catastrophies.get())
-    n_MOLs.set(opt_n_MOLs.get())
+    game['n_player'] = options['n_player'].get()
+    game['n_genes'] = options['n_genes'].get()
+    game['n_catastrophies'] = options['n_catastrophies'].get()
+    game['n_MOLs'] = options['n_MOLs'].get()
 
     # save previous names
     last_names = player_name.copy()
@@ -1879,7 +1880,7 @@ def reset_variables():
     sleepy_spinbox.clear()
 
     # fill variables
-    for i in range(n_player.get()):
+    for i in range(game['n_player']):
         if len(last_names) >= i+1:
             player_name.append(tk.StringVar(value=last_names[i].get()))
             write_log(['init', 'previous_names'], i+1, player_name[i].get())
@@ -1887,7 +1888,7 @@ def reset_variables():
             player_name.append(tk.StringVar(value=cfg["names"][i]))
             write_log(['init', 'default_names'], i+1, player_name[i].get())
 
-        player_genes.append(tk.IntVar(value=n_genes.get()))
+        player_genes.append(tk.IntVar(value=game['n_genes']))
         player_points.append({'face': tk.IntVar(value=0), 'drops': tk.IntVar(value=0),
                               'worlds_end': tk.IntVar(value=0), 'MOL': tk.IntVar(value=0),
                               'total': tk.IntVar(value=0)})
@@ -1899,7 +1900,7 @@ def reset_variables():
         neoteny_checkbutton.append(tk.IntVar(value=0))
         sleepy_spinbox.append(tk.IntVar(value=0))
 
-        for m in range(n_MOLs.get()):
+        for m in range(game['n_MOLs']):
             player_MOLs[i].append(tk.StringVar(value="0"))  # for now, manually editing MOL points in entries
 
     # reset deck/lbox card-lists
@@ -1917,7 +1918,7 @@ def reset_variables():
     catastrophies_possible.clear()
     catastrophies_played.clear()
     catastrophies_cbox.clear()
-    for i in range(n_catastrophies.get()):
+    for i in range(game['n_catastrophies']):
         catastrophies_possible.append(catastrophies_dfi.copy())
         catastrophies_played.append(None)
         catastrophies_cbox.append([])
@@ -1947,7 +1948,7 @@ def start_game():
         w.grid_forget()
 
     for i in range(cfg["max_player"]):
-        w = 0 if i >= n_player.get() else 1  # 'else 1' => player_frames are stretchable
+        w = 0 if i >= game['n_player'] else 1  # 'else 1' => player_frames are stretchable
         frame_playground.columnconfigure(i, weight=w)
 
     # fill _menu_ frame --------------------------------------------------
@@ -1956,7 +1957,7 @@ def start_game():
 
     # fill _playground_ frame with _player_ frames -----------------------
     write_log(['init', 'playground'])
-    for i in range(n_player.get()):
+    for i in range(game['n_player']):
         # frame_playground.columnconfigure(i, weight=1)
         frames_player.append(create_player_frame(i))
 
@@ -1966,6 +1967,9 @@ def start_game():
 
 # _tkinter_ #########################################################################
 # create a window --------------------------------------------------------
+# init system ######################################################################################
+mixer.init()
+
 root = tk.Tk()
 root.title("LIVE Doomlings Calculator")
 root.geometry("1600x900")
@@ -1997,25 +2001,19 @@ gui_style.configure("total.TLabel", font=("", 80, "bold"), foreground="orangered
 gui_style.configure("genes.TLabel", font=("", 38, "bold"), foreground="hotpink1")
 gui_style.configure("move.TCombobox", selectbackground="none")
 
-# load tk-images ------------------------------------------------------------
+# tk_inter _variables ------------------------------------------------------------------------------
+options = {}
+options['n_player'] = tk.IntVar(value=cfg["n_player"])                # OPTIONS: number of players
+options['n_genes'] = tk.IntVar(value=cfg["n_genes"])                  # OPTIONS: gene pool at beginning
+options['n_catastrophies'] = tk.IntVar(value=cfg["n_catastrophies"])  # OPTIONS: number of catastrophies
+options['n_MOLs'] = tk.IntVar(value=cfg["n_MOLs"])                    # OPTIONS: number of MOLs
+
+# load tk-images ------------------------------------------------------------------------------------
 images = {}
 for k, v in images_dict.items():
     images[k] = ImageTk.PhotoImage(v)
 
-# init variables ---------------------------------------------------------
-lbl_music_switch = [None]
-lbl_icons_switch = [None]
-ent_trait_search = [None]
-
-opt_n_player = tk.IntVar(value=cfg["n_player"])                # OPTIONS: number of players
-opt_n_genes = tk.IntVar(value=cfg["n_genes"])                  # OPTIONS: gene pool at beginning
-opt_n_catastrophies = tk.IntVar(value=cfg["n_catastrophies"])  # OPTIONS: number of catastrophies
-opt_n_MOLs = tk.IntVar(value=cfg["n_MOLs"])                    # OPTIONS: number of MOLs
-
-n_player = tk.IntVar()          # number of current players
-n_genes = tk.IntVar()           # gene pool at start
-n_catastrophies = tk.IntVar()   # number of catastrophies
-n_MOLs = tk.IntVar()            # number of MOLs
+# init variables -----------------------------------------------------------------------------------
 
 search_trait = tk.StringVar(value="")   # searching for traits in playable deck
 deck_cards = []                         # all traits in deck (or discard pile) left to be drawn / list of idx

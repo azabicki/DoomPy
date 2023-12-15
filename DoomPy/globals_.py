@@ -126,4 +126,21 @@ show_icons['effectless'] = False  # default: False
 show_icons['attachment'] = False  # default: False
 
 
+# design variables #################################################################################
+
+
+# tk_inter variables ###############################################################################
+global lbl_music_switch, lbl_icons_switch, ent_trait_search
+lbl_music_switch = [None]   # label containing music-switch-icon
+lbl_icons_switch = [None]   # label containing icon-switch-icon
+ent_trait_search = [None]   # entry for trait_search
+
+
 # define game variables ############################################################################
+# settings -----------------------------------------------------------------------------------------
+global game
+game = {}
+game['n_player'] = []           # number of current players
+game['n_genes'] = []            # gene pool at start
+game['n_catastrophies'] = []    # number of catastrophies
+game['n_MOLs'] = []             # number of MOLs

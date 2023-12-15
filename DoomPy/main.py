@@ -404,6 +404,8 @@ def btn_remove_trait(from_):
     print(traits_df.loc[card].tolist())
     if attachment != 'none':
         print(traits_df.loc[attachment].tolist())
+    # focus back to search field
+    trait_ent.focus_set()
 
 
 def btn_move_trait(from_, cbox_move_to):
@@ -468,6 +470,9 @@ def btn_move_trait(from_, cbox_move_to):
     # clear combobox
     cbox_move_to.current(0)
 
+    # focus back to search field
+    trait_ent.focus_set()
+
 
 def btn_play_trait(to):
     # return, if no trait selected
@@ -507,6 +512,9 @@ def btn_play_trait(to):
 
     # play sound bites
     play(trait)
+
+    # focus back to search field
+    trait_ent.focus_set()
 
 
 def btn_play_worlds_end():
@@ -597,6 +605,9 @@ def btn_play_catastrophe(event, c):
     # update all trait piles
     for p in range(n_player.get()):
         create_trait_pile(player_rb_frames[p], p)
+
+    # focus back to search field
+    trait_ent.focus_set()
 
 
 def update_manual_we(event, p):

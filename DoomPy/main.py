@@ -8,6 +8,7 @@ from PIL import ImageTk
 from pygame import mixer
 import rules_attachment as rules_at
 import rules_drop as rules_dr
+import rules_play as rules_pl
 import rules_remove as rules_re
 import rules_traits_worlds_end as rules_twe
 import rules_worlds_end as rules_we
@@ -448,6 +449,10 @@ def btn_play_trait(to):
             write_log(['play', 'error_2dominants'])
             return
 
+    # check for any trait specific requirements
+    if rules_pl.check_requirement(trait_idx, to):
+        return
+
     # print log
     write_log(['play', 'play'], plr['name'][to].get(), trait)
 
@@ -840,6 +845,11 @@ def update_stars():
     for p in range(game['n_player']):
         # number of dominant traits
         n_dominant = np.nansum([traits_df.loc[trait_idx].dominant for trait_idx in plr['trait_pile'][p]])
+
+        # check special cases
+        Epic_idx = traits_df.index[traits_df.trait == 'Epic'].tolist()[0]
+        if Epic_idx in plr['trait_pile'][p]:
+            n_dominant = 2
 
         # find label widgets
         tmp_frame = frame_player[p].winfo_children()

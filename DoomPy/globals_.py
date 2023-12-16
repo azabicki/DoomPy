@@ -141,7 +141,7 @@ frame_trait_pile = []       # frame containing players traits -> needed to be ab
 
 # define game variables ############################################################################
 # settings -----------------------------------------------------------------------------------------
-global game, plr, deck, deck_filtered_idx, play_this_trait, catastrophe, worlds_end
+global game, plr, deck, deck_filtered_idx, catastrophe, worlds_end
 game = {}
 game['n_player'] = []           # number of current players
 game['n_genes'] = []            # gene pool at start
@@ -159,7 +159,6 @@ plr['MOL'] = []
 
 deck = []                       # all traits in deck (or discard pile) left to be drawn / list of idx
 deck_filtered_idx = []          # _filtered_ deck of trait_idx in listbox after searching -> idx
-play_this_trait = [None]          # selected trait (by index in traits_df) in listbox
 
 catastrophe = {}
 catastrophe['possible'] = []                  # occured catastrophies / StringVar

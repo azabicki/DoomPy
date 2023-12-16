@@ -17,7 +17,7 @@ from globals_ import cfg, images_dict, sounds, music_onoff, icons_onoff, points_
 from globals_ import traits_df, traits_dfi, ages_df, catastrophies_dfi
 from globals_ import lbl_music_switch, lbl_icons_switch, lbl_points_switch, ent_trait_search, lbox_deck
 from globals_ import frame_player, frame_trait_pile
-from globals_ import game, plr, deck, deck_filtered_idx, play_this_trait, catastrophe, worlds_end
+from globals_ import game, plr, deck, deck_filtered_idx, catastrophe, worlds_end
 from globals_ import neoteny_checkbutton, sleepy_spinbox
 
 
@@ -172,14 +172,11 @@ def play(trait):
 
 
 def btn_clear_trait_search():
-    global play_this_trait
-
     str_trait_search.set("")
     deck_filtered_idx.clear()
     deck_filtered_idx.extend(deck)
     deck_filtered_str.set(traits_df.loc[deck_filtered_idx].trait.values.tolist())
     lbox_deck[0].selection_clear(0, tk.END)
-    play_this_trait = None
 
 
 def btn_traits_world_end(from_, trait_idx, event):
@@ -427,12 +424,12 @@ def btn_move_trait(from_, cbox_move_to):
 
 def btn_play_trait(to):
     # return, if no trait selected
-    if play_this_trait is None:
+    if not lbox_deck[0].curselection():
         write_log(['play', 'error_no_trait'])
         return
 
     # get card
-    trait_idx = play_this_trait
+    trait_idx = deck_filtered_idx[lbox_deck[0].curselection()[0]]
     trait = traits_df.loc[trait_idx].trait
 
     # return, if player already has two dominants
@@ -869,27 +866,6 @@ def search_trait_in_list(inp):
         deck_filtered_str.set(filtered_trait_str)
 
 
-def update_selected_trait(where, idx):
-    # select trait in deck/listbox
-    if where == "lbox":
-        # trait in DECK is selected as 'play_trait'
-        global play_this_trait
-        play_this_trait = deck_filtered_idx[idx[0]]
-
-        # print log
-        write_log(['select', 'deck'],
-                  traits_df.loc[play_this_trait].trait, play_this_trait)
-
-    # select trait in one of players trait pile
-    else:
-        # note: 'where'  == 'who'
-        plr['trait_selected'][where].set(idx.get())
-
-        # print log
-        write_log(['select', 'trait_pile'],
-                  plr['name'][where].get(), traits_df.loc[idx.get()].trait, idx.get())
-
-
 def create_trait_pile(frame_trait_overview, p):
     # first, clean up frame
     for w in frame_trait_overview.grid_slaves():
@@ -911,7 +887,11 @@ def create_trait_pile(frame_trait_overview, p):
             text=" " + trait,
             variable=plr['trait_selected'][p],
             value=trait_idx,
-            command=lambda: update_selected_trait(p, plr['trait_selected'][p]))
+            command=lambda t_idx=trait_idx: write_log(['select', 'trait_pile'],
+                                                      plr['name'][p].get(),
+                                                      traits_df.loc[t_idx].trait,
+                                                      t_idx))
+        # log_trait_selection(p, plr['trait_selected'][p]))
         rb_trait.grid(row=irow, column=0, padx=3, pady=ypad, sticky='nsw')
 
         # change font color if dominant
@@ -1769,7 +1749,9 @@ def create_menu_frame():
     ent_trait_search[0].bind('<Down>',
                              lambda e: lbox_deck[0].see(0), add='+')
     ent_trait_search[0].bind('<Down>',
-                             lambda e: update_selected_trait("lbox", lbox_deck[0].curselection()), add='+')
+                             lambda e: write_log(['select', 'deck'],
+                                                 traits_df.loc[deck_filtered_idx[0]].trait,
+                                                 deck_filtered_idx[0]), add='+')
 
     ttk.Button(
         frame_menu_traits,
@@ -1786,7 +1768,9 @@ def create_menu_frame():
         exportselection=False)
     lbox_deck[0].grid(row=2, column=0, columnspan=2, padx=10)
     lbox_deck[0].bind("<<ListboxSelect>>",
-                      lambda e: update_selected_trait("lbox", lbox_deck[0].curselection()))
+                      lambda e: write_log(['select', 'deck'],
+                                          traits_df.loc[deck_filtered_idx[lbox_deck[0].curselection()[0]]].trait,
+                                          deck_filtered_idx[lbox_deck[0].curselection()[0]]))
     lbox_deck[0].bind("<Up>",
                       lambda e: ent_trait_search[0].focus() if lbox_deck[0].curselection()[0] == 0 else None)
     # create key bindings to play trait into player's trait pile by hitting number on keyboard

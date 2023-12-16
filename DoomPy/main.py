@@ -540,14 +540,21 @@ def btn_play_trait(to):
     trait = traits_df.loc[trait_idx].trait
 
     # return, if player already has two dominants
-    if traits_df.loc[trait_idx]['dominant'] == 1:
+    if traits_df.loc[trait_idx].dominant == 1:
         if sum([1 for t in plr['trait_pile'][to] if traits_df.loc[t].dominant == 1]) == 2:
             write_log(['play', 'error_2dominants'])
             return
 
-    # check for any trait specific requirements
+    # return, if any trait specific requirements are not met
     if rules_pl.check_requirement(trait_idx, to):
         return
+
+    # return, if attachment does not have any trait to attach to
+    if traits_df.loc[trait_idx].attachment == 1:
+        attachables = rules_at.filter_attachables(trait_idx, to)
+        if len(attachables) == 0:
+            write_log(['play', 'error_no_attachables'])
+            return
 
     # print log
     write_log(['play', 'play'], plr['name'][to].get(), trait)
@@ -659,7 +666,7 @@ def update_traits_current_status(todo, *args):
             traits_df.loc[host, 'cur_attachment'] = attachment
 
             # get effects of attachments from rules.py & update current status of host
-            effects = rules_at.attachment_effects(traits_df, host, attachment)
+            effects = rules_at.attachment_effects(host, attachment)
             traits_df.loc[host, "cur_color"] = effects['color']
             traits_df.loc[host, "cur_face"] = effects['face']
             traits_df.loc[host, "cur_effect"] = effects['effect']
@@ -1168,7 +1175,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
 
             # filter only non-attachment-traits and check if this is already attached to a trait
-            traits_filtered_idx = [None] + rules_at.filter_attachables(traits_df, plr['trait_pile'][p], trait_idx)
+            traits_filtered_idx = [None] + rules_at.filter_attachables(trait_idx, p)
             traits_filtered_str = [" ... "] + [traits_df.loc[idx].trait
                                                for idx in traits_filtered_idx if idx is not None]
 

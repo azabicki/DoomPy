@@ -55,6 +55,10 @@ def write_log(what, *args):
                     print(">>> play <<< ERROR - already 2 dominant traits in trait pile")
                     f.write(">>> play <<< ERROR - already 2 dominant traits in trait pile\n")
 
+                case 'error_no_attachables':
+                    print(">>> play <<< ERROR - no traits in trait pile for attachment to attach to")
+                    f.write(">>> play <<< ERROR - no traits in trait pile for attachment to attach to\n")
+
                 case 'play':
                     print(">>> play <<< '{}' is playing '{}'"
                           .format(*args))

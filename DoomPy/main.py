@@ -188,7 +188,9 @@ def btn_clear_trait_search():
     deck_filtered_idx.clear()
     deck_filtered_idx.extend(deck)
     deck_filtered_str.set(traits_df.loc[deck_filtered_idx].trait.values.tolist())
+    ent_trait_search[0].focus_set()
     lbox_deck[0].selection_clear(0, tk.END)
+    lbox_deck[0].see(0)
 
 
 def btn_traits_world_end(from_, trait_idx, event):

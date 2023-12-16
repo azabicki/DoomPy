@@ -174,7 +174,7 @@ def switch(switch):
                 write_log(['music', 'off'])
 
 
-def play(trait):
+def play_sound(trait):
     if music_onoff == 'on':
         if trait.replace(' ', '_').lower() in sounds:
             sounds[trait.replace(' ', '_').lower()].play()
@@ -468,7 +468,7 @@ def btn_play_trait(to):
         create_trait_pile(frame_trait_pile[p], p)
 
     # play sound bites
-    play(trait)
+    play_sound(trait)
 
     # focus back to search field
     ent_trait_search[0].focus_set()

@@ -465,6 +465,7 @@ def btn_play_trait(to):
 
     # focus back to search field
     ent_trait_search[0].focus_set()
+    lbox_deck[0].see(0)
 
 
 def btn_play_worlds_end():
@@ -1757,16 +1758,18 @@ def create_menu_frame():
         width=10,
         textvariable=str_trait_search)
     ent_trait_search[0].grid(row=1, column=0, padx=(10, 0), sticky="w")
-    ent_trait_search[0].bind(
-        "<KeyRelease>", lambda e: search_trait_in_list(str_trait_search))
-    ent_trait_search[0].bind(
-        '<Down>', lambda e: lbox_deck[0].selection_clear(0, tk.END), add='+')
-    ent_trait_search[0].bind(
-        '<Down>', lambda e: lbox_deck[0].selection_set(0), add='+')
-    ent_trait_search[0].bind(
-        '<Down>', lambda e: lbox_deck[0].focus(), add='+')
-    ent_trait_search[0].bind(
-        '<Down>', lambda e: update_selected_trait("lbox", lbox_deck[0].curselection()), add='+')
+    ent_trait_search[0].bind("<KeyRelease>",
+                             lambda e: search_trait_in_list(str_trait_search))
+    ent_trait_search[0].bind('<Down>',
+                             lambda e: lbox_deck[0].selection_clear(0, tk.END), add='+')
+    ent_trait_search[0].bind('<Down>',
+                             lambda e: lbox_deck[0].selection_set(0), add='+')
+    ent_trait_search[0].bind('<Down>',
+                             lambda e: lbox_deck[0].focus(), add='+')
+    ent_trait_search[0].bind('<Down>',
+                             lambda e: lbox_deck[0].see(0), add='+')
+    ent_trait_search[0].bind('<Down>',
+                             lambda e: update_selected_trait("lbox", lbox_deck[0].curselection()), add='+')
 
     ttk.Button(
         frame_menu_traits,
@@ -1784,6 +1787,8 @@ def create_menu_frame():
     lbox_deck[0].grid(row=2, column=0, columnspan=2, padx=10)
     lbox_deck[0].bind("<<ListboxSelect>>",
                       lambda e: update_selected_trait("lbox", lbox_deck[0].curselection()))
+    lbox_deck[0].bind("<Up>",
+                      lambda e: ent_trait_search[0].focus() if lbox_deck[0].curselection()[0] == 0 else None)
     # create key bindings to play trait into player's trait pile by hitting number on keyboard
     for p in range(game['n_player']):
         lbox_deck[0].bind('{}'.format(p+1), lambda e, pp=p: btn_play_trait(pp))

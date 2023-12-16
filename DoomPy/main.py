@@ -1635,7 +1635,7 @@ def create_menu_frame():
     frame_menu.rowconfigure(2, weight=4)
     frame_menu.rowconfigure(3, weight=1)
 
-    # ----- frame 4 options -------------------------------------------------------------
+    # ----- frame 4 options ------------------------------------------------------------------------
     frame_menu_options = tk.Frame(frame_menu)
     frame_menu_options.grid(row=0, column=0, padx=border, pady=border, sticky="nesw")
     frame_menu_options.columnconfigure(0, weight=1)
@@ -1736,7 +1736,7 @@ def create_menu_frame():
         style="game_info.TLabel",
     ).grid(row=7, column=0, columnspan=2, pady=(0, 5))
 
-    # ----- frame 4 player names --------------------------------------------------------
+    # ----- frame 4 player names -------------------------------------------------------------------
     frame_menu_names = tk.Frame(frame_menu)
     frame_menu_names.grid(row=1, column=0, padx=border, pady=(0, border), ipady=4, sticky="nesw")
     frame_menu_names.columnconfigure(0, weight=1)
@@ -1761,7 +1761,7 @@ def create_menu_frame():
             width=8,
         ).grid(row=i+1, column=1, sticky='w')
 
-    # ----- frame 4 trait selection -----------------------------------------------------
+    # ----- frame 4 trait selection ----------------------------------------------------------------
     frame_menu_traits = tk.Frame(frame_menu)
     frame_menu_traits.grid(row=2, column=0, padx=border, pady=(0, border), sticky="nesw")
     frame_menu_traits.columnconfigure(0, weight=1)
@@ -1837,7 +1837,7 @@ def create_menu_frame():
             command=partial(btn_play_trait, i),
         ).grid(row=floor(i / 2), column=i % 2, columnspan=clspn)
 
-    # ----- frame 4 catastrophy selection -----------------------------------------------
+    # ----- frame 4 catastrophy selection ----------------------------------------------------------
     frame_menu_catastrophe = tk.Frame(frame_menu)
     frame_menu_catastrophe.grid(row=3, column=0, padx=border, pady=(0, border), sticky="nesw")
     frame_menu_catastrophe.columnconfigure(0, weight=1)
@@ -1884,7 +1884,7 @@ def create_menu_frame():
                             padx=4, pady=(0, 5), sticky='ns')
     worlds_end['cbox'].bind("<<ComboboxSelected>>", lambda e: btn_play_worlds_end())
 
-    # ----- frame for control buttons ---------------------------------------------------
+    # ----- frame for control buttons --------------------------------------------------------------
     frame_menu_controls = tk.Frame(frame_menu)
     frame_menu_controls.grid(row=4, column=0, padx=border, pady=(0, border), sticky="nesw")
     frame_menu_controls.columnconfigure(0, weight=0)

@@ -1939,8 +1939,7 @@ def reset_variables():
         catastrophe['cbox'].append([])
 
     # reset worlds end
-    worlds_end['cbox'].clear()
-    worlds_end['cbox'].append(None)
+    worlds_end['cbox'] = [None]
     worlds_end['name'] = tk.StringVar(value="")
 
     # reset current status

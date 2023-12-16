@@ -25,25 +25,35 @@ global logfile
 logfile = os.path.join(dir_log, "DoomPyLog_" + time.strftime("%Y%m%d-%H%M%S") + ".txt")
 
 # load cards.xlsx ----------------------------------------------------------------------------------
-global traits_df, traits_dfi, ages_df, catastrophies_dfi
+global traits_df, status_df, catastrophies_df
 
-traits_df_unsorted = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="traits")
-traits_df = traits_df_unsorted.sort_values(by='trait').reset_index(drop=True)
-traits_dfi = traits_df.index.tolist()
+# traits
+xlsx_traits = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="traits")
+traits_df = (xlsx_traits
+             .sort_values(by='trait')
+             .reset_index(drop=True)
+             .drop(columns='id'))
 
-ages_df_unsorted = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="ages")
-ages_df = ages_df_unsorted.sort_values(by='name').reset_index(drop=True)
-catastrophies_dfi = ages_df[ages_df["type"] == "Catastrophe"].index.tolist()
+# create new status dataframe containing current status of each trait
+status_df = traits_df[['trait', 'color', 'face']].copy()
+status_df['drops'] = np.nan
+status_df['swap'] = True
+status_df['steal'] = True
+status_df['remove'] = True
+status_df['discard'] = True
+status_df['effects'] = True
+status_df['host'] = None
+status_df['attachment'] = None
+status_df['traits_WE'] = None
+status_df['WE_effect'] = np.nan
 
-# add columns to traits_df
-traits_df["cur_color"] = traits_df.color
-traits_df["cur_face"] = traits_df.face
-traits_df["cur_drops"] = np.nan
-traits_df["cur_effect"] = 'none'
-traits_df["cur_host"] = 'none'
-traits_df["cur_attachment"] = 'none'
-traits_df["cur_worlds_end_trait"] = 'none'
-traits_df["cur_worlds_end_effect"] = np.nan
+# catastrophies
+xlsx_ages = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="ages")
+xlsx_catastrophies = xlsx_ages.loc[xlsx_ages['type'] == 'Catastrophe']
+catastrophies_df = (xlsx_catastrophies
+                    .sort_values(by='name')
+                    .reset_index(drop=True)
+                    .drop(columns=['game', 'type']))
 
 # load images --------------------------------------------------------------------------------------
 global images_dict

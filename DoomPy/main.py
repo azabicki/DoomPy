@@ -6,16 +6,17 @@ from functools import partial
 import numpy as np
 from PIL import ImageTk
 from pygame import mixer
+
+from log import write_log
 import rules_attachment as rules_at
 import rules_drop as rules_dr
 import rules_play as rules_pl
 import rules_remove as rules_re
 import rules_traits_worlds_end as rules_twe
 import rules_worlds_end as rules_we
-from log import write_log
 
 from globals_ import cfg, images_dict, sounds, music_onoff, icons_onoff, points_onoff, show_icons  # noqa: F401
-from globals_ import traits_df, traits_dfi, ages_df, catastrophies_dfi
+from globals_ import traits_df, status_df, catastrophies_df
 from globals_ import lbl_music_switch, lbl_icons_switch, lbl_points_switch, ent_trait_search, lbox_deck
 from globals_ import frame_player, frame_trait_pile
 from globals_ import game, plr, deck, deck_filtered_idx, catastrophe, worlds_end
@@ -527,15 +528,15 @@ def btn_play_catastrophe(event, c):
     # update possible catastrophies for later ones
     for i in range(1, game['n_catastrophies']):
         # reset possible's
-        catastrophe['possible'][i] = catastrophies_dfi.copy()
+        catastrophe['possible'][i] = catastrophies_df.index.tolist()
 
         # remove previous catastrophies from possible's
         for prev in range(0, i):
             if catastrophe['played'][prev] is not None:
                 catastrophe['possible'][i].remove(catastrophe['played'][prev])
 
-                pos_cat_values = [" catastrophe {}...".format(1+1)] + \
-                    ages_df.loc[catastrophe['possible'][i]].name.values.tolist()
+                pos_cat_values = [" catastrophe {}...".format(1+1)] \
+                    + catastrophies_df.loc[catastrophe['possible'][i]].name.values.tolist()
                 catastrophe['cbox'][i].configure(values=pos_cat_values)
 
                 # check if current catastrophie was selected by a next one
@@ -556,7 +557,7 @@ def btn_play_catastrophe(event, c):
         worlds_end['cbox'].configure(state="readonly")
 
     # update worlds end combobox
-    played_catastrophies = [ages_df.loc[catastrophe['played'][i], "name"]
+    played_catastrophies = [catastrophies_df.loc[catastrophe['played'][i], "name"]
                             for i in range(game['n_catastrophies'])
                             if catastrophe['played'][i] is not None]
     worlds_end['cbox']['values'] = [" select world's end ..."] + played_catastrophies
@@ -788,9 +789,9 @@ def update_genes():
 
         # check if catastrophy was played
         if c_idx is not None:
-            c_str = ages_df.loc[c_idx, "name"]
+            c_str = catastrophies_df.loc[c_idx, "name"]
             # get effect and apply it
-            effect = int(ages_df.loc[c_idx].gene_pool)
+            effect = int(catastrophies_df.loc[c_idx].gene_pool)
             diff_genes = [i + effect for i in diff_genes]
 
             # print log
@@ -1441,8 +1442,8 @@ def create_trait_pile(frame_trait_overview, p):
 
         # get world's end name & index
         we = worlds_end['name'].get()
-        we_idx = ages_df[ages_df['name'] == we].index.values[0]
-        we_eff = ages_df.loc[we_idx].worlds_end
+        we_idx = catastrophies_df[catastrophies_df['name'] == we].index.values[0]
+        we_eff = catastrophies_df.loc[we_idx].worlds_end
 
         # create separate frame for WE_TITLE
         irow += 1
@@ -1829,7 +1830,7 @@ def create_menu_frame():
     ).grid(row=0, column=0, columnspan=2, pady=(5, 0))
     for c in range(game['n_catastrophies']):
         pos_cat_values = [" catastrophe {}...".format(c+1)] + \
-            ages_df.loc[catastrophe['possible'][c]].name.values.tolist()
+            catastrophies_df.loc[catastrophe['possible'][c]].name.values.tolist()
 
         catastrophe['cbox'][c] = ttk.Combobox(
             frame_menu_catastrophe,
@@ -1937,14 +1938,14 @@ def reset_variables():
 
     # reset deck/lbox card-lists
     deck.clear()
-    deck.extend(traits_dfi)   # complete list of indicies of all traits
+    deck.extend(traits_df.index.tolist())   # complete list of indicies of all traits
     deck_filtered_idx.clear()
-    deck_filtered_idx.extend(traits_dfi)  # complete list of indices of traits for menu_listbox
+    deck_filtered_idx.extend(traits_df.index.tolist())  # complete list of indices of traits for menu_listbox
     deck_filtered_str.set(traits_df.loc[deck].trait.values.tolist())  # complete list of names of traits
 
     # reset manually calculated drop values
     manual_drops.clear()
-    for i in range(len(traits_dfi)):
+    for i in range(len(traits_df)):
         manual_drops.append(tk.StringVar(value='-'))
 
     # reset occured catastrophies
@@ -1952,7 +1953,7 @@ def reset_variables():
     catastrophe['played'].clear()
     catastrophe['cbox'].clear()
     for i in range(game['n_catastrophies']):
-        catastrophe['possible'].append(catastrophies_dfi.copy())
+        catastrophe['possible'].append(catastrophies_df.index.tolist())
         catastrophe['played'].append(None)
         catastrophe['cbox'].append([])
 

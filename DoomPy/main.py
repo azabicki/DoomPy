@@ -954,7 +954,9 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # face
-        if show_icons['face'] and 'face' not in traits_df.loc[trait_idx].cur_worlds_end_effect.lower():
+        if (show_icons['face']
+                and status_df.loc[trait_idx].we_effect is not None   # some WE effect value of trait
+                and 'face' not in status_df.loc[trait_idx].we_effect.lower()):
             icol += 1
             face_value = traits_df.loc[trait_idx].face
             face_string = face_value if isinstance(face_value, str) else str(int(face_value))
@@ -1052,7 +1054,7 @@ def create_trait_pile(frame_trait_overview, p):
 
         # ----- current effects due to attachments -------------------------------------------------
         # _current_ color ----------
-        cur_color = traits_df.loc[trait_idx].cur_color.lower()
+        cur_color = status_df.loc[trait_idx].color.lower()
         if cur_color != traits_df.loc[trait_idx].color.lower():
             icol += 1
             cc = 'c' if 'colorless' in cur_color.lower() else ''
@@ -1067,7 +1069,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # drop value ----------
-        cur_drops = traits_df.loc[trait_idx].cur_drops
+        cur_drops = status_df.loc[trait_idx].drops
         if not np.isnan(cur_drops):
             icol += 1
             drop_string = str(int(cur_drops))
@@ -1078,7 +1080,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # has attachment ----------
-        if traits_df.loc[trait_idx].cur_attachment != 'none':
+        if status_df.loc[trait_idx].attachment is not None:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -1086,7 +1088,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # noFX ----------
-        if 'Inactive' in traits_df.loc[trait_idx].cur_effect:
+        if not status_df.loc[trait_idx].effects:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -1094,7 +1096,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # noRemove ----------
-        if 'NoRemove' in traits_df.loc[trait_idx].cur_effect:
+        if not status_df.loc[trait_idx].remove:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -1102,7 +1104,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # noDiscard ----------
-        if 'NoDiscard' in traits_df.loc[trait_idx].cur_effect:
+        if not status_df.loc[trait_idx].discard:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -1110,7 +1112,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # noSteal ----------
-        if 'NoSteal' in traits_df.loc[trait_idx].cur_effect:
+        if not status_df.loc[trait_idx].steal:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -1118,7 +1120,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # noSwap ----------
-        if 'NoSwap' in traits_df.loc[trait_idx].cur_effect:
+        if not status_df.loc[trait_idx].swap:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -1126,7 +1128,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # ----- current effects due to WORLDS END --------------------------------------------------
-        if traits_df.loc[trait_idx].cur_worlds_end_effect != 'none':
+        if status_df.loc[trait_idx].we_effect is not None:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -1150,7 +1152,7 @@ def create_trait_pile(frame_trait_overview, p):
 
         # ----- manual DROP points entry -----------------------------------------------------------
         cur_drop_eff = traits_df.loc[trait_idx].effect_drop
-        if (isinstance(cur_drop_eff, str) and not isinstance(traits_df.loc[trait_idx].effect_worlds_end, str)
+        if (isinstance(cur_drop_eff, str) and not isinstance(status_df.loc[trait_idx].effect_worlds_end, str)
             and ('own_hand' in traits_df.loc[trait_idx].effect_drop
                  or 'discarded' in traits_df.loc[trait_idx].effect_drop)):
             irow += 1
@@ -1978,15 +1980,15 @@ def reset_variables():
     status_df['color'] = traits_df.color
     status_df['face'] = traits_df.face
     status_df['drops'] = np.nan
-    status_df['swap'] = True
-    status_df['steal'] = True
-    status_df['remove'] = True
-    status_df['discard'] = True
-    status_df['effects'] = True
     status_df['host'] = None
     status_df['attachment'] = None
+    status_df['effects'] = True
+    status_df['remove'] = True
+    status_df['discard'] = True
+    status_df['steal'] = True
+    status_df['swap'] = True
     status_df['traits_WE'] = None
-    status_df['WE_effect'] = np.nan
+    status_df['we_effect'] = None
 
     traits_df["cur_color"] = traits_df.color
     traits_df["cur_face"] = traits_df.face

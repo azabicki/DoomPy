@@ -578,10 +578,6 @@ def btn_play_trait(to):
     # play sound bites
     play_sound(trait)
 
-    # focus back to search field
-    ent_trait_search[0].focus_set()
-    lbox_deck[0].see(0)
-
 
 def update_manual_we(event, p):
     value = event.widget.get()

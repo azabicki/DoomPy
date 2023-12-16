@@ -23,60 +23,70 @@ from globals_ import neoteny_checkbutton, sleepy_spinbox
 
 # functions ##############################################################
 def pre_play():
-    global play_this_trait
-
     start_game()
-    pre_play_set = 2
+    pre_play_set = 1
 
     if pre_play_set == 1:
         lisa = [5, 16, 22, 25, 64, 98, 160, 161]
-        for play_this_trait in lisa:
+        for t in lisa:
+            lbox_deck[0].selection_set(t)
             btn_play_trait(0)
 
         julia = [137, 162, 163, 164, 175, 208]
-        for play_this_trait in julia:
+        for t in julia:
+            lbox_deck[0].selection_set(t)
             btn_play_trait(1)
 
         anton = [196, 209, 232, 277, 278, 287, 290, 311, 312, 313, 314]
-        for play_this_trait in anton:
+        for t in anton:
+            lbox_deck[0].selection_set(t)
             btn_play_trait(2)
 
-        adam = [235, 246, 315, 317, 318, 324, 352]
-        for play_this_trait in adam:
+        adam = [235, 246, 315, 317, 318]
+        for t in adam:
+            lbox_deck[0].selection_set(t)
             btn_play_trait(3)
 
     if pre_play_set == 2:
         p0 = list(np.random.randint(low=0, high=len(traits_df), size=12))
-        for play_this_trait in p0:
+        for t in p0:
+            lbox_deck[0].selection_set(t)
             btn_play_trait(0)
 
         p1 = list(np.random.randint(low=0, high=len(traits_df), size=10))
-        for play_this_trait in p1:
+        for t in p1:
+            lbox_deck[0].selection_set(t)
             btn_play_trait(1)
 
         p2 = list(np.random.randint(low=0, high=len(traits_df), size=7))
-        for play_this_trait in p2:
+        for t in p2:
+            lbox_deck[0].selection_set(t)
             btn_play_trait(2)
 
         p3 = list(np.random.randint(low=0, high=len(traits_df), size=9))
-        for play_this_trait in p3:
+        for t in p3:
+            lbox_deck[0].selection_set(t)
             btn_play_trait(3)
 
     if pre_play_set == 3:
         lisa = [5, 27]
-        for play_this_trait in lisa:
+        for t in lisa:
+            lbox_deck[0].selection_set(t)
             btn_play_trait(0)
 
         julia = [54, 175]
-        for play_this_trait in julia:
+        for t in julia:
+            lbox_deck[0].selection_set(t)
             btn_play_trait(1)
 
         anton = [202, 240]
-        for play_this_trait in anton:
+        for t in anton:
+            lbox_deck[0].selection_set(t)
             btn_play_trait(2)
 
         adam = [241, 293, 302]
-        for play_this_trait in adam:
+        for t in adam:
+            lbox_deck[0].selection_set(t)
             btn_play_trait(3)
 
     catastrophe['cbox'][0].current(3)

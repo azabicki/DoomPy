@@ -904,24 +904,29 @@ def create_trait_pile(frame_trait_overview, p):
         ypad = (3, 0) if irow == 0 else 0
         irow += 1
 
-        # ----- radiobutton -----------------------------------------------------------------------
-        rb_trait = tk.Radiobutton(
-            frame_trait_overview,
-            text=" " + trait,
-            variable=plr['trait_selected'][p],
-            value=trait_idx,
-            command=lambda t_idx=trait_idx: write_log(['select', 'trait_pile'],
-                                                      plr['name'][p].get(),
-                                                      traits_df.loc[t_idx].trait,
-                                                      t_idx))
-        # log_trait_selection(p, plr['trait_selected'][p]))
-        rb_trait.grid(row=irow, column=0, padx=3, pady=ypad, sticky='nsw')
+        # ----- radiobutton / label if attachment --------------------------------------------------
+        if traits_df.loc[trait_idx].attachment != 1:
+            row_trait = tk.Radiobutton(
+                frame_trait_overview,
+                text=" " + trait,
+                variable=plr['trait_selected'][p],
+                value=trait_idx,
+                command=lambda t_idx=trait_idx: write_log(['select', 'trait_pile'],
+                                                          plr['name'][p].get(),
+                                                          traits_df.loc[t_idx].trait,
+                                                          t_idx))
+            row_trait.grid(row=irow, column=0, padx=3, pady=ypad, sticky='nsw')
+        else:
+            row_trait = tk.Label(
+                frame_trait_overview,
+                text=" " + trait)
+            row_trait.grid(row=irow, column=0, padx=(24, 3), pady=ypad, sticky='nsw')
 
         # change font color if dominant
         if traits_df.loc[trait_idx].dominant == 1:
-            rb_trait.config(fg=cfg["font_color_trait_pile_dominant"])
+            row_trait.config(fg=cfg["font_color_trait_pile_dominant"])
 
-        # ----- icons -----------------------------------------------------------------------------
+        # ----- icons ------------------------------------------------------------------------------
         frame_pics = tk.Frame(frame_trait_overview)
         frame_pics.grid(row=irow, column=1, sticky='sw')
         icol = -1  # initialize column index which changes depending on card
@@ -1038,7 +1043,7 @@ def create_trait_pile(frame_trait_overview, p):
         ttk.Separator(frame_pics, orient='vertical'
                       ).grid(row=0, column=icol, padx=3, pady=3, sticky='ns')
 
-        # ----- current effects due to attachments ------------------------------------------------
+        # ----- current effects due to attachments -------------------------------------------------
         # _current_ color ----------
         cur_color = traits_df.loc[trait_idx].cur_color.lower()
         if cur_color != traits_df.loc[trait_idx].color.lower():
@@ -1113,7 +1118,7 @@ def create_trait_pile(frame_trait_overview, p):
                 image=images['noSwap']
                 ).grid(row=0, column=icol)
 
-        # ----- current effects due to WORLDS END -------------------------------------------------
+        # ----- current effects due to WORLDS END --------------------------------------------------
         if traits_df.loc[trait_idx].cur_worlds_end_effect != 'none':
             icol += 1
             tk.Label(
@@ -1136,7 +1141,7 @@ def create_trait_pile(frame_trait_overview, p):
                     image=images['noFX']
                     ).grid(row=0, column=icol)
 
-        # ----- manual DROP points entry ----------------------------------------------------------
+        # ----- manual DROP points entry -----------------------------------------------------------
         cur_drop_eff = traits_df.loc[trait_idx].effect_drop
         if (isinstance(cur_drop_eff, str) and not isinstance(traits_df.loc[trait_idx].effect_worlds_end, str)
             and ('own_hand' in traits_df.loc[trait_idx].effect_drop
@@ -1154,7 +1159,7 @@ def create_trait_pile(frame_trait_overview, p):
             drop_entry.grid(row=irow, column=1, sticky='w')
             drop_entry.bind("<KeyRelease>", lambda e, t=trait_idx: update_manual_drops(e, t, p))
 
-        # ----- ATTACHMENT combobox if trait is attachment ----------------------------------------
+        # ----- ATTACHMENT combobox if trait is attachment -----------------------------------------
         if traits_df.loc[trait_idx].attachment == 1:
             irow += 1
             tk.Label(
@@ -1187,7 +1192,7 @@ def create_trait_pile(frame_trait_overview, p):
                 cur_host = traits_df.loc[trait_idx].cur_host
                 cbox_attach_to.current(traits_filtered_idx.index(cur_host))
 
-        # ----- WORLDS_END combobox if trait has worlds end effect --------------------------------
+        # ----- WORLDS_END combobox if trait has worlds end effect ---------------------------------
         if isinstance(traits_df.loc[trait_idx].effect_worlds_end, str):
             irow += 1
             tk.Label(
@@ -1217,7 +1222,7 @@ def create_trait_pile(frame_trait_overview, p):
                 cur_effect = traits_df.loc[trait_idx].cur_worlds_end_trait
                 cbox_attach_to.current(we_effect.index(cur_effect))
 
-        # ----- SLEEPY may affect gene pool ?!?!  -------------------------------------------------
+        # ----- SLEEPY may affect gene pool ?!?!  --------------------------------------------------
         if traits_df.loc[trait_idx].trait == 'Sleepy':
             irow += 1
             tk.Label(
@@ -1284,7 +1289,7 @@ def create_trait_pile(frame_trait_overview, p):
 
             write_log(['trait_effects', 'viral'], we_viral, plr['name'][p].get(), vp_s[p])
 
-    # --- AMATOXINS --- add passively Amatoxins to this trait pile ---------------
+    # --- AMATOXINS --- add passively Amatoxins to this trait pile ----------------
     amatoxins_idx = traits_df.index[traits_df.trait == 'Amatoxins'].tolist()[0]
     if any([amatoxins_idx in tp for tp in plr['trait_pile']]) and amatoxins_idx not in plr['trait_pile'][p]:
         # create separate frame
@@ -1432,8 +1437,6 @@ def create_trait_pile(frame_trait_overview, p):
                                 text=' in my hand???',
                                 command=lambda: update_traits_current_status('neoteny', int(p))
                                 ).grid(row=0, column=1, padx=(0, 0))
-
-    # ******* !!! *** special, individual case *** !!! *******************
 
     # **********************************************************************************************
     # ------ worlds end -> manual entries ---------------------------------------------------------

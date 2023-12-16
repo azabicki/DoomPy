@@ -1968,6 +1968,19 @@ def reset_variables():
     worlds_end['name'] = tk.StringVar(value="")
 
     # reset current status
+    status_df['color'] = traits_df.color
+    status_df['face'] = traits_df.face
+    status_df['drops'] = np.nan
+    status_df['swap'] = True
+    status_df['steal'] = True
+    status_df['remove'] = True
+    status_df['discard'] = True
+    status_df['effects'] = True
+    status_df['host'] = None
+    status_df['attachment'] = None
+    status_df['traits_WE'] = None
+    status_df['WE_effect'] = np.nan
+
     traits_df["cur_color"] = traits_df.color
     traits_df["cur_face"] = traits_df.face
     traits_df["cur_drops"] = np.nan

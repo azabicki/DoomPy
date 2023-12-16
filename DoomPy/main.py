@@ -6,11 +6,11 @@ from functools import partial
 import numpy as np
 from PIL import ImageTk
 from pygame import mixer
-import attachment_rules as at_rules
-import discard_rules as di_rules
-import drop_rules as dr_rules
-import traits_worlds_end_rules as twe_rules
-import worlds_end_rules as we_rules
+import rules_attachment as rules_at
+import rules_drop as rules_dr
+import rules_remove as rules_re
+import rules_traits_worlds_end as rules_twe
+import rules_worlds_end as rules_we
 from log import write_log
 
 from globals_ import cfg, images_dict, sounds, music_onoff, icons_onoff, points_onoff, show_icons  # noqa: F401
@@ -346,7 +346,7 @@ def btn_remove_trait(from_):
     search_trait_in_list(str_trait_search)  # keep current str in search_entry
 
     # in case that trait have a special "discard-rule"
-    special_rule = di_rules.check_trait(traits_df, card, from_)
+    special_rule = rules_re.check_trait(traits_df, card, from_)
 
     # reset current status of card(s)
     update_traits_current_status('reset', card, special_rule, [])
@@ -651,7 +651,7 @@ def update_traits_current_status(todo, *args):
             traits_df.loc[host, 'cur_attachment'] = attachment
 
             # get effects of attachments from rules.py & update current status of host
-            effects = at_rules.attachment_effects(traits_df, host, attachment)
+            effects = rules_at.attachment_effects(traits_df, host, attachment)
             traits_df.loc[host, "cur_color"] = effects['color']
             traits_df.loc[host, "cur_face"] = effects['face']
             traits_df.loc[host, "cur_effect"] = effects['effect']
@@ -666,7 +666,7 @@ def update_traits_current_status(todo, *args):
             trait_pile = args[1]
 
             # call rules_function to update other current_values due to current effect
-            twe_rules.traits_WE_effects(traits_df, trait_idx, trait_pile)
+            rules_twe.traits_WE_effects(traits_df, trait_idx, trait_pile)
 
         case 'neoteny':
             neoteny_idx = traits_df.index[traits_df.trait == 'Neoteny'].tolist()[0]
@@ -711,7 +711,7 @@ def update_scoring():
         trait_pile = plr['trait_pile'][p]
 
         # calculate world's end points
-        p_worlds_end = we_rules.worlds_end(traits_df, worlds_end['name'].get(), plr['trait_pile'],
+        p_worlds_end = rules_we.worlds_end(traits_df, worlds_end['name'].get(), plr['trait_pile'],
                                            p, plr['genes'], plr['WE_effect'])
 
         # calculate face value
@@ -719,7 +719,7 @@ def update_scoring():
                           if not isinstance(traits_df.loc[trait_idx].cur_face, str)]))
 
         # calculate drops points
-        p_drop = dr_rules.drop_points(traits_df, plr['trait_pile'], p, plr['genes'])
+        p_drop = rules_dr.drop_points(traits_df, plr['trait_pile'], p, plr['genes'])
 
         # calculate drops points
         p_MOL = 0
@@ -1150,7 +1150,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
 
             # filter only non-attachment-traits and check if this is already attached to a trait
-            traits_filtered_idx = [None] + at_rules.filter_attachables(traits_df, plr['trait_pile'][p], trait_idx)
+            traits_filtered_idx = [None] + rules_at.filter_attachables(traits_df, plr['trait_pile'][p], trait_idx)
             traits_filtered_str = [" ... "] + [traits_df.loc[idx].trait
                                                for idx in traits_filtered_idx if idx is not None]
 
@@ -1183,7 +1183,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
 
             # get task what to do at worlds end
-            we_effect = twe_rules.traits_WE_tasks(traits_df, trait_idx)
+            we_effect = rules_twe.traits_WE_tasks(traits_df, trait_idx)
 
             # create combobox
             cbox_attach_to = ttk.Combobox(

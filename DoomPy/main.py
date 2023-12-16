@@ -15,7 +15,7 @@ from log import write_log
 
 from globals_ import cfg, images_dict, sounds, music_onoff, icons_onoff, points_onoff, show_icons  # noqa: F401
 from globals_ import traits_df, traits_dfi, ages_df, catastrophies_dfi
-from globals_ import lbl_music_switch, lbl_icons_switch, lbl_points_switch, ent_trait_search, lbox_menu_deck
+from globals_ import lbl_music_switch, lbl_icons_switch, lbl_points_switch, ent_trait_search, lbox_deck
 from globals_ import frame_player, frame_trait_pile
 from globals_ import game, plr, deck, deck_filtered_idx, play_this_trait, catastrophe, worlds_end
 from globals_ import neoteny_checkbutton, sleepy_spinbox
@@ -178,7 +178,7 @@ def btn_clear_trait_search():
     deck_filtered_idx.clear()
     deck_filtered_idx.extend(deck)
     deck_filtered_str.set(traits_df.loc[deck_filtered_idx].trait.values.tolist())
-    lbox_menu_deck[0].selection_clear(0, tk.END)
+    lbox_deck[0].selection_clear(0, tk.END)
     play_this_trait = None
 
 
@@ -849,7 +849,7 @@ def update_stars():
 
 def search_trait_in_list(inp):
     value = inp.get()
-    lbox_menu_deck[0].selection_clear(0, tk.END)
+    lbox_deck[0].selection_clear(0, tk.END)
 
     if value == "":
         deck_filtered_idx.clear()
@@ -1619,17 +1619,17 @@ def create_menu_frame():
     frame_menu_options.columnconfigure(1, weight=1)
 
     # title -----
-    frame_title = tk.Frame(frame_menu_options)
-    frame_title.grid(row=0, column=0, columnspan=2, sticky="nesw")
-    frame_title.columnconfigure(0, weight=3)
+    frame_options = tk.Frame(frame_menu_options)
+    frame_options.grid(row=0, column=0, columnspan=2, sticky="nesw")
+    frame_options.columnconfigure(0, weight=3)
 
     ttk.Label(
-        frame_title,
+        frame_options,
         text="OPTIONS",
         font="'' 24"
         ).grid(row=0, column=0, pady=(5, 5))
     lbl_music_switch[0] = ttk.Label(
-        frame_title,
+        frame_options,
         image=images['note_on'],
         cursor="heart")
     lbl_music_switch[0].grid(row=0, column=1, padx=(0, 10))
@@ -1757,19 +1757,16 @@ def create_menu_frame():
         width=10,
         textvariable=str_trait_search)
     ent_trait_search[0].grid(row=1, column=0, padx=(10, 0), sticky="w")
-    ent_trait_search[0].bind("<KeyRelease>", lambda e: search_trait_in_list(str_trait_search))
-    ent_trait_search[0].bind('<Down>',
-                             lambda e: lbox_menu_deck[0].selection_clear(0, tk.END),
-                             add='+')
-    ent_trait_search[0].bind('<Down>',
-                             lambda e: lbox_menu_deck[0].selection_set(0),
-                             add='+')
-    ent_trait_search[0].bind('<Down>',
-                             lambda e: lbox_menu_deck[0].focus(),
-                             add='+')
-    ent_trait_search[0].bind('<Down>',
-                             lambda e: update_selected_trait("lbox", lbox_menu_deck[0].curselection()),
-                             add='+')
+    ent_trait_search[0].bind(
+        "<KeyRelease>", lambda e: search_trait_in_list(str_trait_search))
+    ent_trait_search[0].bind(
+        '<Down>', lambda e: lbox_deck[0].selection_clear(0, tk.END), add='+')
+    ent_trait_search[0].bind(
+        '<Down>', lambda e: lbox_deck[0].selection_set(0), add='+')
+    ent_trait_search[0].bind(
+        '<Down>', lambda e: lbox_deck[0].focus(), add='+')
+    ent_trait_search[0].bind(
+        '<Down>', lambda e: update_selected_trait("lbox", lbox_deck[0].curselection()), add='+')
 
     ttk.Button(
         frame_menu_traits,
@@ -1779,17 +1776,17 @@ def create_menu_frame():
     ).grid(row=1, column=1, padx=(0, 10), sticky="w")
 
     # listbox with (filtered) deck-cards -----
-    lbox_menu_deck[0] = tk.Listbox(
+    lbox_deck[0] = tk.Listbox(
         frame_menu_traits,
         height=4,
         listvariable=deck_filtered_str,
         exportselection=False)
-    lbox_menu_deck[0].grid(row=2, column=0, columnspan=2, padx=10)
-    lbox_menu_deck[0].bind("<<ListboxSelect>>",
-                           lambda e: update_selected_trait("lbox", lbox_menu_deck[0].curselection()))
+    lbox_deck[0].grid(row=2, column=0, columnspan=2, padx=10)
+    lbox_deck[0].bind("<<ListboxSelect>>",
+                      lambda e: update_selected_trait("lbox", lbox_deck[0].curselection()))
     # create key bindings to play trait into player's trait pile by hitting number on keyboard
     for p in range(game['n_player']):
-        lbox_menu_deck[0].bind('{}'.format(p+1), lambda e, pp=p: btn_play_trait(pp))
+        lbox_deck[0].bind('{}'.format(p+1), lambda e, pp=p: btn_play_trait(pp))
 
     # 'who gets it?' -----
     ttk.Label(

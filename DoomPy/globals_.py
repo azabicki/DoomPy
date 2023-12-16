@@ -109,9 +109,9 @@ for files in glob.glob(os.path.join(curdir, "sounds", "*.mp3")):
 
 # switches #########################################################################################
 global music_onoff, icons_onoff, show_icons, points_onoff
-music_onoff = 'on'
-icons_onoff = 'on'
-points_onoff = 'on'
+music_onoff = 'on'      # 'off' / 'on'
+icons_onoff = 'on'      # 'off' / 'on' / 'full'
+points_onoff = 'on'     # 'off' / 'on'
 
 show_icons = {}
 show_icons['color'] = True        # default: True
@@ -132,7 +132,7 @@ lbl_music_switch = [None]   # label containing music-switch-icon
 lbl_icons_switch = [None]   # label containing icon-switch-icon
 lbl_points_switch = [None]   # label containing icon-switch-icon
 ent_trait_search = [None]   # entry for trait_search
-lbox_menu_deck = [None]     # listbox widget of deck cards -> needed to be able to edit selected traits
+lbox_deck = [None]     # listbox widget of deck cards -> needed to be able to edit selected traits
 
 global frame_player, frame_trait_pile
 frame_player = []          # list of all players frames

@@ -497,7 +497,7 @@ def btn_attach_to(from_, attachment, event, possible_hosts):
     host_idx = possible_hosts[event.widget.current()]
 
     # return, if clicked on current host
-    old_host_idx = traits_df[traits_df['cur_attachment'] == attachment].index.values.tolist()
+    old_host_idx = status_df[status_df['attachment'] == attachment].index.values.tolist()
     if host_idx in old_host_idx:
         write_log(['attach_to', 'error_host'])
         return
@@ -519,7 +519,7 @@ def btn_attach_to(from_, attachment, event, possible_hosts):
         update_traits_current_status('reset', attachment, [])
     else:
         # set new host_idx to status_row of attachment
-        traits_df.loc[attachment, 'cur_host'] = host_idx
+        status_df.loc[attachment, 'host'] = host_idx
 
         # set new attachment to status_row of host & update effects of attachment on host
         update_traits_current_status('attachment', host_idx, attachment)
@@ -634,24 +634,29 @@ def update_traits_current_status(todo, *args):
             log = args[-1]
 
             # backup current state
-            bkp = traits_df.loc[trait].copy()
+            bkp = status_df.loc[trait].copy()
 
             # reset trait
             true_color = traits_df.loc[trait].color
             true_face = traits_df.loc[trait].face
 
-            traits_df.loc[trait, "cur_color"] = true_color
-            traits_df.loc[trait, "cur_face"] = true_face
-            traits_df.loc[trait, "cur_drops"] = np.nan
-            traits_df.loc[trait, "cur_effect"] = 'none'
-            traits_df.loc[trait, "cur_host"] = 'none'
-            traits_df.loc[trait, "cur_attachment"] = 'none'
-            traits_df.loc[trait, "cur_worlds_end_trait"] = 'none'
+            status_df.loc[trait, 'color'] = true_color
+            status_df.loc[trait, 'face'] = true_face
+            status_df.loc[trait, 'drops'] = np.nan
+            status_df.loc[trait, 'host'] = 'none'
+            status_df.loc[trait, 'attachment'] = 'none'
+            status_df.loc[trait, 'effects'] = True
+            status_df.loc[trait, 'remove'] = True
+            status_df.loc[trait, 'discard'] = True
+            status_df.loc[trait, 'steal'] = True
+            status_df.loc[trait, 'swap'] = True
+            status_df.loc[trait, 'traits_WE'] = 'none'
+            status_df.loc[trait, 'we_effect'] = 'none'
 
             # apply rule after resetting
             match rule:
-                case "keep_cur_effect":
-                    traits_df.loc[trait, "cur_effect"] = bkp.cur_effect
+                case 'keep_cur_effect':
+                    status_df.loc[trait, 'effects'] = bkp.effects
 
             # print log
             if log:
@@ -663,13 +668,13 @@ def update_traits_current_status(todo, *args):
             log = args[-1]
 
             # save attachment to host
-            traits_df.loc[host, 'cur_attachment'] = attachment
+            status_df.loc[host, 'attachment'] = attachment
 
             # get effects of attachments from rules.py & update current status of host
             effects = rules_at.attachment_effects(host, attachment)
-            traits_df.loc[host, "cur_color"] = effects['color']
-            traits_df.loc[host, "cur_face"] = effects['face']
-            traits_df.loc[host, "cur_effect"] = effects['effect']
+            status_df.loc[host, 'color'] = effects['color']
+            status_df.loc[host, 'face'] = effects['face']
+            status_df.loc[host, 'effect'] = effects['effect']
 
             # print log
             if log:
@@ -695,11 +700,11 @@ def update_traits_current_status(todo, *args):
 
             # update 'cur_effect'
             if not any([i.get() for i in neoteny_checkbutton]):
-                traits_df.loc[neoteny_idx, "cur_effect"] = 'none'
+                status_df.loc[neoteny_idx, 'effects'] = 'none'
                 if log:
                     write_log(['update_trait_status', 'neoteny_no_one'])
             else:
-                traits_df.loc[neoteny_idx, "cur_effect"] = str(p)
+                status_df.loc[neoteny_idx, 'effects'] = str(p)
                 if log:
                     write_log(['update_trait_status', 'neoteny_that_one'], p)
 
@@ -730,8 +735,8 @@ def update_scoring():
                                            p, plr['genes'], plr['WE_effect'])
 
         # calculate face value
-        p_face = int(sum([traits_df.loc[trait_idx].cur_face for trait_idx in trait_pile
-                          if not isinstance(traits_df.loc[trait_idx].cur_face, str)]))
+        p_face = int(sum([status_df.loc[trait_idx].face for trait_idx in trait_pile
+                          if not isinstance(status_df.loc[trait_idx].face, str)]))
 
         # calculate drops points
         p_drop = rules_dr.drop_points(traits_df, plr['trait_pile'], p, plr['genes'])
@@ -954,9 +959,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # face
-        if (show_icons['face']
-                and status_df.loc[trait_idx].we_effect is not None   # some WE effect value of trait
-                and 'face' not in status_df.loc[trait_idx].we_effect.lower()):
+        if (show_icons['face'] and 'face' not in status_df.loc[trait_idx].we_effect.lower()):
             icol += 1
             face_value = traits_df.loc[trait_idx].face
             face_string = face_value if isinstance(face_value, str) else str(int(face_value))
@@ -1080,7 +1083,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # has attachment ----------
-        if status_df.loc[trait_idx].attachment is not None:
+        if status_df.loc[trait_idx].attachment != 'none':
             icol += 1
             tk.Label(
                 frame_pics,
@@ -1128,7 +1131,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # ----- current effects due to WORLDS END --------------------------------------------------
-        if status_df.loc[trait_idx].we_effect is not None:
+        if status_df.loc[trait_idx].we_effect != 'none':
             icol += 1
             tk.Label(
                 frame_pics,
@@ -1152,7 +1155,8 @@ def create_trait_pile(frame_trait_overview, p):
 
         # ----- manual DROP points entry -----------------------------------------------------------
         cur_drop_eff = traits_df.loc[trait_idx].effect_drop
-        if (isinstance(cur_drop_eff, str) and not isinstance(status_df.loc[trait_idx].effect_worlds_end, str)
+        if (isinstance(cur_drop_eff, str)
+            and not isinstance(traits_df.loc[trait_idx].effect_worlds_end, str)
             and ('own_hand' in traits_df.loc[trait_idx].effect_drop
                  or 'discarded' in traits_df.loc[trait_idx].effect_drop)):
             irow += 1
@@ -1195,10 +1199,10 @@ def create_trait_pile(frame_trait_overview, p):
                                     btn_attach_to(p, t, e, idx))
 
             # check if already attached to host
-            if traits_df.loc[trait_idx].cur_host == 'none':
+            if status_df.loc[trait_idx].host == 'none':
                 cbox_attach_to.current(0)
             else:
-                cur_host = traits_df.loc[trait_idx].cur_host
+                cur_host = status_df.loc[trait_idx].host
                 cbox_attach_to.current(traits_filtered_idx.index(cur_host))
 
         # ----- WORLDS_END combobox if trait has worlds end effect ---------------------------------
@@ -1980,24 +1984,15 @@ def reset_variables():
     status_df['color'] = traits_df.color
     status_df['face'] = traits_df.face
     status_df['drops'] = np.nan
-    status_df['host'] = None
-    status_df['attachment'] = None
+    status_df['host'] = 'none'
+    status_df['attachment'] = 'none'
     status_df['effects'] = True
     status_df['remove'] = True
     status_df['discard'] = True
     status_df['steal'] = True
     status_df['swap'] = True
-    status_df['traits_WE'] = None
-    status_df['we_effect'] = None
-
-    traits_df["cur_color"] = traits_df.color
-    traits_df["cur_face"] = traits_df.face
-    traits_df["cur_drops"] = np.nan
-    traits_df["cur_effect"] = 'none'
-    traits_df["cur_host"] = 'none'
-    traits_df["cur_attachment"] = 'none'
-    traits_df["cur_worlds_end_trait"] = 'none'
-    traits_df["cur_worlds_end_effect"] = 'none'
+    status_df['traits_WE'] = 'none'
+    status_df['we_effect'] = 'none'
 
 
 def start_game():

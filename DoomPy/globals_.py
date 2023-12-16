@@ -37,15 +37,15 @@ traits_df = (xlsx_traits
 # create new status dataframe containing current status of each trait
 status_df = traits_df[['trait', 'color', 'face']].copy()
 status_df['drops'] = np.nan
-status_df['host'] = None
-status_df['attachment'] = None
+status_df['host'] = 'none'
+status_df['attachment'] = 'none'
 status_df['effects'] = True
 status_df['remove'] = True
 status_df['discard'] = True
 status_df['steal'] = True
 status_df['swap'] = True
-status_df['traits_WE'] = None
-status_df['we_effect'] = None
+status_df['traits_WE'] = 'none'
+status_df['we_effect'] = 'none'
 
 # catastrophies
 xlsx_ages = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="ages")

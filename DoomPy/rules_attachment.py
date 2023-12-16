@@ -1,4 +1,4 @@
-from globals_ import traits_df, plr
+from globals_ import traits_df, status_df, plr
 
 
 # filter which traits from trait pile are available for the attacahment to be attached to
@@ -12,8 +12,8 @@ def filter_attachables(attachment, p):
     attachable = [idx for idx in attachable
                   if traits_df.loc[idx].trait not in traits_df[traits_df.attachment == 1].trait.values.tolist()
                   and traits_df.loc[idx].trait not in traits_df[traits_df.dominant == 1].trait.values.tolist()
-                  and (traits_df.loc[idx].cur_attachment == 'none'
-                       or traits_df.loc[idx].cur_attachment == attachment)]
+                  and (status_df.loc[idx].attachment == 'none'
+                       or status_df.loc[idx].attachment == attachment)]
 
     # filter out based on specific rules
     match rule[0]:
@@ -43,9 +43,9 @@ def filter_attachables(attachment, p):
 # handling effects of attachments when attached to a host
 def attachment_effects(host, attachment):
     # get current effects of host
-    effects = {'color':  traits_df.loc[host].cur_color,
-               'face':   traits_df.loc[host].cur_face,
-               'effect': traits_df.loc[host].cur_effect}
+    effects = {'color':  status_df.loc[host].color,
+               'face':   status_df.loc[host].face,
+               'effect': status_df.loc[host].effects}
 
     # get effect of attachment
     rule = traits_df.loc[attachment].effect_attachment.split()

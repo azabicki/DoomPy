@@ -125,9 +125,6 @@ show_icons['effectless'] = False  # default: False
 show_icons['attachment'] = False  # default: False
 
 
-# design variables #################################################################################
-
-
 # tk_inter variables ###############################################################################
 global lbl_music_switch, lbl_icons_switch, ent_trait_search, lbox_menu_deck
 lbl_music_switch = [None]   # label containing music-switch-icon
@@ -138,6 +135,7 @@ lbox_menu_deck = [None]     # listbox widget of deck cards -> needed to be able 
 global frame_player, frame_trait_pile
 frame_player = []          # list of all players frames
 frame_trait_pile = []       # frame containing players traits -> needed to be able to edit selected traits
+
 
 # define game variables ############################################################################
 # settings -----------------------------------------------------------------------------------------
@@ -168,4 +166,10 @@ catastrophe['cbox'] = []             # comboxes containing possible catastrophie
 
 worlds_end = {}
 worlds_end['cbox'] = [None]
-worlds_end['name'] = ''
+worlds_end['name'] = None
+
+
+# trait specific variables #########################################################################
+global neoteny_checkbutton, sleepy_spinbox
+neoteny_checkbutton = []
+sleepy_spinbox = []

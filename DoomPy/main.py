@@ -18,6 +18,7 @@ from globals_ import traits_df, traits_dfi, ages_df, catastrophies_dfi
 from globals_ import lbl_music_switch, lbl_icons_switch, ent_trait_search, lbox_menu_deck
 from globals_ import frame_player, frame_trait_pile
 from globals_ import game, plr, deck, deck_filtered_idx, play_this_trait, catastrophe, worlds_end
+from globals_ import neoteny_checkbutton, sleepy_spinbox
 
 
 # functions ##############################################################
@@ -464,7 +465,7 @@ def btn_play_worlds_end():
         return
 
     # print log
-    write_log(['worlds_end', 'game_over'], worlds_end.get())
+    write_log(['worlds_end', 'game_over'], worlds_end['name'].get())
 
     # update scoring
     update_scoring()
@@ -693,7 +694,7 @@ def update_scoring():
         trait_pile = plr['trait_pile'][p]
 
         # calculate world's end points
-        p_worlds_end = we_rules.worlds_end(traits_df, worlds_end.get(), plr['trait_pile'],
+        p_worlds_end = we_rules.worlds_end(traits_df, worlds_end['name'].get(), plr['trait_pile'],
                                            p, plr['genes'], plr['WE_effect'])
 
         # calculate face value
@@ -1386,7 +1387,7 @@ def create_trait_pile(frame_trait_overview, p):
     # --- NEOTENY --- check button if Neoteny is in your hand ------------
     # is NEOTENY in your hand? asked via checkbox? But only if its not pöayed
     neoteny_idx = traits_df.index[traits_df.trait == 'Neoteny'].tolist()[0]
-    if ("select world's end" not in worlds_end.get() and
+    if ("select world's end" not in worlds_end['name'].get() and
             all(neoteny_idx not in tp for tp in plr['trait_pile'])):
         # only if no one has it or this player has it
         neoteny_effect = traits_df.loc[neoteny_idx].cur_effect
@@ -1423,13 +1424,13 @@ def create_trait_pile(frame_trait_overview, p):
 
     # **********************************************************************************************
     # ------ worlds end -> manual entries ---------------------------------------------------------
-    if "select world's end" not in worlds_end.get():
+    if "select world's end" not in worlds_end['name'].get():
         irow += 1
         ttk.Separator(frame_trait_overview, orient='horizontal'
                       ).grid(row=irow, column=0, columnspan=2, padx=5, pady=10, sticky='we')
 
         # get world's end name & index
-        we = worlds_end.get()
+        we = worlds_end['name'].get()
         we_idx = ages_df[ages_df['name'] == we].index.values[0]
         we_eff = ages_df.loc[we_idx].worlds_end
 
@@ -1838,7 +1839,7 @@ def create_menu_frame():
         state="disabled",
         width=18,
         style="move.TCombobox",
-        textvariable=worlds_end)
+        textvariable=worlds_end['name'])
     worlds_end['cbox'].current(0)
     worlds_end['cbox'].grid(row=game['n_catastrophies']+2, column=0, columnspan=2,
                             padx=4, pady=(0, 5), sticky='ns')
@@ -1914,7 +1915,7 @@ def reset_variables():
         sleepy_spinbox.append(tk.IntVar(value=0))
 
         for m in range(game['n_MOLs']):
-            plr['MOL'][m].append(tk.StringVar(value="0"))  # for now, manually editing MOL points in entries
+            plr['MOL'][i].append(tk.StringVar(value="0"))  # for now, manually editing MOL points in entries
 
     # reset deck/lbox card-lists
     deck.clear()
@@ -1940,6 +1941,7 @@ def reset_variables():
     # reset worlds end
     worlds_end['cbox'].clear()
     worlds_end['cbox'].append(None)
+    worlds_end['name'] = tk.StringVar(value="")
 
     # reset current status
     traits_df["cur_color"] = traits_df.color
@@ -2033,8 +2035,6 @@ for k, v in images_dict.items():
 
 # init variables -----------------------------------------------------------------------------------
 manual_drops = []                       # list to save manual drop entries to
-neoteny_checkbutton = []
-sleepy_spinbox = []
 
 # (re)start game ###################################################################################
 mixer.init()

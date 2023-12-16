@@ -499,18 +499,20 @@ def btn_attach_to(from_, attachment, event, possible_hosts):
     # return, if clicked on current host
     old_host_idx = status_df[status_df['attachment'] == attachment].index.values.tolist()
     if host_idx in old_host_idx:
-        write_log(['attach_to', 'error_host'])
+        write_log(['attach_to', 'error_own_host'])
         return
 
     # print log
     if host == ' ... ':
-        write_log(['attach_to', 'detached'], traits_df.loc[attachment].trait)
+        write_log(['attach_to', 'detached'], traits_df.loc[attachment].trait, attachment)
     else:
-        write_log(['attach_to', 'attached'], plr['name'][from_].get(), traits_df.loc[attachment].trait, host)
+        write_log(['attach_to', 'attached'],
+                  plr['name'][from_].get(), traits_df.loc[attachment].trait,
+                  attachment, host, host_idx)
 
     # check if attachment moved from old_host
     if old_host_idx:
-        write_log(['attach_to', 'change_host'], traits_df.loc[attachment].trait)
+        write_log(['attach_to', 'change_host'], traits_df.loc[old_host_idx[0]].trait, old_host_idx[0])
         update_traits_current_status('reset', old_host_idx[0], [])
 
     # check if attachment is set back to "..." (idx=0)
@@ -561,7 +563,7 @@ def btn_play_trait(to):
             return
 
     # print log
-    write_log(['play', 'play'], plr['name'][to].get(), trait)
+    write_log(['play', 'play'], plr['name'][to].get(), trait, trait_idx)
 
     # add to players traits & update trait_pile
     bisect.insort_left(plr['trait_pile'][to], trait_idx)

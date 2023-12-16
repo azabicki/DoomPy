@@ -60,9 +60,9 @@ def write_log(what, *args):
                     f.write(">>> play <<< ERROR - no traits in trait pile for attachment to attach to\n")
 
                 case 'play':
-                    print(">>> play <<< '{}' is playing '{}'"
+                    print(">>> play <<< '{}' is playing '{}' (id:{})"
                           .format(*args))
-                    f.write(">>> play <<< '{}' is playing '{}'\n"
+                    f.write(">>> play <<< '{}' is playing '{}' (id:{})\n"
                             .format(*args))
 
         case 'move':
@@ -91,25 +91,25 @@ def write_log(what, *args):
 
         case 'attach_to':
             match what[1]:
-                case 'error_host':
+                case 'error_own_host':
                     print(">>> attachment <<< ERROR - clicked on own host")
                     f.write(">>> attachment <<< ERROR - clicked on own host\n")
 
                 case 'detached':
-                    print(">>> attachment <<< '{}' (id:__) is detached from all host..."
+                    print(">>> attachment <<< '{}' (id:{}) is detached from all host..."
                           .format(*args))
-                    f.write(">>> attachment <<< '{}' (id:__) is detached from all host...\n"
+                    f.write(">>> attachment <<< '{}' (id:{}) is detached from all host...\n"
                             .format(*args))
 
                 case 'attached':
-                    print(">>> attachment <<< '{}' is attaching '{}' (id:__) to '{}' (id:__)"
+                    print(">>> attachment <<< '{}' is attaching '{}' (id:{}) to '{}' (id:{})"
                           .format(*args))
-                    f.write(">>> attachment <<< '{}' is attaching '{}' (id:__) to '{}' (id:__)\n"
+                    f.write(">>> attachment <<< '{}' is attaching '{}' (id:{}) to '{}' (id:{})\n"
                             .format(*args))
 
                 case 'change_host':
-                    print("    >>> was until now on old host: {}".format(*args))
-                    f.write("    >>> was until now on old host: {}\n".format(*args))
+                    print("    >>> was until now on old host: {} (id:{})".format(*args))
+                    f.write("    >>> was until now on old host: {} (id:{})\n".format(*args))
 
         case 'remove':
             match what[1]:

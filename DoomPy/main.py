@@ -193,6 +193,99 @@ def btn_clear_trait_search():
     lbox_deck[0].see(0)
 
 
+def btn_play_worlds_end():
+    # do nothing if no catastrophy selected
+    if worlds_end['cbox'].current() == 0:
+        write_log(['worlds_end', 'error_no_event'])
+        return
+
+    # print log
+    write_log(['worlds_end', 'game_over'], worlds_end['name'].get())
+
+    # update scoring
+    update_scoring()
+
+    # update all trait piles
+    for p in range(game['n_player']):
+        create_trait_pile(frame_trait_pile[p], p)
+
+
+def btn_play_catastrophe(event, c):
+    # get played catastrophe
+    cbox_idx = event.widget.current()
+    played_str = event.widget.get()
+    played_before = catastrophe['played'][c]
+    if cbox_idx > 0:
+        played_idx = catastrophe['possible'][c][cbox_idx-1]
+
+    # return, if no catastrophe was selected
+    if cbox_idx == 0:
+        if played_before is not None:
+            old_cbox_idx = catastrophe['possible'][c].index(played_before) + 1
+            catastrophe['cbox'][c].current(old_cbox_idx)
+        write_log(['catastrophe', 'error_no_catastrophe'])
+        return
+
+    # return, if same catastrophe selected
+    if played_before == played_idx:
+        write_log(['catastrophe', 'error_same_catastrophe'])
+        return
+
+    # print log
+    write_log(['catastrophe', 'catastrophe'], c+1, played_str, played_idx)
+
+    # set played catastrophe
+    catastrophe['played'][c] = played_idx
+
+    # update possible catastrophies for later ones
+    for i in range(1, game['n_catastrophies']):
+        # reset possible's
+        catastrophe['possible'][i] = catastrophies_df.index.tolist()
+
+        # remove previous catastrophies from possible's
+        for prev in range(0, i):
+            if catastrophe['played'][prev] is not None:
+                catastrophe['possible'][i].remove(catastrophe['played'][prev])
+
+                pos_cat_values = [" catastrophe {}...".format(1+1)] \
+                    + catastrophies_df.loc[catastrophe['possible'][i]].name.values.tolist()
+                catastrophe['cbox'][i].configure(values=pos_cat_values)
+
+                # check if current catastrophie was selected by a next one
+                if catastrophe['played'][prev] == catastrophe['played'][i]:
+                    # reset i'th catastrophe
+                    catastrophe['played'][i] = None
+                    catastrophe['cbox'][i].current(0)
+
+                    # disable forthcoming catastrophies & worlds end
+                    for z in range(i+1, game['n_catastrophies']):
+                        catastrophe['cbox'][z].configure(state="disabled")
+                        worlds_end['cbox'].configure(state="disabled")
+
+    # enable next catastrophe
+    if c < game['n_catastrophies']-1:
+        catastrophe['cbox'][c+1].configure(state="readonly")
+    else:
+        worlds_end['cbox'].configure(state="readonly")
+
+    # update worlds end combobox
+    played_catastrophies = [catastrophies_df.loc[catastrophe['played'][i], "name"]
+                            for i in range(game['n_catastrophies'])
+                            if catastrophe['played'][i] is not None]
+    worlds_end['cbox']['values'] = [" select world's end ..."] + played_catastrophies
+
+    # update genes & scoring
+    update_genes()
+    update_scoring()
+
+    # update all trait piles
+    for p in range(game['n_player']):
+        create_trait_pile(frame_trait_pile[p], p)
+
+    # focus back to search field
+    ent_trait_search[0].focus_set()
+
+
 def btn_traits_world_end(from_, trait_idx, event):
     # get trait & its WE effect
     # trait = traits_df.loc[trait_idx].trait
@@ -264,48 +357,6 @@ def btn_traits_world_end(from_, trait_idx, event):
             traits_df.loc[trait_idx, "cur_effect"] = 'none'
         else:
             traits_df.loc[trait_idx, "cur_effect"] = effect
-
-    # update scoring
-    update_genes()
-    update_scoring()
-
-    # update all trait piles
-    for p in range(game['n_player']):
-        create_trait_pile(frame_trait_pile[p], p)
-
-
-def btn_attach_to(from_, attachment, event, possible_hosts):
-    # get host_data from event_data
-    host = event.widget.get()
-    host_idx = possible_hosts[event.widget.current()]
-
-    # return, if clicked on current host
-    old_host_idx = traits_df[traits_df['cur_attachment'] == attachment].index.values.tolist()
-    if host_idx in old_host_idx:
-        write_log(['attach_to', 'error_host'])
-        return
-
-    # print log
-    if host == ' ... ':
-        write_log(['attach_to', 'detached'], traits_df.loc[attachment].trait)
-    else:
-        write_log(['attach_to', 'attached'], plr['name'][from_].get(), traits_df.loc[attachment].trait, host)
-
-    # check if attachment moved from old_host
-    if old_host_idx:
-        write_log(['attach_to', 'change_host'], traits_df.loc[attachment].trait)
-        update_traits_current_status('reset', old_host_idx[0], [])
-
-    # check if attachment is set back to "..." (idx=0)
-    if event.widget.current() == 0:
-        # reset host='none' to status_row of attachment
-        update_traits_current_status('reset', attachment, [])
-    else:
-        # set new host_idx to status_row of attachment
-        traits_df.loc[attachment, 'cur_host'] = host_idx
-
-        # set new attachment to status_row of host & update effects of attachment on host
-        update_traits_current_status('attachment', host_idx, attachment)
 
     # update scoring
     update_genes()
@@ -436,6 +487,48 @@ def btn_move_trait(from_, cbox_move_to):
     ent_trait_search[0].focus_set()
 
 
+def btn_attach_to(from_, attachment, event, possible_hosts):
+    # get host_data from event_data
+    host = event.widget.get()
+    host_idx = possible_hosts[event.widget.current()]
+
+    # return, if clicked on current host
+    old_host_idx = traits_df[traits_df['cur_attachment'] == attachment].index.values.tolist()
+    if host_idx in old_host_idx:
+        write_log(['attach_to', 'error_host'])
+        return
+
+    # print log
+    if host == ' ... ':
+        write_log(['attach_to', 'detached'], traits_df.loc[attachment].trait)
+    else:
+        write_log(['attach_to', 'attached'], plr['name'][from_].get(), traits_df.loc[attachment].trait, host)
+
+    # check if attachment moved from old_host
+    if old_host_idx:
+        write_log(['attach_to', 'change_host'], traits_df.loc[attachment].trait)
+        update_traits_current_status('reset', old_host_idx[0], [])
+
+    # check if attachment is set back to "..." (idx=0)
+    if event.widget.current() == 0:
+        # reset host='none' to status_row of attachment
+        update_traits_current_status('reset', attachment, [])
+    else:
+        # set new host_idx to status_row of attachment
+        traits_df.loc[attachment, 'cur_host'] = host_idx
+
+        # set new attachment to status_row of host & update effects of attachment on host
+        update_traits_current_status('attachment', host_idx, attachment)
+
+    # update scoring
+    update_genes()
+    update_scoring()
+
+    # update all trait piles
+    for p in range(game['n_player']):
+        create_trait_pile(frame_trait_pile[p], p)
+
+
 def btn_play_trait(to):
     # return, if no trait selected
     if not lbox_deck[0].curselection():
@@ -481,99 +574,6 @@ def btn_play_trait(to):
     # focus back to search field
     ent_trait_search[0].focus_set()
     lbox_deck[0].see(0)
-
-
-def btn_play_worlds_end():
-    # do nothing if no catastrophy selected
-    if worlds_end['cbox'].current() == 0:
-        write_log(['worlds_end', 'error_no_event'])
-        return
-
-    # print log
-    write_log(['worlds_end', 'game_over'], worlds_end['name'].get())
-
-    # update scoring
-    update_scoring()
-
-    # update all trait piles
-    for p in range(game['n_player']):
-        create_trait_pile(frame_trait_pile[p], p)
-
-
-def btn_play_catastrophe(event, c):
-    # get played catastrophe
-    cbox_idx = event.widget.current()
-    played_str = event.widget.get()
-    played_before = catastrophe['played'][c]
-    if cbox_idx > 0:
-        played_idx = catastrophe['possible'][c][cbox_idx-1]
-
-    # return, if no catastrophe was selected
-    if cbox_idx == 0:
-        if played_before is not None:
-            old_cbox_idx = catastrophe['possible'][c].index(played_before) + 1
-            catastrophe['cbox'][c].current(old_cbox_idx)
-        write_log(['catastrophe', 'error_no_catastrophe'])
-        return
-
-    # return, if same catastrophe selected
-    if played_before == played_idx:
-        write_log(['catastrophe', 'error_same_catastrophe'])
-        return
-
-    # print log
-    write_log(['catastrophe', 'catastrophe'], c+1, played_str, played_idx)
-
-    # set played catastrophe
-    catastrophe['played'][c] = played_idx
-
-    # update possible catastrophies for later ones
-    for i in range(1, game['n_catastrophies']):
-        # reset possible's
-        catastrophe['possible'][i] = catastrophies_df.index.tolist()
-
-        # remove previous catastrophies from possible's
-        for prev in range(0, i):
-            if catastrophe['played'][prev] is not None:
-                catastrophe['possible'][i].remove(catastrophe['played'][prev])
-
-                pos_cat_values = [" catastrophe {}...".format(1+1)] \
-                    + catastrophies_df.loc[catastrophe['possible'][i]].name.values.tolist()
-                catastrophe['cbox'][i].configure(values=pos_cat_values)
-
-                # check if current catastrophie was selected by a next one
-                if catastrophe['played'][prev] == catastrophe['played'][i]:
-                    # reset i'th catastrophe
-                    catastrophe['played'][i] = None
-                    catastrophe['cbox'][i].current(0)
-
-                    # disable forthcoming catastrophies & worlds end
-                    for z in range(i+1, game['n_catastrophies']):
-                        catastrophe['cbox'][z].configure(state="disabled")
-                        worlds_end['cbox'].configure(state="disabled")
-
-    # enable next catastrophe
-    if c < game['n_catastrophies']-1:
-        catastrophe['cbox'][c+1].configure(state="readonly")
-    else:
-        worlds_end['cbox'].configure(state="readonly")
-
-    # update worlds end combobox
-    played_catastrophies = [catastrophies_df.loc[catastrophe['played'][i], "name"]
-                            for i in range(game['n_catastrophies'])
-                            if catastrophe['played'][i] is not None]
-    worlds_end['cbox']['values'] = [" select world's end ..."] + played_catastrophies
-
-    # update genes & scoring
-    update_genes()
-    update_scoring()
-
-    # update all trait piles
-    for p in range(game['n_player']):
-        create_trait_pile(frame_trait_pile[p], p)
-
-    # focus back to search field
-    ent_trait_search[0].focus_set()
 
 
 def update_manual_we(event, p):

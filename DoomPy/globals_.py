@@ -108,9 +108,10 @@ for files in glob.glob(os.path.join(curdir, "sounds", "*.mp3")):
 
 
 # switches #########################################################################################
-global music_onoff, icons_onoff, show_icons
+global music_onoff, icons_onoff, show_icons, points_onoff
 music_onoff = 'on'
 icons_onoff = 'on'
+points_onoff = 'on'
 
 show_icons = {}
 show_icons['color'] = True        # default: True
@@ -126,9 +127,10 @@ show_icons['attachment'] = False  # default: False
 
 
 # tk_inter variables ###############################################################################
-global lbl_music_switch, lbl_icons_switch, ent_trait_search, lbox_menu_deck
+global lbl_music_switch, lbl_icons_switch, lbl_points_switch, ent_trait_search, lbox_menu_deck
 lbl_music_switch = [None]   # label containing music-switch-icon
 lbl_icons_switch = [None]   # label containing icon-switch-icon
+lbl_points_switch = [None]   # label containing icon-switch-icon
 ent_trait_search = [None]   # entry for trait_search
 lbox_menu_deck = [None]     # listbox widget of deck cards -> needed to be able to edit selected traits
 

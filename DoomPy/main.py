@@ -13,9 +13,9 @@ import traits_worlds_end_rules as twe_rules
 import worlds_end_rules as we_rules
 from log import write_log
 
-from globals_ import cfg, images_dict, sounds, music_onoff, icons_onoff, show_icons  # noqa: F401
+from globals_ import cfg, images_dict, sounds, music_onoff, icons_onoff, points_onoff, show_icons  # noqa: F401
 from globals_ import traits_df, traits_dfi, ages_df, catastrophies_dfi
-from globals_ import lbl_music_switch, lbl_icons_switch, ent_trait_search, lbox_menu_deck
+from globals_ import lbl_music_switch, lbl_icons_switch, lbl_points_switch, ent_trait_search, lbox_menu_deck
 from globals_ import frame_player, frame_trait_pile
 from globals_ import game, plr, deck, deck_filtered_idx, play_this_trait, catastrophe, worlds_end
 from globals_ import neoteny_checkbutton, sleepy_spinbox
@@ -87,72 +87,81 @@ def pre_play():
     catastrophe['cbox'][2].event_generate("<<ComboboxSelected>>")
 
 
-def switch_icons():
-    global icons_onoff
+def switch(switch):
+    global icons_onoff, music_onoff, points_onoff
 
-    if icons_onoff == 'off':
-        icons_onoff = 'on'
-        lbl_icons_switch[0].configure(image=images['icons_on'])
-        write_log(['icons', 'on'])
+    match switch:
+        case 'icons':
+            if icons_onoff == 'off':
+                icons_onoff = 'on'
+                lbl_icons_switch[0].configure(image=images['icons_on'])
+                write_log(['icons', 'on'])
 
-        show_icons['color'] = True        # default: True
-        show_icons['face'] = True         # default: True
-        show_icons['collection'] = False  # default: False
-        show_icons['dominant'] = False    # default: False
-        show_icons['action'] = False      # default: False
-        show_icons['drops'] = True        # default: True
-        show_icons['gene_pool'] = False   # default: False
-        show_icons['worlds_end'] = False  # default: False
-        show_icons['effectless'] = False  # default: False
-        show_icons['attachment'] = False  # default: False
-    elif icons_onoff == 'on':
-        icons_onoff = 'full'
-        lbl_icons_switch[0].configure(image=images['icons_full'])
-        write_log(['icons', 'full'])
+                show_icons['color'] = True        # default: True
+                show_icons['face'] = True         # default: True
+                show_icons['collection'] = False  # default: False
+                show_icons['dominant'] = False    # default: False
+                show_icons['action'] = False      # default: False
+                show_icons['drops'] = True        # default: True
+                show_icons['gene_pool'] = False   # default: False
+                show_icons['worlds_end'] = False  # default: False
+                show_icons['effectless'] = False  # default: False
+                show_icons['attachment'] = False  # default: False
+            elif icons_onoff == 'on':
+                icons_onoff = 'full'
+                lbl_icons_switch[0].configure(image=images['icons_full'])
+                write_log(['icons', 'full'])
 
-        show_icons['color'] = True          # default: True
-        show_icons['face'] = True           # default: True
-        show_icons['collection'] = True     # default: False
-        show_icons['dominant'] = True       # default: False
-        show_icons['action'] = True         # default: False
-        show_icons['drops'] = True          # default: True
-        show_icons['gene_pool'] = True      # default: False
-        show_icons['worlds_end'] = True     # default: False
-        show_icons['effectless'] = True     # default: False
-        show_icons['attachment'] = True     # default: False
-    else:
-        icons_onoff = 'off'
-        lbl_icons_switch[0].configure(image=images['icons_off'])
-        write_log(['icons', 'off'])
+                show_icons['color'] = True          # default: True
+                show_icons['face'] = True           # default: True
+                show_icons['collection'] = True     # default: False
+                show_icons['dominant'] = True       # default: False
+                show_icons['action'] = True         # default: False
+                show_icons['drops'] = True          # default: True
+                show_icons['gene_pool'] = True      # default: False
+                show_icons['worlds_end'] = True     # default: False
+                show_icons['effectless'] = True     # default: False
+                show_icons['attachment'] = True     # default: False
+            else:
+                icons_onoff = 'off'
+                lbl_icons_switch[0].configure(image=images['icons_off'])
+                write_log(['icons', 'off'])
 
-        show_icons['color'] = False       # default: True
-        show_icons['face'] = False        # default: True
-        show_icons['collection'] = False  # default: False
-        show_icons['dominant'] = False    # default: False
-        show_icons['action'] = False      # default: False
-        show_icons['drops'] = False       # default: True
-        show_icons['gene_pool'] = False   # default: False
-        show_icons['worlds_end'] = False  # default: False
-        show_icons['effectless'] = False  # default: False
-        show_icons['attachment'] = False  # default: False
+                show_icons['color'] = False       # default: True
+                show_icons['face'] = False        # default: True
+                show_icons['collection'] = False  # default: False
+                show_icons['dominant'] = False    # default: False
+                show_icons['action'] = False      # default: False
+                show_icons['drops'] = False       # default: True
+                show_icons['gene_pool'] = False   # default: False
+                show_icons['worlds_end'] = False  # default: False
+                show_icons['effectless'] = False  # default: False
+                show_icons['attachment'] = False  # default: False
 
-    # update all trait piles
-    for p in range(game['n_player']):
-        if frame_trait_pile[p] is not None:
-            create_trait_pile(frame_trait_pile[p], p)
+            # update all trait piles
+            for p in range(game['n_player']):
+                if frame_trait_pile[p] is not None:
+                    create_trait_pile(frame_trait_pile[p], p)
 
+        case 'music':
+            if music_onoff == 'off':
+                music_onoff = 'on'
+                lbl_music_switch[0].configure(image=images['note_on'])
+                write_log(['music', 'on'])
+            else:
+                music_onoff = 'off'
+                lbl_music_switch[0].configure(image=images['note_off'])
+                write_log(['music', 'off'])
 
-def switch_music():
-    global music_onoff
-
-    if music_onoff == 'off':
-        music_onoff = 'on'
-        lbl_music_switch[0].configure(image=images['note_on'])
-        write_log(['music', 'on'])
-    else:
-        music_onoff = 'off'
-        lbl_music_switch[0].configure(image=images['note_off'])
-        write_log(['music', 'off'])
+        case 'points':
+            if points_onoff == 'off':
+                points_onoff = 'on'
+                lbl_points_switch[0].configure(image=images['points_on'])
+                write_log(['music', 'on'])
+            else:
+                points_onoff = 'off'
+                lbl_points_switch[0].configure(image=images['points_off'])
+                write_log(['music', 'off'])
 
 
 def play(trait):
@@ -1624,7 +1633,7 @@ def create_menu_frame():
         image=images['note_on'],
         cursor="heart")
     lbl_music_switch[0].grid(row=0, column=1, padx=(0, 10))
-    lbl_music_switch[0].bind("<Button-1>", lambda e: switch_music())
+    lbl_music_switch[0].bind("<Button-1>", lambda e: switch('music'))
 
     # nr players -----
     ttk.Label(
@@ -1690,11 +1699,13 @@ def create_menu_frame():
     ).grid(row=5, column=0, columnspan=2, padx=10, pady=5, sticky="we")
 
     # info current game -----
-    ttk.Label(
+    xxx = ttk.Label(
         frame_menu_options,
         text="running game",
         font="'' 12 underline",
-    ).grid(row=6, column=0, columnspan=2)
+    )
+    xxx.grid(row=6, column=0, columnspan=2)
+    xxx.bind("<Button-1>", lambda e: pre_play())
     ttk.Label(
         frame_menu_options,
         text="{} catastrophies + {} genes + {} MOLs"
@@ -1857,12 +1868,13 @@ def create_menu_frame():
         image=images['icons_on'],
         cursor="target")
     lbl_icons_switch[0].grid(row=0, column=0, padx=(10, 0))
-    lbl_icons_switch[0].bind("<Button-1>", lambda e: switch_icons())
-    ttk.Button(frame_menu_controls,
-               image=images['no_star'],
-               command=pre_play,
-               width=2
-               ).grid(row=0, column=1, padx=5)
+    lbl_icons_switch[0].bind("<Button-1>", lambda e: switch('icons'))
+    lbl_points_switch[0] = ttk.Label(
+        frame_menu_controls,
+        image=images['points_on'],
+        cursor="target")
+    lbl_points_switch[0].grid(row=0, column=1, padx=5)
+    lbl_points_switch[0].bind("<Button-1>", lambda e: switch('points'))
     ttk.Button(frame_menu_controls,
                text="quit",
                command=root.quit

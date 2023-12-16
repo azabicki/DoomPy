@@ -108,8 +108,8 @@ for files in glob.glob(os.path.join(curdir, "sounds", "*.mp3")):
 
 
 # switches #########################################################################################
-global music_onoff, icons_onoff, show_icons, points_onoff
-music_onoff = 'on'      # 'off' / 'on'
+global music_onoff, icons_onoff, points_onoff, show_icons
+music_onoff = 'off'     # 'off' / 'on'
 icons_onoff = 'on'      # 'off' / 'on' / 'full'
 points_onoff = 'on'     # 'off' / 'on'
 

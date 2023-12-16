@@ -1631,7 +1631,7 @@ def create_menu_frame():
         ).grid(row=0, column=0, pady=(5, 5))
     lbl_music_switch[0] = ttk.Label(
         frame_options,
-        image=images['note_on'],
+        image=images['note_off'],
         cursor="heart")
     lbl_music_switch[0].grid(row=0, column=1, padx=(0, 10))
     lbl_music_switch[0].bind("<Button-1>", lambda e: switch('music'))

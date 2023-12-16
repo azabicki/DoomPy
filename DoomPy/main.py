@@ -322,9 +322,9 @@ def btn_remove_trait(from_):
         return
 
     # print log
-    write_log(['remove', 'error_no_trait'], plr['name'][from_].get(), traits_df.loc[card].trait, card)
+    write_log(['remove', 'error_discard'], plr['name'][from_].get(), traits_df.loc[card].trait, card)
     if attachment != 'none':
-        write_log(['remove', 'error_no_trait'], traits_df.loc[attachment].trait, attachment)
+        write_log(['remove', 'error_discard_attachment'], traits_df.loc[attachment].trait, attachment)
 
     # remove card(s) from player & clear trait selection
     plr['trait_pile'][from_].remove(card)

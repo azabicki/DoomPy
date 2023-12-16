@@ -1566,8 +1566,9 @@ def create_player_frame(p):
 
     cbox_move_to = ttk.Combobox(
         frame_traits,
-        height=game['n_player'],
-        values=[" move trait to ..."] + cfg["names"][:game['n_player']],
+        height=game['n_player']+1,
+        values=[" move trait to ..."] + ['p' + str(i+1) + ': ' + j.get()
+                                         for i, j in enumerate(plr['name'])],
         exportselection=0,
         state="readonly",
         width=12,

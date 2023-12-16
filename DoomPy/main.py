@@ -99,10 +99,10 @@ def pre_play():
     catastrophe['cbox'][2].event_generate("<<ComboboxSelected>>")
 
 
-def switch(switch):
+def switch(inp):
     global icons_onoff, music_onoff, points_onoff
 
-    match switch:
+    match inp:
         case 'icons':
             if icons_onoff == 'off':
                 icons_onoff = 'on'
@@ -123,7 +123,6 @@ def switch(switch):
                 if frame_trait_pile[p] is not None:
                     create_trait_pile(frame_trait_pile[p], p)
 
-    match switch:
         case 'show_icons':
             if icons_onoff == 'on':
                 show_icons['color'] = True        # default: True

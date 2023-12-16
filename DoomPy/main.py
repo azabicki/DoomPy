@@ -15,74 +15,75 @@ from log import write_log
 
 from globals_ import cfg, images_dict, sounds, music_onoff, icons_onoff, show_icons  # noqa: F401
 from globals_ import traits_df, traits_dfi, ages_df, catastrophies_dfi
-from globals_ import lbl_music_switch, lbl_icons_switch, ent_trait_search
-from globals_ import game
+from globals_ import lbl_music_switch, lbl_icons_switch, ent_trait_search, lbox_menu_deck
+from globals_ import frame_player, frame_trait_pile
+from globals_ import game, plr, deck, deck_filtered_idx, play_this_trait, catastrophe, worlds_end
 
 
 # functions ##############################################################
 def pre_play():
-    global play_trait
+    global play_this_trait
 
     start_game()
     pre_play_set = 2
 
     if pre_play_set == 1:
         lisa = [5, 16, 22, 25, 64, 98, 160, 161]
-        for play_trait in lisa:
+        for play_this_trait in lisa:
             btn_play_trait(0)
 
         julia = [137, 162, 163, 164, 175, 208]
-        for play_trait in julia:
+        for play_this_trait in julia:
             btn_play_trait(1)
 
         anton = [196, 209, 232, 277, 278, 287, 290, 311, 312, 313, 314]
-        for play_trait in anton:
+        for play_this_trait in anton:
             btn_play_trait(2)
 
         adam = [235, 246, 315, 317, 318, 324, 352]
-        for play_trait in adam:
+        for play_this_trait in adam:
             btn_play_trait(3)
 
     if pre_play_set == 2:
         p0 = list(np.random.randint(low=0, high=len(traits_df), size=12))
-        for play_trait in p0:
+        for play_this_trait in p0:
             btn_play_trait(0)
 
         p1 = list(np.random.randint(low=0, high=len(traits_df), size=10))
-        for play_trait in p1:
+        for play_this_trait in p1:
             btn_play_trait(1)
 
         p2 = list(np.random.randint(low=0, high=len(traits_df), size=7))
-        for play_trait in p2:
+        for play_this_trait in p2:
             btn_play_trait(2)
 
         p3 = list(np.random.randint(low=0, high=len(traits_df), size=9))
-        for play_trait in p3:
+        for play_this_trait in p3:
             btn_play_trait(3)
 
     if pre_play_set == 3:
         lisa = [5, 27]
-        for play_trait in lisa:
+        for play_this_trait in lisa:
             btn_play_trait(0)
 
         julia = [54, 175]
-        for play_trait in julia:
+        for play_this_trait in julia:
             btn_play_trait(1)
 
         anton = [202, 240]
-        for play_trait in anton:
+        for play_this_trait in anton:
             btn_play_trait(2)
 
         adam = [241, 293, 302]
-        for play_trait in adam:
+        for play_this_trait in adam:
             btn_play_trait(3)
 
-    catastrophies_cbox[0].current(3)
-    catastrophies_cbox[0].event_generate("<<ComboboxSelected>>")
-    catastrophies_cbox[1].current(15)
-    catastrophies_cbox[1].event_generate("<<ComboboxSelected>>")
-    catastrophies_cbox[2].current(18)
-    catastrophies_cbox[2].event_generate("<<ComboboxSelected>>")
+    catastrophe['cbox'][0].current(3)
+    catastrophe['cbox'][0].event_generate("<<ComboboxSelected>>")
+    catastrophe['cbox'][1].current(15)
+    catastrophe['cbox'][1].event_generate("<<ComboboxSelected>>")
+    catastrophe['cbox'][2].current(18)
+    catastrophe['cbox'][2].event_generate("<<ComboboxSelected>>")
 
 
 def switch_icons():
@@ -136,8 +137,8 @@ def switch_icons():
 
     # update all trait piles
     for p in range(game['n_player']):
-        if player_rb_frames[p] is not None:
-            create_trait_pile(player_rb_frames[p], p)
+        if frame_trait_pile[p] is not None:
+            create_trait_pile(frame_trait_pile[p], p)
 
 
 def switch_music():
@@ -161,13 +162,14 @@ def play(trait):
 
 
 def btn_clear_trait_search():
-    global play_trait
+    global play_this_trait
 
-    search_trait.set("")
-    lbox_cards_idx.set(deck_cards)
-    lbox_cards_str.set(traits_df.loc[deck_cards].trait.values.tolist())
-    lbox_traits[0].selection_clear(0, tk.END)
-    play_trait = None
+    str_trait_search.set("")
+    deck_filtered_idx.clear()
+    deck_filtered_idx.extend(deck)
+    deck_filtered_str.set(traits_df.loc[deck_filtered_idx].trait.values.tolist())
+    lbox_menu_deck[0].selection_clear(0, tk.END)
+    play_this_trait = None
 
 
 def btn_traits_world_end(from_, trait_idx, event):
@@ -186,7 +188,7 @@ def btn_traits_world_end(from_, trait_idx, event):
     old_effect = traits_df.loc[trait_idx].cur_worlds_end_trait
 
     if old_effect != 'none' and old_effect != effect:
-        for trait in player_traits[from_]:
+        for trait in plr['trait_pile'][from_]:
             # skip current worlds-end-trait
             if trait == trait_idx:
                 continue
@@ -213,7 +215,7 @@ def btn_traits_world_end(from_, trait_idx, event):
             # redo worlds_end effects
             if we_effect != 'none':
                 traits_df.loc[trait, 'cur_worlds_end_trait'] = we_effect
-                update_traits_current_status('worlds_end', trait, player_traits[from_])
+                update_traits_current_status('worlds_end', trait, plr['trait_pile'][from_])
 
     # set WE-effect to status_row of trait
     if effect_idx == 0:
@@ -222,7 +224,7 @@ def btn_traits_world_end(from_, trait_idx, event):
         traits_df.loc[trait_idx, 'cur_worlds_end_trait'] = effect
 
     # apply WE-effect and update current_values
-    update_traits_current_status('worlds_end', trait_idx, player_traits[from_])
+    update_traits_current_status('worlds_end', trait_idx, plr['trait_pile'][from_])
 
     # *** !!! ***   VIRAL specific effect   *** !!! ************************
     # -> save list as string which will save drop points for each player
@@ -248,7 +250,7 @@ def btn_traits_world_end(from_, trait_idx, event):
 
     # update all trait piles
     for p in range(game['n_player']):
-        create_trait_pile(player_rb_frames[p], p)
+        create_trait_pile(frame_trait_pile[p], p)
 
 
 def btn_attach_to(from_, attachment, event, possible_hosts):
@@ -266,7 +268,7 @@ def btn_attach_to(from_, attachment, event, possible_hosts):
     if host == ' ... ':
         write_log(['attach_to', 'detached'], traits_df.loc[attachment].trait)
     else:
-        write_log(['attach_to', 'attached'], player_name[from_].get(), traits_df.loc[attachment].trait, host)
+        write_log(['attach_to', 'attached'], plr['name'][from_].get(), traits_df.loc[attachment].trait, host)
 
     # check if attachment moved from old_host
     if old_host_idx:
@@ -290,12 +292,12 @@ def btn_attach_to(from_, attachment, event, possible_hosts):
 
     # update all trait piles
     for p in range(game['n_player']):
-        create_trait_pile(player_rb_frames[p], p)
+        create_trait_pile(frame_trait_pile[p], p)
 
 
 def btn_remove_trait(from_):
     # get card & its attachment
-    card = player_trait_selected[from_].get()
+    card = plr['trait_selected'][from_].get()
     if not np.isnan(card):
         attachment = traits_df.loc[card].cur_attachment
 
@@ -310,21 +312,21 @@ def btn_remove_trait(from_):
         return
 
     # print log
-    write_log(['remove', 'error_no_trait'], player_name[from_].get(), traits_df.loc[card].trait, card)
+    write_log(['remove', 'error_no_trait'], plr['name'][from_].get(), traits_df.loc[card].trait, card)
     if attachment != 'none':
         write_log(['remove', 'error_no_trait'], traits_df.loc[attachment].trait, attachment)
 
     # remove card(s) from player & clear trait selection
-    player_traits[from_].remove(card)
+    plr['trait_pile'][from_].remove(card)
     if attachment != 'none':
-        player_traits[from_].remove(attachment)
-    player_trait_selected[from_].set(np.nan)
+        plr['trait_pile'][from_].remove(attachment)
+    plr['trait_selected'][from_].set(np.nan)
 
     # add to deck traits & update deck_listbox
-    bisect.insort_left(deck_cards, card)
+    bisect.insort_left(deck, card)
     if attachment != 'none':
-        bisect.insort_left(deck_cards, attachment)
-    search_trait_in_list(search_trait)  # keep current str in search_entry
+        bisect.insort_left(deck, attachment)
+    search_trait_in_list(str_trait_search)  # keep current str in search_entry
 
     # in case that trait have a special "discard-rule"
     special_rule = di_rules.check_trait(traits_df, card, from_)
@@ -341,7 +343,7 @@ def btn_remove_trait(from_):
 
     # update all trait piles
     for p in range(game['n_player']):
-        create_trait_pile(player_rb_frames[p], p)
+        create_trait_pile(frame_trait_pile[p], p)
 
     # focus back to search field
     ent_trait_search[0].focus_set()
@@ -349,7 +351,7 @@ def btn_remove_trait(from_):
 
 def btn_move_trait(from_, cbox_move_to):
     # get card & its attachment
-    card = player_trait_selected[from_].get()
+    card = plr['trait_selected'][from_].get()
     if not np.isnan(card):
         attachment = traits_df.loc[card].cur_attachment
 
@@ -382,20 +384,20 @@ def btn_move_trait(from_, cbox_move_to):
     add_txt = "(and its attachment '{}' (id:{}))".format(traits_df.loc[attachment].trait, attachment) \
         if attachment != 'none' else ''
     write_log(['move', 'move_to'],
-              traits_df.loc[card].trait, card, add_txt, player_name[from_].get(), player_name[to].get())
+              traits_df.loc[card].trait, card, add_txt, plr['name'][from_].get(), plr['name'][to].get())
 
     # remove traits(s) from 'giving' player, update trait_pile & clear trait selection
-    player_traits[from_].remove(card)
+    plr['trait_pile'][from_].remove(card)
     if attachment != 'none':
-        player_traits[from_].remove(attachment)
+        plr['trait_pile'][from_].remove(attachment)
 
-    create_trait_pile(player_rb_frames[from_], from_)
-    player_trait_selected[from_].set(np.nan)
+    create_trait_pile(frame_trait_pile[from_], from_)
+    plr['trait_selected'][from_].set(np.nan)
 
     # add to 'receiving' players traits
-    bisect.insort_left(player_traits[to], card)
+    bisect.insort_left(plr['trait_pile'][to], card)
     if attachment != 'none':
-        bisect.insort_left(player_traits[to], attachment)
+        bisect.insort_left(plr['trait_pile'][to], attachment)
 
     # update scoring, stars & genes
     update_stars()
@@ -404,7 +406,7 @@ def btn_move_trait(from_, cbox_move_to):
 
     # update all trait piles
     for p in range(game['n_player']):
-        create_trait_pile(player_rb_frames[p], p)
+        create_trait_pile(frame_trait_pile[p], p)
 
     # clear combobox
     cbox_move_to.current(0)
@@ -415,28 +417,28 @@ def btn_move_trait(from_, cbox_move_to):
 
 def btn_play_trait(to):
     # return, if no trait selected
-    if play_trait is None:
+    if play_this_trait is None:
         write_log(['play', 'error_no_trait'])
         return
 
     # get card
-    trait_idx = play_trait
+    trait_idx = play_this_trait
     trait = traits_df.loc[trait_idx].trait
 
     # return, if player already has two dominants
     if traits_df.loc[trait_idx]['dominant'] == 1:
-        if sum([1 for t in player_traits[to] if traits_df.loc[t].dominant == 1]) == 2:
+        if sum([1 for t in plr['trait_pile'][to] if traits_df.loc[t].dominant == 1]) == 2:
             write_log(['play', 'error_2dominants'])
             return
 
     # print log
-    write_log(['play', 'play'], player_name[to].get(), trait)
+    write_log(['play', 'play'], plr['name'][to].get(), trait)
 
     # add to players traits & update trait_pile
-    bisect.insort_left(player_traits[to], trait_idx)
+    bisect.insort_left(plr['trait_pile'][to], trait_idx)
 
     # remove from deck & update deck_listbox
-    deck_cards.remove(trait_idx)
+    deck.remove(trait_idx)
     btn_clear_trait_search()
 
     # update scoring, stars & genes
@@ -446,7 +448,7 @@ def btn_play_trait(to):
 
     # update all trait piles
     for p in range(game['n_player']):
-        create_trait_pile(player_rb_frames[p], p)
+        create_trait_pile(frame_trait_pile[p], p)
 
     # play sound bites
     play(trait)
@@ -457,7 +459,7 @@ def btn_play_trait(to):
 
 def btn_play_worlds_end():
     # do nothing if no catastrophy selected
-    if worlds_end_cbox[0].current() == 0:
+    if worlds_end['cbox'].current() == 0:
         write_log(['worlds_end', 'error_no_event'])
         return
 
@@ -469,22 +471,22 @@ def btn_play_worlds_end():
 
     # update all trait piles
     for p in range(game['n_player']):
-        create_trait_pile(player_rb_frames[p], p)
+        create_trait_pile(frame_trait_pile[p], p)
 
 
 def btn_play_catastrophe(event, c):
     # get played catastrophe
     cbox_idx = event.widget.current()
     played_str = event.widget.get()
-    played_before = catastrophies_played[c]
+    played_before = catastrophe['played'][c]
     if cbox_idx > 0:
-        played_idx = catastrophies_possible[c][cbox_idx-1]
+        played_idx = catastrophe['possible'][c][cbox_idx-1]
 
     # return, if no catastrophe was selected
     if cbox_idx == 0:
         if played_before is not None:
-            old_cbox_idx = catastrophies_possible[c].index(played_before) + 1
-            catastrophies_cbox[c].current(old_cbox_idx)
+            old_cbox_idx = catastrophe['possible'][c].index(played_before) + 1
+            catastrophe['cbox'][c].current(old_cbox_idx)
         write_log(['catastrophe', 'error_no_catastrophe'])
         return
 
@@ -497,44 +499,44 @@ def btn_play_catastrophe(event, c):
     write_log(['catastrophe', 'catastrophe'], c+1, played_str, played_idx)
 
     # set played catastrophe
-    catastrophies_played[c] = played_idx
+    catastrophe['played'][c] = played_idx
 
     # update possible catastrophies for later ones
     for i in range(1, game['n_catastrophies']):
         # reset possible's
-        catastrophies_possible[i] = catastrophies_dfi.copy()
+        catastrophe['possible'][i] = catastrophies_dfi.copy()
 
         # remove previous catastrophies from possible's
         for prev in range(0, i):
-            if catastrophies_played[prev] is not None:
-                catastrophies_possible[i].remove(catastrophies_played[prev])
+            if catastrophe['played'][prev] is not None:
+                catastrophe['possible'][i].remove(catastrophe['played'][prev])
 
                 pos_cat_values = [" catastrophe {}...".format(1+1)] + \
-                    ages_df.loc[catastrophies_possible[i]].name.values.tolist()
-                catastrophies_cbox[i].configure(values=pos_cat_values)
+                    ages_df.loc[catastrophe['possible'][i]].name.values.tolist()
+                catastrophe['cbox'][i].configure(values=pos_cat_values)
 
                 # check if current catastrophie was selected by a next one
-                if catastrophies_played[prev] == catastrophies_played[i]:
+                if catastrophe['played'][prev] == catastrophe['played'][i]:
                     # reset i'th catastrophe
-                    catastrophies_played[i] = None
-                    catastrophies_cbox[i].current(0)
+                    catastrophe['played'][i] = None
+                    catastrophe['cbox'][i].current(0)
 
                     # disable forthcoming catastrophies & worlds end
                     for z in range(i+1, game['n_catastrophies']):
-                        catastrophies_cbox[z].configure(state="disabled")
-                        worlds_end_cbox[0].configure(state="disabled")
+                        catastrophe['cbox'][z].configure(state="disabled")
+                        worlds_end['cbox'].configure(state="disabled")
 
     # enable next catastrophe
     if c < game['n_catastrophies']-1:
-        catastrophies_cbox[c+1].configure(state="readonly")
+        catastrophe['cbox'][c+1].configure(state="readonly")
     else:
-        worlds_end_cbox[0].configure(state="readonly")
+        worlds_end['cbox'].configure(state="readonly")
 
     # update worlds end combobox
-    played_catastrophies = [ages_df.loc[catastrophies_played[i], "name"]
+    played_catastrophies = [ages_df.loc[catastrophe['played'][i], "name"]
                             for i in range(game['n_catastrophies'])
-                            if catastrophies_played[i] is not None]
-    worlds_end_cbox[0]['values'] = [" select world's end ..."] + played_catastrophies
+                            if catastrophe['played'][i] is not None]
+    worlds_end['cbox']['values'] = [" select world's end ..."] + played_catastrophies
 
     # update genes & scoring
     update_genes()
@@ -542,7 +544,7 @@ def btn_play_catastrophe(event, c):
 
     # update all trait piles
     for p in range(game['n_player']):
-        create_trait_pile(player_rb_frames[p], p)
+        create_trait_pile(frame_trait_pile[p], p)
 
     # focus back to search field
     ent_trait_search[0].focus_set()
@@ -556,16 +558,16 @@ def update_manual_we(event, p):
         # check limit of (hard-coded) 20
         if int(value) > 20:
             value = '20'
-            player_we_effects[p].set(value)
+            plr['WE_effect'][p].set(value)
         if int(value) < -20:
             value = '-20'
-            player_we_effects[p].set(value)
+            plr['WE_effect'][p].set(value)
 
         # update scoring
         update_scoring()
 
         # update this players trait pile
-        create_trait_pile(player_rb_frames[p], p)
+        create_trait_pile(frame_trait_pile[p], p)
 
 
 def update_manual_drops(event, trait, p):
@@ -588,7 +590,7 @@ def update_manual_drops(event, trait, p):
     update_scoring()
 
     # update this players trait pile
-    create_trait_pile(player_rb_frames[p], p)
+    create_trait_pile(frame_trait_pile[p], p)
 
 
 def update_traits_current_status(todo, *args):
@@ -673,7 +675,7 @@ def update_traits_current_status(todo, *args):
 
             # update all trait piles
             for p in range(game['n_player']):
-                create_trait_pile(player_rb_frames[p], p)
+                create_trait_pile(frame_trait_pile[p], p)
 
         case 'update_all':
             update_stars()
@@ -682,28 +684,28 @@ def update_traits_current_status(todo, *args):
 
             # update all trait piles
             for p in range(game['n_player']):
-                create_trait_pile(player_rb_frames[p], p)
+                create_trait_pile(frame_trait_pile[p], p)
 
 
 def update_scoring():
     for p in range(game['n_player']):
         # get cards
-        trait_pile = player_traits[p]
+        trait_pile = plr['trait_pile'][p]
 
         # calculate world's end points
-        p_worlds_end = we_rules.worlds_end(traits_df, worlds_end.get(), player_traits,
-                                           p, player_genes, player_we_effects)
+        p_worlds_end = we_rules.worlds_end(traits_df, worlds_end.get(), plr['trait_pile'],
+                                           p, plr['genes'], plr['WE_effect'])
 
         # calculate face value
         p_face = int(sum([traits_df.loc[trait_idx].cur_face for trait_idx in trait_pile
                           if not isinstance(traits_df.loc[trait_idx].cur_face, str)]))
 
         # calculate drops points
-        p_drop = dr_rules.drop_points(traits_df, player_traits, p, player_genes)
+        p_drop = dr_rules.drop_points(traits_df, plr['trait_pile'], p, plr['genes'])
 
         # calculate drops points
         p_MOL = 0
-        for x in [x.get() for x in player_MOLs[p]]:
+        for x in [x.get() for x in plr['MOL'][p]]:
             if x.isnumeric():
                 p_MOL += int(x)
 
@@ -711,14 +713,14 @@ def update_scoring():
         total = p_face + p_drop + p_worlds_end + p_MOL
 
         # update points
-        player_points[p]['face'].set(p_face)
-        player_points[p]['drops'].set(p_drop)
-        player_points[p]['worlds_end'].set(p_worlds_end)
-        player_points[p]['MOL'].set(p_MOL)
-        player_points[p]['total'].set(total)
+        plr['points'][p]['face'].set(p_face)
+        plr['points'][p]['drops'].set(p_drop)
+        plr['points'][p]['worlds_end'].set(p_worlds_end)
+        plr['points'][p]['MOL'].set(p_MOL)
+        plr['points'][p]['total'].set(total)
 
         # print log, only if points changed
-        write_log(['scoring', 'update'], player_name[p].get(), p_face, p_drop, p_worlds_end, p_MOL, total)
+        write_log(['scoring', 'update'], plr['name'][p].get(), p_face, p_drop, p_worlds_end, p_MOL, total)
 
 
 def update_genes():
@@ -728,7 +730,7 @@ def update_genes():
     # loop players and calculate +- genes of all played traits --------------------------
     for p in range(game['n_player']):
         # loop traits in trait_pile
-        for trait_idx in player_traits[p]:
+        for trait_idx in plr['trait_pile'][p]:
             # get gene effect of this card
             effect = traits_df.loc[trait_idx].effect_gene_pool
 
@@ -754,12 +756,12 @@ def update_genes():
 
                 # print log
                 write_log(['genes', 'trait'],
-                          player_name[p].get(), traits_df.loc[trait_idx].trait, value, who, diff_genes)
+                          plr['name'][p].get(), traits_df.loc[trait_idx].trait, value, who, diff_genes)
 
     # check what catastrophies were played alread ---------------------------------------
     for c in range(game['n_catastrophies']):
         # get card & effect
-        c_idx = catastrophies_played[c]
+        c_idx = catastrophe['played'][c]
 
         # check if catastrophy was played
         if c_idx is not None:
@@ -785,16 +787,16 @@ def update_genes():
                 diff_genes[p] += 1
 
                 # print log
-                write_log(['genes', 'spores'], sprs_idx, player_name[p].get(), diff_genes)
+                write_log(['genes', 'spores'], sprs_idx, plr['name'][p].get(), diff_genes)
 
     # Sleepy
     slp_idx = traits_df.index[traits_df.trait == 'Sleepy'].tolist()[0]
-    if any(slp_idx in tp for tp in player_traits):
+    if any(slp_idx in tp for tp in plr['trait_pile']):
         slp_eff = [i.get() for i in sleepy_spinbox]
         diff_genes = [diff_genes[x]+slp_eff[x] for x in range(len(diff_genes))]
         if any(slp_eff):
             p = [i for i, e in enumerate(slp_eff) if e != 0]
-            write_log(['genes', 'sleepy'], player_name[p[0]].get(), slp_eff[p[0]], diff_genes)
+            write_log(['genes', 'sleepy'], plr['name'][p[0]].get(), slp_eff[p[0]], diff_genes)
     else:  # sleepy in no trait pile -> reset values
         for i in range(game['n_player']):
             sleepy_spinbox[i].set(0)
@@ -803,28 +805,28 @@ def update_genes():
     for p in range(game['n_player']):
         new_gp = game['n_genes'] + diff_genes[p]
         if new_gp > 8:
-            player_genes[p].set(8)
+            plr['genes'][p].set(8)
         elif new_gp < 1:
-            player_genes[p].set(1)
+            plr['genes'][p].set(1)
         else:
-            player_genes[p].set(new_gp)
+            plr['genes'][p].set(new_gp)
 
     # print log - if genes are effected
     if any(i > 0 for i in diff_genes):
         write_log(['genes', 'total_effect'],
-                  diff_genes, [player_genes[i].get() for i in range(game['n_player'])])
+                  diff_genes, [plr['genes'][i].get() for i in range(game['n_player'])])
 
 
 def update_stars():
     # loop players
     for p in range(game['n_player']):
         # number of dominant traits
-        n_dominant = np.nansum([traits_df.loc[trait_idx].dominant for trait_idx in player_traits[p]])
+        n_dominant = np.nansum([traits_df.loc[trait_idx].dominant for trait_idx in plr['trait_pile'][p]])
 
         # find label widgets
-        tmp_frame = frames_player[p].winfo_children()
-        lbl1 = frames_player[p].nametowidget(str(tmp_frame[0]) + '.!label2')
-        lbl2 = frames_player[p].nametowidget(str(tmp_frame[0]) + '.!label3')
+        tmp_frame = frame_player[p].winfo_children()
+        lbl1 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.!label2')
+        lbl2 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.!label3')
 
         # edit images
         lbl1.configure(image=images['no_star'])
@@ -837,42 +839,44 @@ def update_stars():
 
 def search_trait_in_list(inp):
     value = inp.get()
-    lbox_traits[0].selection_clear(0, tk.END)
+    lbox_menu_deck[0].selection_clear(0, tk.END)
 
     if value == "":
-        lbox_cards_idx.set(deck_cards)
-        lbox_cards_str.set(traits_df.loc[deck_cards].trait.values.tolist())
+        deck_filtered_idx.clear()
+        deck_filtered_idx.extend(deck)
+        deck_filtered_str.set(traits_df.loc[deck].trait.values.tolist())
     else:
         filtered_trait_str = []
         filtered_trait_idx = []
-        for idx in deck_cards:
+        for idx in deck:
             if value.lower() in traits_df.loc[idx].trait.lower():
                 filtered_trait_idx.append(idx)
                 filtered_trait_str.append(traits_df.loc[idx].trait)
 
-        lbox_cards_idx.set(filtered_trait_idx)
-        lbox_cards_str.set(filtered_trait_str)
+        deck_filtered_idx.clear()
+        deck_filtered_idx.extend(filtered_trait_idx)
+        deck_filtered_str.set(filtered_trait_str)
 
 
 def update_selected_trait(where, idx):
     # select trait in deck/listbox
     if where == "lbox":
         # trait in DECK is selected as 'play_trait'
-        global play_trait
-        play_trait = lbox_cards_idx.get()[idx[0]]
+        global play_this_trait
+        play_this_trait = deck_filtered_idx[idx[0]]
 
         # print log
         write_log(['select', 'deck'],
-                  traits_df.loc[play_trait].trait, play_trait)
+                  traits_df.loc[play_this_trait].trait, play_this_trait)
 
     # select trait in one of players trait pile
     else:
         # note: 'where'  == 'who'
-        player_trait_selected[where].set(idx.get())
+        plr['trait_selected'][where].set(idx.get())
 
         # print log
         write_log(['select', 'trait_pile'],
-                  player_name[where].get(), traits_df.loc[idx.get()].trait, idx.get())
+                  plr['name'][where].get(), traits_df.loc[idx.get()].trait, idx.get())
 
 
 def create_trait_pile(frame_trait_overview, p):
@@ -882,7 +886,7 @@ def create_trait_pile(frame_trait_overview, p):
 
     # loop traits in pile
     irow = -1
-    for trait_idx in player_traits[p]:
+    for trait_idx in plr['trait_pile'][p]:
         # get trait name
         trait = traits_df.loc[trait_idx].trait
 
@@ -894,9 +898,9 @@ def create_trait_pile(frame_trait_overview, p):
         rb_trait = tk.Radiobutton(
             frame_trait_overview,
             text=" " + trait,
-            variable=player_trait_selected[p],
+            variable=plr['trait_selected'][p],
             value=trait_idx,
-            command=lambda: update_selected_trait(p, player_trait_selected[p]))
+            command=lambda: update_selected_trait(p, plr['trait_selected'][p]))
         rb_trait.grid(row=irow, column=0, padx=3, pady=ypad, sticky='nsw')
 
         # change font color if dominant
@@ -1145,7 +1149,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
 
             # filter only non-attachment-traits and check if this is already attached to a trait
-            traits_filtered_idx = [None] + at_rules.filter_attachables(traits_df, player_traits[p], trait_idx)
+            traits_filtered_idx = [None] + at_rules.filter_attachables(traits_df, plr['trait_pile'][p], trait_idx)
             traits_filtered_str = [" ... "] + [traits_df.loc[idx].trait
                                                for idx in traits_filtered_idx if idx is not None]
 
@@ -1229,7 +1233,7 @@ def create_trait_pile(frame_trait_overview, p):
 
     # --- VIRAL --- add passively Viral to this trait pile ---------------
     viral_idx = traits_df.index[traits_df.trait == 'Viral'].tolist()[0]
-    if any([viral_idx in tp for tp in player_traits]) and viral_idx not in player_traits[p]:
+    if any([viral_idx in tp for tp in plr['trait_pile']]) and viral_idx not in plr['trait_pile'][p]:
         # create separate frame
         irow += 1
         frame_viral = tk.Frame(frame_trait_overview)
@@ -1264,11 +1268,11 @@ def create_trait_pile(frame_trait_overview, p):
                 image=images[vp_s[p]]
                 ).grid(row=0, column=3)
 
-            write_log(['trait_effects', 'viral'], we_viral, player_name[p].get(), vp_s[p])
+            write_log(['trait_effects', 'viral'], we_viral, plr['name'][p].get(), vp_s[p])
 
     # --- AMATOXINS --- add passively Amatoxins to this trait pile ---------------
     amatoxins_idx = traits_df.index[traits_df.trait == 'Amatoxins'].tolist()[0]
-    if any([amatoxins_idx in tp for tp in player_traits]) and amatoxins_idx not in player_traits[p]:
+    if any([amatoxins_idx in tp for tp in plr['trait_pile']]) and amatoxins_idx not in plr['trait_pile'][p]:
         # create separate frame
         irow += 1
         frame_amatoxins = tk.Frame(frame_trait_overview)
@@ -1307,7 +1311,7 @@ def create_trait_pile(frame_trait_overview, p):
 
     # --- PROWLER --- add passively Prowler to this trait pile ---------------
     prowler_idx = traits_df.index[traits_df.trait == 'Prowler'].tolist()[0]
-    if any([prowler_idx in tp for tp in player_traits]) and prowler_idx not in player_traits[p]:
+    if any([prowler_idx in tp for tp in plr['trait_pile']]) and prowler_idx not in plr['trait_pile'][p]:
         # create separate frame
         irow += 1
         frame_prowler = tk.Frame(frame_trait_overview)
@@ -1342,11 +1346,11 @@ def create_trait_pile(frame_trait_overview, p):
             image=images[vp_s[p]]
             ).grid(row=0, column=4)
 
-        write_log(['trait_effects', 'prowler'], player_name[p].get(), vp_s[p])
+        write_log(['trait_effects', 'prowler'], plr['name'][p].get(), vp_s[p])
 
     # --- SHINY --- add passively Shiny to this trait pile ---------------
     shiny_idx = traits_df.index[traits_df.trait == 'Shiny'].tolist()[0]
-    if any([shiny_idx in tp for tp in player_traits]) and shiny_idx not in player_traits[p]:
+    if any([shiny_idx in tp for tp in plr['trait_pile']]) and shiny_idx not in plr['trait_pile'][p]:
         # create separate frame
         irow += 1
         frame_shiny = tk.Frame(frame_trait_overview)
@@ -1377,13 +1381,13 @@ def create_trait_pile(frame_trait_overview, p):
             image=images[vp_s[p]]
             ).grid(row=0, column=3)
 
-        write_log(['trait_effects', 'shiny'], player_name[p].get(), vp_s[p])
+        write_log(['trait_effects', 'shiny'], plr['name'][p].get(), vp_s[p])
 
     # --- NEOTENY --- check button if Neoteny is in your hand ------------
     # is NEOTENY in your hand? asked via checkbox? But only if its not pöayed
     neoteny_idx = traits_df.index[traits_df.trait == 'Neoteny'].tolist()[0]
     if ("select world's end" not in worlds_end.get() and
-            all(neoteny_idx not in tp for tp in player_traits)):
+            all(neoteny_idx not in tp for tp in plr['trait_pile'])):
         # only if no one has it or this player has it
         neoteny_effect = traits_df.loc[neoteny_idx].cur_effect
         if neoteny_effect == 'none' or neoteny_effect == str(p):
@@ -1460,13 +1464,13 @@ def create_trait_pile(frame_trait_overview, p):
 
         if isinstance(we_eff, str) and ('hand' in we_eff or 'draw' in we_eff):
             we_entry = ttk.Entry(frame_weB,
-                                 textvariable=player_we_effects[p],
+                                 textvariable=plr['WE_effect'][p],
                                  justify=tk.CENTER,
                                  width=3)
             we_entry.grid(row=0, column=1)
             we_entry.bind("<KeyRelease>", lambda e: update_manual_we(e, p))
         else:
-            we_points = str(player_points[p]['worlds_end'].get())
+            we_points = str(plr['points'][p]['worlds_end'].get())
             tk.Label(frame_weB, image=images[we_points],
                      ).grid(row=0, column=1, sticky='w')
 
@@ -1492,7 +1496,7 @@ def create_player_frame(p):
     frame_points.columnconfigure(6, weight=1)
 
     # name
-    ttk.Label(frame_points, textvariable=player_name[p], style="name.TLabel"
+    ttk.Label(frame_points, textvariable=plr['name'][p], style="name.TLabel"
               ).grid(row=0, column=0, padx=5, pady=(5, 0), columnspan=5, sticky='ns')
 
     # stars
@@ -1511,24 +1515,24 @@ def create_player_frame(p):
     ttk.Label(frame_points, image=images['MOL_sb']
               ).grid(row=2, column=2, sticky="e")
 
-    ttk.Label(frame_points, textvariable=player_points[p]['face'], style="points.TLabel"
+    ttk.Label(frame_points, textvariable=plr['points'][p]['face'], style="points.TLabel"
               ).grid(row=1, column=1, sticky="sw")
-    ttk.Label(frame_points, textvariable=player_points[p]['drops'], style="points.TLabel"
+    ttk.Label(frame_points, textvariable=plr['points'][p]['drops'], style="points.TLabel"
               ).grid(row=1, column=3, sticky="sw")
-    ttk.Label(frame_points, textvariable=player_points[p]['worlds_end'], style="points.TLabel"
+    ttk.Label(frame_points, textvariable=plr['points'][p]['worlds_end'], style="points.TLabel"
               ).grid(row=2, column=1, sticky="w")
-    ttk.Label(frame_points, textvariable=player_points[p]['MOL'], style="points.TLabel"
+    ttk.Label(frame_points, textvariable=plr['points'][p]['MOL'], style="points.TLabel"
               ).grid(row=2, column=3, sticky="w")
 
     # total points
-    ttk.Label(frame_points, textvariable=player_points[p]['total'], style="total.TLabel"
+    ttk.Label(frame_points, textvariable=plr['points'][p]['total'], style="total.TLabel"
               ).grid(row=1, column=4, rowspan=2, padx=0, pady=0, sticky='ns')
 
     # gene pool
     ttk.Label(frame_points, text="gene pool"
               ).grid(row=1, column=5, columnspan=2, padx=0, pady=0, sticky='s')
 
-    ttk.Label(frame_points, textvariable=player_genes[p], style="genes.TLabel"
+    ttk.Label(frame_points, textvariable=plr['genes'][p], style="genes.TLabel"
               ).grid(row=2, column=5, columnspan=2, padx=0, pady=0, sticky='n')
 
     # ----- list of traits played ----------------------------------------
@@ -1538,10 +1542,10 @@ def create_player_frame(p):
     frame_traits.columnconfigure(0, weight=1)  # for left button under trait-pile
     frame_traits.columnconfigure(1, weight=1)  # for right button under trait-pile
 
-    player_rb_frames[p] = tk.Frame(frame_traits)
-    player_rb_frames[p].grid(row=0, column=0, columnspan=2, sticky='nesw', padx=border, pady=border)
-    player_rb_frames[p].columnconfigure(1, weight=1)  # for left button under trait-pile
-    create_trait_pile(player_rb_frames[p], p)
+    frame_trait_pile[p] = tk.Frame(frame_traits)
+    frame_trait_pile[p].grid(row=0, column=0, columnspan=2, sticky='nesw', padx=border, pady=border)
+    frame_trait_pile[p].columnconfigure(1, weight=1)  # for left button under trait-pile
+    create_trait_pile(frame_trait_pile[p], p)
 
     # action buttons -----
     ttk.Separator(
@@ -1583,7 +1587,7 @@ def create_player_frame(p):
                   ).grid(row=1, column=2*m, sticky='e')
         MOL_ent = ttk.Entry(frame_MOL,
                             width=4,
-                            textvariable=player_MOLs[p][m])
+                            textvariable=plr['MOL'][p][m])
         MOL_ent.grid(row=1, column=2*m+1, sticky='w')
         MOL_ent.bind("<KeyRelease>", lambda e: update_scoring())
     return frame
@@ -1718,7 +1722,7 @@ def create_menu_frame():
         ).grid(row=i+1, column=0, sticky='e')
         ttk.Entry(
             frame_menu_names,
-            textvariable=player_name[i],
+            textvariable=plr['name'][i],
             width=8,
         ).grid(row=i+1, column=1, sticky='w')
 
@@ -1739,12 +1743,21 @@ def create_menu_frame():
     ent_trait_search[0] = ttk.Entry(
         frame_menu_traits,
         width=10,
-        textvariable=search_trait)
+        textvariable=str_trait_search)
     ent_trait_search[0].grid(row=1, column=0, padx=(10, 0), sticky="w")
-    ent_trait_search[0].bind("<KeyRelease>", lambda e: search_trait_in_list(search_trait))
-    ent_trait_search[0].bind('<Down>', lambda e: lbox_traits[0].focus(), add='+')         # down arrow key is pressed
-    ent_trait_search[0].bind('<Down>', lambda e: lbox_traits[0].selection_set(0), add='+')
-    ent_trait_search[0].bind('<Down>', lambda e: update_selected_trait("lbox", lbox_traits[0].curselection()), add='+')
+    ent_trait_search[0].bind("<KeyRelease>", lambda e: search_trait_in_list(str_trait_search))
+    ent_trait_search[0].bind('<Down>',
+                             lambda e: lbox_menu_deck[0].selection_clear(0, tk.END),
+                             add='+')
+    ent_trait_search[0].bind('<Down>',
+                             lambda e: lbox_menu_deck[0].selection_set(0),
+                             add='+')
+    ent_trait_search[0].bind('<Down>',
+                             lambda e: lbox_menu_deck[0].focus(),
+                             add='+')
+    ent_trait_search[0].bind('<Down>',
+                             lambda e: update_selected_trait("lbox", lbox_menu_deck[0].curselection()),
+                             add='+')
 
     ttk.Button(
         frame_menu_traits,
@@ -1754,17 +1767,17 @@ def create_menu_frame():
     ).grid(row=1, column=1, padx=(0, 10), sticky="w")
 
     # listbox with (filtered) deck-cards -----
-    lbox_traits[0] = tk.Listbox(
+    lbox_menu_deck[0] = tk.Listbox(
         frame_menu_traits,
         height=4,
-        listvariable=lbox_cards_str,
+        listvariable=deck_filtered_str,
         exportselection=False)
-    lbox_traits[0].grid(row=2, column=0, columnspan=2, padx=10)
-    lbox_traits[0].bind("<<ListboxSelect>>",
-                        lambda e: update_selected_trait("lbox", lbox_traits[0].curselection()))
+    lbox_menu_deck[0].grid(row=2, column=0, columnspan=2, padx=10)
+    lbox_menu_deck[0].bind("<<ListboxSelect>>",
+                           lambda e: update_selected_trait("lbox", lbox_menu_deck[0].curselection()))
     # create key bindings to play trait into player's trait pile by hitting number on keyboard
     for p in range(game['n_player']):
-        lbox_traits[0].bind('{}'.format(p+1), lambda e, pp=p: btn_play_trait(pp))
+        lbox_menu_deck[0].bind('{}'.format(p+1), lambda e, pp=p: btn_play_trait(pp))
 
     # 'who gets it?' -----
     ttk.Label(
@@ -1780,7 +1793,7 @@ def create_menu_frame():
         clspn = int(i + 1 == game['n_player'] and (i + 1) % 2 == 1) + 1
         ttk.Button(
             frame_menu_buttons,
-            textvariable=player_name[i],
+            textvariable=plr['name'][i],
             command=partial(btn_play_trait, i),
         ).grid(row=floor(i / 2), column=i % 2, columnspan=clspn)
 
@@ -1798,18 +1811,18 @@ def create_menu_frame():
     ).grid(row=0, column=0, columnspan=2, pady=(5, 0))
     for c in range(game['n_catastrophies']):
         pos_cat_values = [" catastrophe {}...".format(c+1)] + \
-            ages_df.loc[catastrophies_possible[c]].name.values.tolist()
+            ages_df.loc[catastrophe['possible'][c]].name.values.tolist()
 
-        catastrophies_cbox[c] = ttk.Combobox(
+        catastrophe['cbox'][c] = ttk.Combobox(
             frame_menu_catastrophe,
             values=pos_cat_values,
             exportselection=0,
             state="readonly" if c == 0 else "disabled",
             width=18,
             style="move.TCombobox")
-        catastrophies_cbox[c].current(0)
-        catastrophies_cbox[c].grid(row=c+1, column=0, columnspan=2, padx=4, sticky='ns')
-        catastrophies_cbox[c].bind("<<ComboboxSelected>>", lambda ev, c=c: btn_play_catastrophe(ev, c))
+        catastrophe['cbox'][c].current(0)
+        catastrophe['cbox'][c].grid(row=c+1, column=0, columnspan=2, padx=4, sticky='ns')
+        catastrophe['cbox'][c].bind("<<ComboboxSelected>>", lambda ev, c=c: btn_play_catastrophe(ev, c))
 
     # world's end -----
     ttk.Label(
@@ -1818,7 +1831,7 @@ def create_menu_frame():
         font="'' 18",
     ).grid(row=game['n_catastrophies']+1, column=0, columnspan=2, pady=(5, 0))
 
-    worlds_end_cbox[0] = ttk.Combobox(
+    worlds_end['cbox'] = ttk.Combobox(
         frame_menu_catastrophe,
         values=[" select world's end ..."],
         exportselection=0,
@@ -1826,10 +1839,10 @@ def create_menu_frame():
         width=18,
         style="move.TCombobox",
         textvariable=worlds_end)
-    worlds_end_cbox[0].current(0)
-    worlds_end_cbox[0].grid(row=game['n_catastrophies']+2, column=0, columnspan=2,
+    worlds_end['cbox'].current(0)
+    worlds_end['cbox'].grid(row=game['n_catastrophies']+2, column=0, columnspan=2,
                             padx=4, pady=(0, 5), sticky='ns')
-    worlds_end_cbox[0].bind("<<ComboboxSelected>>", lambda e: btn_play_worlds_end())
+    worlds_end['cbox'].bind("<<ComboboxSelected>>", lambda e: btn_play_worlds_end())
 
     # ----- frame for control buttons ---------------------------------------------------
     frame_menu_controls = tk.Frame(frame_menu)
@@ -1863,18 +1876,17 @@ def reset_variables():
     game['n_MOLs'] = options['n_MOLs'].get()
 
     # save previous names
-    last_names = player_name.copy()
+    last_names = plr['name'].copy()
 
     # reset _player_ variables
-    frames_player.clear()
-    player_name.clear()
-    player_genes.clear()
-    player_points.clear()
-    player_traits.clear()
-    player_trait_selected.clear()
-    player_rb_frames.clear()
-    player_we_effects.clear()
-    player_MOLs.clear()
+    plr['name'].clear()
+    plr['genes'].clear()
+    plr['points'].clear()
+    plr['trait_pile'].clear()
+    plr['trait_selected'].clear()
+    plr['WE_effect'].clear()
+    plr['MOL'].clear()
+    frame_trait_pile.clear()
 
     neoteny_checkbutton.clear()
     sleepy_spinbox.clear()
@@ -1882,32 +1894,34 @@ def reset_variables():
     # fill variables
     for i in range(game['n_player']):
         if len(last_names) >= i+1:
-            player_name.append(tk.StringVar(value=last_names[i].get()))
-            write_log(['init', 'previous_names'], i+1, player_name[i].get())
+            plr['name'].append(tk.StringVar(value=last_names[i].get()))
+            write_log(['init', 'previous_names'], i+1, plr['name'][i].get())
         else:
-            player_name.append(tk.StringVar(value=cfg["names"][i]))
-            write_log(['init', 'default_names'], i+1, player_name[i].get())
+            plr['name'].append(tk.StringVar(value=cfg["names"][i]))
+            write_log(['init', 'default_names'], i+1, plr['name'][i].get())
 
-        player_genes.append(tk.IntVar(value=game['n_genes']))
-        player_points.append({'face': tk.IntVar(value=0), 'drops': tk.IntVar(value=0),
+        plr['genes'].append(tk.IntVar(value=game['n_genes']))
+        plr['points'].append({'face': tk.IntVar(value=0), 'drops': tk.IntVar(value=0),
                               'worlds_end': tk.IntVar(value=0), 'MOL': tk.IntVar(value=0),
                               'total': tk.IntVar(value=0)})
-        player_traits.append([])
-        player_trait_selected.append(tk.Variable(value=np.nan))
-        player_rb_frames.append(None)
-        player_we_effects.append(tk.StringVar(value='0'))
-        player_MOLs.append([])
+        plr['trait_pile'].append([])
+        plr['trait_selected'].append(tk.Variable(value=np.nan))
+        plr['WE_effect'].append(tk.StringVar(value='0'))
+        plr['MOL'].append([])
+
+        frame_trait_pile.append(None)
         neoteny_checkbutton.append(tk.IntVar(value=0))
         sleepy_spinbox.append(tk.IntVar(value=0))
 
         for m in range(game['n_MOLs']):
-            player_MOLs[i].append(tk.StringVar(value="0"))  # for now, manually editing MOL points in entries
+            plr['MOL'][m].append(tk.StringVar(value="0"))  # for now, manually editing MOL points in entries
 
     # reset deck/lbox card-lists
-    deck_cards.clear()
-    deck_cards.extend(traits_dfi)   # complete list of indicies of all traits
-    lbox_cards_idx.set(traits_dfi)  # complete list of indices of traits for menu_listbox
-    lbox_cards_str.set(traits_df.loc[traits_dfi].trait.values.tolist())  # complete list of names of traits
+    deck.clear()
+    deck.extend(traits_dfi)   # complete list of indicies of all traits
+    deck_filtered_idx.clear()
+    deck_filtered_idx.extend(traits_dfi)  # complete list of indices of traits for menu_listbox
+    deck_filtered_str.set(traits_df.loc[deck].trait.values.tolist())  # complete list of names of traits
 
     # reset manually calculated drop values
     manual_drops.clear()
@@ -1915,14 +1929,17 @@ def reset_variables():
         manual_drops.append(tk.StringVar(value='-'))
 
     # reset occured catastrophies
-    catastrophies_possible.clear()
-    catastrophies_played.clear()
-    catastrophies_cbox.clear()
+    catastrophe['possible'].clear()
+    catastrophe['played'].clear()
+    catastrophe['cbox'].clear()
     for i in range(game['n_catastrophies']):
-        catastrophies_possible.append(catastrophies_dfi.copy())
-        catastrophies_played.append(None)
-        catastrophies_cbox.append([])
-    worlds_end_cbox[0] = None
+        catastrophe['possible'].append(catastrophies_dfi.copy())
+        catastrophe['played'].append(None)
+        catastrophe['cbox'].append([])
+
+    # reset worlds end
+    worlds_end['cbox'].clear()
+    worlds_end['cbox'].append(None)
 
     # reset current status
     traits_df["cur_color"] = traits_df.color
@@ -1957,16 +1974,14 @@ def start_game():
 
     # fill _playground_ frame with _player_ frames -------------------------------------------------
     write_log(['init', 'playground'])
+    frame_player.clear()
     for i in range(game['n_player']):
         # frame_playground.columnconfigure(i, weight=1)
-        frames_player.append(create_player_frame(i))
+        frame_player.append(create_player_frame(i))
 
     # clear traits listbox -------------------------------------------------------------------------
     btn_clear_trait_search()
 
-
-# init system ######################################################################################
-mixer.init()
 
 # _tkinter_ ########################################################################################
 # create a window ----------------------------------------------------------------------------------
@@ -2001,12 +2016,15 @@ gui_style.configure("total.TLabel", font=("", 80, "bold"), foreground="orangered
 gui_style.configure("genes.TLabel", font=("", 38, "bold"), foreground="hotpink1")
 gui_style.configure("move.TCombobox", selectbackground="none")
 
-# tk_inter _variables ------------------------------------------------------------------------------
+# tk_inter_variables -------------------------------------------------------------------------------
 options = {}
 options['n_player'] = tk.IntVar(value=cfg["n_player"])                # OPTIONS: number of players
 options['n_genes'] = tk.IntVar(value=cfg["n_genes"])                  # OPTIONS: gene pool at beginning
 options['n_catastrophies'] = tk.IntVar(value=cfg["n_catastrophies"])  # OPTIONS: number of catastrophies
 options['n_MOLs'] = tk.IntVar(value=cfg["n_MOLs"])                    # OPTIONS: number of MOLs
+
+str_trait_search = tk.StringVar(value="")   # string searching for traits in DECK
+deck_filtered_str = tk.Variable(value="")   # _filtered_ deck of traits_strings in listbox after searching -> str
 
 # load tk-images ------------------------------------------------------------------------------------
 images = {}
@@ -2014,36 +2032,13 @@ for k, v in images_dict.items():
     images[k] = ImageTk.PhotoImage(v)
 
 # init variables -----------------------------------------------------------------------------------
-
-search_trait = tk.StringVar(value="")   # searching for traits in playable deck
-deck_cards = []                         # all traits in deck (or discard pile) left to be drawn / list of idx
-lbox_cards_idx = tk.Variable(value="")  # traits >>shown<< in listbox on the left, i.e. after filtering / list of idx
-lbox_cards_str = tk.Variable(value="")  # traits >>shown<< in listbox on the left, i.e. after filtering / as string
-play_trait = None                       # selected trait (by index in traits_df) in listbox
-lbox_traits = [None]                    # listbox widget of deck cards -> needed to be able to edit selected traits
 manual_drops = []                       # list to save manual drop entries to
-
-catastrophies_possible = []                  # occured catastrophies / StringVar
-catastrophies_played = []                  # occured catastrophies / StringVar
-catastrophies_cbox = []             # comboxes containing possible catastrophies
-worlds_end_cbox = [None]
-worlds_end = tk.StringVar(value="")
-
-frames_player = []          # list of all players frames
-player_name = []            # current players names / tk.StringVar
-player_genes = []           # current players gene pool / tk.IntVar
-player_points = []          # current players points / dictionary
-player_traits = []          # current players traits played / lists
-player_trait_selected = []  # selected traits in players trait piles / StringVar
-player_rb_frames = []       # frame containing players traits -> needed to be able to edit selected traits
-player_we_effects = []      # frame containing players traits -> needed to be able to edit selected traits
-player_MOLs = []            # list of lists containing MOLs for each player
-
 neoteny_checkbutton = []
 sleepy_spinbox = []
 
-# (re)start game -----------------------------------------------------------------------------------
+# (re)start game ###################################################################################
+mixer.init()
 start_game()
 
-# ----- run ----------------------------------------------------------------------------------------
+# run mainloop #####################################################################################
 root.mainloop()

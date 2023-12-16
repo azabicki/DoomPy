@@ -129,17 +129,43 @@ show_icons['attachment'] = False  # default: False
 
 
 # tk_inter variables ###############################################################################
-global lbl_music_switch, lbl_icons_switch, ent_trait_search
+global lbl_music_switch, lbl_icons_switch, ent_trait_search, lbox_menu_deck
 lbl_music_switch = [None]   # label containing music-switch-icon
 lbl_icons_switch = [None]   # label containing icon-switch-icon
 ent_trait_search = [None]   # entry for trait_search
+lbox_menu_deck = [None]     # listbox widget of deck cards -> needed to be able to edit selected traits
 
+global frame_player, frame_trait_pile
+frame_player = []          # list of all players frames
+frame_trait_pile = []       # frame containing players traits -> needed to be able to edit selected traits
 
 # define game variables ############################################################################
 # settings -----------------------------------------------------------------------------------------
-global game
+global game, plr, deck, deck_filtered_idx, play_this_trait, catastrophe, worlds_end
 game = {}
 game['n_player'] = []           # number of current players
 game['n_genes'] = []            # gene pool at start
 game['n_catastrophies'] = []    # number of catastrophies
 game['n_MOLs'] = []             # number of MOLs
+
+plr = {}
+plr['name'] = []
+plr['genes'] = []
+plr['points'] = []
+plr['trait_pile'] = []
+plr['trait_selected'] = []
+plr['WE_effect'] = []
+plr['MOL'] = []
+
+deck = []                       # all traits in deck (or discard pile) left to be drawn / list of idx
+deck_filtered_idx = []          # _filtered_ deck of trait_idx in listbox after searching -> idx
+play_this_trait = [None]          # selected trait (by index in traits_df) in listbox
+
+catastrophe = {}
+catastrophe['possible'] = []                  # occured catastrophies / StringVar
+catastrophe['played'] = []                  # occured catastrophies / StringVar
+catastrophe['cbox'] = []             # comboxes containing possible catastrophies
+
+worlds_end = {}
+worlds_end['cbox'] = [None]
+worlds_end['name'] = ''

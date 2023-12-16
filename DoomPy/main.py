@@ -108,7 +108,24 @@ def switch(switch):
                 icons_onoff = 'on'
                 lbl_icons_switch[0].configure(image=images['icons_on'])
                 write_log(['icons', 'on'])
+            elif icons_onoff == 'on':
+                icons_onoff = 'full'
+                lbl_icons_switch[0].configure(image=images['icons_full'])
+                write_log(['icons', 'full'])
+            else:
+                icons_onoff = 'off'
+                lbl_icons_switch[0].configure(image=images['icons_off'])
+                write_log(['icons', 'off'])
 
+            switch('show_icons')
+            # update all trait piles
+            for p in range(game['n_player']):
+                if frame_trait_pile[p] is not None:
+                    create_trait_pile(frame_trait_pile[p], p)
+
+    match switch:
+        case 'show_icons':
+            if icons_onoff == 'on':
                 show_icons['color'] = True        # default: True
                 show_icons['face'] = True         # default: True
                 show_icons['collection'] = False  # default: False
@@ -119,11 +136,7 @@ def switch(switch):
                 show_icons['worlds_end'] = False  # default: False
                 show_icons['effectless'] = False  # default: False
                 show_icons['attachment'] = False  # default: False
-            elif icons_onoff == 'on':
-                icons_onoff = 'full'
-                lbl_icons_switch[0].configure(image=images['icons_full'])
-                write_log(['icons', 'full'])
-
+            elif icons_onoff == 'full':
                 show_icons['color'] = True          # default: True
                 show_icons['face'] = True           # default: True
                 show_icons['collection'] = True     # default: False
@@ -135,10 +148,6 @@ def switch(switch):
                 show_icons['effectless'] = True     # default: False
                 show_icons['attachment'] = True     # default: False
             else:
-                icons_onoff = 'off'
-                lbl_icons_switch[0].configure(image=images['icons_off'])
-                write_log(['icons', 'off'])
-
                 show_icons['color'] = False       # default: True
                 show_icons['face'] = False        # default: True
                 show_icons['collection'] = False  # default: False
@@ -149,11 +158,6 @@ def switch(switch):
                 show_icons['worlds_end'] = False  # default: False
                 show_icons['effectless'] = False  # default: False
                 show_icons['attachment'] = False  # default: False
-
-            # update all trait piles
-            for p in range(game['n_player']):
-                if frame_trait_pile[p] is not None:
-                    create_trait_pile(frame_trait_pile[p], p)
 
         case 'music':
             if music_onoff == 'off':
@@ -1641,7 +1645,7 @@ def create_menu_frame():
         ).grid(row=0, column=0, pady=(5, 5))
     lbl_music_switch[0] = ttk.Label(
         frame_options,
-        image=images['note_off'],
+        image=init_switch['music'],
         cursor="heart")
     lbl_music_switch[0].grid(row=0, column=1, padx=(0, 10))
     lbl_music_switch[0].bind("<Button-1>", lambda e: switch('music'))
@@ -1881,13 +1885,13 @@ def create_menu_frame():
 
     lbl_icons_switch[0] = ttk.Label(
         frame_menu_controls,
-        image=images['icons_on'],
+        image=init_switch['icons'],
         cursor="target")
     lbl_icons_switch[0].grid(row=0, column=0, padx=(10, 0))
     lbl_icons_switch[0].bind("<Button-1>", lambda e: switch('icons'))
     lbl_points_switch[0] = ttk.Label(
         frame_menu_controls,
-        image=images['points_on'],
+        image=init_switch['points'],
         cursor="target")
     lbl_points_switch[0].grid(row=0, column=1, padx=5)
     lbl_points_switch[0].bind("<Button-1>", lambda e: switch('points'))
@@ -2076,8 +2080,28 @@ for k, v in images_dict.items():
 # init variables -----------------------------------------------------------------------------------
 manual_drops = []                       # list to save manual drop entries to
 
+# set switch images --------------------------------------------------------------------------------
+init_switch = {}
+if music_onoff == 'on':
+    init_switch['music'] = images['note_on']
+else:
+    init_switch['music'] = images['note_off']
+
+if icons_onoff == 'on':
+    init_switch['icons'] = images['icons_on']
+elif icons_onoff == 'full':
+    init_switch['icons'] = images['icons_full']
+else:
+    init_switch['icons'] = images['icons_off']
+
+if points_onoff == 'on':
+    init_switch['points'] = images['points_on']
+else:
+    init_switch['points'] = images['points_off']
+
 # (re)start game ###################################################################################
 mixer.init()
+switch('show_icons')
 start_game()
 
 # run mainloop #####################################################################################

@@ -756,7 +756,7 @@ def update_traits_current_status(todo, *args):
                 write_log(['update_trait_status', 'neoteny_no_one'])
             else:
                 status_df.loc[neoteny_idx, 'effects'] = str(p)
-                write_log(['update_trait_status', 'neoteny_that_one'], p)
+                write_log(['update_trait_status', 'neoteny_that_one'], plr['name'][p].get())
 
             # update scoreboard
             update_scoring()
@@ -1315,11 +1315,9 @@ def create_trait_pile(frame_trait_overview, p):
                 command=lambda: update_traits_current_status('update_all')
             ).grid(row=irow, column=1, sticky='w')
 
-    # *** !!! *** special, individual case *** !!! *************************************************
-    # since 'VIRAL's Drop-of-Life-Effect is affecting other players, hence it needs to be shown on
-    # each other players trait pile, allowing there to enter individual drop values, while giving
-    # the host only the oppurtunity to perform worlds end effect first, find viral index, and check
-    # if it is in another trait pile
+    # *********** special, individual case *** !!! *************************************************
+    # Drop-of-Life-Effects of some traits are affecting other players! hence, effects of these traits
+    # need to be shown on each other players trait pile, allowing to enter individual drop values
     irow += 1
     ttk.Separator(frame_trait_overview, orient='horizontal'
                   ).grid(row=irow, column=0, columnspan=2, padx=5, pady=10, sticky='nesw')
@@ -1450,67 +1448,48 @@ def create_trait_pile(frame_trait_overview, p):
         frame_shiny.grid(row=irow, column=0, columnspan=2, sticky='we')
 
         # add label & drop icon
-        tk.Label(
-            frame_shiny,
-            text="SHINY",
-            fg="#228B22"
-            ).grid(row=0, column=0, padx=(20, 0), sticky='e')
-        tk.Label(
-            frame_shiny,
-            text=" punishes ",
-            image=images["drops"],
-            compound=tk.LEFT
-            ).grid(row=0, column=1, sticky='w')
-
-        # add color icon
-        tk.Label(
-            frame_shiny,
-            image=images['c']
-            ).grid(row=0, column=2)
+        tk.Label(frame_shiny, text="SHINY", fg="#228B22", font="'' 14 bold"
+                 ).grid(row=0, column=0, padx=(10, 0), sticky='ens')
+        # add effect
+        tk.Label(frame_shiny, text="punishes ", image=images["c"], compound=tk.RIGHT
+                 ).grid(row=0, column=1, sticky='wns')
+        # add drop icon
+        tk.Label(frame_shiny, image=images['drops']
+                 ).grid(row=0, column=2)
         # add points icon
-        vp_s = traits_df.loc[shiny_idx].cur_effect.split()
-        tk.Label(
-            frame_shiny,
-            image=images[vp_s[p]]
-            ).grid(row=0, column=3)
+        shiny_dp = status_df.loc[shiny_idx].effects.split()
+        tk.Label(frame_shiny, image=images[shiny_dp[p]]
+                 ).grid(row=0, column=3)
 
-        write_log(['trait_effects', 'shiny'], plr['name'][p].get(), vp_s[p])
+        write_log(['trait_effects', 'shiny'], plr['name'][p].get(), shiny_dp[p])
 
     # --- NEOTENY --- check button if Neoteny is in your hand ------------
-    # is NEOTENY in your hand? asked via checkbox? But only if its not pöayed
+    # is NEOTENY in your hand? asked via checkbox? But only if its not played
     neoteny_idx = traits_df.index[traits_df.trait == 'Neoteny'].tolist()[0]
     if ("select world's end" not in worlds_end['name'].get() and
             all(neoteny_idx not in tp for tp in plr['trait_pile'])):
         # only if no one has it or this player has it
-        neoteny_effect = traits_df.loc[neoteny_idx].cur_effect
+        neoteny_effect = status_df.loc[neoteny_idx].effects
         if neoteny_effect == 'none' or neoteny_effect == str(p):
             # create separate frame for WE_TITLE
             irow += 1
             frame_neoteny = tk.Frame(frame_trait_overview)
             frame_neoteny.grid(row=irow, column=0, columnspan=2, sticky='we')
 
-            tk.Label(frame_neoteny,
-                     text="NEOTENY",
-                     fg="#1C86EE"
-                     ).grid(row=0, column=0, padx=(20, 0), sticky='e')
+            tk.Label(frame_neoteny, text="NEOTENY", fg="#1C86EE", font='"" 14 bold'
+                     ).grid(row=0, column=0, padx=(20, 0), sticky='en')
             if neoteny_checkbutton[p].get() == 1:
-                ttk.Checkbutton(frame_neoteny,
-                                variable=neoteny_checkbutton[p],
-                                text=' got it!',
+                ttk.Checkbutton(frame_neoteny, variable=neoteny_checkbutton[p], text=' got it -> ',
                                 command=lambda: update_traits_current_status('neoteny', int(p))
-                                ).grid(row=0, column=1, padx=(0, 0))
-                ttk.Label(frame_neoteny,
-                          image=images['drops']
-                          ).grid(row=0, column=2)
-                tk.Label(frame_neoteny,
-                         image=images['4']
-                         ).grid(row=0, column=3)
+                                ).grid(row=0, column=1, padx=(0, 0), sticky='wns')
+                ttk.Label(frame_neoteny, image=images['drops']
+                          ).grid(row=0, column=2, sticky='ns')
+                tk.Label(frame_neoteny, image=images['4']
+                         ).grid(row=0, column=3, sticky='ns')
             else:
-                ttk.Checkbutton(frame_neoteny,
-                                variable=neoteny_checkbutton[p],
-                                text=' in my hand???',
+                ttk.Checkbutton(frame_neoteny, variable=neoteny_checkbutton[p], text=' in my hand???',
                                 command=lambda: update_traits_current_status('neoteny', int(p))
-                                ).grid(row=0, column=1, padx=(0, 0))
+                                ).grid(row=0, column=1, padx=(0, 0), sticky='wns')
 
     # **********************************************************************************************
     # ------ worlds end -> manual entries ---------------------------------------------------------

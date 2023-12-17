@@ -447,26 +447,24 @@ def drop_points(p):
 
     # ----- SHINY ----- if Shiny was played by another player -----------------
     shiny_idx = status_df.index[status_df.trait == 'Shiny'].tolist()[0]
-    if (any(shiny_idx in tp for tp in plr['trait_pile']) and
-            'inactive' not in status_df.loc[shiny_idx].effects.lower()):
-        # load current shiny_drop_points
-        shiny_ps = status_df.loc[shiny_idx, 'effects']
+    if (any(shiny_idx in tp for tp in plr['trait_pile'])
+            and not status_df.loc[shiny_idx].inactive):
 
-        # init them, if not done previously
-        if shiny_ps == 'none':
-            shiny_p = [np.nan] * len(gene_pool)
+        # init shiny_points, or unpack them from status_df
+        if status_df.loc[shiny_idx].effects == 'none':
+            shiny_dp = [np.nan] * len(plr['trait_pile'])
         else:
-            shiny_p = [int(i) if i.lstrip('-').isnumeric() else np.nan
-                       for i in shiny_ps.split()]
+            shiny_dp = [int(i) if i.lstrip('-').isnumeric() else np.nan
+                        for i in status_df.loc[shiny_idx].effects.split()]
 
         # calculate drop points
         # -1 all n_colorless own
-        shiny_p[p] = -1 * sum('colorless' in color.lower()
-                              for color in status_df.iloc[traits].color.tolist())
+        shiny_dp[p] = -1 * sum('colorless' in color.lower()
+                               for color in status_df.iloc[traits].color.tolist())
 
         # update total & save updated points to Shiny's 'effects'
-        total += shiny_p[p]
-        status_df.loc[shiny_idx, "effects"] = ' '.join(str(x) for x in shiny_p)
+        total += shiny_dp[p]
+        status_df.loc[shiny_idx, "effects"] = ' '.join(str(x) for x in shiny_dp)
 
     # ----- VIRAL ----- if Viral was played by another player -----------------
     viral_idx = status_df.index[status_df.trait == 'Viral'].tolist()[0]

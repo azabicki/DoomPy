@@ -735,7 +735,7 @@ def update_scoring():
                           if not isinstance(status_df.loc[trait_idx].face, str)]))
 
         # calculate drops points
-        p_drop = rules_dr.drop_points(traits_df, plr['trait_pile'], p, plr['genes'])
+        p_drop = rules_dr.drop_points(p)
 
         # calculate drops points
         p_MOL = 0
@@ -1969,11 +1969,6 @@ def reset_variables():
     deck_filtered_idx.extend(traits_df.index.tolist())  # complete list of indices of traits for menu_listbox
     deck_filtered_str.set(traits_df.loc[deck].trait.values.tolist())  # complete list of names of traits
 
-    # reset manually calculated drop values
-    manual_drops.clear()
-    for i in range(len(traits_df)):
-        manual_drops.append(tk.StringVar(value='-'))
-
     # reset occured catastrophies
     catastrophe['possible'].clear()
     catastrophe['played'].clear()
@@ -2081,9 +2076,6 @@ deck_filtered_str = tk.Variable(value="")   # _filtered_ deck of traits_strings 
 images = {}
 for k, v in images_dict.items():
     images[k] = ImageTk.PhotoImage(v)
-
-# init variables -----------------------------------------------------------------------------------
-manual_drops = []                       # list to save manual drop entries to
 
 # set switch images --------------------------------------------------------------------------------
 init_switch = {}

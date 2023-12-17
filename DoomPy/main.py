@@ -26,27 +26,31 @@ from globals_ import neoteny_checkbutton, sleepy_spinbox
 # functions ##############################################################
 def pre_play():
     start_game()
-    pre_play_set = 1
+    pre_play_set = 'attachments'
 
-    if pre_play_set == 1:
-        lisa = [5, 16, 22, 25, 64, 98, 160, 161]
+    if pre_play_set == 'attachments':
+        lisa = [0, 1, 9, 11, 19, 21, 26, 29, 69, 89, 178, 256, 300]
         for t in lisa:
-            lbox_deck[0].selection_set(t)
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
             btn_play_trait(0)
 
-        julia = [137, 162, 163, 164, 175, 208]
+        julia = [52, 62, 68, 72, 81, 84, 30, 70, 301, 340]
         for t in julia:
-            lbox_deck[0].selection_set(t)
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
             btn_play_trait(1)
 
-        anton = [196, 209, 232, 277, 278, 287, 290, 311, 312, 313, 314]
+        anton = [105, 107, 114, 115, 117, 177, 257, 341]
         for t in anton:
-            lbox_deck[0].selection_set(t)
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
             btn_play_trait(2)
 
-        adam = [235, 246, 315, 317, 318]
+        adam = [362, 356, 347, 336, 320, 291, 283, 127, 128, 182, 183, 199, 200]
         for t in adam:
-            lbox_deck[0].selection_set(t)
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
             btn_play_trait(3)
 
     if pre_play_set == 2:

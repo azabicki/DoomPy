@@ -1097,8 +1097,8 @@ def create_trait_pile(frame_trait_overview, p):
         ttk.Separator(frame_pics, orient='vertical'
                       ).grid(row=0, column=icol, padx=3, pady=3, sticky='ns')
 
-        # ----- current effects due to attachments -------------------------------------------------
-        # _current_ color ----------
+        # ----- current drop/attachment effects  ---------------------------------------------------
+        # *new* color ---------------------------
         cur_color = status_df.loc[trait_idx].color.lower()
         if cur_color != traits_df.loc[trait_idx].color.lower():
             icol += 1
@@ -1113,7 +1113,7 @@ def create_trait_pile(frame_trait_overview, p):
                 image=images[cc+cb+cg+cp+cr]
                 ).grid(row=0, column=icol)
 
-        # drop value ----------
+        # drop value ----------------------------
         cur_drops = status_df.loc[trait_idx].drops
         if not np.isnan(cur_drops):
             icol += 1
@@ -1124,7 +1124,7 @@ def create_trait_pile(frame_trait_overview, p):
                 image=images[drop_string]
                 ).grid(row=0, column=icol)
 
-        # has attachment ----------
+        # has attachment ------------------------
         if status_df.loc[trait_idx].attachment != 'none':
             icol += 1
             tk.Label(
@@ -1132,7 +1132,7 @@ def create_trait_pile(frame_trait_overview, p):
                 image=images['attachment']
                 ).grid(row=0, column=icol)
 
-        # noFX ----------
+        # noFX ----------------------------------
         if status_df.loc[trait_idx].inactive:
             icol += 1
             tk.Label(
@@ -1140,7 +1140,7 @@ def create_trait_pile(frame_trait_overview, p):
                 image=images['noFX']
                 ).grid(row=0, column=icol)
 
-        # noRemove ----------
+        # noRemove ------------------------------
         if status_df.loc[trait_idx].no_remove:
             icol += 1
             tk.Label(
@@ -1148,7 +1148,7 @@ def create_trait_pile(frame_trait_overview, p):
                 image=images['noRemove']
                 ).grid(row=0, column=icol)
 
-        # noDiscard ----------
+        # noDiscard -----------------------------
         if status_df.loc[trait_idx].no_discard:
             icol += 1
             tk.Label(
@@ -1156,7 +1156,7 @@ def create_trait_pile(frame_trait_overview, p):
                 image=images['noDiscard']
                 ).grid(row=0, column=icol)
 
-        # noSteal ----------
+        # noSteal -------------------------------
         if status_df.loc[trait_idx].no_steal:
             icol += 1
             tk.Label(
@@ -1164,7 +1164,7 @@ def create_trait_pile(frame_trait_overview, p):
                 image=images['noSteal']
                 ).grid(row=0, column=icol)
 
-        # noSwap ----------
+        # noSwap --------------------------------
         if status_df.loc[trait_idx].no_swap:
             icol += 1
             tk.Label(
@@ -1172,7 +1172,7 @@ def create_trait_pile(frame_trait_overview, p):
                 image=images['noSwap']
                 ).grid(row=0, column=icol)
 
-        # ----- current effects due to WORLDS END --------------------------------------------------
+        # if WORLDS END effects this trait ------
         if status_df.loc[trait_idx].we_effect != 'none':
             icol += 1
             tk.Label(
@@ -1299,7 +1299,7 @@ def create_trait_pile(frame_trait_overview, p):
                 width=3,
                 textvariable=sleepy_spinbox[p],
                 wrap=False,
-                command=lambda: update_traits_current_status('update_all')
+                command=lambda: update_traits_current_status('update_all')  # update everything
             ).grid(row=irow, column=1, sticky='w')
 
     # *********** special, individual case *** !!! *************************************************

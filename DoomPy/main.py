@@ -1791,13 +1791,11 @@ def create_menu_frame():
     ).grid(row=5, column=0, columnspan=2, padx=10, pady=5, sticky="we")
 
     # info current game -----
-    xxx = ttk.Label(
+    ttk.Label(
         frame_menu_options,
         text="running game",
         font="'' 12 underline",
-    )
-    xxx.grid(row=6, column=0, columnspan=2)
-    xxx.bind("<Button-1>", lambda e: pre_play())
+    ).grid(row=6, column=0, columnspan=2)
     ttk.Label(
         frame_menu_options,
         text="{} catastrophies + {} genes + {} MOLs"
@@ -2101,6 +2099,9 @@ root.geometry("1600x900")
 root.configure(background=cfg["bg_content"])
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
+
+# hit F1 to run pr_play()
+root.bind("<F1>", lambda e: pre_play())
 
 # create _content_ frame ---------------------------------------------------------------------------
 content = tk.Frame(root, width=1200, height=800, bg=cfg["bg_content"])

@@ -155,6 +155,8 @@ def pre_play():
     catastrophe['cbox'][1].event_generate("<<ComboboxSelected>>")
     catastrophe['cbox'][2].current(18)
     catastrophe['cbox'][2].event_generate("<<ComboboxSelected>>")
+    catastrophe['cbox'][3].current(1)
+    catastrophe['cbox'][3].event_generate("<<ComboboxSelected>>")
 
 
 def switch(inp):
@@ -1316,7 +1318,8 @@ def create_trait_pile(frame_trait_overview, p):
 
     # --- VIRAL --- add passively Viral to this trait pile -------------------------
     viral_idx = traits_df.index[traits_df.trait == 'Viral'].tolist()[0]
-    if any([viral_idx in tp for tp in plr['trait_pile']]) and viral_idx not in plr['trait_pile'][p]:
+    if (any([viral_idx in tp for tp in plr['trait_pile']])
+            and viral_idx not in plr['trait_pile'][p]):
         # create separate frame
         irow += 1
         frame_viral = tk.Frame(frame_trait_overview)
@@ -1383,7 +1386,8 @@ def create_trait_pile(frame_trait_overview, p):
 
     # --- PROWLER --- add passively Prowler to this trait pile ---------------------
     prowler_idx = traits_df.index[traits_df.trait == 'Prowler'].tolist()[0]
-    if any([prowler_idx in tp for tp in plr['trait_pile']]) and prowler_idx not in plr['trait_pile'][p]:
+    if (any([prowler_idx in tp for tp in plr['trait_pile']])
+            and prowler_idx not in plr['trait_pile'][p]):
         # create separate frame
         irow += 1
         frame_prowler = tk.Frame(frame_trait_overview)
@@ -1422,7 +1426,8 @@ def create_trait_pile(frame_trait_overview, p):
 
     # --- SHINY --- add passively Shiny to this trait pile -------------------------
     shiny_idx = traits_df.index[traits_df.trait == 'Shiny'].tolist()[0]
-    if any([shiny_idx in tp for tp in plr['trait_pile']]) and shiny_idx not in plr['trait_pile'][p]:
+    if (any([shiny_idx in tp for tp in plr['trait_pile']])
+            and shiny_idx not in plr['trait_pile'][p]):
         # create separate frame
         irow += 1
         frame_shiny = tk.Frame(frame_trait_overview)
@@ -1447,8 +1452,8 @@ def create_trait_pile(frame_trait_overview, p):
     # --- NEOTENY --- check button if Neoteny is in your hand ----------------------
     # is NEOTENY in your hand? asked via checkbox? But only if its not played
     neoteny_idx = traits_df.index[traits_df.trait == 'Neoteny'].tolist()[0]
-    if ("select world's end" not in worlds_end['name'].get() and
-            all(neoteny_idx not in tp for tp in plr['trait_pile'])):
+    if ("select world's end" not in worlds_end['name'].get()
+            and all(neoteny_idx not in tp for tp in plr['trait_pile'])):
         # only if no one has it or this player has it
         neoteny_effect = status_df.loc[neoteny_idx].effects
         if neoteny_effect == 'none' or neoteny_effect == str(p):

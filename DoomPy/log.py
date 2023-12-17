@@ -96,15 +96,15 @@ def write_log(what, *args):
                     f.write(">>> attachment <<< ERROR - clicked on own host\n")
 
                 case 'detached':
-                    print(">>> attachment <<< '{}' (id:{}) is detached from all host..."
+                    print(">>> attachment <<< detached '{}' (id:{}) from host..."
                           .format(*args))
-                    f.write(">>> attachment <<< '{}' (id:{}) is detached from all host...\n"
+                    f.write(">>> attachment <<< detached '{}' (id:{}) from host...\n"
                             .format(*args))
 
                 case 'attached':
-                    print(">>> attachment <<< '{}' is attaching '{}' (id:{}) to '{}' (id:{})"
+                    print(">>> attachment <<< '{}' attached '{}' (id:{}) to '{}' (id:{})"
                           .format(*args))
-                    f.write(">>> attachment <<< '{}' is attaching '{}' (id:{}) to '{}' (id:{})\n"
+                    f.write(">>> attachment <<< '{}' attached '{}' (id:{}) to '{}' (id:{})\n"
                             .format(*args))
 
                 case 'change_host':

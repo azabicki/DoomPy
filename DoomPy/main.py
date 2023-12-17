@@ -646,11 +646,12 @@ def update_traits_current_status(todo, *args):
             status_df.loc[trait, 'drops'] = np.nan
             status_df.loc[trait, 'host'] = 'none'
             status_df.loc[trait, 'attachment'] = 'none'
-            status_df.loc[trait, 'effects'] = True
-            status_df.loc[trait, 'remove'] = True
-            status_df.loc[trait, 'discard'] = True
-            status_df.loc[trait, 'steal'] = True
-            status_df.loc[trait, 'swap'] = True
+            status_df.loc[trait, 'inactive'] = False
+            status_df.loc[trait, 'no_remove'] = False
+            status_df.loc[trait, 'no_discard'] = False
+            status_df.loc[trait, 'no_steal'] = False
+            status_df.loc[trait, 'no_swap'] = False
+            status_df.loc[trait, 'effects'] = 'none'
             status_df.loc[trait, 'traits_WE'] = 'none'
             status_df.loc[trait, 'we_effect'] = 'none'
 
@@ -1987,11 +1988,12 @@ def reset_variables():
     status_df['drops'] = np.nan
     status_df['host'] = 'none'
     status_df['attachment'] = 'none'
-    status_df['effects'] = True
-    status_df['remove'] = True
-    status_df['discard'] = True
-    status_df['steal'] = True
-    status_df['swap'] = True
+    status_df['inactive'] = False
+    status_df['no_remove'] = False
+    status_df['no_discard'] = False
+    status_df['no_steal'] = False
+    status_df['no_swap'] = False
+    status_df['effects'] = 'none'
     status_df['traits_WE'] = 'none'
     status_df['we_effect'] = 'none'
 

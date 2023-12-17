@@ -671,9 +671,9 @@ def update_manual_drops(event, trait, p, change):
 
     # change value according to button
     if change == '+':
-        value = int(cur_value) + 1
+        value = min([int(cur_value) + 1, 20])
     else:
-        value = int(cur_value) - 1
+        value = max([-20, int(cur_value) - 1])
 
     # save value in status_df
     status_df.loc[trait, 'drops'] = value

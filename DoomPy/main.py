@@ -942,6 +942,16 @@ def search_trait_in_list(inp):
         deck_filtered_idx.extend(filtered_trait_idx)
         deck_filtered_str.set(filtered_trait_str)
 
+        # if only 1 pssibility left, select it automatically
+        if len(filtered_trait_idx) == 1:
+            lbox_deck[0].selection_clear(0, tk.END)
+            lbox_deck[0].selection_set(0)
+            lbox_deck[0].focus()
+            lbox_deck[0].see(0)
+            write_log(['select', 'deck'],
+                      traits_df.loc[deck_filtered_idx[0]].trait,
+                      deck_filtered_idx[0])
+
 
 def create_trait_pile(frame_trait_overview, p):
     # first, clean up frame

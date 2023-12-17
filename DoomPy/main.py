@@ -857,7 +857,7 @@ def update_genes():
             write_log(['genes', 'catastrophe'], c_str, effect, diff_genes)
 
     # check for special effects by specific traits --------------------------------------
-    # Spores
+    # ----- Spores ---------------
     sprs_idx = traits_df.index[traits_df.trait == 'Spores'].tolist()[0]
     sprs_eff = status_df.loc[sprs_idx].effects
     if sprs_eff != 'none':
@@ -873,7 +873,7 @@ def update_genes():
             # print log
             write_log(['genes', 'spores'], sprs_idx, plr['name'][p].get(), diff_genes)
 
-    # Sleepy
+    # ----- Sleepy --------------
     slp_idx = traits_df.index[traits_df.trait == 'Sleepy'].tolist()[0]
     if any(slp_idx in tp for tp in plr['trait_pile']):
         slp_eff = [i.get() for i in sleepy_spinbox]
@@ -1358,7 +1358,7 @@ def create_trait_pile(frame_trait_overview, p):
         frame_viral = tk.Frame(frame_trait_overview)
         frame_viral.grid(row=irow, column=0, columnspan=2, sticky='we')
 
-        # add label & drop icon
+        # add trait & drop icon
         tk.Label(
             frame_viral,
             text="VIRAL",
@@ -1389,7 +1389,7 @@ def create_trait_pile(frame_trait_overview, p):
 
             write_log(['trait_effects', 'viral'], we_viral, plr['name'][p].get(), vp_s[p])
 
-    # --- AMATOXINS --- add passively Amatoxins to this trait pile ----------------
+    # --- AMATOXINS --- add passively Amatoxins to this trait pile -----------------
     amatoxins_idx = traits_df.index[traits_df.trait == 'Amatoxins'].tolist()[0]
     if any([amatoxins_idx in tp for tp in plr['trait_pile']]) and amatoxins_idx not in plr['trait_pile'][p]:
         # create separate frame
@@ -1397,7 +1397,7 @@ def create_trait_pile(frame_trait_overview, p):
         frame_amatoxins = tk.Frame(frame_trait_overview)
         frame_amatoxins.grid(row=irow, column=0, columnspan=2, sticky='we')
 
-        # add label & drop icon
+        # add trait & drop icon
         tk.Label(
             frame_amatoxins,
             text="AMATOXINS",
@@ -1428,7 +1428,7 @@ def create_trait_pile(frame_trait_overview, p):
 
             write_log(['trait_effects', 'amatoxins'], we_drops)
 
-    # --- PROWLER --- add passively Prowler to this trait pile ---------------
+    # --- PROWLER --- add passively Prowler to this trait pile ---------------------
     prowler_idx = traits_df.index[traits_df.trait == 'Prowler'].tolist()[0]
     if any([prowler_idx in tp for tp in plr['trait_pile']]) and prowler_idx not in plr['trait_pile'][p]:
         # create separate frame
@@ -1436,7 +1436,7 @@ def create_trait_pile(frame_trait_overview, p):
         frame_prowler = tk.Frame(frame_trait_overview)
         frame_prowler.grid(row=irow, column=0, columnspan=2, sticky='we')
 
-        # add label & drop icon
+        # add trait & drop icon
         tk.Label(
             frame_prowler,
             text="PROWLER",
@@ -1467,7 +1467,7 @@ def create_trait_pile(frame_trait_overview, p):
 
         write_log(['trait_effects', 'prowler'], plr['name'][p].get(), vp_s[p])
 
-    # --- SHINY --- add passively Shiny to this trait pile ---------------
+    # --- SHINY --- add passively Shiny to this trait pile -------------------------
     shiny_idx = traits_df.index[traits_df.trait == 'Shiny'].tolist()[0]
     if any([shiny_idx in tp for tp in plr['trait_pile']]) and shiny_idx not in plr['trait_pile'][p]:
         # create separate frame
@@ -1475,7 +1475,7 @@ def create_trait_pile(frame_trait_overview, p):
         frame_shiny = tk.Frame(frame_trait_overview)
         frame_shiny.grid(row=irow, column=0, columnspan=2, sticky='we')
 
-        # add label & drop icon
+        # add trait
         tk.Label(frame_shiny, text="SHINY", fg="#228B22", font="'' 14 bold"
                  ).grid(row=0, column=0, padx=(10, 0), sticky='ens')
         # add effect
@@ -1491,7 +1491,7 @@ def create_trait_pile(frame_trait_overview, p):
 
         write_log(['trait_effects', 'shiny'], plr['name'][p].get(), shiny_dp[p])
 
-    # --- NEOTENY --- check button if Neoteny is in your hand ------------
+    # --- NEOTENY --- check button if Neoteny is in your hand ----------------------
     # is NEOTENY in your hand? asked via checkbox? But only if its not played
     neoteny_idx = traits_df.index[traits_df.trait == 'Neoteny'].tolist()[0]
     if ("select world's end" not in worlds_end['name'].get() and
@@ -1504,8 +1504,10 @@ def create_trait_pile(frame_trait_overview, p):
             frame_neoteny = tk.Frame(frame_trait_overview)
             frame_neoteny.grid(row=irow, column=0, columnspan=2, sticky='we')
 
+            # add trait
             tk.Label(frame_neoteny, text="NEOTENY", fg="#1C86EE", font='"" 14 bold'
                      ).grid(row=0, column=0, padx=(20, 0), sticky='en')
+            # if is this hand
             if neoteny_checkbutton[p].get() == 1:
                 ttk.Checkbutton(frame_neoteny, variable=neoteny_checkbutton[p], text=' got it -> ',
                                 command=lambda: update_traits_current_status('neoteny', int(p))
@@ -1514,6 +1516,7 @@ def create_trait_pile(frame_trait_overview, p):
                           ).grid(row=0, column=2, sticky='ns')
                 tk.Label(frame_neoteny, image=images['4']
                          ).grid(row=0, column=3, sticky='ns')
+            # not in this hand
             else:
                 ttk.Checkbutton(frame_neoteny, variable=neoteny_checkbutton[p], text=' in my hand???',
                                 command=lambda: update_traits_current_status('neoteny', int(p))

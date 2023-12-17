@@ -321,7 +321,7 @@ def btn_traits_world_end(from_, trait_idx, event):
             cur_drops = traits_df.loc[trait].cur_drops
 
             # reset trait
-            update_traits_current_status('reset', trait, False)
+            update_traits_current_status('reset', trait, [])
 
             # redo attachment effects
             if attachment != 'none':
@@ -407,11 +407,11 @@ def btn_remove_trait(from_):
         bisect.insort_left(deck, attachment)
     search_trait_in_list(str_trait_search)  # keep current str in search_entry
 
-    # in case that trait have a special "discard-rule"
-    special_rule = rules_re.check_trait(traits_df, card, from_)
+    # check, if this trait has a special "remove-rule"
+    remove_rule = rules_re.check_trait(traits_df, card, from_)
 
     # reset current status of card(s)
-    update_traits_current_status('reset', card, special_rule, [])
+    update_traits_current_status('reset', card, remove_rule)
     if attachment != 'none':
         update_traits_current_status('reset', attachment, [])
 
@@ -521,7 +521,7 @@ def btn_attach_to(from_, attachment, event, possible_hosts):
     # check if attachment is set back to "..." (idx=0)
     if event.widget.current() == 0:
         # reset host='none' to status_row of attachment
-        update_traits_current_status('reset', attachment, [])
+        status_df.loc[attachment, 'host'] = 'none'
     else:
         # set new host_idx to status_row of attachment
         status_df.loc[attachment, 'host'] = host_idx
@@ -635,8 +635,7 @@ def update_traits_current_status(todo, *args):
     match todo:
         case 'reset':
             trait = args[0]
-            rule = args[1]
-            log = args[-1]
+            reset_rule = args[-1]
 
             # backup current state
             bkp = status_df.loc[trait].copy()
@@ -660,18 +659,16 @@ def update_traits_current_status(todo, *args):
             status_df.loc[trait, 'we_effect'] = 'none'
 
             # apply rule after resetting
-            match rule:
+            match reset_rule:
                 case 'keep_cur_effect':
                     status_df.loc[trait, 'effects'] = bkp.effects
 
             # print log
-            if log:
-                write_log(['update_trait_status', 'reset'], traits_df.loc[trait].trait)
+            write_log(['update_trait_status', 'reset'], traits_df.loc[trait].trait)
 
         case 'attachment':
             host = args[0]
             attachment = args[1]
-            log = args[-1]
 
             # save attachment to host
             status_df.loc[host, 'attachment'] = attachment
@@ -693,7 +690,6 @@ def update_traits_current_status(todo, *args):
         case 'neoteny':
             neoteny_idx = traits_df.index[traits_df.trait == 'Neoteny'].tolist()[0]
             p = args[0]
-            log = args[-1]
 
             # set other player to 0
             for i in range(game['n_player']):
@@ -703,12 +699,10 @@ def update_traits_current_status(todo, *args):
             # update 'cur_effect'
             if not any([i.get() for i in neoteny_checkbutton]):
                 status_df.loc[neoteny_idx, 'effects'] = 'none'
-                if log:
-                    write_log(['update_trait_status', 'neoteny_no_one'])
+                write_log(['update_trait_status', 'neoteny_no_one'])
             else:
                 status_df.loc[neoteny_idx, 'effects'] = str(p)
-                if log:
-                    write_log(['update_trait_status', 'neoteny_that_one'], p)
+                write_log(['update_trait_status', 'neoteny_that_one'], p)
 
             # update scoreboard
             update_scoring()

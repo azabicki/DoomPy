@@ -672,16 +672,12 @@ def update_traits_current_status(todo, *args):
             # save attachment to host
             status_df.loc[host, 'attachment'] = attachment
 
-            # get effects of attachments from rules.py & update current status of host
-            effects = rules_at.attachment_effects(host, attachment)
-            status_df.loc[host, 'color'] = effects['color']
-            status_df.loc[host, 'face'] = effects['face']
-            status_df.loc[host, 'effect'] = effects['effect']
+            # update current status of host
+            rules_at.attachment_effects(host, attachment)
 
             # print log
-            if log:
-                write_log(['update_trait_status', 'attachment'],
-                          traits_df.loc[host].trait, traits_df.loc[attachment].trait)
+            write_log(['update_trait_status', 'attachment'],
+                      traits_df.loc[host].trait, traits_df.loc[attachment].trait)
 
         case 'worlds_end':
             trait_idx = args[0]

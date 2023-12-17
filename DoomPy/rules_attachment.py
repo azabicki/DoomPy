@@ -6,7 +6,7 @@ def filter_attachables(attachment, p):
     attachable = plr['trait_pile'][p]
 
     # get attachment-rule of attachment
-    rule = traits_df.loc[attachment].effect_attachment.split()
+    rule = traits_df.loc[attachment].attachment_target
 
     # filter out all attachments, dominants & traits-with-attachments
     attachable = [idx for idx in attachable
@@ -16,7 +16,7 @@ def filter_attachables(attachment, p):
                        or status_df.loc[idx].attachment == attachment)]
 
     # filter out based on specific rules
-    match rule[0]:
+    match rule:
         case 'negative_face':
             attachable = [idx for idx in attachable 
                           if traits_df.loc[idx].face < 0]
@@ -28,6 +28,14 @@ def filter_attachables(attachment, p):
         case 'non_green':
             attachable = [idx for idx in attachable
                           if 'green' not in traits_df.loc[idx].color.lower()]
+
+        case 'non_purple':
+            attachable = [idx for idx in attachable
+                          if 'purple' not in traits_df.loc[idx].color.lower()]
+
+        case 'non_red':
+            attachable = [idx for idx in attachable
+                          if 'red' not in traits_df.loc[idx].color.lower()]
 
         case 'color':
             attachable = [idx for idx in attachable
@@ -42,32 +50,38 @@ def filter_attachables(attachment, p):
 
 # handling effects of attachments when attached to a host
 def attachment_effects(host, attachment):
-    # get current effects of host
-    effects = {'color':  status_df.loc[host].color,
-               'face':   status_df.loc[host].face,
-               'effect': status_df.loc[host].effects}
-
     # get effect of attachment
-    rule = traits_df.loc[attachment].effect_attachment.split()
+    rules = traits_df.loc[attachment].attachment_effect.split()
 
-    # update current effect based on specific rules
-    match rule[1]:
-        case 'IsBlue':
-            effects['color'] = 'Blue'
+    # update current status based on specific rules
+    for rule in rules:
+        match rule:
+            case 'IsBlue':
+                status_df.loc[host, 'color'] = 'Blue'
 
-        case 'IsGreen':
-            effects['color'] = 'Green'
+            case 'IsGreen':
+                status_df.loc[host, 'color'] = 'Green'
 
-        case 'Inactive':
-            effects['effect'] = rule[1]
+            case 'IsRed':
+                status_df.loc[host, 'color'] = 'Red'
 
-        case 'NoDiscard':
-            effects['effect'] = rule[1]
+            case 'IsPurple':
+                status_df.loc[host, 'color'] = 'Purple'
 
-        case 'NoRemove':
-            effects['effect'] = rule[1]
+            case 'IsColorless':
+                status_df.loc[host, 'color'] = 'Colorless'
 
-        case 'NoSwap_NoSteal':
-            effects['effect'] = rule[1]
+            case 'Inactive':
+                status_df.loc[host, 'inactive'] = True
 
-    return effects
+            case 'NoRemove':
+                status_df.loc[host, 'no_remove'] = True
+
+            case 'NoDiscard':
+                status_df.loc[host, 'no_discard'] = True
+
+            case 'NoSwap':
+                status_df.loc[host, 'no_swap'] = True
+
+            case 'NoSteal':
+                status_df.loc[host, 'no_steal'] = True

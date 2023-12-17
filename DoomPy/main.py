@@ -608,21 +608,21 @@ def update_manual_we(event, p):
         create_trait_pile(frame_trait_pile[p], p)
 
 
-def update_manual_drops(event, trait, p):
-    value = event.widget.get()
+def update_manual_drops(event, trait, p, change):
+    cur_value = event.widget.get()
 
-    # check if input is numeric
-    if value.isnumeric():
-        # check limit of (hord-coded) 20
-        if int(value) > 20:
-            value = '20'
-            manual_drops[trait].set('20')
+    # check, if spinbox is in initial state
+    if cur_value == '-':
+        cur_value = '0'
 
-        # save manually calculkated drop value to main traits_df
-        traits_df.loc[trait, 'cur_drops'] = int(value)
+    # change value according to button
+    if change == '+':
+        value = int(cur_value) + 1
     else:
-        manual_drops[trait].set('')
-        traits_df.loc[trait, 'cur_drops'] = np.nan
+        value = int(cur_value) - 1
+
+    # save value in status_df
+    status_df.loc[trait, 'drops'] = value
 
     # update scoring
     update_scoring()
@@ -1150,23 +1150,34 @@ def create_trait_pile(frame_trait_overview, p):
                     ).grid(row=0, column=icol)
 
         # ----- manual DROP points entry -----------------------------------------------------------
-        cur_drop_eff = traits_df.loc[trait_idx].effect_drop
+        cur_drop_eff = traits_df.loc[trait_idx].drop_effect
         if (isinstance(cur_drop_eff, str)
             and not isinstance(traits_df.loc[trait_idx].effect_worlds_end, str)
-            and ('own_hand' in traits_df.loc[trait_idx].effect_drop
-                 or 'discarded' in traits_df.loc[trait_idx].effect_drop)):
+            and ('own_hand' in traits_df.loc[trait_idx].drop_effect
+                 or 'discarded' in traits_df.loc[trait_idx].drop_effect)):
             irow += 1
             tk.Label(
                 frame_trait_overview,
                 text="Drop of Life:"
                 ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
 
-            drop_entry = ttk.Entry(
+            drop_sbox = ttk.Spinbox(
                 frame_trait_overview,
+                from_=-20,
+                to=20,
                 width=3,
-                textvariable=manual_drops[trait_idx])
-            drop_entry.grid(row=irow, column=1, sticky='w')
-            drop_entry.bind("<KeyRelease>", lambda e, t=trait_idx: update_manual_drops(e, t, p))
+                wrap=False
+            )
+            drop_sbox.grid(row=irow, column=1, sticky='w')
+            drop_sbox.bind("<<Increment>>", lambda e, t=trait_idx: update_manual_drops(e, t, p, '+'))
+            drop_sbox.bind("<<Decrement>>", lambda e, t=trait_idx: update_manual_drops(e, t, p, '-'))
+
+            # fill entry, depending on drops_status
+            if np.isnan(status_df.loc[trait_idx].drops):
+                drop_sbox.set('-')
+            else:
+                dp = str(int(status_df.loc[trait_idx].drops))
+                drop_sbox.set(dp)
 
         # ----- ATTACHMENT combobox if trait is attachment -----------------------------------------
         if traits_df.loc[trait_idx].attachment == 1:

@@ -1089,7 +1089,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # noFX ----------
-        if not status_df.loc[trait_idx].effects:
+        if status_df.loc[trait_idx].inactive:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -1097,7 +1097,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # noRemove ----------
-        if not status_df.loc[trait_idx].remove:
+        if status_df.loc[trait_idx].no_remove:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -1105,7 +1105,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # noDiscard ----------
-        if not status_df.loc[trait_idx].discard:
+        if status_df.loc[trait_idx].no_discard:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -1113,7 +1113,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # noSteal ----------
-        if not status_df.loc[trait_idx].steal:
+        if status_df.loc[trait_idx].no_steal:
             icol += 1
             tk.Label(
                 frame_pics,
@@ -1121,7 +1121,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # noSwap ----------
-        if not status_df.loc[trait_idx].swap:
+        if status_df.loc[trait_idx].no_swap:
             icol += 1
             tk.Label(
                 frame_pics,

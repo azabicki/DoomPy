@@ -859,18 +859,19 @@ def update_genes():
     # check for special effects by specific traits --------------------------------------
     # Spores
     sprs_idx = traits_df.index[traits_df.trait == 'Spores'].tolist()[0]
-    sprs_eff = traits_df.loc[sprs_idx].cur_effect
+    sprs_eff = status_df.loc[sprs_idx].effects
     if sprs_eff != 'none':
+        # check if more players are affected
         if '_' in sprs_eff:
             sprs_eff = sprs_eff.split('_')
 
+        # apply effects
         for eff in sprs_eff:
-            if eff.isnumeric() and int(eff) < game['n_player']:
-                p = int(eff)
-                diff_genes[p] += 1
+            p = int(eff)
+            diff_genes[p] += 1
 
-                # print log
-                write_log(['genes', 'spores'], sprs_idx, plr['name'][p].get(), diff_genes)
+            # print log
+            write_log(['genes', 'spores'], sprs_idx, plr['name'][p].get(), diff_genes)
 
     # Sleepy
     slp_idx = traits_df.index[traits_df.trait == 'Sleepy'].tolist()[0]
@@ -1322,7 +1323,34 @@ def create_trait_pile(frame_trait_overview, p):
     ttk.Separator(frame_trait_overview, orient='horizontal'
                   ).grid(row=irow, column=0, columnspan=2, padx=5, pady=10, sticky='nesw')
 
-    # --- VIRAL --- add passively Viral to this trait pile ---------------
+    # --- SPORES --- add passively Viral to this trait pile ------------------------
+    spores_idx = traits_df.index[traits_df.trait == 'Spores'].tolist()[0]
+    spores_effect = status_df.iloc[spores_idx].effects
+    if spores_effect != 'none':
+        # check if more players are affected
+        if '_' in spores_effect:
+            spores_effect = spores_effect.split('_')
+
+        # print Spores effects if this player is affected
+        n_genes = sum(str(p) == i for i in spores_effect)
+        if n_genes > 0:
+            # create separate frame
+            irow += 1
+            frame_spores = tk.Frame(frame_trait_overview)
+            frame_spores.grid(row=irow, column=0, columnspan=2, sticky='we')
+
+            # add trait
+            tk.Label(frame_spores, text="SPORES", fg="#228B22", font="'' 14 bold"
+                     ).grid(row=0, column=0, padx=(10, 0), sticky='ens')
+            # add effect
+            tk.Label(frame_spores, text="adds genes "
+                     ).grid(row=0, column=1, sticky='wns')
+            # add gene_pool icon(s)
+            for i in range(n_genes):
+                tk.Label(frame_spores, image=images['gene_pool']
+                         ).grid(row=0, column=2+i)
+
+    # --- VIRAL --- add passively Viral to this trait pile -------------------------
     viral_idx = traits_df.index[traits_df.trait == 'Viral'].tolist()[0]
     if any([viral_idx in tp for tp in plr['trait_pile']]) and viral_idx not in plr['trait_pile'][p]:
         # create separate frame

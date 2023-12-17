@@ -26,7 +26,7 @@ from globals_ import neoteny_checkbutton, sleepy_spinbox
 # functions ##############################################################
 def pre_play():
     start_game()
-    pre_play_set = 'attachments'
+    pre_play_set = 'drops_B'
 
     if pre_play_set == 'attachments':
         lisa = [0, 1, 9, 11, 19, 21, 26, 29, 69, 89, 178, 256, 300]
@@ -53,25 +53,79 @@ def pre_play():
             lbox_deck[0].selection_set(tt)
             btn_play_trait(3)
 
-    if pre_play_set == 2:
+    if pre_play_set == 'drops_A':
+        lisa = [4, 16, 24, 25, 37, 40, 41, 64, 66, 67, 82, 87]
+        for t in lisa:
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
+            btn_play_trait(0)
+
+        julia = [95, 98, 122, 123, 127, 128, 132, 140, 147, 160, 161, 162, 163, 164, 165, 166]
+        for t in julia:
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
+            btn_play_trait(1)
+
+        anton = [167, 168, 169, 170, 171, 190, 203, 208, 215]
+        for t in anton:
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
+            btn_play_trait(2)
+
+        adam = [228, 232, 247, 260, 274, 275, 277, 278, 287, 290, 296, 317, 318, 324, 333, 352]
+        for t in adam:
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
+            btn_play_trait(3)
+
+    if pre_play_set == 'drops_B':
+        lisa = [37, 41, 66, 67]
+        for t in lisa:
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
+            btn_play_trait(0)
+
+        julia = [122, 123]
+        for t in julia:
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
+            btn_play_trait(1)
+
+        anton = [203, 260]
+        for t in anton:
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
+            btn_play_trait(2)
+
+        adam = [274, 275, 296, 333]
+        for t in adam:
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
+            btn_play_trait(3)
+
+    if pre_play_set == 'random':
         p0 = list(np.random.randint(low=0, high=len(traits_df), size=12))
         for t in p0:
-            lbox_deck[0].selection_set(t)
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
             btn_play_trait(0)
 
         p1 = list(np.random.randint(low=0, high=len(traits_df), size=10))
         for t in p1:
-            lbox_deck[0].selection_set(t)
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
             btn_play_trait(1)
 
         p2 = list(np.random.randint(low=0, high=len(traits_df), size=7))
         for t in p2:
-            lbox_deck[0].selection_set(t)
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
             btn_play_trait(2)
 
         p3 = list(np.random.randint(low=0, high=len(traits_df), size=9))
         for t in p3:
-            lbox_deck[0].selection_set(t)
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
             btn_play_trait(3)
 
     if pre_play_set == 3:

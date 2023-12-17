@@ -428,44 +428,47 @@ def btn_traits_world_end(from_, trait_idx, event):
         create_trait_pile(frame_trait_pile[p], p)
 
 
-def btn_remove_trait(from_):
+def btn_remove_trait(from_, where_to):
     # get card & its attachment
-    card = plr['trait_selected'][from_].get()
-    if not np.isnan(card):
-        attachment = traits_df.loc[card].cur_attachment
+    trait_idx = plr['trait_selected'][from_].get()
+    if not np.isnan(trait_idx):
+        attachment = status_df.loc[trait_idx].attachment
 
     # return, if no trait selected
-    if np.isnan(card):
+    if np.isnan(trait_idx):
         write_log(['remove', 'error_no_trait'])
         return
 
     # return, if attachment selected
-    if traits_df.loc[card].attachment == 1:
+    if traits_df.loc[trait_idx].attachment == 1:
         write_log(['remove', 'error_attachment_selected'])
         return
 
     # print log
-    write_log(['remove', 'error_discard'], plr['name'][from_].get(), traits_df.loc[card].trait, card)
+    if where_to == 'hand':
+        write_log(['remove', 'hand'], plr['name'][from_].get(), traits_df.loc[trait_idx].trait, trait_idx)
+    else:
+        write_log(['remove', 'discard'], plr['name'][from_].get(), traits_df.loc[trait_idx].trait, trait_idx)
     if attachment != 'none':
         write_log(['remove', 'error_discard_attachment'], traits_df.loc[attachment].trait, attachment)
 
-    # remove card(s) from player & clear trait selection
-    plr['trait_pile'][from_].remove(card)
+    # remove card(s) from player & clear player trait selection
+    plr['trait_pile'][from_].remove(trait_idx)
     if attachment != 'none':
         plr['trait_pile'][from_].remove(attachment)
     plr['trait_selected'][from_].set(np.nan)
 
     # add to deck traits & update deck_listbox
-    bisect.insort_left(deck, card)
+    bisect.insort_left(deck, trait_idx)
     if attachment != 'none':
         bisect.insort_left(deck, attachment)
     search_trait_in_list(str_trait_search)  # keep current str in search_entry
 
-    # check, if this trait has a special "remove-rule"
-    remove_rule = rules_re.check_trait(traits_df, card, from_)
+    # check, if this trait has a special "remove-rule", which may be needed for "status_updating"
+    remove_rule = rules_re.check_trait(trait_idx, from_, where_to)
 
     # reset current status of card(s)
-    update_traits_current_status('reset', card, remove_rule)
+    update_traits_current_status('reset', trait_idx, remove_rule)
     if attachment != 'none':
         update_traits_current_status('reset', attachment, [])
 
@@ -714,7 +717,7 @@ def update_traits_current_status(todo, *args):
 
             # apply rule after resetting
             match reset_rule:
-                case 'keep_cur_effect':
+                case 'keep_trait_effect':
                     status_df.loc[trait, 'effects'] = bkp.effects
 
             # print log
@@ -1607,37 +1610,40 @@ def create_player_frame(p):
     frame_traits.grid(row=1, column=0, padx=border, pady=(0, border), sticky="nesw")
     frame_traits.rowconfigure(2, weight=1)
     frame_traits.columnconfigure(0, weight=1)  # for left button under trait-pile
-    frame_traits.columnconfigure(1, weight=1)  # for right button under trait-pile
+    frame_traits.columnconfigure(1, weight=1)  # for middle button under trait-pile
+    frame_traits.columnconfigure(2, weight=1)  # for right button under trait-pile
 
     frame_trait_pile[p] = tk.Frame(frame_traits)
-    frame_trait_pile[p].grid(row=0, column=0, columnspan=2, sticky='nesw', padx=border, pady=border)
+    frame_trait_pile[p].grid(row=0, column=0, columnspan=3, sticky='nesw', padx=border, pady=border)
     frame_trait_pile[p].columnconfigure(1, weight=1)  # for left button under trait-pile
     create_trait_pile(frame_trait_pile[p], p)
 
     # action buttons -----
     ttk.Separator(
         frame_traits, orient='horizontal'
-        ).grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky='we')
+        ).grid(row=1, column=0, columnspan=3, padx=5, pady=5, sticky='we')
 
     cbox_move_to = ttk.Combobox(
         frame_traits,
         height=game['n_player']+1,
-        values=[" move trait to ..."] + ['p' + str(i+1) + ': ' + j.get()
-                                         for i, j in enumerate(plr['name'])],
+        values=[" move to ..."] + ['p' + str(i+1) + ': ' + j.get()
+                                   for i, j in enumerate(plr['name'])],
         exportselection=0,
         state="readonly",
-        width=12,
+        width=6,
         style="move.TCombobox")
-    cbox_move_to.grid(row=2, column=0, pady=(0, border), sticky='n')
+    cbox_move_to.grid(row=2, column=0, pady=(0, border), sticky='ne')
     cbox_move_to.current(0)
     cbox_move_to.bind(
         "<<ComboboxSelected>>", lambda e: btn_move_trait(p, cbox_move_to))
 
-    ttk.Button(
-        frame_traits,
-        text="remove trait",
-        command=partial(btn_remove_trait, p),
-    ).grid(row=2, column=1, pady=(0, border), sticky='n')
+    ttk.Button(frame_traits, text="to hand", width=5,
+               command=partial(btn_remove_trait, p, 'hand')
+               ).grid(row=2, column=1, pady=(0, border), sticky='n')
+
+    ttk.Button(frame_traits, text="discard", width=5,
+               command=partial(btn_remove_trait, p, 'discard')
+               ).grid(row=2, column=2, pady=(0, border), sticky='nw')
 
     # ----- Meaning of Life -------------------------------------
     frame_MOL = tk.Frame(frame)

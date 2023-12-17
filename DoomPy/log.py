@@ -121,13 +121,19 @@ def write_log(what, *args):
                     print(">>> remove <<< ERROR - attachment not discardable -> discard host instead")
                     f.write(">>> remove <<< ERROR - attachment not discardable -> discard host instead\n")
 
-                case 'error_discard':
+                case 'hand':
+                    print(">>> remove <<< '{}' is moving '{}' (id:{}) to his hand"
+                          .format(*args))
+                    f.write(">>> remove <<< '{}' is moving '{}' (id:{}) to his hand\n"
+                            .format(*args))
+
+                case 'discard':
                     print(">>> remove <<< '{}' is discarding '{}' (id:{})"
                           .format(*args))
                     f.write(">>> remove <<< '{}' is discarding '{}' (id:{})\n"
                             .format(*args))
 
-                case 'error_discard_attachment':
+                case 'discard_attachment':
                     print(">>> remove <<< ___ attachment '{}' (id:{}) is also discarded automatically"
                           .format(*args))
                     f.write(">>> remove <<< ___ attachment '{}' (id:{}) is also discarded automatically\n"

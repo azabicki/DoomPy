@@ -1210,18 +1210,15 @@ def create_trait_pile(frame_trait_overview, p):
             and ('own_hand' in traits_df.loc[trait_idx].drop_effect
                  or 'discarded' in traits_df.loc[trait_idx].drop_effect)):
             irow += 1
-            tk.Label(
-                frame_trait_overview,
-                text="Drop of Life:"
-                ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
+            tk.Label(frame_trait_overview, text="Drop of Life:", fg='grey'
+                     ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
 
             drop_sbox = ttk.Spinbox(
                 frame_trait_overview,
                 from_=-20,
                 to=20,
                 width=3,
-                wrap=False
-            )
+                wrap=False)
             drop_sbox.grid(row=irow, column=1, sticky='w')
             drop_sbox.bind("<<Increment>>", lambda e, t=trait_idx: update_manual_drops(e, t, p, '+'))
             drop_sbox.bind("<<Decrement>>", lambda e, t=trait_idx: update_manual_drops(e, t, p, '-'))
@@ -1236,10 +1233,8 @@ def create_trait_pile(frame_trait_overview, p):
         # ----- ATTACHMENT combobox if trait is attachment -----------------------------------------
         if traits_df.loc[trait_idx].attachment == 1:
             irow += 1
-            tk.Label(
-                frame_trait_overview,
-                text="Attach to:"
-                ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
+            tk.Label(frame_trait_overview, text="Attach to:", fg='grey'
+                     ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
 
             # filter only non-attachment-traits and check if this is already attached to a trait
             traits_filtered_idx = [None] + rules_at.filter_attachables(trait_idx, p)

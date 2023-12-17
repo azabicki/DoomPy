@@ -18,7 +18,7 @@ def filter_attachables(attachment, p):
     # filter out based on specific rules
     match rule:
         case 'negative_face':
-            attachable = [idx for idx in attachable 
+            attachable = [idx for idx in attachable
                           if traits_df.loc[idx].face < 0]
 
         case 'non_blue':

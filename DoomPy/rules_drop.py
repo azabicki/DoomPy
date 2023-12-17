@@ -20,8 +20,7 @@ def drop_points(p):
 
         # skip trait, if specific effects prevent drop calculation
         if (not status_df.loc[trait].effects
-                or status_df.loc[trait].inactive
-                or 'inactive' in status_df.loc[trait].we_effect.lower()):
+                or status_df.loc[trait].inactive):
             status_df.loc[trait, 'drops'] = dp
             continue
 

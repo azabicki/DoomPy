@@ -820,31 +820,23 @@ def update_genes():
         # loop traits in trait_pile
         for trait_idx in plr['trait_pile'][p]:
             # get gene effect of this card
-            effect = traits_df.loc[trait_idx].effect_gene_pool
+            who = traits_df.loc[trait_idx].gene_pool_target
+            effect = traits_df.loc[trait_idx].gene_pool_effect
+            rule = traits_df.loc[trait_idx].gene_pool_rule
 
-            # if there is a rule saved as strings
-            if isinstance(effect, str):
-                tmp = effect.split()
-                value = int(tmp[0])
-                who = tmp[1]
-                if len(tmp) > 2:
-                    restriction = tmp[2]
-                else:
-                    restriction = False
-
-                # apply rule, only if no restrictions
-                if not restriction:
-                    match who:
-                        case 'all':
-                            diff_genes = [i + value for i in diff_genes]
-                        case 'self':
-                            diff_genes[p] += value
-                        case 'opponents':
-                            diff_genes = [i+value if i != p else i for i in diff_genes]
+            # if there is an effect and no restrictions
+            if isinstance(who, str) and not isinstance(rule, str):
+                match who:
+                    case 'all':
+                        diff_genes = [i + int(effect) for i in diff_genes]
+                    case 'self':
+                        diff_genes[p] += int(effect)
+                    case 'opponents':
+                        diff_genes = [i+int(effect) if i != p else i for i in diff_genes]
 
                 # print log
                 write_log(['genes', 'trait'],
-                          plr['name'][p].get(), traits_df.loc[trait_idx].trait, value, who, diff_genes)
+                          plr['name'][p].get(), traits_df.loc[trait_idx].trait, int(effect), who, diff_genes)
 
     # check what catastrophies were played alread ---------------------------------------
     for c in range(game['n_catastrophies']):

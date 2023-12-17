@@ -406,10 +406,10 @@ def drop_points(p):
     # *** section for drop-effects in other trait piles, which could affect this player ***
     # ----- AMATOXINS ----- if Amatoxins was played by another player -----------------
     amatoxins_idx = status_df.index[status_df.trait == 'Amatoxins'].tolist()[0]
-    we_amatoxins = status_df.loc[amatoxins_idx].traits_WE
-    if amatoxins_idx not in traits and we_amatoxins != 'none':
+    amatoxins_WE = status_df.loc[amatoxins_idx].traits_WE
+    if amatoxins_idx not in traits and amatoxins_WE != 'none':
         # calculate drop points
-        total += int(status_df.loc[amatoxins_idx].effects) * -2
+        total += int(status_df.loc[amatoxins_idx].traits_WE) * -2
 
     # ----- PROWLER ----- if Prowler was played by another player -----------------
     prowler_idx = status_df.index[status_df.trait == 'Prowler'].tolist()[0]

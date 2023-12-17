@@ -142,15 +142,15 @@ def write_log(what, *args):
         case 'traits_WE':
             match what[1]:
                 case 'reset':
-                    print(">>> traits world end <<< resetting '{}'s (id:__) worlds-end-effect..."
+                    print(">>> traits world end <<< resetting '{}'s (id:{}) worlds-end-effect..."
                           .format(*args))
-                    f.write(">>> traits world end <<< resetting '{}'s (id:__) worlds-end-effect...\n"
+                    f.write(">>> traits world end <<< resetting '{}'s (id:{}) worlds-end-effect...\n"
                             .format(*args))
 
                 case 'set':
-                    print(">>> traits world end <<< setting '{}'s (id:__) worlds-end-effect to '{}'"
+                    print(">>> traits world end <<< setting '{}'s (id:{}) worlds-end-effect to '{}'"
                           .format(*args))
-                    f.write(">>> traits world end <<< setting '{}'s (id:__) worlds-end-effect to '{}'\n"
+                    f.write(">>> traits world end <<< setting '{}'s (id:{}) worlds-end-effect to '{}'\n"
                             .format(*args))
 
         case 'catastrophe':

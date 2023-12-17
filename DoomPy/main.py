@@ -355,69 +355,52 @@ def btn_traits_world_end(from_, trait_idx, event):
 
     # print log
     if effect_idx == 0:
-        write_log(['traits_WE', 'reset'], traits_df.loc[trait_idx].trait)
+        write_log(['traits_WE', 'reset'], traits_df.loc[trait_idx].trait, trait_idx)
     else:
-        write_log(['traits_WE', 'set'], traits_df.loc[trait_idx].trait, effect)
+        write_log(['traits_WE', 'set'], traits_df.loc[trait_idx].trait, trait_idx, effect)
 
-    # check if effect was selected previously & if its different than the current, reset old effect
-    old_effect = traits_df.loc[trait_idx].cur_worlds_end_trait
-
+    # reverse traits_WE-effects, if it is changed, therefore check if WE-effect was selected
+    # previously & if its different than the current, reset old effect
+    old_effect = status_df.loc[trait_idx].traits_WE
     if old_effect != 'none' and old_effect != effect:
+        # loop every trait in this trait pile
         for trait in plr['trait_pile'][from_]:
-            # skip current worlds-end-trait
+            # skip if its current worlds-end-trait
             if trait == trait_idx:
                 continue
 
             # get current status before reseting
-            attachment = traits_df.loc[trait].cur_attachment
-            host = traits_df.loc[trait].cur_host
-            we_effect = traits_df.loc[trait].cur_worlds_end_trait
-            cur_drops = traits_df.loc[trait].cur_drops
+            prev_drops = status_df.loc[trait].drops
+            prev_host = status_df.loc[trait].host
+            prev_attachment = status_df.loc[trait].attachment
+            prev_traits_WE = status_df.loc[trait].traits_WE
 
             # reset trait
             update_traits_current_status('reset', trait, [])
 
             # redo attachment effects
-            if attachment != 'none':
-                update_traits_current_status('attachment', trait, attachment)
+            if prev_attachment != 'none':
+                update_traits_current_status('attachment', trait, prev_attachment)
 
             # restore host in attachment
-            traits_df.loc[trait, 'cur_host'] = host
+            status_df.loc[trait, 'cur_host'] = prev_host
 
             # restore cur_drop points
-            traits_df.loc[trait, 'cur_drops'] = cur_drops
+            status_df.loc[trait, 'cur_drops'] = prev_drops
 
             # redo worlds_end effects
-            if we_effect != 'none':
-                traits_df.loc[trait, 'cur_worlds_end_trait'] = we_effect
+            if prev_traits_WE != 'none':
+                status_df.loc[trait, 'cur_worlds_end_trait'] = prev_traits_WE
                 update_traits_current_status('worlds_end', trait, plr['trait_pile'][from_])
 
-    # set WE-effect to status_row of trait
+    # set traits_WE-effect to status_df of trait
     if effect_idx == 0:
-        traits_df.loc[trait_idx, 'cur_worlds_end_trait'] = 'none'
+        status_df.loc[trait_idx, 'traits_WE'] = 'none'
     else:
-        traits_df.loc[trait_idx, 'cur_worlds_end_trait'] = effect
+        status_df.loc[trait_idx, 'traits_WE'] = effect
 
-    # apply WE-effect and update current_values
-    update_traits_current_status('worlds_end', trait_idx, plr['trait_pile'][from_])
-
-    # *** !!! ***   VIRAL specific effect   *** !!! ************************
-    # -> save list as string which will save drop points for each player
-    if traits_df.loc[trait_idx].trait == 'Viral':
-        if effect_idx == 0:
-            traits_df.loc[trait_idx, "cur_effect"] = 'none'
-        else:
-            vp = [np.nan] * game['n_player']
-            vp_s = ' '.join(str(x) for x in vp)
-            traits_df.loc[trait_idx, "cur_effect"] = vp_s
-
-    # *** !!! ***   AMATOXINS specific effect   *** !!! ************************
-    # -> save number of discarded different colors into string
-    if traits_df.loc[trait_idx].trait == 'Amatoxins':
-        if effect_idx == 0:
-            traits_df.loc[trait_idx, "cur_effect"] = 'none'
-        else:
-            traits_df.loc[trait_idx, "cur_effect"] = effect
+    # apply traits_WE-effects and update status of traits in this trait pile
+    rules_twe.traits_WE_effects(trait_idx, plr['trait_pile'][from_])
 
     # update scoring
     update_genes()
@@ -726,13 +709,6 @@ def update_traits_current_status(todo, *args):
             # print log
             write_log(['update_trait_status', 'attachment'],
                       traits_df.loc[host].trait, traits_df.loc[attachment].trait)
-
-        case 'worlds_end':
-            trait_idx = args[0]
-            trait_pile = args[1]
-
-            # call rules_function to update other current_values due to current effect
-            rules_twe.traits_WE_effects(traits_df, trait_idx, trait_pile)
 
         case 'neoteny':
             neoteny_idx = traits_df.index[traits_df.trait == 'Neoteny'].tolist()[0]
@@ -1202,7 +1178,7 @@ def create_trait_pile(frame_trait_overview, p):
         # ----- manual DROP points entry -----------------------------------------------------------
         cur_drop_eff = traits_df.loc[trait_idx].drop_effect
         if (isinstance(cur_drop_eff, str)
-            and not isinstance(traits_df.loc[trait_idx].effect_worlds_end, str)
+            and not isinstance(traits_df.loc[trait_idx].worlds_end_task, str)
             and ('own_hand' in traits_df.loc[trait_idx].drop_effect
                  or 'discarded' in traits_df.loc[trait_idx].drop_effect)):
             irow += 1
@@ -1258,15 +1234,13 @@ def create_trait_pile(frame_trait_overview, p):
                 cbox_attach_to.current(traits_filtered_idx.index(cur_host))
 
         # ----- WORLDS_END combobox if trait has worlds end effect ---------------------------------
-        if isinstance(traits_df.loc[trait_idx].effect_worlds_end, str):
+        if isinstance(traits_df.loc[trait_idx].worlds_end_task, str):
             irow += 1
-            tk.Label(
-                frame_trait_overview,
-                text="Worlds End:"
-                ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
+            tk.Label(frame_trait_overview, text="Worlds End:", fg='grey'
+                     ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
 
             # get task what to do at worlds end
-            we_effect = rules_twe.traits_WE_tasks(traits_df, trait_idx)
+            we_effect = rules_twe.traits_WE_tasks(trait_idx)
 
             # create combobox
             cbox_attach_to = ttk.Combobox(
@@ -1275,16 +1249,16 @@ def create_trait_pile(frame_trait_overview, p):
                 values=we_effect,
                 exportselection=0,
                 state="readonly",
-                width=10)
+                width=11)
             cbox_attach_to.grid(row=irow, column=1, sticky='w')
             cbox_attach_to.bind(
                "<<ComboboxSelected>>", lambda e, t=trait_idx: btn_traits_world_end(p, t, e))
 
             # check if effect already selected
-            if traits_df.loc[trait_idx].cur_worlds_end_trait == 'none':
+            if status_df.loc[trait_idx].traits_WE == 'none':
                 cbox_attach_to.current(0)
             else:
-                cur_effect = traits_df.loc[trait_idx].cur_worlds_end_trait
+                cur_effect = status_df.loc[trait_idx].traits_WE
                 cbox_attach_to.current(we_effect.index(cur_effect))
 
         # ----- SLEEPY may affect gene pool ?!?!  --------------------------------------------------
@@ -1381,42 +1355,31 @@ def create_trait_pile(frame_trait_overview, p):
 
     # --- AMATOXINS --- add passively Amatoxins to this trait pile -----------------
     amatoxins_idx = traits_df.index[traits_df.trait == 'Amatoxins'].tolist()[0]
-    if any([amatoxins_idx in tp for tp in plr['trait_pile']]) and amatoxins_idx not in plr['trait_pile'][p]:
+    if (any([amatoxins_idx in tp for tp in plr['trait_pile']])
+            and amatoxins_idx not in plr['trait_pile'][p]):
         # create separate frame
         irow += 1
         frame_amatoxins = tk.Frame(frame_trait_overview)
         frame_amatoxins.grid(row=irow, column=0, columnspan=2, sticky='we')
 
         # add trait & drop icon
-        tk.Label(
-            frame_amatoxins,
-            text="AMATOXINS",
-            fg="mediumorchid1"
-            ).grid(row=0, column=0, padx=(20, 0), sticky='e')
-        tk.Label(
-            frame_amatoxins,
-            text=" discarded",
-            image=images["drops"],
-            compound=tk.LEFT
-            ).grid(row=0, column=1, sticky='w')
+        tk.Label(frame_amatoxins, text="AMATOXINS", fg="mediumorchid1", font='"" 14 bold'
+                 ).grid(row=0, column=0, padx=(20, 0), sticky='e')
+        tk.Label(frame_amatoxins, text=" discarded", image=images["drops"], compound=tk.LEFT
+                 ).grid(row=0, column=1, sticky='w')
         # add color icon
-        tk.Label(
-            frame_amatoxins,
-            image=images['bgpr']
-            ).grid(row=0, column=2)
+        tk.Label(frame_amatoxins, image=images['bgpr']
+                 ).grid(row=0, column=2)
 
         # check if worlds end effect was chosen
-        we_amatoxins = traits_df.loc[amatoxins_idx].cur_worlds_end_trait
-        if we_amatoxins != 'none':
-            we_drops = str(int(traits_df.loc[amatoxins_idx].cur_effect) * -2)
+        amatoxins_WE = status_df.loc[amatoxins_idx].traits_WE
+        if amatoxins_WE != 'none':
+            WE_drops = str(int(amatoxins_WE) * -2)
 
             # add points icono
-            tk.Label(
-                frame_amatoxins,
-                image=images[we_drops]
-                ).grid(row=0, column=3)
-
-            write_log(['trait_effects', 'amatoxins'], we_drops)
+            tk.Label(frame_amatoxins, image=images[WE_drops]
+                     ).grid(row=0, column=3)
+            write_log(['trait_effects', 'amatoxins'], WE_drops)
 
     # --- PROWLER --- add passively Prowler to this trait pile ---------------------
     prowler_idx = traits_df.index[traits_df.trait == 'Prowler'].tolist()[0]

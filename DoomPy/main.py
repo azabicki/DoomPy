@@ -439,11 +439,6 @@ def btn_remove_trait(from_, where_to):
         write_log(['remove', 'error_no_trait'])
         return
 
-    # return, if attachment selected
-    if traits_df.loc[trait_idx].attachment == 1:
-        write_log(['remove', 'error_attachment_selected'])
-        return
-
     # print log
     if where_to == 'hand':
         write_log(['remove', 'hand'], plr['name'][from_].get(), traits_df.loc[trait_idx].trait, trait_idx)
@@ -486,10 +481,12 @@ def btn_remove_trait(from_, where_to):
 
 
 def btn_move_trait(from_, cbox_move_to):
-    # get card & its attachment
+    # get card, its attachment & target
     card = plr['trait_selected'][from_].get()
     if not np.isnan(card):
-        attachment = traits_df.loc[card].cur_attachment
+        attachment = status_df.loc[card].attachment
+    cbox_str = cbox_move_to.get().split()
+    to = cfg["names"].index(cbox_str[-1])
 
     # return, if no target selected
     if cbox_move_to.current() == 0:
@@ -498,7 +495,6 @@ def btn_move_trait(from_, cbox_move_to):
         return
 
     # return, if no trait selected
-    to = cfg["names"].index(cbox_move_to.get())
     if np.isnan(card):
         cbox_move_to.current(0)
         write_log(['move', 'error_no_trait'])
@@ -508,12 +504,6 @@ def btn_move_trait(from_, cbox_move_to):
     if from_ == to:
         cbox_move_to.current(0)
         write_log(['move', 'error_source_target'])
-        return
-
-    # return, if attachment selected
-    if traits_df.loc[card].attachment == 1:
-        cbox_move_to.current(0)
-        write_log(['move', 'error_attachment'])
         return
 
     # print log

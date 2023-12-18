@@ -1289,6 +1289,121 @@ def create_trait_pile(frame_trait_overview, p):
     ttk.Separator(frame_trait_overview, orient='horizontal'
                   ).grid(row=irow, column=0, columnspan=2, padx=5, pady=10, sticky='nesw')
 
+    # --- AMATOXINS --- add passively Amatoxins to this trait pile -----------------
+    amatoxins_idx = traits_df.index[traits_df.trait == 'Amatoxins'].tolist()[0]
+    if (any([amatoxins_idx in tp for tp in plr['trait_pile']])
+            and amatoxins_idx not in plr['trait_pile'][p]):
+        # create separate frame
+        irow += 1
+        frame_amatoxins = tk.Frame(frame_trait_overview)
+        frame_amatoxins.grid(row=irow, column=0, columnspan=2, sticky='we')
+
+        # add trait & drop icon
+        tk.Label(frame_amatoxins, text="AMATOXINS", fg="mediumorchid1", font='"" 14 bold'
+                 ).grid(row=0, column=0, padx=(10, 0), sticky='ens')
+        # add effect
+        tk.Label(frame_amatoxins, text=" discarded", image=images["bgpr"], compound=tk.LEFT
+                 ).grid(row=0, column=1, sticky='wns')
+        # add ?/drop icon
+        lbl = tk.Label(frame_amatoxins, image=images['points_off'])
+        lbl.grid(row=0, column=2)
+
+        # check if worlds end effect was chosen
+        amatoxins_WE = status_df.loc[amatoxins_idx].traits_WE
+        if amatoxins_WE != 'none':
+            WE_drops = str(int(amatoxins_WE) * -2)
+
+            # change ?/drop icon
+            lbl.configure(image=images['drops'])
+            # add points icono
+            tk.Label(frame_amatoxins, image=images[WE_drops]
+                     ).grid(row=0, column=3)
+            write_log(['trait_effects', 'amatoxins'], WE_drops)
+
+    # --- NEOTENY --- check button if Neoteny is in your hand ----------------------
+    # is NEOTENY in your hand? asked via checkbox? But only if its not played
+    neoteny_idx = traits_df.index[traits_df.trait == 'Neoteny'].tolist()[0]
+    if ("select world's end" not in worlds_end['name'].get()
+            and all(neoteny_idx not in tp for tp in plr['trait_pile'])):
+        # only if no one has it or this player has it
+        neoteny_effect = status_df.loc[neoteny_idx].effects
+        if neoteny_effect == 'none' or neoteny_effect == str(p):
+            # create separate frame for WE_TITLE
+            irow += 1
+            frame_neoteny = tk.Frame(frame_trait_overview)
+            frame_neoteny.grid(row=irow, column=0, columnspan=2, sticky='we')
+
+            # add trait
+            tk.Label(frame_neoteny, text="NEOTENY", fg="#1C86EE", font='"" 14 bold'
+                     ).grid(row=0, column=0, padx=(10, 0), sticky='en')
+            # if is this hand
+            if neoteny_checkbutton[p].get() == 1:
+                ttk.Checkbutton(frame_neoteny, variable=neoteny_checkbutton[p], text=' got it -> ',
+                                command=lambda: update_traits_current_status('neoteny', int(p))
+                                ).grid(row=0, column=1, padx=(0, 0), sticky='wns')
+                ttk.Label(frame_neoteny, image=images['drops']
+                          ).grid(row=0, column=2, sticky='ns')
+                tk.Label(frame_neoteny, image=images['4']
+                         ).grid(row=0, column=3, sticky='ns')
+            # not in this hand
+            else:
+                ttk.Checkbutton(frame_neoteny, variable=neoteny_checkbutton[p], text=' in my hand???',
+                                command=lambda: update_traits_current_status('neoteny', int(p))
+                                ).grid(row=0, column=1, padx=(0, 0), sticky='wns')
+
+    # --- PROWLER --- add passively Prowler to this trait pile ---------------------
+    prowler_idx = traits_df.index[traits_df.trait == 'Prowler'].tolist()[0]
+    if (any([prowler_idx in tp for tp in plr['trait_pile']])
+            and prowler_idx not in plr['trait_pile'][p]):
+        # create separate frame
+        irow += 1
+        frame_prowler = tk.Frame(frame_trait_overview)
+        frame_prowler.grid(row=irow, column=0, columnspan=2, sticky='we')
+
+        # add trait & drop icon
+        tk.Label(frame_prowler, text="PROWLER", fg="mediumorchid1", font='"" 14 bold'
+                 ).grid(row=0, column=0, padx=(10, 0), sticky='e')
+        tk.Label(frame_prowler, text=" less", image=images["drops"], compound=tk.LEFT
+                 ).grid(row=0, column=1, sticky='w')
+
+        # add color icon
+        tk.Label(frame_prowler, image=images['bgpr']
+                 ).grid(row=0, column=2)
+        tk.Label(frame_prowler, text=" as host",
+                 ).grid(row=0, column=3, sticky='w')
+
+        # add points icon
+        WE_drops = status_df.loc[prowler_idx].effects.split()
+        tk.Label(frame_prowler, image=images[WE_drops[p]]
+                 ).grid(row=0, column=4)
+
+        write_log(['trait_effects', 'prowler'], plr['name'][p].get(), WE_drops[p])
+
+    # --- SHINY --- add passively Shiny to this trait pile -------------------------
+    shiny_idx = traits_df.index[traits_df.trait == 'Shiny'].tolist()[0]
+    if (any([shiny_idx in tp for tp in plr['trait_pile']])
+            and shiny_idx not in plr['trait_pile'][p]):
+        # create separate frame
+        irow += 1
+        frame_shiny = tk.Frame(frame_trait_overview)
+        frame_shiny.grid(row=irow, column=0, columnspan=2, sticky='we')
+
+        # add trait
+        tk.Label(frame_shiny, text="SHINY", fg="#228B22", font="'' 14 bold"
+                 ).grid(row=0, column=0, padx=(10, 0), sticky='ens')
+        # add effect
+        tk.Label(frame_shiny, text="punishes ", image=images["c"], compound=tk.RIGHT
+                 ).grid(row=0, column=1, sticky='wns')
+        # add drop icon
+        tk.Label(frame_shiny, image=images['drops']
+                 ).grid(row=0, column=2)
+        # add points icon
+        shiny_dp = status_df.loc[shiny_idx].effects.split()
+        tk.Label(frame_shiny, image=images[shiny_dp[p]]
+                 ).grid(row=0, column=3)
+
+        write_log(['trait_effects', 'shiny'], plr['name'][p].get(), shiny_dp[p])
+
     # --- SPORES --- add passively Viral to this trait pile ------------------------
     spores_idx = traits_df.index[traits_df.trait == 'Spores'].tolist()[0]
     spores_effect = status_df.iloc[spores_idx].effects
@@ -1326,159 +1441,27 @@ def create_trait_pile(frame_trait_overview, p):
         frame_viral.grid(row=irow, column=0, columnspan=2, sticky='we')
 
         # add trait & drop icon
-        tk.Label(
-            frame_viral,
-            text="VIRAL",
-            fg="mediumorchid1"
-            ).grid(row=0, column=0, padx=(20, 0), sticky='e')
-        tk.Label(
-            frame_viral,
-            text=" punishes ",
-            image=images["drops"],
-            compound=tk.LEFT
-            ).grid(row=0, column=1, sticky='w')
-
-        # check if worlds end effect was chosen
-        we_viral = traits_df.loc[viral_idx].cur_worlds_end_trait
-        if we_viral != 'none':
-            vp_s = traits_df.loc[viral_idx].cur_effect.split()
-
-            # add color icon
-            tk.Label(
-                frame_viral,
-                image=images[we_viral[0]]
-                ).grid(row=0, column=2)
-            # add points icono
-            tk.Label(
-                frame_viral,
-                image=images[vp_s[p]]
-                ).grid(row=0, column=3)
-
-            write_log(['trait_effects', 'viral'], we_viral, plr['name'][p].get(), vp_s[p])
-
-    # --- AMATOXINS --- add passively Amatoxins to this trait pile -----------------
-    amatoxins_idx = traits_df.index[traits_df.trait == 'Amatoxins'].tolist()[0]
-    if (any([amatoxins_idx in tp for tp in plr['trait_pile']])
-            and amatoxins_idx not in plr['trait_pile'][p]):
-        # create separate frame
-        irow += 1
-        frame_amatoxins = tk.Frame(frame_trait_overview)
-        frame_amatoxins.grid(row=irow, column=0, columnspan=2, sticky='we')
-
-        # add trait & drop icon
-        tk.Label(frame_amatoxins, text="AMATOXINS", fg="mediumorchid1", font='"" 14 bold'
-                 ).grid(row=0, column=0, padx=(20, 0), sticky='e')
-        tk.Label(frame_amatoxins, text=" discarded", image=images["drops"], compound=tk.LEFT
-                 ).grid(row=0, column=1, sticky='w')
-        # add color icon
-        tk.Label(frame_amatoxins, image=images['bgpr']
-                 ).grid(row=0, column=2)
-
-        # check if worlds end effect was chosen
-        amatoxins_WE = status_df.loc[amatoxins_idx].traits_WE
-        if amatoxins_WE != 'none':
-            WE_drops = str(int(amatoxins_WE) * -2)
-
-            # add points icono
-            tk.Label(frame_amatoxins, image=images[WE_drops]
-                     ).grid(row=0, column=3)
-            write_log(['trait_effects', 'amatoxins'], WE_drops)
-
-    # --- PROWLER --- add passively Prowler to this trait pile ---------------------
-    prowler_idx = traits_df.index[traits_df.trait == 'Prowler'].tolist()[0]
-    if (any([prowler_idx in tp for tp in plr['trait_pile']])
-            and prowler_idx not in plr['trait_pile'][p]):
-        # create separate frame
-        irow += 1
-        frame_prowler = tk.Frame(frame_trait_overview)
-        frame_prowler.grid(row=irow, column=0, columnspan=2, sticky='we')
-
-        # add trait & drop icon
-        tk.Label(
-            frame_prowler,
-            text="PROWLER",
-            fg="mediumorchid1"
-            ).grid(row=0, column=0, padx=(20, 0), sticky='e')
-        tk.Label(
-            frame_prowler,
-            text=" less",
-            image=images["drops"],
-            compound=tk.LEFT
-            ).grid(row=0, column=1, sticky='w')
-
-        # add color icon
-        tk.Label(
-            frame_prowler,
-            image=images['bgpr']
-            ).grid(row=0, column=2)
-        tk.Label(
-            frame_prowler,
-            text=" as host",
-            ).grid(row=0, column=3, sticky='w')
-        # add points icono
-        vp_s = traits_df.loc[prowler_idx].cur_effect.split()
-        tk.Label(
-            frame_prowler,
-            image=images[vp_s[p]]
-            ).grid(row=0, column=4)
-
-        write_log(['trait_effects', 'prowler'], plr['name'][p].get(), vp_s[p])
-
-    # --- SHINY --- add passively Shiny to this trait pile -------------------------
-    shiny_idx = traits_df.index[traits_df.trait == 'Shiny'].tolist()[0]
-    if (any([shiny_idx in tp for tp in plr['trait_pile']])
-            and shiny_idx not in plr['trait_pile'][p]):
-        # create separate frame
-        irow += 1
-        frame_shiny = tk.Frame(frame_trait_overview)
-        frame_shiny.grid(row=irow, column=0, columnspan=2, sticky='we')
-
-        # add trait
-        tk.Label(frame_shiny, text="SHINY", fg="#228B22", font="'' 14 bold"
+        tk.Label(frame_viral, text="VIRAL", fg="mediumorchid1", font='"" 14 bold'
                  ).grid(row=0, column=0, padx=(10, 0), sticky='ens')
         # add effect
-        tk.Label(frame_shiny, text="punishes ", image=images["c"], compound=tk.RIGHT
-                 ).grid(row=0, column=1, sticky='wns')
-        # add drop icon
-        tk.Label(frame_shiny, image=images['drops']
-                 ).grid(row=0, column=2)
-        # add points icon
-        shiny_dp = status_df.loc[shiny_idx].effects.split()
-        tk.Label(frame_shiny, image=images[shiny_dp[p]]
-                 ).grid(row=0, column=3)
+        lbl = tk.Label(frame_viral, text=" punishes ", image=images["points_off"], compound=tk.RIGHT)
+        lbl.grid(row=0, column=1, sticky='wns')
 
-        write_log(['trait_effects', 'shiny'], plr['name'][p].get(), shiny_dp[p])
+        # check if worlds end effect was chosen
+        viral_WE = status_df.loc[viral_idx].traits_WE
+        if viral_WE != 'none':
+            WE_drops = status_df.loc[viral_idx].effects.split()
 
-    # --- NEOTENY --- check button if Neoteny is in your hand ----------------------
-    # is NEOTENY in your hand? asked via checkbox? But only if its not played
-    neoteny_idx = traits_df.index[traits_df.trait == 'Neoteny'].tolist()[0]
-    if ("select world's end" not in worlds_end['name'].get()
-            and all(neoteny_idx not in tp for tp in plr['trait_pile'])):
-        # only if no one has it or this player has it
-        neoteny_effect = status_df.loc[neoteny_idx].effects
-        if neoteny_effect == 'none' or neoteny_effect == str(p):
-            # create separate frame for WE_TITLE
-            irow += 1
-            frame_neoteny = tk.Frame(frame_trait_overview)
-            frame_neoteny.grid(row=irow, column=0, columnspan=2, sticky='we')
+            # change color icon
+            lbl.configure(image=images[viral_WE[0]])
+            # add drop icon
+            tk.Label(frame_viral, image=images['drops']
+                     ).grid(row=0, column=2)
+            # add points icono
+            tk.Label(frame_viral, image=images[WE_drops[p]]
+                     ).grid(row=0, column=3)
 
-            # add trait
-            tk.Label(frame_neoteny, text="NEOTENY", fg="#1C86EE", font='"" 14 bold'
-                     ).grid(row=0, column=0, padx=(20, 0), sticky='en')
-            # if is this hand
-            if neoteny_checkbutton[p].get() == 1:
-                ttk.Checkbutton(frame_neoteny, variable=neoteny_checkbutton[p], text=' got it -> ',
-                                command=lambda: update_traits_current_status('neoteny', int(p))
-                                ).grid(row=0, column=1, padx=(0, 0), sticky='wns')
-                ttk.Label(frame_neoteny, image=images['drops']
-                          ).grid(row=0, column=2, sticky='ns')
-                tk.Label(frame_neoteny, image=images['4']
-                         ).grid(row=0, column=3, sticky='ns')
-            # not in this hand
-            else:
-                ttk.Checkbutton(frame_neoteny, variable=neoteny_checkbutton[p], text=' in my hand???',
-                                command=lambda: update_traits_current_status('neoteny', int(p))
-                                ).grid(row=0, column=1, padx=(0, 0), sticky='wns')
+            write_log(['trait_effects', 'viral'], viral_WE, plr['name'][p].get(), WE_drops[p])
 
     # **********************************************************************************************
     # ------ worlds end -> manual entries ---------------------------------------------------------

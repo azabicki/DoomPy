@@ -413,36 +413,35 @@ def drop_points(p):
 
     # ----- PROWLER ----- if Prowler was played by another player -----------------
     prowler_idx = status_df.index[status_df.trait == 'Prowler'].tolist()[0]
-    played = [prowler_idx in tp for tp in plr['trait_pile']]
-    if any(played) and played.index(True) != p:
-        # load current prowler_drop_points
-        prw_ps = status_df.loc[prowler_idx].effects
+    prowler_played = [prowler_idx in tp for tp in plr['trait_pile']]
+    if any(prowler_played) and (prowler_idx not in traits):
 
-        # init them, if not done previously
-        if prw_ps == 'none':
-            prw_p = [np.nan] * len(gene_pool)
+        # init prowler points, or unpack them from status_df
+        if status_df.loc[prowler_idx].effects == 'none':
+            prowler_dp = [np.nan] * len(plr['trait_pile'])
         else:
-            prw_p = [int(i) if i.lstrip('-').isnumeric() else np.nan for i in prw_ps.split()]
+            prowler_dp = [int(i) if i.lstrip('-').isnumeric() else np.nan
+                          for i in status_df.loc[prowler_idx].effects.split()]
 
         # calculate drop points
-        played_by = played.index(True)
-        ncols_ref = []
+        played_by = prowler_played.index(True)
+        n_cols_ref = []
         for col in colors:
-            ncols_ref.append(sum(col in color.lower()
-                             for color in status_df.iloc[plr['trait_pile'][played_by]].color.tolist()))
-        ncols_ref = sum(n > 0 for n in ncols_ref)
+            n_cols_ref.append(sum(col in color.lower()
+                                  for color in status_df.iloc[plr['trait_pile'][played_by]].color.tolist()))
+        n_cols_ref = sum(n > 0 for n in n_cols_ref)
 
-        ncols = []
+        n_cols = []
         for col in colors:
-            ncols.append(sum(col in color.lower()
-                             for color in status_df.iloc[plr['trait_pile'][p]].color.tolist()))
-        ncols = sum(n > 0 for n in ncols)
+            n_cols.append(sum(col in color.lower()
+                              for color in status_df.iloc[plr['trait_pile'][p]].color.tolist()))
+        n_cols = sum(n > 0 for n in n_cols)
 
-        prw_p[p] = max([0, ncols_ref - ncols]) * -2
+        prowler_dp[p] = max([0, n_cols_ref - n_cols]) * -2
 
         # update total & save updated points to Prowler's 'effects'
-        total += prw_p[p]
-        status_df.loc[prowler_idx, "effects"] = ' '.join(str(x) for x in prw_p)
+        total += prowler_dp[p]
+        status_df.loc[prowler_idx, "effects"] = ' '.join(str(x) for x in prowler_dp)
 
     # ----- SHINY ----- if Shiny was played by another player -----------------
     shiny_idx = status_df.index[status_df.trait == 'Shiny'].tolist()[0]
@@ -467,20 +466,26 @@ def drop_points(p):
 
     # ----- VIRAL ----- if Viral was played by another player -----------------
     viral_idx = status_df.index[status_df.trait == 'Viral'].tolist()[0]
-    vp_s = status_df.loc[viral_idx].effects
-    if viral_idx not in traits and vp_s != 'none':
-        # load current drop values for all players & Viral's 'effects'
-        vp = [int(i) if i.lstrip('-').isnumeric() else np.nan for i in vp_s.split()]
-        vp_col = status_df.loc[viral_idx].traits_WE
+    viral_WE = status_df.loc[viral_idx].traits_WE
+    if (any(viral_idx in tp for tp in plr['trait_pile'])
+            and viral_idx not in traits
+            and viral_WE != 'none'):
+
+        # init viral points, or unpack them from status_df
+        if status_df.loc[viral_idx].effects == 'none':
+            viral_dp = [np.nan] * len(plr['trait_pile'])
+        else:
+            viral_dp = [int(i) if i.lstrip('-').isnumeric() else np.nan
+                        for i in status_df.loc[viral_idx].effects.split()]
 
         # calculate drop points
-        vp[p] = sum([vp_col in color.lower()
-                     for color in status_df.iloc[traits].color.tolist()]) * -1
+        viral_dp[p] = sum([viral_WE in color.lower()
+                           for color in status_df.iloc[traits].color.tolist()]) * -1
 
         # update total & save updated points to Viral's 'effects'
-        if not np.isnan(vp[p]):
-            total += vp[p]
-            status_df.loc[viral_idx, "effects"] = ' '.join(str(x) for x in vp)
+        if not np.isnan(viral_dp[p]):
+            total += viral_dp[p]
+            status_df.loc[viral_idx, "effects"] = ' '.join(str(x) for x in viral_dp)
 
     # ----- NEOTENY ----- if Neoteny is in Hand after Worlds End --------------
     neoteny_idx = status_df.index[status_df.trait == 'Neoteny'].tolist()[0]

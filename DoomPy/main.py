@@ -492,9 +492,9 @@ def btn_remove_trait(from_, where_to):
 
 def btn_move_trait(from_, cbox_move_to):
     # get card, its attachment & target
-    card = plr['trait_selected'][from_].get()
-    if not np.isnan(card):
-        attachment = status_df.loc[card].attachment
+    trait_idx = plr['trait_selected'][from_].get()
+    if not np.isnan(trait_idx):
+        attachment = status_df.loc[trait_idx].attachment
     cbox_str = cbox_move_to.get().split()
     to = cfg["names"].index(cbox_str[-1])
 
@@ -505,7 +505,7 @@ def btn_move_trait(from_, cbox_move_to):
         return
 
     # return, if no trait selected
-    if np.isnan(card):
+    if np.isnan(trait_idx):
         cbox_move_to.current(0)
         write_log(['move', 'error_no_trait'])
         return
@@ -520,10 +520,10 @@ def btn_move_trait(from_, cbox_move_to):
     add_txt = "(and its attachment '{}' (id:{}))".format(traits_df.loc[attachment].trait, attachment) \
         if attachment != 'none' else ''
     write_log(['move', 'move_to'],
-              traits_df.loc[card].trait, card, add_txt, plr['name'][from_].get(), plr['name'][to].get())
+              traits_df.loc[trait_idx].trait, trait_idx, add_txt, plr['name'][from_].get(), plr['name'][to].get())
 
     # remove traits(s) from 'giving' player, update trait_pile & clear trait selection
-    plr['trait_pile'][from_].remove(card)
+    plr['trait_pile'][from_].remove(trait_idx)
     if attachment != 'none':
         plr['trait_pile'][from_].remove(attachment)
 
@@ -531,7 +531,7 @@ def btn_move_trait(from_, cbox_move_to):
     plr['trait_selected'][from_].set(np.nan)
 
     # add to 'receiving' players traits
-    bisect.insort_left(plr['trait_pile'][to], card)
+    bisect.insort_left(plr['trait_pile'][to], trait_idx)
     if attachment != 'none':
         bisect.insort_left(plr['trait_pile'][to], attachment)
 

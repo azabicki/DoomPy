@@ -200,6 +200,14 @@ def write_log(what, *args):
                 case 'update':
                     print(">>> scoring <<< current points 4 '{}': face={} | drops={} | WE={} | MOL={} | total={}"
                           .format(*args))
+                    f.write(">>> scoring <<< current points 4 '{}': face={} | drops={} | WE={} | MOL={} | total={}\n"
+                            .format(*args))
+
+                case 'manual_drops':
+                    print(">>> scoring <<< manual drops of {} (id:{}) set to: {}"
+                          .format(*args))
+                    f.write(">>> scoring <<< manual drops of {} (id:{}) set to: {}\n"
+                            .format(*args))
 
         case 'genes':
             match what[1]:

@@ -14,7 +14,7 @@ def traits_WE_tasks(host):
         case 'is_color_of_choice':
             options = ['becomes ...', 'blue', 'green', 'purple', 'red']
 
-        case 'may_change_one_color':
+        case 'may_change_color':
             options = ['may change:',
                        'blue -> green', 'blue -> purple', 'blue -> red',
                        'green -> blue', 'green -> purple', 'green -> red',
@@ -46,7 +46,7 @@ def traits_WE_effects(host, trait_pile):
             else:
                 status_df.loc[host, 'color'] = effect
 
-        case 'may_change_one_color':
+        case 'may_change_color':
             if effect != 'none':
                 # split rule to define which color will be changed to which other color
                 col_from, col_to = effect.split(' -> ')

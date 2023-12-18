@@ -806,7 +806,7 @@ def update_scoring():
         plr['points'][p]['MOL'].set(p_MOL)
         plr['points'][p]['total'].set(total)
 
-        # print log, only if points changed
+        # print log
         write_log(['scoring', 'update'], plr['name'][p].get(), p_face, p_drop, p_worlds_end, p_MOL, total)
 
 

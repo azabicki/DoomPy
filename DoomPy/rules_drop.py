@@ -258,12 +258,12 @@ def drop_points(p):
 
             case 'Pack Behavior':
                 # 1 self n_color_pairs own
-                tmp = []
+                n_pairs = []
                 for col in colors:
-                    tmp.append(int(sum(col in color.lower()
-                                       for color in status_df.iloc[traits].color.tolist()) / 2))
-                if sum(tmp) > 0:
-                    dp = sum(tmp)
+                    n_pairs.append(int(sum(col in color.lower()
+                                           for color in status_df.iloc[traits].color.tolist()) / 2))
+                if sum(n_pairs) > 0:
+                    dp = sum(n_pairs)
 
             case 'Pollination':
                 # 1 self n_face_is_1 own
@@ -369,13 +369,13 @@ def drop_points(p):
 
             case 'Symbiosis':
                 # 2 self lowest_color_count own
-                n = []
+                n_cols = []
                 for col in colors:
-                    n.append(sum(col in color.lower()
-                                 for color in status_df.iloc[traits].color.tolist()))
-                n = [i for i in n if i > 0]
-                if len(n) >= 2:
-                    dp = min(n) * 2
+                    n_cols.append(sum(col in color.lower()
+                                      for color in status_df.iloc[traits].color.tolist()))
+                n_cols = [i for i in n_cols if i > 0]
+                if len(n_cols) >= 2:
+                    dp = min(n_cols) * 2
 
             case 'Tenacious':
                 # 6 self 4_or_more_red own
@@ -407,7 +407,7 @@ def drop_points(p):
     # ----- AMATOXINS ----- if Amatoxins was played by another player -----------------
     amatoxins_idx = status_df.index[status_df.trait == 'Amatoxins'].tolist()[0]
     amatoxins_WE = status_df.loc[amatoxins_idx].traits_WE
-    if amatoxins_idx not in traits and amatoxins_WE != 'none':
+    if (amatoxins_idx not in traits) and (amatoxins_WE != 'none'):
         # calculate drop points
         total += int(status_df.loc[amatoxins_idx].traits_WE) * -2
 

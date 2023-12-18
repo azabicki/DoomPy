@@ -1629,7 +1629,8 @@ def create_player_frame(p):
         frame_traits,
         height=game['n_player']+1,
         values=[" move to ..."] + ['p' + str(i+1) + ': ' + j.get()
-                                   for i, j in enumerate(plr['name'])],
+                                   for i, j in enumerate(plr['name'])
+                                   if i != p],
         exportselection=0,
         state="readonly",
         width=6,

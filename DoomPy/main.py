@@ -33,7 +33,32 @@ def get_sup(tp):
 
 def pre_play():
     start_game()
-    pre_play_set = 'effectless'
+    pre_play_set = 'random'
+
+    if pre_play_set == 'action':
+        lisa = [210, 218, 221, 222, 223, 226, 227, 230, 233]
+        for t in lisa:
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
+            btn_play_trait(0)
+
+        julia = [234, 236, 237, 238, 239, 249, 254, 259, 264, 266, 267, 269, 270, 271, 272]
+        for t in julia:
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
+            btn_play_trait(1)
+
+        anton = [276, 281, 286, 294, 295, 298, 304, 316, 322, 323, 325, 326, 327, 328, 330]
+        for t in anton:
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
+            btn_play_trait(2)
+
+        adam = [331, 334, 337, 338, 339, 342, 343, 345, 346, 348, 350, 353, 354, 360, 363]
+        for t in adam:
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
+            btn_play_trait(3)
 
     if pre_play_set == 'effectless':
         lisa = [0, 1, 9, 11, 18, 19, 21]
@@ -2104,7 +2129,9 @@ root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
 
 # hit F1 to run pr_play()
-root.bind("<F1>", lambda e: pre_play())
+root.bind("<F1>", lambda e: start_game())
+root.bind("<F4>", lambda e: btn_clear_trait_search())
+root.bind("<F2>", lambda e: pre_play())
 
 # create _content_ frame ---------------------------------------------------------------------------
 content = tk.Frame(root, width=1200, height=800, bg=cfg["bg_content"])

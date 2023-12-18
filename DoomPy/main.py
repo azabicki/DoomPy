@@ -1302,25 +1302,19 @@ def create_trait_pile(frame_trait_overview, p):
         # ----- SLEEPY may affect gene pool ?!?!  --------------------------------------------------
         if traits_df.loc[trait_idx].trait == 'Sleepy':
             irow += 1
-            tk.Label(
-                frame_trait_overview,
-                text="gene effect:"
-                ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
+            tk.Label(frame_trait_overview, text="gene effect:", fg='grey'
+                     ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
 
             # create combobox
-            ttk.Spinbox(
-                frame_trait_overview,
-                from_=-1,
-                to=1,
-                width=3,
-                textvariable=sleepy_spinbox[p],
-                wrap=False,
-                command=lambda: update_traits_current_status('update_all')  # update everything
-            ).grid(row=irow, column=1, sticky='w')
+            ttk.Spinbox(frame_trait_overview,
+                        from_=-1, to=1, width=3, wrap=False,
+                        textvariable=sleepy_spinbox[p],
+                        command=lambda: update_traits_current_status('update_all')  # update everything
+                        ).grid(row=irow, column=1, sticky='w')
 
     # *********** special, individual case *** !!! *************************************************
-    # Drop-of-Life-Effects of some traits are affecting other players! hence, effects of these traits
-    # need to be shown on each other players trait pile, allowing to enter individual drop values
+    # Some Drop-of-Life-Effects are affecting other players! hence, effects of these traits need to
+    # be shown on each other players trait pile, allowing to enter individual drop values
     irow += 1
     ttk.Separator(frame_trait_overview, orient='horizontal'
                   ).grid(row=irow, column=0, columnspan=2, padx=5, pady=10, sticky='nesw')

@@ -26,7 +26,32 @@ from globals_ import neoteny_checkbutton, sleepy_spinbox
 # functions ##############################################################
 def pre_play():
     start_game()
-    pre_play_set = 'drops_B'
+    pre_play_set = 'effectless'
+
+    if pre_play_set == 'effectless':
+        lisa = [0, 1, 9, 11, 18, 19, 21]
+        for t in lisa:
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
+            btn_play_trait(0)
+
+        julia = [26, 28, 44, 52, 62, 68, 72, 76, 77]
+        for t in julia:
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
+            btn_play_trait(1)
+
+        anton = [79, 81, 84, 103, 105, 106, 107, 114, 115]
+        for t in anton:
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
+            btn_play_trait(2)
+
+        adam = [117, 118, 121, 124, 131, 135, 136, 148, 173, 179]
+        for t in adam:
+            tt = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(tt)
+            btn_play_trait(3)
 
     if pre_play_set == 'attachments':
         lisa = [0, 1, 9, 11, 19, 21, 26, 29, 69, 89, 178, 256, 300]

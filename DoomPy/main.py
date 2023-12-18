@@ -24,6 +24,13 @@ from globals_ import neoteny_checkbutton, sleepy_spinbox
 
 
 # functions ##############################################################
+def get_sup(tp):
+    lib = {'0': '\u2070', '1': '\u00B9', '2': '\u00B2', '3': '\u00B3', '4': '\u2074',
+           '5': '\u2075', '6': '\u2076', '7': '\u2077', '8': '\u2078', '9': '\u2079'}
+
+    return ''.join(lib[i] for i in str(len(tp)))
+
+
 def pre_play():
     start_game()
     pre_play_set = 'effectless'
@@ -915,8 +922,8 @@ def update_stars():
 
         # find label widgets
         tmp_frame = frame_player[p].winfo_children()
-        lbl1 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.!label2')
-        lbl2 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.!label3')
+        lbl1 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.!label3')
+        lbl2 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.!label4')
 
         # edit images
         lbl1.configure(image=images['no_star'])
@@ -966,7 +973,10 @@ def create_trait_pile(frame_trait_overview, p):
     # then, scan trait pile for any effects by any traits, like protecting other traits...
     rules_tr.traits_effects(plr['trait_pile'][p])
 
-    # loop traits in pile
+    # then, update n_tp
+    plr['n_tp'][p].set(get_sup(plr['trait_pile'][p]))
+
+    # --- loop traits in trait pile ------------------------------------------------
     irow = -1
     for trait_idx in plr['trait_pile'][p]:
         # get trait name
@@ -1568,8 +1578,12 @@ def create_player_frame(p):
     frame_points.columnconfigure(6, weight=1)
 
     # name
-    ttk.Label(frame_points, textvariable=plr['name'][p], style="name.TLabel"
-              ).grid(row=0, column=0, padx=5, pady=(5, 0), columnspan=5, sticky='ns')
+    ttk.Label(frame_points, textvariable=plr['n_tp'][p],
+              style="n_traitsFirstPlayer.TLabel" if game['first_player'] == p else "n_traits.TLabel"
+              ).grid(row=0, column=0, padx=5, pady=(5, 0), columnspan=1, sticky='ns')
+    ttk.Label(frame_points, textvariable=plr['name'][p],
+              style="nameFirstPlayer.TLabel" if game['first_player'] == p else "name.TLabel"
+              ).grid(row=0, column=1, padx=5, pady=(5, 0), columnspan=4, sticky='ns')
 
     # stars
     ttk.Label(frame_points, image=images['no_star']
@@ -1670,6 +1684,33 @@ def create_player_frame(p):
     return frame
 
 
+def create_name_entries(frame_menu_names):
+    # forget all previous widgets
+    for w in frame_menu_names.grid_slaves():
+        w.grid_forget()
+
+    # note to keep order
+    ttk.Label(frame_menu_names, text="important:", font="'' 12 underline"
+              ).grid(row=0, column=0, columnspan=1, pady=(0, 5), sticky='e')
+    ttk.Label(frame_menu_names, text="keep order", font="'' 12"
+              ).grid(row=0, column=1, columnspan=2, pady=(0, 5), sticky='w')
+
+    # fix 1st player radiobutton if outside
+    if options['first_player'].get() > (options['n_player'].get()-1):
+        options['first_player'].set(options['n_player'].get()-1)
+
+    # name entries ---
+    for i in range(options['n_player'].get()):
+        ttk.Label(frame_menu_names, text="player {}: ".format(i+1)
+                  ).grid(row=i+1, column=0, sticky='e')
+        ttk.Entry(frame_menu_names, textvariable=options['names'][i], width=6
+                  ).grid(row=i+1, column=1, sticky='we')
+        tk.Radiobutton(frame_menu_names,
+                       variable=options['first_player'],
+                       value=i
+                       ).grid(row=i+1, column=2, sticky='e')
+
+
 def create_menu_frame():
     border = cfg["color_frame_width"]
 
@@ -1714,6 +1755,7 @@ def create_menu_frame():
         width=3,
         textvariable=options['n_player'],
         wrap=False,
+        command=lambda: create_name_entries(frame_menu_names),
     ).grid(row=1, column=1, sticky='w')
 
     # genes at beginning -----
@@ -1758,50 +1800,36 @@ def create_menu_frame():
         wrap=False
     ).grid(row=4, column=1, sticky='w')
 
+    ttk.Separator(
+            frame_menu_options, orient='horizontal'
+            ).grid(row=5, column=0, columnspan=3, padx=10, pady=8, sticky='we')
+
+    # players names -----
+    frame_menu_names = tk.Frame(frame_menu_options)
+    frame_menu_names.grid(row=6, column=0, columnspan=2, sticky="ns")
+    frame_menu_names.columnconfigure(0, weight=1)
+    frame_menu_names.columnconfigure(1, weight=1)
+    create_name_entries(frame_menu_names)
+
     # restart button -----
     ttk.Button(
         frame_menu_options,
         text="restart game",
         command=start_game,
-    ).grid(row=5, column=0, columnspan=2, padx=10, pady=5, sticky="we")
+    ).grid(row=7, column=0, columnspan=2, padx=10, pady=5, sticky="we")
 
     # info current game -----
     ttk.Label(
         frame_menu_options,
         text="running game",
         font="'' 12 underline",
-    ).grid(row=6, column=0, columnspan=2)
+    ).grid(row=8, column=0, columnspan=2)
     ttk.Label(
         frame_menu_options,
         text="{} catastrophies + {} genes + {} MOLs"
         .format(game['n_catastrophies'], game['n_genes'], game['n_MOLs']),
         style="game_info.TLabel",
-    ).grid(row=7, column=0, columnspan=2, pady=(0, 5))
-
-    # ----- frame 4 player names -------------------------------------------------------------------
-    frame_menu_names = tk.Frame(frame_menu)
-    frame_menu_names.grid(row=1, column=0, padx=border, pady=(0, border), ipady=4, sticky="nesw")
-    frame_menu_names.columnconfigure(0, weight=1)
-    frame_menu_names.columnconfigure(1, weight=1)
-
-    # title -----
-    ttk.Label(
-        frame_menu_names,
-        text="who's playing?",
-        font="'' 18",
-    ).grid(row=0, column=0, columnspan=2, pady=(5, 5))
-
-    # name entries ---
-    for i in range(game['n_player']):
-        ttk.Label(
-            frame_menu_names,
-            text="player {}: ".format(i+1),
-        ).grid(row=i+1, column=0, sticky='e')
-        ttk.Entry(
-            frame_menu_names,
-            textvariable=plr['name'][i],
-            width=8,
-        ).grid(row=i+1, column=1, sticky='w')
+    ).grid(row=9, column=0, columnspan=2, pady=(0, 8))
 
     # ----- frame 4 trait selection ----------------------------------------------------------------
     frame_menu_traits = tk.Frame(frame_menu)
@@ -1958,36 +1986,32 @@ def reset_variables():
     game['n_catastrophies'] = options['n_catastrophies'].get()
     game['n_MOLs'] = options['n_MOLs'].get()
 
-    # save previous names
-    last_names = plr['name'].copy()
-
     # reset _player_ variables
     plr['name'].clear()
     plr['genes'].clear()
     plr['points'].clear()
     plr['trait_pile'].clear()
+    plr['n_tp'].clear()
     plr['trait_selected'].clear()
     plr['WE_effect'].clear()
     plr['MOL'].clear()
     frame_trait_pile.clear()
 
+    # reset trait_specific variables
     neoteny_checkbutton.clear()
     sleepy_spinbox.clear()
 
     # fill variables
     for i in range(game['n_player']):
-        if len(last_names) >= i+1:
-            plr['name'].append(tk.StringVar(value=last_names[i].get()))
-            write_log(['init', 'previous_names'], i+1, plr['name'][i].get())
-        else:
-            plr['name'].append(tk.StringVar(value=cfg["names"][i]))
-            write_log(['init', 'default_names'], i+1, plr['name'][i].get())
+        plr['name'].append(tk.StringVar(value=options["names"][i].get()))
+        write_log(['init', 'names'], i+1, plr['name'][i].get())
 
         plr['genes'].append(tk.IntVar(value=game['n_genes']))
         plr['points'].append({'face': tk.IntVar(value=0), 'drops': tk.IntVar(value=0),
                               'worlds_end': tk.IntVar(value=0), 'MOL': tk.IntVar(value=0),
                               'total': tk.IntVar(value=0)})
         plr['trait_pile'].append([])
+        plr['n_tp'].append(tk.StringVar(value='0'))
         plr['trait_selected'].append(tk.Variable(value=np.nan))
         plr['WE_effect'].append(tk.StringVar(value='0'))
         plr['MOL'].append([])
@@ -1998,6 +2022,10 @@ def reset_variables():
 
         for m in range(game['n_MOLs']):
             plr['MOL'][i].append(tk.StringVar(value="0"))  # for now, manually editing MOL points in entries
+
+    # first player
+    game['first_player'] = options['first_player'].get()
+    write_log(['init', 'first_player'], plr['name'][game['first_player']].get())
 
     # reset deck/lbox card-lists
     deck.clear()
@@ -2096,7 +2124,10 @@ frame_playground.rowconfigure(0, weight=1)  # stretch playground to bottom
 # styling ------------------------------------------------------------------------------------------
 gui_style = ttk.Style()
 gui_style.configure("game_info.TLabel", font=("", 10, "italic"))
-gui_style.configure("name.TLabel", font=("Comic Sans MS", 36, "bold"))
+gui_style.configure("name.TLabel", font=("Comic Sans MS", 38, "bold"))
+gui_style.configure("nameFirstPlayer.TLabel", font=("Comic Sans MS", 38, "bold"), foreground='#00CD66')
+gui_style.configure("n_traits.TLabel", font=("Arial", 38, "bold"))
+gui_style.configure("n_traitsFirstPlayer.TLabel", font=("Arial", 38, "bold"), foreground='#00CD66')
 gui_style.configure("points.TLabel", font=("", 20))
 gui_style.configure("total.TLabel", font=("", 80, "bold"), foreground="orangered1")
 gui_style.configure("genes.TLabel", font=("", 38, "bold"), foreground="hotpink1")
@@ -2108,7 +2139,12 @@ options['n_player'] = tk.IntVar(value=cfg["n_player"])                # OPTIONS:
 options['n_genes'] = tk.IntVar(value=cfg["n_genes"])                  # OPTIONS: gene pool at beginning
 options['n_catastrophies'] = tk.IntVar(value=cfg["n_catastrophies"])  # OPTIONS: number of catastrophies
 options['n_MOLs'] = tk.IntVar(value=cfg["n_MOLs"])                    # OPTIONS: number of MOLs
+options['names'] = []
+for i in range(len(cfg["names"])):
+    options['names'].append(tk.StringVar(value=cfg["names"][i]))      # OPTIONS: name of players
+options['first_player'] = tk.IntVar(value=0)                          # OPTIONS: first player at begining
 
+options['first_player'] = tk.IntVar(value=0)                          # OPTIONS: first player at begining
 str_trait_search = tk.StringVar(value="")   # string searching for traits in DECK
 deck_filtered_str = tk.Variable(value="")   # _filtered_ deck of traits_strings in listbox after searching -> str
 

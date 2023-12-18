@@ -19,16 +19,16 @@ def write_log(what, *args):
                     print(">>> initialize <<< create playground")
                     f.write(">>> initialize <<< create playground\n")
 
-                case 'previous_names':
-                    print("   >>> use *previous* name for player #{} = {}"
+                case 'names':
+                    print("   >>> name of player #{} = {}"
                           .format(*args))
-                    f.write("   >>> use *previous* name for player #{} = {}\n"
+                    f.write("   >>> name of player #{} = {}\n"
                             .format(*args))
 
-                case 'default_names':
-                    print("   >>> use *default* name for player #{} = {}"
+                case 'first_player':
+                    print("   >>> '{}' is first player"
                           .format(*args))
-                    f.write("   >>> use *default* name for player #{} = {}\n"
+                    f.write("   >>> '{}' is first player\n"
                             .format(*args))
 
         case 'select':

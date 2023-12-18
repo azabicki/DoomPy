@@ -1,9 +1,10 @@
-from globals_ import traits_df, plr
+from globals_ import status_df, traits_df, plr
 from log import write_log
 
 
 def check_requirement(trait_idx, p):
     # returns 'True' if playing trait should be aborted for any trait-specific reason
+    # colors = ['blue', 'green', 'purple', 'red']
     trait = traits_df.loc[trait_idx].trait
     tp = plr['trait_pile'][p]
 
@@ -16,11 +17,34 @@ def check_requirement(trait_idx, p):
 
     # check individual traits
     match trait:
+        case 'Carnosaur Jaw':
+            # return, if there are less than 2 red traits in trait pile
+            if sum(['red' in color.lower() for color in status_df.loc[tp].color.tolist()]) < 2:
+                write_log(['*'],
+                          '>>> play <<< ERROR - for CARNOSAUR JAW to play, 2 or more red traits in trait pile needed')
+                return True
+
         case 'Epic':
             # return, if there is another dominant in trait pile
             if sum([1 for t in tp if traits_df.loc[t].dominant == 1]) == 1:
                 write_log(['*'],
                           '>>> play <<< ERROR - already 1 dominant in trait pile - EPIC not allowed')
+                return True
+
+        case 'Heroic':
+            # return, if there are less than 3 green traits in trait pile
+            if sum(['green' in color.lower() for color in status_df.loc[tp].color.tolist()]) < 3:
+                write_log(['*'],
+                          '>>> play <<< ERROR - for HEROIC to play, 3 or more green traits in trait pile needed')
+                return True
+
+        case 'Metamorphosis':
+            # return, if there are less than 3 traits with face value < 1
+            if sum([face >= 1
+                    for face in status_df.loc[tp].face.tolist()
+                    if not isinstance(face, str)]) < 3:
+                write_log(['*'],
+                          '>>> play <<< ERROR - for METAMORPHOSIS to play, 3 or more traits with face value 1 or higher in trait pile needed')  # noqa: E501
                 return True
 
         case 'Opposable Thumbs':

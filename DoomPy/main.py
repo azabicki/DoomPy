@@ -831,7 +831,9 @@ def update_genes():
                     case 'self':
                         diff_genes[p] += int(effect)
                     case 'opponents':
-                        diff_genes = [i+int(effect) if i != p else i for i in diff_genes]
+                        diff_genes = [g+int(effect)
+                                      if i != p else g
+                                      for i, g in enumerate(diff_genes)]
 
                 # print log
                 write_log(['genes', 'trait'],

@@ -8,7 +8,7 @@ def check_requirement(trait_idx, p):
     trait = traits_df.loc[trait_idx].trait
     tp = plr['trait_pile'][p]
 
-    # if EPIC is already in trait pile -> no more dominat
+    # if EPIC is already in trait pile -> no more dominant
     Epic_idx = traits_df.index[traits_df.trait == 'Epic'].tolist()[0]
     if traits_df.loc[trait_idx].dominant == 1 and Epic_idx in tp:
         write_log(['*'],
@@ -22,6 +22,15 @@ def check_requirement(trait_idx, p):
             if sum(['red' in color.lower() for color in status_df.loc[tp].color.tolist()]) < 2:
                 write_log(['*'],
                           '>>> play <<< ERROR - for CARNOSAUR JAW to play, 2 or more red traits in trait pile needed')
+                return True
+
+        case 'Citrus':
+            # return, if there are no negative face value traits in trait pile
+            if sum(face < 0
+                   for face in status_df.loc[tp].face.tolist()
+                   if not isinstance(face, str)) == 0:
+                write_log(['*'],
+                          '>>> play <<< ERROR - for CITRUS to play, a trait with a negative face value needed')
                 return True
 
         case 'Epic':
@@ -52,4 +61,18 @@ def check_requirement(trait_idx, p):
             if sum([1 for t in tp if traits_df.loc[t].dominant == 1]) == 0:
                 write_log(['*'],
                           '>>> play <<< ERROR - no dominant in trait pile - OPPOSABLE THUMBS not allowed')
+                return True
+
+        case 'Silk':
+            # return, if gene pool > 4
+            if plr['genes'][p].get() > 4:
+                write_log(['*'],
+                          '>>> play <<< ERROR - to play SILK, gene pool must be 4 or lower')
+                return True
+
+        case 'Xylophage':
+            # return, if no green trait in trait pile
+            if sum('green' in color.lower() for color in status_df.loc[tp].color.tolist()) == 0:
+                write_log(['*'],
+                          '>>> play <<< ERROR - to play XYLOPHAGE, you need at least one green trait in trait pile')
                 return True

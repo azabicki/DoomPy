@@ -2171,7 +2171,6 @@ for i in range(len(cfg["names"])):
     options['names'].append(tk.StringVar(value=cfg["names"][i]))      # OPTIONS: name of players
 options['first_player'] = tk.IntVar(value=0)                          # OPTIONS: first player at begining
 
-options['first_player'] = tk.IntVar(value=0)                          # OPTIONS: first player at begining
 str_trait_search = tk.StringVar(value="")   # string searching for traits in DECK
 deck_filtered_str = tk.Variable(value="")   # _filtered_ deck of traits_strings in listbox after searching -> str
 

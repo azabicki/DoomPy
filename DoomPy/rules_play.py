@@ -90,7 +90,7 @@ def check_requirement(trait_idx, p):
             # return, if no red trait in trait pile
             if sum('red' in color.lower() for color in status_df.loc[tp].color.tolist()) == 0:
                 write_log(['*'],
-                          '>>> play <<< ERROR - to play RETRACTABLE CLAWS, you need at least one red trait in trait pile')
+                          '>>> play <<< ERROR - to play RETRACTABLE CLAWS, you need at least one red trait in trait pile')  # noqa: E501
                 return True
 
         case 'Silk':

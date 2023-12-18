@@ -681,6 +681,9 @@ def update_manual_drops(event, trait, p, change):
     # save value in status_df
     status_df.loc[trait, 'drops'] = value
 
+    # print log
+    write_log(['scoring', 'manual_drops'], traits_df.iloc[trait].trait, trait, value)
+
     # update scoring
     update_scoring()
 

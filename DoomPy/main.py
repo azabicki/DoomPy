@@ -12,7 +12,7 @@ import rules_attachment as rules_at
 import rules_drop as rules_dr
 import rules_play as rules_pl
 import rules_remove as rules_re
-import rules_traits_worlds_end as rules_twe
+import rules_traits as rules_tr
 import rules_worlds_end as rules_we
 
 from globals_ import cfg, images_dict, sounds, music_onoff, icons_onoff, points_onoff, show_icons  # noqa: F401
@@ -427,7 +427,7 @@ def btn_traits_world_end(from_, trait_idx, event):
         status_df.loc[trait_idx, 'traits_WE'] = effect
 
     # apply traits_WE-effects and update status of traits in this trait pile
-    rules_twe.traits_WE_effects(trait_idx, plr['trait_pile'][from_])
+    rules_tr.traits_WE_effects(trait_idx, plr['trait_pile'][from_])
 
     # update scoring
     update_genes()
@@ -534,6 +534,9 @@ def btn_move_trait(from_, cbox_move_to):
     bisect.insort_left(plr['trait_pile'][to], trait_idx)
     if attachment != 'none':
         bisect.insort_left(plr['trait_pile'][to], attachment)
+
+    # check, if this trait has a special "remove-rule", which may be needed for "status_updating"
+    rules_re.check_trait(trait_idx, from_, 'different_trait_pile')
 
     # update scoring, stars & genes
     update_stars()
@@ -960,6 +963,9 @@ def create_trait_pile(frame_trait_overview, p):
     for w in frame_trait_overview.grid_slaves():
         w.grid_forget()
 
+    # then, scan trait pile for any effects by any traits, like protecting other traits...
+    rules_tr.traits_effects(plr['trait_pile'][p])
+
     # loop traits in pile
     irow = -1
     for trait_idx in plr['trait_pile'][p]:
@@ -1272,7 +1278,7 @@ def create_trait_pile(frame_trait_overview, p):
                      ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
 
             # get task what to do at worlds end
-            we_effect = rules_twe.traits_WE_tasks(trait_idx)
+            we_effect = rules_tr.traits_WE_tasks(trait_idx)
 
             # create combobox
             cbox_attach_to = ttk.Combobox(

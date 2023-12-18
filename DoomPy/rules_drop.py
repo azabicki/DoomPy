@@ -224,12 +224,6 @@ def drop_points(p):
                     else:
                         print('___________________ check this out!!! why am i here???? ___________')
 
-            case 'Neoteny':
-                # 4 self if_in_hand own_hand
-                # load drop value from status_df, because it was set manually, if its not nan
-                if not np.isnan(status_df.loc[trait].drops):
-                    dp = int(status_df.loc[trait].drops)
-
             case 'Noxious':
                 # -1 self n_red own
                 dp = -1 * sum('red' in color.lower()
@@ -277,7 +271,7 @@ def drop_points(p):
 
             case 'Rainbow Keratin':
                 # -2 self n_drops own&2 self n_highest_color_if4colors own
-                dp = -2 * sum(traits_df.loc[t].drops == 1 for t in traits)
+                dp = -2 * (sum(traits_df.loc[t].drops == 1 for t in traits) - 1)
                 n_cols = []
                 for col in colors:
                     n_cols.append(sum(col in color.lower()
@@ -403,7 +397,7 @@ def drop_points(p):
             # print("____ {} drop points by '{}'".format(dp, status_df.loc[trait].trait))
             total += dp
 
-    # *** section for drop-effects in other trait piles, which could affect this player ***
+    # *** section for drop-effects in other trait piles / hands, which could affect this player ***
     # ----- AMATOXINS ----- if Amatoxins was played by another player -----------------
     amatoxins_idx = status_df.index[status_df.trait == 'Amatoxins'].tolist()[0]
     amatoxins_WE = status_df.loc[amatoxins_idx].traits_WE

@@ -1829,7 +1829,7 @@ def create_menu_frame():
     ttk.Spinbox(
         frame_menu_options,
         from_=2,
-        to=8,
+        to=6,
         width=3,
         textvariable=options['n_catastrophies'],
         wrap=False

@@ -251,7 +251,7 @@ def write_log(what, *args):
                     f.write(">>> genes <<< 'Spores' (id:{}) has an gene effect (+1) on '{}' -> current effect: {}\n"
                             .format(*args))
 
-                case 'sleppy':
+                case 'sleepy':
                     print(">>> genes <<< 'Sleepy' (id:?) has an gene effect on '{}' by {} -> current effect: {}"
                           .format(*args))
                     f.write(">>> genes <<< 'Sleepy' (id:?) has an gene effect on '{}' by {} -> current effect: {}\n"

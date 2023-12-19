@@ -876,21 +876,6 @@ def update_genes():
                 write_log(['genes', 'trait'],
                           plr['name'][p].get(), traits_df.loc[trait_idx].trait, int(effect), who, diff_genes)
 
-    # check what catastrophies were played alread ---------------------------------------
-    for c in range(game['n_catastrophies']):
-        # get card & effect
-        c_idx = catastrophe['played'][c]
-
-        # check if catastrophy was played
-        if c_idx is not None:
-            c_str = catastrophies_df.loc[c_idx, "name"]
-            # get effect and apply it
-            effect = int(catastrophies_df.loc[c_idx].gene_pool)
-            diff_genes = [i + effect for i in diff_genes]
-
-            # print log
-            write_log(['genes', 'catastrophe'], c_str, effect, diff_genes)
-
     # check for special effects by specific traits --------------------------------------
     # ----- Denial --------------
     dnl_idx = status_df.index[status_df.trait == 'Denial'].tolist()[0]
@@ -938,6 +923,21 @@ def update_genes():
 
             # print log
             write_log(['genes', 'spores'], sprs_idx, plr['name'][p].get(), diff_genes)
+
+    # check what catastrophies were played alread ---------------------------------------
+    for c in range(game['n_catastrophies']):
+        # get card & effect
+        c_idx = catastrophe['played'][c]
+
+        # check if catastrophy was played
+        if c_idx is not None:
+            c_str = catastrophies_df.loc[c_idx, "name"]
+            # get effect and apply it
+            effect = int(catastrophies_df.loc[c_idx].gene_pool)
+            diff_genes = [i + effect for i in diff_genes]
+
+            # print log
+            write_log(['genes', 'catastrophe'], c_str, effect, diff_genes)
 
     # update gene values ----------------------------------------------------------------
     for p in range(game['n_player']):

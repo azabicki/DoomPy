@@ -156,12 +156,18 @@ def write_log(what, *args):
         case 'catastrophe':
             match what[1]:
                 case 'error_no_catastrophe':
-                    print(">>> catastrophe <<< ERROR - no catastrophe selected")
-                    f.write(">>> catastrophe <<< ERROR - no catastrophe selected\n")
+                    print(">>> catastrophe <<< ERROR - no catastrophe (#{}) selected".format(*args))
+                    f.write(">>> catastrophe <<< ERROR - no catastrophe (#{}) selected\n".format(*args))
+
+                case 'error_keep_catastrophe':
+                    print(">>> catastrophe <<< ERROR - keep selected catastrophe (#{})".format(*args))
+                    f.write(">>> catastrophe <<< ERROR - keep selected catastrophe (#{})\n".format(*args))
 
                 case 'error_same_catastrophe':
-                    print(">>> catastrophe <<< ERROR - same catastrophe selected as before")
-                    f.write(">>> catastrophe <<< ERROR - same catastrophe selected as before\n")
+                    print(">>> catastrophe <<< ERROR - same catastrophe (#{}) selected as before: '{}'"
+                          .format(*args))
+                    f.write(">>> catastrophe <<< ERROR - same catastrophe (#{}) selected as before: '{}'\n"
+                            .format(*args))
 
                 case 'catastrophe':
                     print(">>> catastrophe <<< played catastrophe #{}: '{}' (id:{})"

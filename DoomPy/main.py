@@ -332,23 +332,26 @@ def btn_play_worlds_end():
 
 def btn_play_catastrophe(event, c):
     # get played catastrophe
-    cbox_idx = event.widget.current()
+    cbox_idx = event.widget.current()   # selected item_idx in combobox
     played_str = event.widget.get()
-    played_before = catastrophe['played'][c]
+    played_previously = catastrophe['played'][c]
     if cbox_idx > 0:
         played_idx = catastrophe['possible'][c][cbox_idx-1]
 
     # return, if no catastrophe was selected
     if cbox_idx == 0:
-        if played_before is not None:
-            old_cbox_idx = catastrophe['possible'][c].index(played_before) + 1
+        # OR -> force to keep previous selection -> NO WAY BACK
+        if played_previously is None:
+            write_log(['catastrophe', 'error_no_catastrophe'], c+1)
+        else:
+            old_cbox_idx = catastrophe['possible'][c].index(played_previously) + 1
             catastrophe['cbox'][c].current(old_cbox_idx)
-        write_log(['catastrophe', 'error_no_catastrophe'])
+            write_log(['catastrophe', 'error_keep_catastrophe'], c+1)
         return
 
     # return, if same catastrophe selected
-    if played_before == played_idx:
-        write_log(['catastrophe', 'error_same_catastrophe'])
+    if played_previously == played_idx:
+        write_log(['catastrophe', 'error_same_catastrophe'], c+1, played_str)
         return
 
     # print log
@@ -357,30 +360,23 @@ def btn_play_catastrophe(event, c):
     # set played catastrophe
     catastrophe['played'][c] = played_idx
 
-    # update possible catastrophies for later ones
-    for i in range(1, game['n_catastrophies']):
-        # reset possible's
+    # update possible catastrophies for other catastrophies
+    # for i in range(1, game['n_catastrophies']):
+    for i in [i for i in range(game['n_catastrophies']) if i != c]:
+        # begin with ALL possible catastrophies
         catastrophe['possible'][i] = catastrophies_df.index.tolist()
 
-        # remove previous catastrophies from possible's
-        for prev in range(0, i):
-            if catastrophe['played'][prev] is not None:
-                catastrophe['possible'][i].remove(catastrophe['played'][prev])
+        # remove other catastrophies from possible ones
+        for j in [j for j in range(game['n_catastrophies']) if j != i]:
+            # only, if j'th catastrophe was played already
+            if catastrophe['played'][j] is not None:
+                # remove from list of possibles
+                catastrophe['possible'][i].remove(catastrophe['played'][j])
 
-                pos_cat_values = [" catastrophe {}...".format(1+1)] \
-                    + catastrophies_df.loc[catastrophe['possible'][i]].name.values.tolist()
-                catastrophe['cbox'][i].configure(values=pos_cat_values)
-
-                # check if current catastrophie was selected by a next one
-                if catastrophe['played'][prev] == catastrophe['played'][i]:
-                    # reset i'th catastrophe
-                    catastrophe['played'][i] = None
-                    catastrophe['cbox'][i].current(0)
-
-                    # disable forthcoming catastrophies & worlds end
-                    for z in range(i+1, game['n_catastrophies']):
-                        catastrophe['cbox'][z].configure(state="disabled")
-                        worlds_end['cbox'].configure(state="disabled")
+        # create list of catastrophe names & update combobox
+        pos_cat_values = [" catastrophe {}...".format(i+1)] \
+            + catastrophies_df.loc[catastrophe['possible'][i]].name.values.tolist()
+        catastrophe['cbox'][i].configure(values=pos_cat_values)
 
     # enable next catastrophe
     if c < game['n_catastrophies']-1:

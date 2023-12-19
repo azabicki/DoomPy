@@ -174,9 +174,9 @@ deck = []                       # all traits in deck (or discard pile) left to b
 deck_filtered_idx = []          # _filtered_ deck of trait_idx in listbox after searching -> idx
 
 catastrophe = {}
-catastrophe['possible'] = []                  # occured catastrophies / StringVar
-catastrophe['played'] = []                  # occured catastrophies / StringVar
-catastrophe['cbox'] = []             # comboxes containing possible catastrophies
+catastrophe['possible'] = []    # list of  possibles catastrophies
+catastrophe['played'] = []      # occured catastrophies / needed for worlds end
+catastrophe['cbox'] = []        # comboxes containing possible catastrophies
 
 worlds_end = {}
 worlds_end['cbox'] = [None]

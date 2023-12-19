@@ -1,5 +1,31 @@
 from globals_ import status_df, traits_df, plr
 from log import write_log
+import tkinter as tk
+
+
+def is_heroic_born(trait_idx):
+    def response(response, trait_idx):
+        status_df.loc[trait_idx, 'effects'] = True if response == 'yes' else False
+        top.destroy()
+
+    top = tk.Toplevel(width=500, height=75)
+    top.title("Birth of a Hero")
+
+    msg1 = tk.Label(top, text='HEROIC', font='"" 28 bold', fg="#228B22")
+    msg1.grid(row=0, column=0, columnspan=2, padx=10, sticky='nesw')
+    msg2 = tk.Label(top, text='born during\n"Birth of a Hero" ???', font='"" 20 bold')
+    msg2.grid(row=1, column=0, columnspan=2, padx=10, sticky='nesw')
+
+    no = tk.Button(top, text="no, he isn't.\njust a regular birth.",
+                   command=lambda: response('no', trait_idx))
+    no.grid(row=2, column=0, padx=10, pady=10, sticky='nesw')
+    yes = tk.Button(top, text="Hell Yeah, he is!!",
+                    command=lambda: response('yes', trait_idx))
+    yes.grid(row=2, column=1, padx=10, pady=10, sticky='nesw')
+
+    top.focus()
+    top.grab_set()
+    top.wait_window()
 
 
 def check_requirement(trait_idx, p):
@@ -55,11 +81,19 @@ def check_requirement(trait_idx, p):
                 return True
 
         case 'Heroic':
-            # return, if there are less than 3 green traits in trait pile
-            if sum(['green' in color.lower() for color in status_df.loc[tp].color.tolist()]) < 3:
+            # first, ask if HEROIC is born during 'Birth of a Hero'
+            is_heroic_born(trait_idx)
+            is_born = status_df.loc[trait_idx, 'effects']
+
+            # if not born during that age, check if there are less than 3 green traits in trait pile
+            if is_born:
                 write_log(['*'],
-                          '>>> play <<< ERROR - for HEROIC to play, 3 or more green traits in trait pile needed')
-                return True
+                          ">>> play <<< 'HEROIC' is born during 'Birth of a Hero' and ignores restrictions")
+            else:
+                if sum(['green' in color.lower() for color in status_df.loc[tp].color.tolist()]) < 3:
+                    write_log(['*'],
+                              '>>> play <<< ERROR - for HEROIC to play, 3 or more green traits in trait pile needed')
+                    return True
 
         case 'Metamorphosis':
             # return, if there are less than 3 traits with face value < 1

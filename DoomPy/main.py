@@ -701,15 +701,23 @@ def btn_play_trait(to):
     trait_idx = deck_filtered_idx[lbox_deck[0].curselection()[0]]
     trait = traits_df.loc[trait_idx].trait
 
-    # return, if player already has two dominants
-    if traits_df.loc[trait_idx].dominant == 1:
-        if sum([1 for t in plr['trait_pile'][to] if traits_df.loc[t].dominant == 1]) == 2:
-            write_log(['play', 'error_2dominants'])
-            return 0
-
     # return, if any trait specific requirements are not met
     if rules_pl.check_requirement(trait_idx, to):
         return 0
+
+    # return, if player already has two dominants
+    if traits_df.loc[trait_idx].dominant == 1:
+        if sum([1 for t in plr['trait_pile'][to] if traits_df.loc[t].dominant == 1]) == 2:
+            # check if HEROIC is born during 'Birth of a Hero'
+            heroic_idx = traits_df.index[traits_df.trait == 'Heroic'].tolist()[0]
+            is_born = status_df.loc[heroic_idx, 'effects']
+
+            # no hero, then return
+            if trait_idx == heroic_idx and is_born:
+                write_log(['play', 'heroic'])
+            else:
+                write_log(['play', 'error_2dominants'])
+                return 0
 
     # return, if attachment does not have any trait to attach to
     if traits_df.loc[trait_idx].attachment == 1:
@@ -1041,8 +1049,10 @@ def update_stars():
         lbl2.configure(image=images['no_star'])
         if n_dominant > 0:
             lbl1.configure(image=images['star'])
-            if n_dominant > 1:
+            if n_dominant == 2:
                 lbl2.configure(image=images['star'])
+            elif n_dominant == 3:
+                lbl2.configure(image=images['heroic_star'])
 
 
 def search_trait_in_list(inp):

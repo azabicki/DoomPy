@@ -63,6 +63,10 @@ def write_log(what, *args):
                     print(">>> play <<< ERROR - no traits in trait pile for attachment to attach to")
                     f.write(">>> play <<< ERROR - no traits in trait pile for attachment to attach to\n")
 
+                case 'heroic':
+                    print(">>> play <<< 'HEROIC' is born as 3rd dominant during 'Birth of a Hero'")
+                    f.write(">>> play <<< 'HEROIC' is born as 3rd dominant during 'Birth of a Hero'\n")
+
                 case 'play':
                     print(">>> play <<< '{}' is playing '{}' (id:{})"
                           .format(*args))

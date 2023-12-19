@@ -2138,6 +2138,10 @@ def start_game():
     write_log(['init', 'menu'])
     create_menu_frame()
 
+    # set catastrophe F-key-bindings
+    for i in range(game['n_catastrophies']):
+        root.bind('<F' + str(i+1) + '>', lambda e, j=i: catastrophe['cbox'][j].focus())
+
     # fill _playground_ frame with _player_ frames -------------------------------------------------
     write_log(['init', 'playground'])
     frame_player.clear()
@@ -2158,10 +2162,10 @@ root.configure(background=cfg["bg_content"])
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
 
-# hit F1 to run pr_play()
-root.bind("<F1>", lambda e: start_game())
-root.bind("<F4>", lambda e: btn_clear_trait_search())
-root.bind("<F2>", lambda e: pre_play())
+# create gui_wide F-key bindings
+root.bind("<F7>", lambda e: btn_clear_trait_search())
+root.bind("<F8>", lambda e: start_game())
+root.bind("<F9>", lambda e: pre_play())
 
 # create _content_ frame ---------------------------------------------------------------------------
 content = tk.Frame(root, width=1200, height=800, bg=cfg["bg_content"])

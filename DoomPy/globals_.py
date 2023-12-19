@@ -179,8 +179,8 @@ catastrophe['played'] = []      # occured catastrophies / needed for worlds end
 catastrophe['cbox'] = []        # comboxes containing possible catastrophies
 
 worlds_end = {}
-worlds_end['cbox'] = [None]
-worlds_end['name'] = None
+worlds_end['played'] = None     # selected worlds end
+worlds_end['cbox'] = [None]     # combobox 4 worlds end
 
 
 # trait specific variables #########################################################################

@@ -312,7 +312,7 @@ def btn_play_worlds_end():
         return
 
     # print log
-    write_log(['worlds_end', 'game_over'], worlds_end['name'].get())
+    write_log(['worlds_end', 'game_over'], worlds_end['played'].get())
 
     # update scoring
     update_scoring()
@@ -809,7 +809,7 @@ def update_scoring():
         trait_pile = plr['trait_pile'][p]
 
         # calculate world's end points
-        p_worlds_end = rules_we.worlds_end(traits_df, worlds_end['name'].get(), plr['trait_pile'],
+        p_worlds_end = rules_we.worlds_end(traits_df, worlds_end['played'].get(), plr['trait_pile'],
                                            p, plr['genes'], plr['WE_effect'])
 
         # calculate face value
@@ -1401,7 +1401,7 @@ def create_trait_pile(frame_trait_overview, p):
     # --- NEOTENY --- check button if Neoteny is in your hand ----------------------
     # is NEOTENY in your hand? asked via checkbox? But only if its not played
     neoteny_idx = traits_df.index[traits_df.trait == 'Neoteny'].tolist()[0]
-    if ("select world's end" not in worlds_end['name'].get()
+    if ("select world's end" not in worlds_end['played'].get()
             and all(neoteny_idx not in tp for tp in plr['trait_pile'])):
         # only if no one has it or this player has it
         neoteny_effect = status_df.loc[neoteny_idx].effects
@@ -1543,13 +1543,13 @@ def create_trait_pile(frame_trait_overview, p):
 
     # **********************************************************************************************
     # ------ worlds end -> manual entries ---------------------------------------------------------
-    if "select world's end" not in worlds_end['name'].get():
+    if "select world's end" not in worlds_end['played'].get():
         irow += 1
         ttk.Separator(frame_trait_overview, orient='horizontal'
                       ).grid(row=irow, column=0, columnspan=2, padx=5, pady=10, sticky='we')
 
         # get world's end name & index
-        we = worlds_end['name'].get()
+        we = worlds_end['played'].get()
         we_idx = catastrophies_df[catastrophies_df['name'] == we].index.values[0]
         we_eff = catastrophies_df.loc[we_idx].worlds_end
 
@@ -1986,7 +1986,7 @@ def create_menu_frame():
         state="disabled",
         width=18,
         style="move.TCombobox",
-        textvariable=worlds_end['name'])
+        textvariable=worlds_end['played'])
     worlds_end['cbox'].current(0)
     worlds_end['cbox'].grid(row=game['n_catastrophies']+2, column=0, columnspan=2,
                             padx=4, pady=(0, 5), sticky='ns')
@@ -2082,8 +2082,8 @@ def reset_variables():
         catastrophe['cbox'].append([])
 
     # reset worlds end
+    worlds_end['played'] = tk.StringVar(value="")
     worlds_end['cbox'] = [None]
-    worlds_end['name'] = tk.StringVar(value="")
 
     # reset current status
     status_df['color'] = traits_df.color

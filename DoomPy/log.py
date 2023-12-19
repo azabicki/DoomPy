@@ -175,6 +175,10 @@ def write_log(what, *args):
                     f.write(">>> catastrophe <<< played catastrophe #{}: '{}' (id:{})\n"
                             .format(*args))
 
+                case 'first_player':
+                    print("   >>> '{}' is now first player after {} catastrophies".format(*args))
+                    f.write("   >>> '{}' is now first player after {} catastrophies\n".format(*args))
+
         case 'worlds_end':
             match what[1]:
                 case 'error_no_event':

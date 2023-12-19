@@ -388,12 +388,20 @@ def btn_play_catastrophe(event, c):
             and status_df.loc[denial_idx].effects == 'none'):
         status_df.loc[denial_idx, "effects"] = played_str
 
+    # update first player
+    n_cat = sum(i is not None for i in catastrophe['played'])
+    game['first_player'] = game['first_player_start'] + n_cat
+    if game['first_player'] > game['n_player']-1:
+        game['first_player'] = game['first_player'] - game['n_player']
+    write_log(['catastrophe', 'first_player'], plr['name'][game['first_player']].get(), n_cat)
+
     # update genes & scoring
     update_genes()
     update_scoring()
 
     # update all trait piles
     for p in range(game['n_player']):
+        create_player_frame(p)
         create_trait_pile(frame_trait_pile[p], p)
 
     # focus back to search field
@@ -2063,6 +2071,7 @@ def reset_variables():
 
     # first player
     game['first_player'] = options['first_player'].get()
+    game['first_player_start'] = options['first_player'].get()
     write_log(['init', 'first_player'], plr['name'][game['first_player']].get())
 
     # reset deck/lbox card-lists

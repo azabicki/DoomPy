@@ -154,11 +154,12 @@ frame_trait_pile = []       # frame containing players traits -> needed to be ab
 # settings -----------------------------------------------------------------------------------------
 global game, plr, deck, deck_filtered_idx, catastrophe, worlds_end
 game = {}
-game['n_player'] = []           # number of current players
-game['n_genes'] = []            # gene pool at start
-game['n_catastrophies'] = []    # number of catastrophies
-game['n_MOLs'] = []             # number of MOLs
-game['first_player'] = []       # keep track of first player
+game['n_player'] = []            # number of current players
+game['n_genes'] = []             # gene pool at start
+game['n_catastrophies'] = []     # number of catastrophies
+game['n_MOLs'] = []              # number of MOLs
+game['first_player'] = []        # keep track of first player
+game['first_player_start'] = []  # keep track of first player AT START
 
 plr = {}
 plr['name'] = []

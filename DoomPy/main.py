@@ -1022,10 +1022,14 @@ def update_stars():
         # number of dominant traits
         n_dominant = np.nansum([traits_df.loc[trait_idx].dominant for trait_idx in plr['trait_pile'][p]])
 
+        # write log
+        write_log(['stars', 'n'], plr['name'][p].get(), int(n_dominant))
+
         # check special cases
         Epic_idx = traits_df.index[traits_df.trait == 'Epic'].tolist()[0]
         if Epic_idx in plr['trait_pile'][p]:
             n_dominant = 2
+            write_log(['stars', 'epic'])
 
         # find label widgets
         tmp_frame = frame_player[p].winfo_children()

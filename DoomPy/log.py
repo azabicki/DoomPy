@@ -209,7 +209,19 @@ def write_log(what, *args):
                 case 'neoteny_that_one':
                     print('>>> Neoteny <<< in {}`s hand'.format(*args))
 
-        case 'scoring':
+        case 'stars':
+            match what[1]:
+                case 'n':
+                    print(">>> dominant_stars <<< '{}' currently has {} dominant traits"
+                          .format(*args))
+                    f.write(">>> dominant_stars <<< '{}' currently has {} dominant traits\n"
+                            .format(*args))
+
+                case 'epic':
+                    print("   >>> dominant_stars <<< EPIC fills both dominant spots")
+                    f.write("   >>> dominant_stars <<< EPIPC fills both dominant spots\n")
+
+        case '_scoring':
             match what[1]:
                 case 'update':
                     print(">>> scoring <<< current points 4 '{}': face={} | drops={} | WE={} | MOL={} | total={}"

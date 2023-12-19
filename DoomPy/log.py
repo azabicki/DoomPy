@@ -2,11 +2,15 @@ from globals_ import logfile
 
 
 def write_log(what, *args):
-    f = open(logfile, 'a')
+    f = open(logfile['file'], 'a')
 
     match what[0]:
         case 'init':  # initialize
             match what[1]:
+                case 'datetime':
+                    print(">>> initialize <<< new game: {}". format(*args))
+                    f.write(">>> initialize <<< new game: {}\n".format(*args))
+
                 case 'variables':
                     print(">>> initialize <<< reset variables")
                     f.write(">>> initialize <<< reset variables\n")

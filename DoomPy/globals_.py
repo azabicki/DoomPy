@@ -20,10 +20,6 @@ global cfg
 with open(os.path.join(curdir, "config.json")) as json_file:
     cfg = json.load(json_file)
 
-# logfile to store debug lines ---------------------------------------------------------------------
-global logfile
-logfile = os.path.join(dir_log, "DoomPyLog_" + time.strftime("%Y%m%d-%H%M%S") + ".txt")
-
 # load cards.xlsx ----------------------------------------------------------------------------------
 global traits_df, status_df, catastrophies_df
 
@@ -182,6 +178,10 @@ catastrophe['cbox'] = []        # comboxes containing possible catastrophies
 worlds_end = {}
 worlds_end['played'] = None     # selected worlds end
 worlds_end['cbox'] = [None]     # combobox 4 worlds end
+
+# logfile to store debug lines ---------------------------------------------------------------------
+global logfile
+logfile = {'file': os.path.join(dir_log, "DoomPyLog_" + time.strftime("%Y%m%d-%H%M%S") + ".txt")}
 
 
 # trait specific variables #########################################################################

@@ -1,3 +1,5 @@
+import os
+import time
 import bisect
 import tkinter as tk
 from tkinter import ttk
@@ -15,6 +17,7 @@ import rules_remove as rules_re
 import rules_traits as rules_tr
 import rules_worlds_end as rules_we
 
+from globals_ import logfile, dir_log
 from globals_ import cfg, images_dict, sounds, music_onoff, icons_onoff, points_onoff, show_icons  # noqa: F401
 from globals_ import traits_df, status_df, catastrophies_df
 from globals_ import lbl_music_switch, lbl_icons_switch, lbl_points_switch, ent_trait_search, lbox_deck
@@ -2111,6 +2114,11 @@ def reset_variables():
 
 
 def start_game():
+    # new logfile ----------------------------------------------------------------------------------
+    dt = time.strftime("%Y%m%d-%H%M%S")
+    logfile['file'] = os.path.join(dir_log, "DoomPyLog_" + dt + ".txt")
+    write_log(['init', 'datetime'], dt)
+
     # reset variables ------------------------------------------------------------------------------
     write_log(['init', 'variables'])
     reset_variables()

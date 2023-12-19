@@ -164,21 +164,80 @@ def pre_play():
             btn_play_trait(3)
 
     if pre_play_set == 'random':
-        for t in range(9):
-            lbox_deck[0].selection_set(np.random.randint(low=0, high=len(deck)-1))
-            btn_play_trait(0)
+        rounds = 12
+        for r in range(rounds):
+            for p in range(4):
+                print(p, ' _ ', r)
 
-        for t in range(8):
-            lbox_deck[0].selection_set(np.random.randint(low=0, high=len(deck)-1))
-            btn_play_trait(1)
+                t = np.random.randint(low=0, high=len(deck)-1)
+                lbox_deck[0].selection_set(t)
+                trait_idx = deck_filtered_idx[lbox_deck[0].curselection()[0]]
 
-        for t in range(7):
-            lbox_deck[0].selection_set(np.random.randint(low=0, high=len(deck)-1))
-            btn_play_trait(2)
+                # do not play 'Opposable THumbs'
+                while trait_idx == 211:
+                    t = np.random.randint(low=0, high=len(deck)-1)
+                    lbox_deck[0].selection_set(t)
+                    trait_idx = deck_filtered_idx[lbox_deck[0].curselection()[0]]
 
-        for t in range(8):
-            lbox_deck[0].selection_set(np.random.randint(low=0, high=len(deck)-1))
-            btn_play_trait(3)
+                write_log(['select', 'deck'],
+                          traits_df.loc[deck_filtered_idx[lbox_deck[0].curselection()[0]]].trait,
+                          trait_idx)
+
+                # repeat until trait played
+                while btn_play_trait(p) == 0:
+                    btn_clear_trait_search()
+
+                    t = np.random.randint(low=0, high=len(deck)-1)
+                    lbox_deck[0].selection_set(t)
+                    trait_idx = deck_filtered_idx[lbox_deck[0].curselection()[0]]
+
+                    # do not play 'Opposable THumbs'
+                    while trait_idx == 211:
+                        t = np.random.randint(low=0, high=len(deck)-1)
+                        lbox_deck[0].selection_set(t)
+                        trait_idx = deck_filtered_idx[lbox_deck[0].curselection()[0]]
+
+                    write_log(['select', 'deck'],
+                              traits_df.loc[deck_filtered_idx[lbox_deck[0].curselection()[0]]].trait,
+                              trait_idx)
+
+                if traits_df.loc[trait_idx].attachment == 1:
+                    host_idx = rules_at.filter_attachables(trait_idx, p)[0]
+                    host = traits_df.loc[host_idx].trait
+
+                    write_log(['attach_to', 'attached'],plr['name'][p].get(),
+                              traits_df.loc[trait_idx].trait, trait_idx, host, host_idx)
+
+                    # set new attachment to status_row of host & update effects of attachment on host
+                    status_df.loc[trait_idx, 'host'] = host_idx
+                    update_traits_current_status('attachment', host_idx, trait_idx)
+
+                    # update scoring
+                    update_genes()
+                    update_scoring()
+
+                    # update all trait piles
+                    for p in range(game['n_player']):
+                        create_trait_pile(frame_trait_pile[p], p)
+
+                # reset trait to play
+                btn_clear_trait_search()
+                trait_idx = None
+
+            # play catastrophe ?!
+            if r == 2:
+                catastrophe['cbox'][0].current(3)
+                catastrophe['cbox'][0].event_generate("<<ComboboxSelected>>")
+            elif r == 5:
+                catastrophe['cbox'][1].current(13)
+                catastrophe['cbox'][1].event_generate("<<ComboboxSelected>>")
+            elif r == 8:
+                catastrophe['cbox'][2].current(18)
+                catastrophe['cbox'][2].event_generate("<<ComboboxSelected>>")
+            elif r == 11:
+                catastrophe['cbox'][3].current(22)
+                catastrophe['cbox'][3].event_generate("<<ComboboxSelected>>")
+    print('___done___')
 
     if pre_play_set == 3:
         lisa = [5, 27]
@@ -200,15 +259,6 @@ def pre_play():
         for t in adam:
             lbox_deck[0].selection_set(t)
             btn_play_trait(3)
-
-    # catastrophe['cbox'][0].current(3)
-    # catastrophe['cbox'][0].event_generate("<<ComboboxSelected>>")
-    # catastrophe['cbox'][1].current(15)
-    # catastrophe['cbox'][1].event_generate("<<ComboboxSelected>>")
-    # catastrophe['cbox'][2].current(18)
-    # catastrophe['cbox'][2].event_generate("<<ComboboxSelected>>")
-    # catastrophe['cbox'][3].current(1)
-    # catastrophe['cbox'][3].event_generate("<<ComboboxSelected>>")
 
 
 def switch(inp):
@@ -639,7 +689,7 @@ def btn_play_trait(to):
     # return, if no trait selected
     if not lbox_deck[0].curselection():
         write_log(['play', 'error_no_trait'])
-        return
+        return 0
 
     # get card
     trait_idx = deck_filtered_idx[lbox_deck[0].curselection()[0]]
@@ -649,18 +699,18 @@ def btn_play_trait(to):
     if traits_df.loc[trait_idx].dominant == 1:
         if sum([1 for t in plr['trait_pile'][to] if traits_df.loc[t].dominant == 1]) == 2:
             write_log(['play', 'error_2dominants'])
-            return
+            return 0
 
     # return, if any trait specific requirements are not met
     if rules_pl.check_requirement(trait_idx, to):
-        return
+        return 0
 
     # return, if attachment does not have any trait to attach to
     if traits_df.loc[trait_idx].attachment == 1:
         attachables = rules_at.filter_attachables(trait_idx, to)
         if len(attachables) == 0:
             write_log(['play', 'error_no_attachables'])
-            return
+            return 0
 
     # print log
     write_log(['play', 'play'], plr['name'][to].get(), trait, trait_idx)
@@ -683,6 +733,8 @@ def btn_play_trait(to):
 
     # play sound bites
     play_sound(trait)
+    
+    return 1
 
 
 def update_manual_we(event, p):

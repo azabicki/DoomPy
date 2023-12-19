@@ -205,7 +205,7 @@ def pre_play():
                     host_idx = rules_at.filter_attachables(trait_idx, p)[0]
                     host = traits_df.loc[host_idx].trait
 
-                    write_log(['attach_to', 'attached'],plr['name'][p].get(),
+                    write_log(['attach_to', 'attached'], plr['name'][p].get(),
                               traits_df.loc[trait_idx].trait, trait_idx, host, host_idx)
 
                     # set new attachment to status_row of host & update effects of attachment on host
@@ -583,7 +583,8 @@ def btn_move_trait(from_, cbox_move_to):
     if not np.isnan(trait_idx):
         attachment = status_df.loc[trait_idx].attachment
     cbox_str = cbox_move_to.get().split()
-    to = cfg["names"].index(cbox_str[-1])
+    if cbox_str[0] != 'move':
+        to = cfg["names"].index(cbox_str[-1])
 
     # return, if no target selected
     if cbox_move_to.current() == 0:
@@ -733,7 +734,7 @@ def btn_play_trait(to):
 
     # play sound bites
     play_sound(trait)
-    
+
     return 1
 
 

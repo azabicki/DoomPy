@@ -21,7 +21,7 @@ with open(os.path.join(curdir, "config.json")) as json_file:
     cfg = json.load(json_file)
 
 # load cards.xlsx ----------------------------------------------------------------------------------
-global traits_df, status_df, catastrophies_df
+global traits_df, status_df, catastrophes_df
 
 # traits
 xlsx_traits = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="traits")
@@ -44,13 +44,13 @@ status_df['effects'] = 'none'
 status_df['traits_WE'] = 'none'
 status_df['we_effect'] = 'none'
 
-# catastrophies
+# catastrophes
 xlsx_ages = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="ages")
-xlsx_catastrophies = xlsx_ages.loc[xlsx_ages['type'] == 'Catastrophe']
-catastrophies_df = (xlsx_catastrophies
-                    .sort_values(by='name')
-                    .reset_index(drop=True)
-                    .drop(columns=['game', 'type']))
+xlsx_catastrophes = xlsx_ages.loc[xlsx_ages['type'] == 'Catastrophe']
+catastrophes_df = (xlsx_catastrophes
+                   .sort_values(by='name')
+                   .reset_index(drop=True)
+                   .drop(columns=['game', 'type']))
 
 # load images --------------------------------------------------------------------------------------
 global images_dict
@@ -152,7 +152,7 @@ global game, plr, deck, deck_filtered_idx, catastrophe, worlds_end
 game = {}
 game['n_player'] = []            # number of current players
 game['n_genes'] = []             # gene pool at start
-game['n_catastrophies'] = []     # number of catastrophies
+game['n_catastrophes'] = []     # number of catastrophes
 game['n_MOLs'] = []              # number of MOLs
 game['first_player'] = []        # keep track of first player
 game['first_player_start'] = []  # keep track of first player AT START
@@ -171,9 +171,9 @@ deck = []                       # all traits in deck (or discard pile) left to b
 deck_filtered_idx = []          # _filtered_ deck of trait_idx in listbox after searching -> idx
 
 catastrophe = {}
-catastrophe['possible'] = []    # list of  possibles catastrophies
-catastrophe['played'] = []      # occured catastrophies / needed for worlds end
-catastrophe['cbox'] = []        # comboxes containing possible catastrophies
+catastrophe['possible'] = []    # list of  possibles catastrophes
+catastrophe['played'] = []      # occured catastrophes / needed for worlds end
+catastrophe['cbox'] = []        # comboxes containing possible catastrophes
 
 worlds_end = {}
 worlds_end['played'] = None     # selected worlds end

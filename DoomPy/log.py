@@ -180,8 +180,8 @@ def write_log(what, *args):
                             .format(*args))
 
                 case 'first_player':
-                    print("   >>> '{}' is now first player after {} catastrophies".format(*args))
-                    f.write("   >>> '{}' is now first player after {} catastrophies\n".format(*args))
+                    print("   >>> '{}' is now first player after {} catastrophes".format(*args))
+                    f.write("   >>> '{}' is now first player after {} catastrophes\n".format(*args))
 
         case 'worlds_end':
             match what[1]:

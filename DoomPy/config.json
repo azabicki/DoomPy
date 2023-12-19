@@ -2,7 +2,7 @@
     "names": ["Lisa", "Julia", "Anton", "Adam", "Ben", "Franzi"],
     "n_player": 4,
     "n_genes": 6,
-    "n_catastrophies": 4,
+    "n_catastrophes": 4,
     "n_MOLs": 2,
     "max_player": 6,
     "img_colors_set": "circle",

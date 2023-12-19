@@ -19,7 +19,7 @@ import rules_worlds_end as rules_we
 
 from globals_ import logfile, dir_log
 from globals_ import cfg, images_dict, sounds, music_onoff, icons_onoff, points_onoff, show_icons  # noqa: F401
-from globals_ import traits_df, status_df, catastrophies_df
+from globals_ import traits_df, status_df, catastrophes_df
 from globals_ import lbl_music_switch, lbl_icons_switch, lbl_points_switch, ent_trait_search, lbox_deck
 from globals_ import frame_player, frame_trait_pile
 from globals_ import game, plr, deck, deck_filtered_idx, catastrophe, worlds_end
@@ -405,14 +405,14 @@ def btn_play_catastrophe(event, c):
     # set played catastrophe
     catastrophe['played'][c] = played_idx
 
-    # update possible catastrophies for other catastrophies
-    # for i in range(1, game['n_catastrophies']):
-    for i in [i for i in range(game['n_catastrophies']) if i != c]:
-        # begin with ALL possible catastrophies
-        catastrophe['possible'][i] = catastrophies_df.index.tolist()
+    # update possible catastrophes for other catastrophes
+    # for i in range(1, game['n_catastrophes']):
+    for i in [i for i in range(game['n_catastrophes']) if i != c]:
+        # begin with ALL possible catastrophes
+        catastrophe['possible'][i] = catastrophes_df.index.tolist()
 
-        # remove other catastrophies from possible ones
-        for j in [j for j in range(game['n_catastrophies']) if j != i]:
+        # remove other catastrophes from possible ones
+        for j in [j for j in range(game['n_catastrophes']) if j != i]:
             # only, if j'th catastrophe was played already
             if catastrophe['played'][j] is not None:
                 # remove from list of possibles
@@ -420,20 +420,20 @@ def btn_play_catastrophe(event, c):
 
         # create list of catastrophe names & update combobox
         pos_cat_values = [" catastrophe {}...".format(i+1)] \
-            + catastrophies_df.loc[catastrophe['possible'][i]].name.values.tolist()
+            + catastrophes_df.loc[catastrophe['possible'][i]].name.values.tolist()
         catastrophe['cbox'][i].configure(values=pos_cat_values)
 
     # enable next catastrophe
-    if c < game['n_catastrophies']-1:
+    if c < game['n_catastrophes']-1:
         catastrophe['cbox'][c+1].configure(state="readonly")
     else:
         worlds_end['cbox'].configure(state="readonly")
 
     # update worlds end combobox
-    played_catastrophies = [catastrophies_df.loc[catastrophe['played'][i], "name"]
-                            for i in range(game['n_catastrophies'])
-                            if catastrophe['played'][i] is not None]
-    worlds_end['cbox']['values'] = [" select world's end ..."] + played_catastrophies
+    played_catastrophes = [catastrophes_df.loc[catastrophe['played'][i], "name"]
+                           for i in range(game['n_catastrophes'])
+                           if catastrophe['played'][i] is not None]
+    worlds_end['cbox']['values'] = [" select world's end ..."] + played_catastrophes
 
     # --- if DENIAL is out there, save first catastrophe he sees ---
     denial_idx = status_df.index[status_df.trait == 'Denial'].tolist()[0]
@@ -946,7 +946,7 @@ def update_genes():
             write_log(['genes', 'denial_t4h'], dnl_idx, plr['name'][dnl_p].get(), dnl_effect, diff_genes)
         else:
             # reverse effect
-            reverse_effect = catastrophies_df[catastrophies_df.name == dnl_effect].gene_pool.values[0] * -1
+            reverse_effect = catastrophes_df[catastrophes_df.name == dnl_effect].gene_pool.values[0] * -1
             diff_genes[dnl_p] += int(reverse_effect)
 
             # write log
@@ -980,16 +980,16 @@ def update_genes():
             # print log
             write_log(['genes', 'spores'], sprs_idx, plr['name'][p].get(), diff_genes)
 
-    # check what catastrophies were played alread ---------------------------------------
-    for c in range(game['n_catastrophies']):
+    # check what catastrophes were played alread ---------------------------------------
+    for c in range(game['n_catastrophes']):
         # get card & effect
         c_idx = catastrophe['played'][c]
 
         # check if catastrophy was played
         if c_idx is not None:
-            c_str = catastrophies_df.loc[c_idx, "name"]
+            c_str = catastrophes_df.loc[c_idx, "name"]
             # get effect and apply it
-            effect = int(catastrophies_df.loc[c_idx].gene_pool)
+            effect = int(catastrophes_df.loc[c_idx].gene_pool)
             diff_genes = [i + effect for i in diff_genes]
 
             # print log
@@ -1614,8 +1614,8 @@ def create_trait_pile(frame_trait_overview, p):
 
         # get world's end name & index
         we = worlds_end['played'].get()
-        we_idx = catastrophies_df[catastrophies_df['name'] == we].index.values[0]
-        we_eff = catastrophies_df.loc[we_idx].worlds_end
+        we_idx = catastrophes_df[catastrophes_df['name'] == we].index.values[0]
+        we_eff = catastrophes_df.loc[we_idx].worlds_end
 
         # create separate frame for WE_TITLE
         irow += 1
@@ -1874,17 +1874,17 @@ def create_menu_frame():
         wrap=False
     ).grid(row=2, column=1, sticky='w')
 
-    # nr catastrophies -----
+    # nr catastrophes -----
     ttk.Label(
         frame_menu_options,
-        text="# catastrophies: ",
+        text="# catastrophes: ",
     ).grid(row=3, column=0, sticky='e')
     ttk.Spinbox(
         frame_menu_options,
         from_=2,
         to=6,
         width=3,
-        textvariable=options['n_catastrophies'],
+        textvariable=options['n_catastrophes'],
         wrap=False
     ).grid(row=3, column=1, sticky='w')
 
@@ -1928,8 +1928,8 @@ def create_menu_frame():
     ).grid(row=8, column=0, columnspan=2)
     ttk.Label(
         frame_menu_options,
-        text="{} catastrophies + {} genes + {} MOLs"
-        .format(game['n_catastrophies'], game['n_genes'], game['n_MOLs']),
+        text="{} catastrophes + {} genes + {} MOLs"
+        .format(game['n_catastrophes'], game['n_genes'], game['n_MOLs']),
         style="game_info.TLabel",
     ).grid(row=9, column=0, columnspan=2, pady=(0, 8))
 
@@ -2015,15 +2015,15 @@ def create_menu_frame():
     frame_menu_catastrophe.columnconfigure(0, weight=1)
     frame_menu_catastrophe.columnconfigure(1, weight=1)
 
-    # catastrophies -----
+    # catastrophes -----
     ttk.Label(
         frame_menu_catastrophe,
-        text="Catastrophies",
+        text="catastrophes",
         font="'' 18",
     ).grid(row=0, column=0, columnspan=2, pady=(5, 0))
-    for c in range(game['n_catastrophies']):
+    for c in range(game['n_catastrophes']):
         pos_cat_values = [" catastrophe {}...".format(c+1)] + \
-            catastrophies_df.loc[catastrophe['possible'][c]].name.values.tolist()
+            catastrophes_df.loc[catastrophe['possible'][c]].name.values.tolist()
 
         catastrophe['cbox'][c] = ttk.Combobox(
             frame_menu_catastrophe,
@@ -2041,7 +2041,7 @@ def create_menu_frame():
         frame_menu_catastrophe,
         text="World's End",
         font="'' 18",
-    ).grid(row=game['n_catastrophies']+1, column=0, columnspan=2, pady=(5, 0))
+    ).grid(row=game['n_catastrophes']+1, column=0, columnspan=2, pady=(5, 0))
 
     worlds_end['cbox'] = ttk.Combobox(
         frame_menu_catastrophe,
@@ -2052,7 +2052,7 @@ def create_menu_frame():
         style="move.TCombobox",
         textvariable=worlds_end['played'])
     worlds_end['cbox'].current(0)
-    worlds_end['cbox'].grid(row=game['n_catastrophies']+2, column=0, columnspan=2,
+    worlds_end['cbox'].grid(row=game['n_catastrophes']+2, column=0, columnspan=2,
                             padx=4, pady=(0, 5), sticky='ns')
     worlds_end['cbox'].bind("<<ComboboxSelected>>", lambda e: btn_play_worlds_end())
 
@@ -2085,7 +2085,7 @@ def reset_variables():
     # update current settings
     game['n_player'] = options['n_player'].get()
     game['n_genes'] = options['n_genes'].get()
-    game['n_catastrophies'] = options['n_catastrophies'].get()
+    game['n_catastrophes'] = options['n_catastrophes'].get()
     game['n_MOLs'] = options['n_MOLs'].get()
 
     # reset _player_ variables
@@ -2137,12 +2137,12 @@ def reset_variables():
     deck_filtered_idx.extend(traits_df.index.tolist())  # complete list of indices of traits for menu_listbox
     deck_filtered_str.set(traits_df.loc[deck].trait.values.tolist())  # complete list of names of traits
 
-    # reset occured catastrophies
+    # reset occured catastrophes
     catastrophe['possible'].clear()
     catastrophe['played'].clear()
     catastrophe['cbox'].clear()
-    for i in range(game['n_catastrophies']):
-        catastrophe['possible'].append(catastrophies_df.index.tolist())
+    for i in range(game['n_catastrophes']):
+        catastrophe['possible'].append(catastrophes_df.index.tolist())
         catastrophe['played'].append(None)
         catastrophe['cbox'].append([])
 
@@ -2192,7 +2192,7 @@ def start_game():
     create_menu_frame()
 
     # set catastrophe F-key-bindings
-    for i in range(game['n_catastrophies']):
+    for i in range(game['n_catastrophes']):
         root.bind('<F' + str(i+1) + '>', lambda e, j=i: catastrophe['cbox'][j].focus())
 
     # fill _playground_ frame with _player_ frames -------------------------------------------------
@@ -2251,7 +2251,7 @@ gui_style.configure("move.TCombobox", selectbackground="none")
 options = {}
 options['n_player'] = tk.IntVar(value=cfg["n_player"])                # OPTIONS: number of players
 options['n_genes'] = tk.IntVar(value=cfg["n_genes"])                  # OPTIONS: gene pool at beginning
-options['n_catastrophies'] = tk.IntVar(value=cfg["n_catastrophies"])  # OPTIONS: number of catastrophies
+options['n_catastrophes'] = tk.IntVar(value=cfg["n_catastrophes"])  # OPTIONS: number of catastrophes
 options['n_MOLs'] = tk.IntVar(value=cfg["n_MOLs"])                    # OPTIONS: number of MOLs
 options['names'] = []
 for i in range(len(cfg["names"])):

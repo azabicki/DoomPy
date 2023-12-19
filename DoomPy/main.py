@@ -444,13 +444,22 @@ def btn_play_catastrophe(event, c):
         game['first_player'] = game['first_player'] - game['n_player']
     write_log(['catastrophe', 'first_player'], plr['name'][game['first_player']].get(), n_cat)
 
+    # update label_style
+    for p in range(game['n_player']):
+        tmp_frame = frame_player[p].winfo_children()
+        lbl1 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.!label')
+        lbl2 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.!label2')
+        lbl1.configure(style="n_traitsFirstPlayer.TLabel"
+                       if game['first_player'] == p else "n_traits.TLabel")
+        lbl2.configure(style="n_traitsFirstPlayer.TLabel"
+                       if game['first_player'] == p else "n_traits.TLabel")
+
     # update genes & scoring
     update_genes()
     update_scoring()
 
     # update all trait piles
     for p in range(game['n_player']):
-        create_player_frame(p)
         create_trait_pile(frame_trait_pile[p], p)
 
     # focus back to search field

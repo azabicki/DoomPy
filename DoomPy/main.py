@@ -166,7 +166,7 @@ def pre_play():
     if pre_play_set == 'random':
         rounds = 12
         for r in range(rounds):
-            for p in range(4):
+            for p in range(game['n_player']):
                 print(p, ' _ ', r)
 
                 t = np.random.randint(low=0, high=len(deck)-1)
@@ -179,6 +179,7 @@ def pre_play():
                     lbox_deck[0].selection_set(t)
                     trait_idx = deck_filtered_idx[lbox_deck[0].curselection()[0]]
 
+                # write log
                 write_log(['select', 'deck'],
                           traits_df.loc[deck_filtered_idx[lbox_deck[0].curselection()[0]]].trait,
                           trait_idx)
@@ -201,6 +202,7 @@ def pre_play():
                               traits_df.loc[deck_filtered_idx[lbox_deck[0].curselection()[0]]].trait,
                               trait_idx)
 
+                # attach to host if neccessary
                 if traits_df.loc[trait_idx].attachment == 1:
                     host_idx = rules_at.filter_attachables(trait_idx, p)[0]
                     host = traits_df.loc[host_idx].trait
@@ -225,18 +227,12 @@ def pre_play():
                 trait_idx = None
 
             # play catastrophe ?!
-            if r == 2:
-                catastrophe['cbox'][0].current(3)
-                catastrophe['cbox'][0].event_generate("<<ComboboxSelected>>")
-            elif r == 5:
-                catastrophe['cbox'][1].current(13)
-                catastrophe['cbox'][1].event_generate("<<ComboboxSelected>>")
-            elif r == 8:
-                catastrophe['cbox'][2].current(18)
-                catastrophe['cbox'][2].event_generate("<<ComboboxSelected>>")
-            elif r == 11:
-                catastrophe['cbox'][3].current(22)
-                catastrophe['cbox'][3].event_generate("<<ComboboxSelected>>")
+            if r % 3 == 2:
+                n_cat = sum(i is not None for i in catastrophe['played'])
+                c = np.random.randint(low=0, high=len(catastrophe['possible'][n_cat]))
+                catastrophe['cbox'][n_cat].current(c)
+                catastrophe['cbox'][n_cat].event_generate("<<ComboboxSelected>>")
+
     print('___done___')
 
     if pre_play_set == 3:

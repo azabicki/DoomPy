@@ -161,28 +161,20 @@ def pre_play():
             btn_play_trait(3)
 
     if pre_play_set == 'random':
-        p0 = list(np.random.randint(low=0, high=len(traits_df), size=12))
-        for t in p0:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+        for t in range(9):
+            lbox_deck[0].selection_set(np.random.randint(low=0, high=len(deck)-1))
             btn_play_trait(0)
 
-        p1 = list(np.random.randint(low=0, high=len(traits_df), size=10))
-        for t in p1:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+        for t in range(8):
+            lbox_deck[0].selection_set(np.random.randint(low=0, high=len(deck)-1))
             btn_play_trait(1)
 
-        p2 = list(np.random.randint(low=0, high=len(traits_df), size=7))
-        for t in p2:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+        for t in range(7):
+            lbox_deck[0].selection_set(np.random.randint(low=0, high=len(deck)-1))
             btn_play_trait(2)
 
-        p3 = list(np.random.randint(low=0, high=len(traits_df), size=9))
-        for t in p3:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+        for t in range(8):
+            lbox_deck[0].selection_set(np.random.randint(low=0, high=len(deck)-1))
             btn_play_trait(3)
 
     if pre_play_set == 3:
@@ -206,14 +198,14 @@ def pre_play():
             lbox_deck[0].selection_set(t)
             btn_play_trait(3)
 
-    catastrophe['cbox'][0].current(3)
-    catastrophe['cbox'][0].event_generate("<<ComboboxSelected>>")
-    catastrophe['cbox'][1].current(15)
-    catastrophe['cbox'][1].event_generate("<<ComboboxSelected>>")
-    catastrophe['cbox'][2].current(18)
-    catastrophe['cbox'][2].event_generate("<<ComboboxSelected>>")
-    catastrophe['cbox'][3].current(1)
-    catastrophe['cbox'][3].event_generate("<<ComboboxSelected>>")
+    # catastrophe['cbox'][0].current(3)
+    # catastrophe['cbox'][0].event_generate("<<ComboboxSelected>>")
+    # catastrophe['cbox'][1].current(15)
+    # catastrophe['cbox'][1].event_generate("<<ComboboxSelected>>")
+    # catastrophe['cbox'][2].current(18)
+    # catastrophe['cbox'][2].event_generate("<<ComboboxSelected>>")
+    # catastrophe['cbox'][3].current(1)
+    # catastrophe['cbox'][3].event_generate("<<ComboboxSelected>>")
 
 
 def switch(inp):

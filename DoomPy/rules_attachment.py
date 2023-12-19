@@ -20,27 +20,27 @@ def filter_attachables(attachment, p):
         case 'negative_face':
             attachable = [idx for idx in attachable
                           if (not isinstance(status_df.loc[idx].face, str)
-                              and status_df.loc[idx].face < 0)]
+                              and traits_df.loc[idx].face < 0)]
 
         case 'non_blue':
             attachable = [idx for idx in attachable
-                          if 'blue' not in status_df.loc[idx].color.lower()]
+                          if 'blue' not in traits_df.loc[idx].color.lower()]
 
         case 'non_green':
             attachable = [idx for idx in attachable
-                          if 'green' not in status_df.loc[idx].color.lower()]
+                          if 'green' not in traits_df.loc[idx].color.lower()]
 
         case 'non_purple':
             attachable = [idx for idx in attachable
-                          if 'purple' not in status_df.loc[idx].color.lower()]
+                          if 'purple' not in traits_df.loc[idx].color.lower()]
 
         case 'non_red':
             attachable = [idx for idx in attachable
-                          if 'red' not in status_df.loc[idx].color.lower()]
+                          if 'red' not in traits_df.loc[idx].color.lower()]
 
         case 'color':
             attachable = [idx for idx in attachable
-                          if 'colorless' not in status_df.loc[idx].color.lower()]
+                          if 'colorless' not in traits_df.loc[idx].color.lower()]
 
         case 'effectless':
             attachable = [idx for idx in attachable

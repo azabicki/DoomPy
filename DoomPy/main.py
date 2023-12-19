@@ -390,6 +390,12 @@ def btn_play_catastrophe(event, c):
                             if catastrophe['played'][i] is not None]
     worlds_end['cbox']['values'] = [" select world's end ..."] + played_catastrophies
 
+    # --- if DENIAL is out there, save first catastrophe he sees ---
+    denial_idx = status_df.index[status_df.trait == 'Denial'].tolist()[0]
+    if (any(denial_idx in tp for tp in plr['trait_pile'])
+            and status_df.loc[denial_idx].effects == 'none'):
+        status_df.loc[denial_idx, "effects"] = played_str
+
     # update genes & scoring
     update_genes()
     update_scoring()
@@ -886,6 +892,37 @@ def update_genes():
             write_log(['genes', 'catastrophe'], c_str, effect, diff_genes)
 
     # check for special effects by specific traits --------------------------------------
+    # ----- Denial --------------
+    dnl_idx = status_df.index[status_df.trait == 'Denial'].tolist()[0]
+    dnl_effect = status_df.loc[dnl_idx].effects
+    if (dnl_effect != 'none'):
+        # find player
+        dnl_in = [dnl_idx in tp for tp in plr['trait_pile']]
+        dnl_p = dnl_in.index(True)
+
+        if dnl_effect == 'The Four Horsemen':
+            # write log
+            write_log(['genes', 'denial_t4h'], dnl_idx, plr['name'][dnl_p].get(), dnl_effect, diff_genes)
+        else:
+            # reverse effect
+            reverse_effect = catastrophies_df[catastrophies_df.name == dnl_effect].gene_pool.values[0] * -1
+            diff_genes[dnl_p] += int(reverse_effect)
+
+            # write log
+            write_log(['genes', 'denial'], dnl_idx, plr['name'][dnl_p].get(), dnl_effect, diff_genes)
+
+    # ----- Sleepy --------------
+    slp_idx = traits_df.index[traits_df.trait == 'Sleepy'].tolist()[0]
+    if any(slp_idx in tp for tp in plr['trait_pile']):
+        slp_eff = [i.get() for i in sleepy_spinbox]
+        diff_genes = [diff_genes[x]+slp_eff[x] for x in range(len(diff_genes))]
+        if any(slp_eff):
+            p = [i for i, e in enumerate(slp_eff) if e != 0]
+            write_log(['genes', 'sleepy'], plr['name'][p[0]].get(), slp_eff[p[0]], diff_genes)
+    else:  # sleepy in no trait pile -> reset values
+        for i in range(game['n_player']):
+            sleepy_spinbox[i].set(0)
+
     # ----- Spores ---------------
     sprs_idx = traits_df.index[traits_df.trait == 'Spores'].tolist()[0]
     sprs_eff = status_df.loc[sprs_idx].effects
@@ -901,18 +938,6 @@ def update_genes():
 
             # print log
             write_log(['genes', 'spores'], sprs_idx, plr['name'][p].get(), diff_genes)
-
-    # ----- Sleepy --------------
-    slp_idx = traits_df.index[traits_df.trait == 'Sleepy'].tolist()[0]
-    if any(slp_idx in tp for tp in plr['trait_pile']):
-        slp_eff = [i.get() for i in sleepy_spinbox]
-        diff_genes = [diff_genes[x]+slp_eff[x] for x in range(len(diff_genes))]
-        if any(slp_eff):
-            p = [i for i, e in enumerate(slp_eff) if e != 0]
-            write_log(['genes', 'sleepy'], plr['name'][p[0]].get(), slp_eff[p[0]], diff_genes)
-    else:  # sleepy in no trait pile -> reset values
-        for i in range(game['n_player']):
-            sleepy_spinbox[i].set(0)
 
     # update gene values ----------------------------------------------------------------
     for p in range(game['n_player']):

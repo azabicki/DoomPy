@@ -229,6 +229,18 @@ def write_log(what, *args):
                     f.write(">>> genes <<< catastrophe '{}' has gene effect off '{}' -> current effect: {}\n"
                             .format(*args))
 
+                case 'denial':
+                    print(">>> genes <<< 'Denial' (id:{}) protects '{}' from gene effect of '{}' -> current effect: {}"
+                          .format(*args))
+                    f.write(">>> genes <<< 'Denial' (id:{}) protects '{}' from gene effect of '{}' -> current effect: {}\n"  # noqa: E501
+                            .format(*args))
+
+                case 'denial_t4h':
+                    print(">>> genes <<< 'Denial' (id:{}) could not protect '{}' from '{}' -> current effect: {}"
+                          .format(*args))
+                    f.write(">>> genes <<< 'Denial' (id:{}) could not protect '{}' from '{}' -> current effect: {}\n"
+                            .format(*args))
+
                 case 'spores':
                     print(">>> genes <<< 'Spores' (id:{}) has an gene effect (+1) on '{}' -> current effect: {}"
                           .format(*args))

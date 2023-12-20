@@ -707,7 +707,7 @@ def btn_play_trait(to):
 
     # return, if player already has two dominants
     if traits_df.loc[trait_idx].dominant == 1:
-        if sum([1 for t in plr['trait_pile'][to] if traits_df.loc[t].dominant == 1]) == 2:
+        if sum([1 for t in plr['trait_pile'][to] if traits_df.loc[t].dominant == 1]) >= 2:
             # check if HEROIC is born during 'Birth of a Hero'
             heroic_idx = traits_df.index[traits_df.trait == 'Heroic'].tolist()[0]
             is_born = status_df.loc[heroic_idx, 'effects']

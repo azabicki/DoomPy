@@ -729,6 +729,9 @@ def btn_play_trait(to):
     # print log
     write_log(['play', 'play'], plr['name'][to].get(), trait, trait_idx)
 
+    # check for rules/effects to apply when playing this trait
+    rules_pl.play_effect(trait_idx, to)
+
     # add to players traits & update trait_pile
     bisect.insort_left(plr['trait_pile'][to], trait_idx)
 

@@ -140,3 +140,40 @@ def check_requirement(trait_idx, p):
                 write_log(['*'],
                           '>>> play <<< ERROR - to play XYLOPHAGE, you need at least one green trait in trait pile')
                 return True
+
+
+def play_effect(trait_idx, p):
+    # perform trait specific actions when played
+    trait = traits_df.loc[trait_idx].trait
+    tp = plr['trait_pile'][p]
+
+    match trait:
+        case 'Opposable Thumbs':
+            # copy first dominant
+            first_D = [i for i in tp if traits_df.loc[i].dominant.tolist() == 1]
+
+            traits_df.loc[trait_idx, 'color'] = traits_df.loc[first_D, 'color'].values[0]
+            traits_df.loc[trait_idx, 'face'] = traits_df.loc[first_D, 'face'].values[0]
+            traits_df.loc[trait_idx, 'action'] = traits_df.loc[first_D, 'action'].values[0]
+            traits_df.loc[trait_idx, 'drops'] = traits_df.loc[first_D, 'drops'].values[0]
+            traits_df.loc[trait_idx, 'play_when'] = traits_df.loc[first_D, 'play_when'].values[0]
+            traits_df.loc[trait_idx, 'gene_pool'] = traits_df.loc[first_D, 'gene_pool'].values[0]
+            traits_df.loc[trait_idx, 'worlds_end'] = traits_df.loc[first_D, 'worlds_end'].values[0]
+            traits_df.loc[trait_idx, 'effectless'] = traits_df.loc[first_D, 'effectless'].values[0]
+            traits_df.loc[trait_idx, 'attachment'] = traits_df.loc[first_D, 'attachment'].values[0]
+            traits_df.loc[trait_idx, 'gene_pool_target'] = traits_df.loc[first_D, 'gene_pool_target'].values[0]
+            traits_df.loc[trait_idx, 'gene_pool_rule'] = traits_df.loc[first_D, 'gene_pool_rule'].values[0]
+            traits_df.loc[trait_idx, 'gene_pool_effect'] = traits_df.loc[first_D, 'gene_pool_effect'].values[0]
+            traits_df.loc[trait_idx, 'attachment_target'] = traits_df.loc[first_D, 'attachment_target'].values[0]
+            traits_df.loc[trait_idx, 'attachment_effect'] = traits_df.loc[first_D, 'attachment_effect'].values[0]
+            traits_df.loc[trait_idx, 'drop_effect'] = traits_df.loc[first_D, 'drop_effect'].values[0]
+            traits_df.loc[trait_idx, 'worlds_end_task'] = traits_df.loc[first_D, 'worlds_end_task'].values[0]
+            traits_df.loc[trait_idx, 'trait_effect'] = traits_df.loc[first_D, 'trait_effect'].values[0]
+            traits_df.loc[trait_idx, 'trait_effect_rule'] = traits_df.loc[first_D, 'trait_effect_rule'].values[0]
+
+            status_df.loc[trait_idx, 'color'] = status_df.loc[first_D, 'color'].values[0]
+            status_df.loc[trait_idx, 'face'] = status_df.loc[first_D, 'face'].values[0]
+
+            write_log(['*'],
+                      ">>> play <<< OPPOSABLE THUMBS is now a copy of {}"
+                      .format(traits_df.loc[first_D].trait.values[0].upper()))

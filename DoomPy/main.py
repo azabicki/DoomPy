@@ -780,9 +780,9 @@ def update_manual_drops(event, trait, p, change):
 
     # change value according to button
     if change == '+':
-        value = min([int(cur_value) + 1, 20])
+        value = int(cur_value) + 1
     else:
-        value = max([-20, int(cur_value) - 1])
+        value = int(cur_value) - 1
 
     # save value in status_df
     status_df.loc[trait, 'drops'] = value
@@ -1286,13 +1286,21 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
             if np.isnan(cur_drops):
+                # add question mark as long as no drop value is calculated
                 icol += 1
                 tk.Label(
                     frame_pics,
                     image=images['question_mark']
                     ).grid(row=0, column=icol)
             else:
-                drop_string = str(int(cur_drops))
+                # check if values are higher/lower than drop icons exist
+                if int(cur_drops) > 20:
+                    drop_string = '20+'
+                elif int(cur_drops) < -20:
+                    drop_string = '-20-'
+                else:
+                    drop_string = str(int(cur_drops))
+                # add value icon
                 icol += 1
                 tk.Label(
                     frame_pics,
@@ -1382,8 +1390,8 @@ def create_trait_pile(frame_trait_overview, p):
 
             drop_sbox = ttk.Spinbox(
                 frame_trait_overview,
-                from_=-20,
-                to=20,
+                from_=-100,
+                to=100,
                 width=3,
                 wrap=False)
             drop_sbox.grid(row=irow, column=1, sticky='w')

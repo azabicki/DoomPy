@@ -242,3 +242,21 @@ def special_trait_effects(frame_trait_overview, p, irow, images):
     if (any([viral_idx in tp for tp in plr['trait_pile']])
             and viral_idx not in plr['trait_pile'][p]):
         irow = viral(frame_trait_overview, p, irow, images, viral_idx, 'Viral')
+
+    # --- OPPOSABLE THUMBS --- copy first traits effects, if listed here ---------------------------
+    oppo_idx = traits_df.index[traits_df.trait == 'Opposable Thumbs'].tolist()[0]
+    if (any(oppo_idx in tp for tp in plr['trait_pile'])
+            and oppo_idx not in plr['trait_pile'][p]):
+
+        oppo_at = [i for i, tp in enumerate(plr['trait_pile']) if oppo_idx in tp][0]
+        first_D = [traits_df.loc[i].trait for i in plr['trait_pile'][oppo_at]
+                   if (traits_df.loc[i].dominant == 1 and i != oppo_idx)][0]
+        match first_D:
+            case 'Amatoxins':
+                irow = amatoxins(frame_trait_overview, irow, images, oppo_idx, 'Opp. Thumbs')
+
+            case 'Prowler':
+                irow = prowler(frame_trait_overview, p, irow, images, oppo_idx, 'Opp. Thumbs')
+
+            case 'Viral':
+                irow = viral(frame_trait_overview, p, irow, images, oppo_idx, 'Opp. Thumbs')

@@ -285,28 +285,28 @@ def write_log(what, *args):
 
         case 'trait_effects':
             match what[1]:
-                case 'viral':
-                    print("Viral acts on '{}' traits in '{}'s trait pile -> drop points = {}"
-                          .format(*args))
-                    f.write("Viral acts on '{}' traits in '{}'s trait pile -> drop points = {}\n"
-                            .format(*args))
-
                 case 'amatoxins':
-                    print("Amatoxins' effect is based on amount of discraded colors -> drop points = {}"
+                    print(">>> trait effects <<< '{}' effect is based on amount of discraded colors -> drop points = {}"
                           .format(*args))
-                    f.write("Amatoxins' effect is based on amount of discraded colors -> drop points = {}\n"
+                    f.write(">>> trait effects <<< '{}' effect is based on amount of discraded colors -> drop points = {}\n"  # noqa: E501
                             .format(*args))
 
                 case 'prowler':
-                    print("Prowler acts on 'color_count' in '{}'s trait pile -> drop points = {}"
+                    print(">>> trait effects <<< '{}' acts on 'color_count' in '{}'s trait pile -> drop points = {}"
                           .format(*args))
-                    f.write("Prowler acts on 'color_count' in '{}'s trait pile -> drop points = {}\n"
+                    f.write(">>> trait effects <<< '{}' acts on 'color_count' in '{}'s trait pile -> drop points = {}\n"
                             .format(*args))
 
                 case 'shiny':
-                    print("Shiny acts on 'colorless' traits in '{}'s trait pile -> drop points = {}"
+                    print(">>> trait effects <<< Shiny acts on 'colorless' traits in '{}'s trait pile -> drop points = {}"  # noqa: E501
                           .format(*args))
-                    f.write("Shiny acts on 'colorless' traits in '{}'s trait pile -> drop points = {}\n"
+                    f.write(">>> trait effects <<< Shiny acts on 'colorless' traits in '{}'s trait pile -> drop points = {}\n"  # noqa: E501
+                            .format(*args))
+
+                case 'viral':
+                    print(">>> trait effects <<< '{}' acts on '{}' traits in '{}'s trait pile -> drop points = {}"
+                          .format(*args))
+                    f.write(">>> trait effects <<< '{}' acts on '{}' traits in '{}'s trait pile -> drop points = {}\n"
                             .format(*args))
 
         case 'music':

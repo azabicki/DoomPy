@@ -165,7 +165,7 @@ def pre_play():
             btn_play_trait(3)
 
     if pre_play_set == 'random':
-        rounds = 12
+        rounds = 16
         for r in range(rounds):
             for p in range(game['n_player']):
                 print(p, ' _ ', r)
@@ -218,11 +218,10 @@ def pre_play():
             # play catastrophe ?!
             if r % 3 == 2:
                 n_cat = sum(i is not None for i in catastrophe['played'])
-                c = np.random.randint(low=0, high=len(catastrophe['possible'][n_cat]))
-                catastrophe['cbox'][n_cat].current(c)
-                catastrophe['cbox'][n_cat].event_generate("<<ComboboxSelected>>")
-
-    print('___done___')
+                if n_cat < game['n_catastrophes']:
+                    c = np.random.randint(low=0, high=len(catastrophe['possible'][n_cat]))
+                    catastrophe['cbox'][n_cat].current(c)
+                    catastrophe['cbox'][n_cat].event_generate("<<ComboboxSelected>>")
 
     if pre_play_set == 3:
         lisa = [5, 27]
@@ -244,6 +243,8 @@ def pre_play():
         for t in adam:
             lbox_deck[0].selection_set(t)
             btn_play_trait(3)
+
+    print('___done___')
 
 
 def switch(inp):

@@ -520,6 +520,9 @@ def btn_traits_world_end(from_, trait_idx, event):
     for p in range(game['n_player']):
         create_trait_pile(frame_trait_pile[p], p)
 
+    # focus back to search field
+    ent_trait_search[0].focus_set()
+
 
 def btn_remove_trait(from_, where_to):
     # get card & its attachment
@@ -681,6 +684,9 @@ def btn_attach_to(from_, attachment, event, possible_hosts):
     for p in range(game['n_player']):
         create_trait_pile(frame_trait_pile[p], p)
 
+    # focus back to search field
+    ent_trait_search[0].focus_set()
+
 
 def btn_play_trait(to):
     # return, if no trait selected
@@ -789,6 +795,9 @@ def update_manual_drops(event, trait, p, change):
 
     # update this players trait pile
     create_trait_pile(frame_trait_pile[p], p)
+
+    # focus back to search field
+    ent_trait_search[0].focus_set()
 
 
 def update_traits_current_status(todo, *args):

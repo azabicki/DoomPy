@@ -174,12 +174,6 @@ def pre_play():
                 lbox_deck[0].selection_set(t)
                 trait_idx = deck_filtered_idx[lbox_deck[0].curselection()[0]]
 
-                # do not play 'Opposable THumbs'
-                while trait_idx == 211:
-                    t = np.random.randint(low=0, high=len(deck)-1)
-                    lbox_deck[0].selection_set(t)
-                    trait_idx = deck_filtered_idx[lbox_deck[0].curselection()[0]]
-
                 # write log
                 write_log(['select', 'deck'],
                           traits_df.loc[deck_filtered_idx[lbox_deck[0].curselection()[0]]].trait,
@@ -192,12 +186,6 @@ def pre_play():
                     t = np.random.randint(low=0, high=len(deck)-1)
                     lbox_deck[0].selection_set(t)
                     trait_idx = deck_filtered_idx[lbox_deck[0].curselection()[0]]
-
-                    # do not play 'Opposable THumbs'
-                    while trait_idx == 211:
-                        t = np.random.randint(low=0, high=len(deck)-1)
-                        lbox_deck[0].selection_set(t)
-                        trait_idx = deck_filtered_idx[lbox_deck[0].curselection()[0]]
 
                     write_log(['select', 'deck'],
                               traits_df.loc[deck_filtered_idx[lbox_deck[0].curselection()[0]]].trait,

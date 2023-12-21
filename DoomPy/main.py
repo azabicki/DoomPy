@@ -15,6 +15,7 @@ import rules_drop as rules_dr
 import rules_play as rules_pl
 import rules_remove as rules_re
 import rules_traits as rules_tr
+import rules_trait_pile as rules_tp
 import rules_worlds_end as rules_we
 
 from globals_ import logfile, dir_log

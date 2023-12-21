@@ -1087,7 +1087,8 @@ def search_trait_in_list(inp):
         deck_filtered_str.set(filtered_trait_str)
 
         # if only 1 pssibility left, select it automatically
-        if len(filtered_trait_idx) == 1:
+        if (len(filtered_trait_idx) == 1 or
+                (len(filtered_trait_idx) == 2 and filtered_trait_str[0] == filtered_trait_str[1])):
             lbox_deck[0].selection_clear(0, tk.END)
             lbox_deck[0].selection_set(0)
             lbox_deck[0].focus()

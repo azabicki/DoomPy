@@ -277,7 +277,7 @@ def switch(inp):
                 show_icons['collection'] = False  # default: False
                 show_icons['dominant'] = False    # default: False
                 show_icons['action'] = False      # default: False
-                show_icons['drops'] = True        # default: True
+                show_icons['drops'] = False       # default: False
                 show_icons['gene_pool'] = False   # default: False
                 show_icons['worlds_end'] = False  # default: False
                 show_icons['effectless'] = False  # default: False
@@ -318,11 +318,11 @@ def switch(inp):
         case 'points':
             if points_onoff == 'off':
                 points_onoff = 'on'
-                lbl_points_switch[0].configure(image=images['points_on'])
+                lbl_points_switch[0].configure(image=images['points_123'])
                 write_log(['music', 'on'])
             else:
                 points_onoff = 'off'
-                lbl_points_switch[0].configure(image=images['points_off'])
+                lbl_points_switch[0].configure(image=images['question_mark'])
                 write_log(['music', 'off'])
 
 
@@ -1260,14 +1260,26 @@ def create_trait_pile(frame_trait_overview, p):
 
         # drop value ----------------------------
         cur_drops = status_df.loc[trait_idx].drops
-        if not np.isnan(cur_drops):
+        if traits_df.loc[trait_idx].drops == 1:
             icol += 1
-            drop_string = str(int(cur_drops))
-
             tk.Label(
                 frame_pics,
-                image=images[drop_string]
+                image=images['drops']
                 ).grid(row=0, column=icol)
+
+            if np.isnan(cur_drops):
+                icol += 1
+                tk.Label(
+                    frame_pics,
+                    image=images['question_mark']
+                    ).grid(row=0, column=icol)
+            else:
+                drop_string = str(int(cur_drops))
+                icol += 1
+                tk.Label(
+                    frame_pics,
+                    image=images[drop_string]
+                    ).grid(row=0, column=icol)
 
         # has attachment ------------------------
         if status_df.loc[trait_idx].attachment != 'none':
@@ -2124,9 +2136,9 @@ else:
     init_switch['icons'] = images['icons_off']
 
 if points_onoff == 'on':
-    init_switch['points'] = images['points_on']
+    init_switch['points'] = images['points_123']
 else:
-    init_switch['points'] = images['points_off']
+    init_switch['points'] = images['question_mark']
 
 # (re)start game ###################################################################################
 mixer.init()

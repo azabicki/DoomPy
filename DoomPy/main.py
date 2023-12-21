@@ -1105,7 +1105,7 @@ def create_trait_pile(frame_trait_overview, p):
                      text=" " + trait,
                      image=images["attachment"],
                      compound=tk.LEFT
-                     ).grid(row=irow, column=0, padx=3, pady=ypad, sticky='nsw')
+                     ).grid(row=irow, column=0, padx=2, pady=ypad, sticky='nsw')
         elif traits_df.loc[trait_idx].dominant == 1:
             tk.Label(frame_trait_overview,
                      text=" " + trait,
@@ -1113,7 +1113,7 @@ def create_trait_pile(frame_trait_overview, p):
                      compound=tk.LEFT,
                      fg=cfg["font_color_trait_pile_dominant"],
                      font="'' 14 bold"
-                     ).grid(row=irow, column=0, padx=3, pady=ypad, sticky='nsw')
+                     ).grid(row=irow, column=0, padx=2, pady=ypad, sticky='nsw')
         else:
             tk.Radiobutton(frame_trait_overview,
                            text=" " + trait,

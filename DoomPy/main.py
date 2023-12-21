@@ -1108,30 +1108,34 @@ def create_trait_pile(frame_trait_overview, p):
         trait = traits_df.loc[trait_idx].trait
 
         # init some vars
-        ypad = (3, 0) if irow == 0 else 0
         irow += 1
+        ypad = (3, 0) if irow == 0 else 0
 
         # ----- radiobutton / label if attachment --------------------------------------------------
-        if traits_df.loc[trait_idx].attachment != 1:
-            row_trait = tk.Radiobutton(
-                frame_trait_overview,
-                text=" " + trait,
-                variable=plr['trait_selected'][p],
-                value=trait_idx,
-                command=lambda t_idx=trait_idx: write_log(['select', 'trait_pile'],
-                                                          plr['name'][p].get(),
-                                                          traits_df.loc[t_idx].trait,
-                                                          t_idx))
-            row_trait.grid(row=irow, column=0, padx=3, pady=ypad, sticky='nsw')
+        if traits_df.loc[trait_idx].attachment == 1:
+            tk.Label(frame_trait_overview,
+                     text=" " + trait,
+                     image=images["attachment"],
+                     compound=tk.LEFT
+                     ).grid(row=irow, column=0, padx=3, pady=ypad, sticky='nsw')
+        elif traits_df.loc[trait_idx].dominant == 1:
+            tk.Label(frame_trait_overview,
+                     text=" " + trait,
+                     image=images["dominant"],
+                     compound=tk.LEFT,
+                     fg=cfg["font_color_trait_pile_dominant"],
+                     font="'' 14 bold"
+                     ).grid(row=irow, column=0, padx=3, pady=ypad, sticky='nsw')
         else:
-            row_trait = tk.Label(
-                frame_trait_overview,
-                text=" " + trait)
-            row_trait.grid(row=irow, column=0, padx=(24, 3), pady=ypad, sticky='nsw')
-
-        # change font color if dominant
-        if traits_df.loc[trait_idx].dominant == 1:
-            row_trait.config(fg=cfg["font_color_trait_pile_dominant"])
+            tk.Radiobutton(frame_trait_overview,
+                           text=" " + trait,
+                           variable=plr['trait_selected'][p],
+                           value=trait_idx,
+                           command=lambda t_idx=trait_idx: write_log(['select', 'trait_pile'],
+                                                                     plr['name'][p].get(),
+                                                                     traits_df.loc[t_idx].trait,
+                                                                     t_idx)
+                           ).grid(row=irow, column=0, padx=3, pady=ypad, sticky='nsw')
 
         # ----- icons ------------------------------------------------------------------------------
         frame_pics = tk.Frame(frame_trait_overview)

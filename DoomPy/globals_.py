@@ -115,22 +115,10 @@ for files in glob.glob(os.path.join(curdir, "sounds", "*.mp3")):
 
 
 # switches #########################################################################################
-global music_onoff, icons_onoff, points_onoff, show_icons
+global music_onoff, icons_onoff, points_onoff
 music_onoff = 'off'     # 'off' / 'on'
 icons_onoff = 'on'      # 'off' / 'on' / 'full'
 points_onoff = 'on'     # 'off' / 'on'
-
-show_icons = {}
-show_icons['color'] = True        # default: True
-show_icons['face'] = True         # default: True
-show_icons['collection'] = False  # default: False
-show_icons['dominant'] = False    # default: False
-show_icons['action'] = False      # default: False
-show_icons['drops'] = False       # default: False
-show_icons['gene_pool'] = False   # default: False
-show_icons['worlds_end'] = False  # default: False
-show_icons['effectless'] = False  # default: False
-show_icons['attachment'] = False  # default: False
 
 
 # tk_inter variables ###############################################################################

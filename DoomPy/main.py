@@ -19,7 +19,7 @@ import rules_trait_pile as rules_tp
 import rules_worlds_end as rules_we
 
 from globals_ import logfile, dir_log
-from globals_ import cfg, images_dict, sounds, music_onoff, icons_onoff, points_onoff, show_icons  # noqa: F401
+from globals_ import cfg, images_dict, sounds, music_onoff, icons_onoff, points_onoff
 from globals_ import traits_df, status_df, catastrophes_df
 from globals_ import lbl_music_switch, lbl_icons_switch, lbl_points_switch, ent_trait_search, lbox_deck
 from globals_ import frame_player, frame_trait_pile
@@ -259,7 +259,7 @@ def switch(inp):
                 icons_onoff = 'full'
                 lbl_icons_switch[0].configure(image=images['icons_full'])
                 write_log(['icons', 'full'])
-            else:
+            elif icons_onoff == 'full':
                 icons_onoff = 'off'
                 lbl_icons_switch[0].configure(image=images['icons_off'])
                 write_log(['icons', 'off'])
@@ -288,18 +288,18 @@ def switch(inp):
                 show_icons['collection'] = True     # default: False
                 show_icons['dominant'] = True       # default: False
                 show_icons['action'] = True         # default: False
-                show_icons['drops'] = True          # default: True
+                show_icons['drops'] = True          # default: False
                 show_icons['gene_pool'] = True      # default: False
                 show_icons['worlds_end'] = True     # default: False
                 show_icons['effectless'] = True     # default: False
                 show_icons['attachment'] = True     # default: False
-            else:
+            elif icons_onoff == 'off':
                 show_icons['color'] = False       # default: True
                 show_icons['face'] = False        # default: True
                 show_icons['collection'] = False  # default: False
                 show_icons['dominant'] = False    # default: False
                 show_icons['action'] = False      # default: False
-                show_icons['drops'] = False       # default: True
+                show_icons['drops'] = False       # default: False
                 show_icons['gene_pool'] = False   # default: False
                 show_icons['worlds_end'] = False  # default: False
                 show_icons['effectless'] = False  # default: False
@@ -320,10 +320,12 @@ def switch(inp):
                 points_onoff = 'on'
                 lbl_points_switch[0].configure(image=images['points_123'])
                 write_log(['music', 'on'])
+                update_scoring()
             else:
                 points_onoff = 'off'
                 lbl_points_switch[0].configure(image=images['question_mark'])
                 write_log(['music', 'off'])
+                update_scoring()
 
 
 def play_sound(trait):
@@ -898,11 +900,18 @@ def update_scoring():
         total = p_face + p_drop + p_worlds_end + p_MOL
 
         # update points
-        plr['points'][p]['face'].set(p_face)
-        plr['points'][p]['drops'].set(p_drop)
-        plr['points'][p]['worlds_end'].set(p_worlds_end)
-        plr['points'][p]['MOL'].set(p_MOL)
-        plr['points'][p]['total'].set(total)
+        if points_onoff == 'on':
+            plr['points'][p]['face'].set(p_face)
+            plr['points'][p]['drops'].set(p_drop)
+            plr['points'][p]['worlds_end'].set(p_worlds_end)
+            plr['points'][p]['MOL'].set(p_MOL)
+            plr['points'][p]['total'].set(total)
+        else:
+            plr['points'][p]['face'].set('**')
+            plr['points'][p]['drops'].set('**')
+            plr['points'][p]['worlds_end'].set('**')
+            plr['points'][p]['MOL'].set('**')
+            plr['points'][p]['total'].set('**')
 
         # print log
         write_log(['scoring', 'update'], plr['name'][p].get(), p_face, p_drop, p_worlds_end, p_MOL, total)
@@ -2123,17 +2132,18 @@ for k, v in images_dict.items():
 
 # set switch images --------------------------------------------------------------------------------
 init_switch = {}
-if music_onoff == 'on':
-    init_switch['music'] = images['note_on']
-else:
-    init_switch['music'] = images['note_off']
-
+show_icons = {}
 if icons_onoff == 'on':
     init_switch['icons'] = images['icons_on']
 elif icons_onoff == 'full':
     init_switch['icons'] = images['icons_full']
 else:
     init_switch['icons'] = images['icons_off']
+
+if music_onoff == 'on':
+    init_switch['music'] = images['note_on']
+else:
+    init_switch['music'] = images['note_off']
 
 if points_onoff == 'on':
     init_switch['points'] = images['points_123']

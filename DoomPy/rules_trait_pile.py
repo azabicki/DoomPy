@@ -19,7 +19,7 @@ def amatoxins(frame_trait_overview, irow, images, trait_idx, trait_name):
     tk.Label(frame, text=" discarded", image=images["bgpr"], compound=tk.LEFT
              ).grid(row=0, column=1, sticky='wns')
     # add ?/drop icon
-    lbl = tk.Label(frame, image=images['points_off'])
+    lbl = tk.Label(frame, image=images['question_mark'])
     lbl.grid(row=0, column=2)
 
     # check if worlds end effect was chosen
@@ -177,7 +177,7 @@ def viral(frame_trait_overview, p, irow, images, trait_idx, trait_name):
     tk.Label(frame, text=trait_name.upper(), fg="mediumorchid1", font='"" 14 bold'
              ).grid(row=0, column=0, padx=(10, 0), sticky='ens')
     # add effect
-    lbl = tk.Label(frame, text=" punishes ", image=images["points_off"], compound=tk.RIGHT)
+    lbl = tk.Label(frame, text=" punishes ", image=images["question_mark"], compound=tk.RIGHT)
     lbl.grid(row=0, column=1, sticky='wns')
 
     # check if worlds end effect was chosen

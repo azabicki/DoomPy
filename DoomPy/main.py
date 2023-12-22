@@ -447,16 +447,8 @@ def btn_play_catastrophe(event, c):
         lbl2.configure(style="n_traitsFirstPlayer.TLabel"
                        if game['first_player'] == p else "n_traits.TLabel")
 
-    # update genes & scoring
-    update_genes()
-    update_scoring()
-
-    # update all trait piles
-    for p in range(game['n_player']):
-        create_trait_pile(frame_trait_pile[p], p)
-
-    # focus back to search field
-    ent_trait_search[0].focus_set()
+    # update
+    update_all()
 
 
 def btn_traits_world_end(from_, trait_idx, event):
@@ -514,16 +506,8 @@ def btn_traits_world_end(from_, trait_idx, event):
     # apply traits_WE-effects and update status of traits in this trait pile
     rules_tr.traits_WE_effects(trait_idx, plr['trait_pile'][from_])
 
-    # update scoring
-    update_genes()
-    update_scoring()
-
-    # update all trait piles
-    for p in range(game['n_player']):
-        create_trait_pile(frame_trait_pile[p], p)
-
-    # focus back to search field
-    ent_trait_search[0].focus_set()
+    # update
+    update_all()
 
 
 def btn_remove_trait(from_, where_to):
@@ -565,17 +549,8 @@ def btn_remove_trait(from_, where_to):
     if attachment != 'none':
         update_traits_current_status('reset', attachment, [])
 
-    # update scoring, stars & genes
-    update_stars()
-    update_genes()
-    update_scoring()
-
-    # update all trait piles
-    for p in range(game['n_player']):
-        create_trait_pile(frame_trait_pile[p], p)
-
-    # focus back to search field
-    ent_trait_search[0].focus_set()
+    # update
+    update_all()
 
 
 def btn_move_trait(from_, cbox_move_to):
@@ -627,20 +602,11 @@ def btn_move_trait(from_, cbox_move_to):
     # check, if this trait has a special "remove-rule", which may be needed for "status_updating"
     rules_re.check_trait(trait_idx, from_, 'different_trait_pile')
 
-    # update scoring, stars & genes
-    update_stars()
-    update_genes()
-    update_scoring()
-
-    # update all trait piles
-    for p in range(game['n_player']):
-        create_trait_pile(frame_trait_pile[p], p)
-
     # clear combobox
     cbox_move_to.current(0)
 
-    # focus back to search field
-    ent_trait_search[0].focus_set()
+    # update
+    update_all()
 
 
 def btn_attach_to(from_, attachment, event, possible_hosts):
@@ -678,16 +644,8 @@ def btn_attach_to(from_, attachment, event, possible_hosts):
         # set new attachment to status_row of host & update effects of attachment on host
         update_traits_current_status('attachment', host_idx, attachment)
 
-    # update scoring
-    update_genes()
-    update_scoring()
-
-    # update all trait piles
-    for p in range(game['n_player']):
-        create_trait_pile(frame_trait_pile[p], p)
-
-    # focus back to search field
-    ent_trait_search[0].focus_set()
+    # update
+    update_all()
 
 
 def btn_play_trait(to):
@@ -738,17 +696,11 @@ def btn_play_trait(to):
     deck.remove(trait_idx)
     btn_clear_trait_search()
 
-    # update scoring, stars & genes
-    update_stars()
-    update_genes()
-    update_scoring()
-
-    # update all trait piles
-    for p in range(game['n_player']):
-        create_trait_pile(frame_trait_pile[p], p)
-
     # play sound bites
     play_sound(trait)
+
+    # update
+    update_all()
 
     return 1
 
@@ -868,21 +820,8 @@ def update_traits_current_status(todo, *args):
                 status_df.loc[neoteny_idx, 'effects'] = str(p)
                 write_log(['update_trait_status', 'neoteny_that_one'], plr['name'][p].get())
 
-            # update scoreboard
-            update_scoring()
-
-            # update all trait piles
-            for p in range(game['n_player']):
-                create_trait_pile(frame_trait_pile[p], p)
-
-        case 'update_all':
-            update_stars()
-            update_genes()
-            update_scoring()
-
-            # update all trait piles
-            for p in range(game['n_player']):
-                create_trait_pile(frame_trait_pile[p], p)
+            # update
+            update_all()
 
 
 def update_scoring():
@@ -1065,6 +1004,35 @@ def update_stars():
                 lbl2.configure(image=images['star'])
             elif n_dominant == 3:
                 lbl2.configure(image=images['heroic_star'])
+
+
+def resolve_effects():
+    # loop players
+    for p in range(game['n_player']):
+        tp = plr['trait_pile'][p]
+        for trait_idx in tp:
+            # 1) attachment effect
+
+            # 2) traits WE effect(s)
+
+            # 3) worlds end effect
+
+
+def update_all():
+    # first, resolve all effects on traits
+    resolve_effects()
+
+    # update stuff
+    update_stars()
+    update_genes()
+    update_scoring()
+
+    # update all trait piles
+    for p in range(game['n_player']):
+        create_trait_pile(frame_trait_pile[p], p)
+
+    # focus back to search field
+    ent_trait_search[0].focus_set()
 
 
 def search_trait_in_list(inp):
@@ -1396,7 +1364,7 @@ def create_trait_pile(frame_trait_overview, p):
             ttk.Spinbox(frame_trait_overview,
                         from_=-1, to=1, width=3, wrap=False,
                         textvariable=sleepy_spinbox[p],
-                        command=lambda: update_traits_current_status('update_all')  # update everything
+                        command=lambda: update_all()
                         ).grid(row=irow, column=1, sticky='w')
 
         # ----- ATTACHMENT combobox if trait is attachment -----------------------------------------

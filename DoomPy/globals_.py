@@ -41,6 +41,9 @@ status_df['no_discard'] = False
 status_df['no_steal'] = False
 status_df['no_swap'] = False
 status_df['effects'] = 'none'
+status_df['effects_attachment'] = 'none'
+status_df['effects_traits_WE'] = 'none'
+status_df['effects_WE'] = 'none'
 status_df['traits_WE'] = 'none'
 status_df['we_effect'] = 'none'
 

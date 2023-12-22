@@ -586,21 +586,18 @@ def btn_move_trait(from_, cbox_move_to):
     write_log(['move', 'move_to'],
               traits_df.loc[trait_idx].trait, trait_idx, add_txt, plr['name'][from_].get(), plr['name'][to].get())
 
-    # remove traits(s) from 'giving' player, update trait_pile & clear trait selection
+    # remove traits(s) from 'giving' player - update trait_pile - check remove_rules - clear trait selection
     plr['trait_pile'][from_].remove(trait_idx)
     if attachment != 'none':
         plr['trait_pile'][from_].remove(attachment)
-
     create_trait_pile(frame_trait_pile[from_], from_)
+    rules_re.check_trait(trait_idx, from_, 'different_trait_pile')
     plr['trait_selected'][from_].set(np.nan)
 
     # add to 'receiving' players traits
     bisect.insort_left(plr['trait_pile'][to], trait_idx)
     if attachment != 'none':
         bisect.insort_left(plr['trait_pile'][to], attachment)
-
-    # check, if this trait has a special "remove-rule", which may be needed for "status_updating"
-    rules_re.check_trait(trait_idx, from_, 'different_trait_pile')
 
     # clear combobox
     cbox_move_to.current(0)
@@ -755,7 +752,9 @@ def update_manual_drops(event, trait, p, change):
 
 
 def update_traits_current_status(todo, *args):
+    # space for various effects which may affect traits in certain situations (like Neoteny...)
     match todo:
+        # 'reset' routine to reset traits status_df_row to initial state
         case 'reset':
             trait = args[0]
             reset_rule = args[-1]
@@ -778,6 +777,9 @@ def update_traits_current_status(todo, *args):
             status_df.loc[trait, 'no_steal'] = False
             status_df.loc[trait, 'no_swap'] = False
             status_df.loc[trait, 'effects'] = 'none'
+            status_df.loc[trait, 'effects_attachment'] = 'none'
+            status_df.loc[trait, 'effects_traits_WE'] = 'none'
+            status_df.loc[trait, 'effects_WE'] = 'none'
             status_df.loc[trait, 'traits_WE'] = 'none'
             status_df.loc[trait, 'we_effect'] = 'none'
 
@@ -803,6 +805,7 @@ def update_traits_current_status(todo, *args):
             write_log(['update_trait_status', 'attachment'],
                       traits_df.loc[host].trait, traits_df.loc[attachment].trait)
 
+        # Neoteny-Checkbox is clicked somewhere
         case 'neoteny':
             neoteny_idx = traits_df.index[traits_df.trait == 'Neoteny'].tolist()[0]
             p = args[0]
@@ -2070,6 +2073,9 @@ def reset_variables():
     status_df['no_steal'] = False
     status_df['no_swap'] = False
     status_df['effects'] = 'none'
+    status_df['effects_attachment'] = 'none'
+    status_df['effects_traits_WE'] = 'none'
+    status_df['effects_WE'] = 'none'
     status_df['traits_WE'] = 'none'
     status_df['we_effect'] = 'none'
 

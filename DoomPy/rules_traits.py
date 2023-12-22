@@ -28,9 +28,8 @@ def traits_WE_tasks(trait_idx):
         case 'discard_upto_3_traits':
             options = ['#colors discarded?', '0', '1', '2', '3']
 
-        case 'copy_1st_dominant':
-            copied_task = ['!!! needs still to... ', 'be', 'coded']
-            options = copied_task
+        case 'is_color_of_most_colors':
+            options = ['morst colors?']
 
     return options
 
@@ -58,6 +57,21 @@ def traits_WE_effects(trait_idx, trait_pile):
                         old_colors = status_df.loc[trait].color.lower()
                         new_colors = old_colors.replace(col_from, col_to)
                         status_df.loc[trait, 'color'] = new_colors
+
+        case 'is_color_of_most_colors':
+            colors = ['blue', 'green', 'purple', 'red']
+            n_cols = []
+            for col in colors:
+                n_cols.append(sum(col in color.lower()
+                                  for color in status_df.iloc[trait_pile].color.tolist()))
+
+            if sum(i == max(n_cols) for i in n_cols) > 1:
+                effect = 'colorless'
+            else:
+                mx_idx = max(n_cols)
+                effect = colors[n_cols.index(mx_idx)]
+
+            status_df.loc[trait_idx, 'color'] = effect
 
 
 # handle worlds end effects of trait

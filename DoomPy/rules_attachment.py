@@ -1,4 +1,5 @@
 from globals_ import traits_df, status_df, plr
+from log import write_log
 
 
 # filter which traits from trait pile are available for the attacahment to be attached to
@@ -49,40 +50,49 @@ def filter_attachables(attachment, p):
     return attachable
 
 
-# handling effects of attachments when attached to a host
-def attachment_effects(host, attachment):
-    # get effect of attachment
-    rules = traits_df.loc[attachment].attachment_effect.split()
+# apply effects to host
+def apply_effects(host):
+    # get attachment
+    attachment = status_df.loc[host].attachment
 
-    # update current status based on specific rules
-    for rule in rules:
-        match rule:
-            case 'IsBlue':
-                status_df.loc[host, 'color'] = 'Blue'
+    # apply effect(s) only if there is an attachment
+    if attachment != 'none':
+        # get previously stored attachment effects
+        effects = traits_df.loc[attachment].attachment_effect.split()
 
-            case 'IsGreen':
-                status_df.loc[host, 'color'] = 'Green'
+        # apply effect(s)
+        for effect in effects:
+            match effect:
+                case 'IsBlue':
+                    status_df.loc[host, 'color'] = 'Blue'
 
-            case 'IsRed':
-                status_df.loc[host, 'color'] = 'Red'
+                case 'IsGreen':
+                    status_df.loc[host, 'color'] = 'Green'
 
-            case 'IsPurple':
-                status_df.loc[host, 'color'] = 'Purple'
+                case 'IsRed':
+                    status_df.loc[host, 'color'] = 'Red'
 
-            case 'IsColorless':
-                status_df.loc[host, 'color'] = 'Colorless'
+                case 'IsPurple':
+                    status_df.loc[host, 'color'] = 'Purple'
 
-            case 'Inactive':
-                status_df.loc[host, 'inactive'] = True
+                case 'IsColorless':
+                    status_df.loc[host, 'color'] = 'Colorless'
 
-            case 'NoRemove':
-                status_df.loc[host, 'no_remove'] = True
+                case 'Inactive':
+                    status_df.loc[host, 'inactive'] = True
 
-            case 'NoDiscard':
-                status_df.loc[host, 'no_discard'] = True
+                case 'NoRemove':
+                    status_df.loc[host, 'no_remove'] = True
 
-            case 'NoSwap':
-                status_df.loc[host, 'no_swap'] = True
+                case 'NoDiscard':
+                    status_df.loc[host, 'no_discard'] = True
 
-            case 'NoSteal':
-                status_df.loc[host, 'no_steal'] = True
+                case 'NoSwap':
+                    status_df.loc[host, 'no_swap'] = True
+
+                case 'NoSteal':
+                    status_df.loc[host, 'no_steal'] = True
+
+        # print log
+        write_log(['update_trait_status', 'attachment'],
+                  traits_df.loc[host].trait, traits_df.loc[attachment].trait)

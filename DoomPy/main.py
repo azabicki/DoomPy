@@ -606,26 +606,26 @@ def btn_move_trait(from_, cbox_move_to):
     update_all()
 
 
-def btn_attach_to(from_, attachment, event, possible_hosts):
+def btn_attach_to(from_, attachment_idx, event, possible_hosts):
     # get host_data from event_data
     host = event.widget.get()
     host_idx = possible_hosts[event.widget.current()]
+    attachment = traits_df.loc[attachment_idx].trait
 
     # return, if clicked on current host
-    old_host_idx = status_df[status_df['attachment'] == attachment].index.values.tolist()
+    old_host_idx = status_df[status_df['attachment'] == attachment_idx].index.values.tolist()
     if host_idx in old_host_idx:
         write_log(['attach_to', 'error_own_host'])
         return
 
     # print log
     if host == ' ... ':
-        write_log(['attach_to', 'detached'], traits_df.loc[attachment].trait, attachment)
+        write_log(['attach_to', 'detached'], attachment, attachment_idx)
     else:
         write_log(['attach_to', 'attached'],
-                  plr['name'][from_].get(), traits_df.loc[attachment].trait,
-                  attachment, host, host_idx)
+                  plr['name'][from_].get(), attachment, attachment_idx, host, host_idx)
 
-    # check if attachment moved from old_host
+    # update old_host, where attachment was removed from
     if old_host_idx:
         write_log(['attach_to', 'change_host'], traits_df.loc[old_host_idx[0]].trait, old_host_idx[0])
         update_traits_current_status('reset', old_host_idx[0], [])
@@ -633,13 +633,11 @@ def btn_attach_to(from_, attachment, event, possible_hosts):
     # check if attachment is set back to "..." (idx=0)
     if event.widget.current() == 0:
         # reset host='none' to status_row of attachment
-        status_df.loc[attachment, 'host'] = 'none'
+        status_df.loc[attachment_idx, 'host'] = 'none'
     else:
-        # set new host_idx to status_row of attachment
-        status_df.loc[attachment, 'host'] = host_idx
-
-        # set new attachment to status_row of host & update effects of attachment on host
-        update_traits_current_status('attachment', host_idx, attachment)
+        # update status of attachment/host - saving idx's of each other
+        status_df.loc[attachment_idx, 'host'] = host_idx
+        status_df.loc[host_idx, 'attachment'] = attachment_idx
 
     # update
     update_all()
@@ -790,20 +788,6 @@ def update_traits_current_status(todo, *args):
 
             # print log
             write_log(['update_trait_status', 'reset'], traits_df.loc[trait].trait)
-
-        case 'attachment':
-            host = args[0]
-            attachment = args[1]
-
-            # save attachment to host
-            status_df.loc[host, 'attachment'] = attachment
-
-            # update current status of host
-            rules_at.attachment_effects(host, attachment)
-
-            # print log
-            write_log(['update_trait_status', 'attachment'],
-                      traits_df.loc[host].trait, traits_df.loc[attachment].trait)
 
         # Neoteny-Checkbox is clicked somewhere
         case 'neoteny':
@@ -1015,6 +999,7 @@ def resolve_effects():
         tp = plr['trait_pile'][p]
         for trait_idx in tp:
             # 1) attachment effect
+            rules_at.apply_effects(trait_idx)
 
             # 2) traits WE effect(s)
 

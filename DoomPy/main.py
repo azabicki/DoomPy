@@ -1122,11 +1122,16 @@ def create_trait_pile(frame_trait_overview, p):
 
         # ----- radiobutton / label if attachment --------------------------------------------------
         if traits_df.loc[trait_idx].attachment == 1:
-            tk.Label(frame_trait_overview,
-                     text=" " + trait,
-                     image=images["attachment"],
-                     compound=tk.LEFT
-                     ).grid(row=irow, column=0, padx=2, pady=ypad, sticky='nsw')
+            lbl = tk.Label(frame_trait_overview,
+                           text=" " + trait,
+                           image=images["attachment"],
+                           compound=tk.LEFT)
+            lbl.grid(row=irow, column=0, padx=2, pady=ypad, sticky='nsw')
+
+            # it also could be a DOMINANT
+            if traits_df.loc[trait_idx].dominant == 1:
+                lbl.config(fg=cfg["font_color_trait_pile_dominant"])
+
         elif traits_df.loc[trait_idx].dominant == 1:
             tk.Label(frame_trait_overview,
                      text=" " + trait,
@@ -1498,7 +1503,7 @@ def create_trait_pile(frame_trait_overview, p):
     irow = rules_tp.special_trait_effects(frame_trait_overview, p, irow, images)
 
     # --- NEOTENY needs to stay here ---------------------------------------------------------------
-    # --- beacuse trait piles need to be updated once the checkbox is clicked ----------------------
+    # --- because 'create_trait_pile' needs to be run once the checkbox is clicked -----------------
     neoteny_idx = traits_df.index[traits_df.trait == 'Neoteny'].tolist()[0]
     neoteny_effect = status_df.loc[neoteny_idx].effects
     if ("select world's end" not in worlds_end['played'].get()

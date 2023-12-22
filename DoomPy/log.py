@@ -193,9 +193,9 @@ def write_log(what, *args):
                     print(">>> world's end <<< ERROR - no event selected")
                     f.write(">>> world's end <<< ERROR - no event selected\n")
 
-                case 'game_over':
-                    print(">>> world's end <<< '{}' is happening now...".format(*args))
-                    f.write(">>> world's end <<< '{}' is happening now...\n".format(*args))
+                case 'select':
+                    print(">>> world's end <<< '{}' is selected as worlds end event".format(*args))
+                    f.write(">>> world's end <<< '{}' is selected as worlds end event\n".format(*args))
 
         case 'update_trait_status':
             match what[1]:

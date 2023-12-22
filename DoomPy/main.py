@@ -346,21 +346,22 @@ def btn_clear_trait_search():
     lbox_deck[0].see(0)
 
 
-def btn_play_worlds_end():
+def btn_worlds_end_apply():
+    print('_____ WE _____')
+
+
+def btn_worlds_end_select():
     # do nothing if no catastrophy selected
     if worlds_end['cbox'].current() == 0:
+        worlds_end['btn'].configure(state="disabled", style="disabled.TButton")
         write_log(['worlds_end', 'error_no_event'])
         return
 
     # print log
-    write_log(['worlds_end', 'game_over'], worlds_end['played'].get())
+    write_log(['worlds_end', 'select'], worlds_end['played'].get())
 
-    # update scoring
-    update_scoring()
-
-    # update all trait piles
-    for p in range(game['n_player']):
-        create_trait_pile(frame_trait_pile[p], p)
+    # enable WE_button
+    worlds_end['btn'].configure(state="normal", style="TButton")
 
 
 def btn_play_catastrophe(event, c):
@@ -1380,32 +1381,18 @@ def create_trait_pile(frame_trait_overview, p):
                     image=images['noFX']
                     ).grid(row=0, column=icol)
 
-        # ----- manual DROP points entry -----------------------------------------------------------
-        cur_drop_eff = traits_df.loc[trait_idx].drop_effect
-        if (isinstance(cur_drop_eff, str)
-            and not isinstance(traits_df.loc[trait_idx].worlds_end_task, str)
-            and ('own_hand' in traits_df.loc[trait_idx].drop_effect
-                 or 'discarded' in traits_df.loc[trait_idx].drop_effect)):
+        # ----- SLEEPY may affect gene pool ?!?!  --------------------------------------------------
+        if traits_df.loc[trait_idx].trait == 'Sleepy':
             irow += 1
-            tk.Label(frame_trait_overview, text="Drop of Life:", fg='grey'
+            tk.Label(frame_trait_overview, text="gene effect:", fg='grey'
                      ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
 
-            drop_sbox = ttk.Spinbox(
-                frame_trait_overview,
-                from_=-100,
-                to=100,
-                width=3,
-                wrap=False)
-            drop_sbox.grid(row=irow, column=1, sticky='w')
-            drop_sbox.bind("<<Increment>>", lambda e, t=trait_idx: update_manual_drops(e, t, p, '+'))
-            drop_sbox.bind("<<Decrement>>", lambda e, t=trait_idx: update_manual_drops(e, t, p, '-'))
-
-            # fill entry, depending on drops_status
-            if np.isnan(status_df.loc[trait_idx].drops):
-                drop_sbox.set('-')
-            else:
-                dp = str(int(status_df.loc[trait_idx].drops))
-                drop_sbox.set(dp)
+            # create combobox
+            ttk.Spinbox(frame_trait_overview,
+                        from_=-1, to=1, width=3, wrap=False,
+                        textvariable=sleepy_spinbox[p],
+                        command=lambda: update_traits_current_status('update_all')  # update everything
+                        ).grid(row=irow, column=1, sticky='w')
 
         # ----- ATTACHMENT combobox if trait is attachment -----------------------------------------
         if traits_df.loc[trait_idx].attachment == 1:
@@ -1447,13 +1434,16 @@ def create_trait_pile(frame_trait_overview, p):
             # get task what to do at worlds end
             we_effect = rules_tr.traits_WE_tasks(trait_idx)
 
+            # set state depending on 'played' catastrophes
+            state = 'readonly' if sum(i is None for i in catastrophe['played']) == 0 else 'disabled'
+
             # create combobox
             cbox_attach_to = ttk.Combobox(
                 frame_trait_overview,
                 height=len(we_effect),
                 values=we_effect,
                 exportselection=0,
-                state="readonly",
+                state=state,
                 width=11)
             cbox_attach_to.grid(row=irow, column=1, sticky='w')
             cbox_attach_to.bind(
@@ -1466,18 +1456,37 @@ def create_trait_pile(frame_trait_overview, p):
                 cur_effect = status_df.loc[trait_idx].traits_WE
                 cbox_attach_to.current(we_effect.index(cur_effect))
 
-        # ----- SLEEPY may affect gene pool ?!?!  --------------------------------------------------
-        if traits_df.loc[trait_idx].trait == 'Sleepy':
+        # ----- manual DROP points spinbox -----------------------------------------------------------
+        cur_drop_eff = traits_df.loc[trait_idx].drop_effect
+        if (isinstance(cur_drop_eff, str)
+            and not isinstance(traits_df.loc[trait_idx].worlds_end_task, str)
+            and ('own_hand' in traits_df.loc[trait_idx].drop_effect
+                 or 'discarded' in traits_df.loc[trait_idx].drop_effect)):
             irow += 1
-            tk.Label(frame_trait_overview, text="gene effect:", fg='grey'
+            tk.Label(frame_trait_overview, text="Drop of Life:", fg='grey'
                      ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
 
-            # create combobox
-            ttk.Spinbox(frame_trait_overview,
-                        from_=-1, to=1, width=3, wrap=False,
-                        textvariable=sleepy_spinbox[p],
-                        command=lambda: update_traits_current_status('update_all')  # update everything
-                        ).grid(row=irow, column=1, sticky='w')
+            # set state depending on 'played' worlds end
+            state = 'readonly' if worlds_end['played'].get() != " select world's end ..." else 'disabled'
+
+            # create spinbox
+            drop_sbox = ttk.Spinbox(
+                frame_trait_overview,
+                state=state,
+                from_=-100,
+                to=100,
+                width=3,
+                wrap=False)
+            drop_sbox.grid(row=irow, column=1, sticky='w')
+            drop_sbox.bind("<<Increment>>", lambda e, t=trait_idx: update_manual_drops(e, t, p, '+'))
+            drop_sbox.bind("<<Decrement>>", lambda e, t=trait_idx: update_manual_drops(e, t, p, '-'))
+
+            # fill entry, depending on drops_status
+            if np.isnan(status_df.loc[trait_idx].drops):
+                drop_sbox.set('-')
+            else:
+                dp = str(int(status_df.loc[trait_idx].drops))
+                drop_sbox.set(dp)
 
     # *********** special, individual case *** !!! *************************************************
     # Some Drop-of-Life-Effects are affecting other players! hence, effects of these traits need to
@@ -1964,13 +1973,22 @@ def create_menu_frame():
         values=[" select world's end ..."],
         exportselection=0,
         state="disabled",
-        width=18,
+        width=10,
         style="move.TCombobox",
         textvariable=worlds_end['played'])
     worlds_end['cbox'].current(0)
-    worlds_end['cbox'].grid(row=game['n_catastrophes']+2, column=0, columnspan=2,
-                            padx=4, pady=(0, 5), sticky='ns')
-    worlds_end['cbox'].bind("<<ComboboxSelected>>", lambda e: btn_play_worlds_end())
+    worlds_end['cbox'].grid(row=game['n_catastrophes']+2, column=0,
+                            padx=(4, 0), pady=(0, 5), sticky='ns')
+    worlds_end['cbox'].bind("<<ComboboxSelected>>", lambda e: btn_worlds_end_select())
+
+    worlds_end['btn'] = ttk.Button(
+        frame_menu_catastrophe,
+        text="GO!",
+        width=3,
+        state="disabled",
+        style="disabled.TButton",
+        command=lambda: btn_worlds_end_apply())
+    worlds_end['btn'].grid(row=game['n_catastrophes']+2, column=1, padx=(0, 4), pady=(0, 5), sticky="nse")
 
     # ----- frame for control buttons --------------------------------------------------------------
     frame_menu_controls = tk.Frame(frame_menu)
@@ -2065,6 +2083,7 @@ def reset_variables():
     # reset worlds end
     worlds_end['played'] = tk.StringVar(value="")
     worlds_end['cbox'] = [None]
+    worlds_end['btn'] = [None]
 
     # reset current status
     status_df['color'] = traits_df.color
@@ -2162,6 +2181,7 @@ gui_style.configure("points.TLabel", font=("", 20))
 gui_style.configure("total.TLabel", font=("", 80, "bold"), foreground="orangered1")
 gui_style.configure("genes.TLabel", font=("", 38, "bold"), foreground="hotpink1")
 gui_style.configure("move.TCombobox", selectbackground="none")
+gui_style.configure("disabled.TButton", foreground="grey")
 
 # tk_inter_variables -------------------------------------------------------------------------------
 options = {}

@@ -166,6 +166,7 @@ catastrophe['cbox'] = []        # comboxes containing possible catastrophes
 worlds_end = {}
 worlds_end['played'] = None     # selected worlds end
 worlds_end['cbox'] = [None]     # combobox 4 worlds end
+worlds_end['btn'] = [None]      # button running worlds end
 
 # logfile to store debug lines ---------------------------------------------------------------------
 global logfile

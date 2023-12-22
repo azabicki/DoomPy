@@ -1583,7 +1583,7 @@ def create_player_frame(p):
     # frame.rowconfigure(2, weight=1)  # MOL
     frame.grid(column=p, row=0, padx=5, pady=5, sticky="nesw")  # or use nsw for non-x-streched frames!
 
-    # ----- name + overview current points -------------------------------
+    # ----- name + overview current points ---------------------------------------------------------
     frame_points = tk.Frame(frame)
     frame_points.grid(row=0, column=0, padx=border, pady=border, ipady=3, sticky="nesw")
     frame_points.columnconfigure(0, weight=1)
@@ -1638,7 +1638,7 @@ def create_player_frame(p):
     ttk.Label(frame_points, textvariable=plr['genes'][p], style="genes.TLabel"
               ).grid(row=2, column=5, columnspan=2, padx=0, pady=0, sticky='n')
 
-    # ----- list of traits played ----------------------------------------
+    # ----- gaming ares ------------------------------------------------------------------
     frame_traits = tk.Frame(frame)
     frame_traits.grid(row=1, column=0, padx=border, pady=(0, border), sticky="nesw")
     frame_traits.rowconfigure(2, weight=1)
@@ -1646,16 +1646,7 @@ def create_player_frame(p):
     frame_traits.columnconfigure(1, weight=1)  # for middle button under trait-pile
     frame_traits.columnconfigure(2, weight=1)  # for right button under trait-pile
 
-    frame_trait_pile[p] = tk.Frame(frame_traits)
-    frame_trait_pile[p].grid(row=0, column=0, columnspan=3, sticky='nesw', padx=border, pady=border)
-    frame_trait_pile[p].columnconfigure(1, weight=1)  # for left button under trait-pile
-    create_trait_pile(frame_trait_pile[p], p)
-
-    # action buttons -----
-    ttk.Separator(
-        frame_traits, orient='horizontal'
-        ).grid(row=1, column=0, columnspan=3, padx=5, pady=5, sticky='we')
-
+    # action buttons -----------------
     cbox_move_to = ttk.Combobox(
         frame_traits,
         height=game['n_player']+1,
@@ -1666,20 +1657,30 @@ def create_player_frame(p):
         state="readonly",
         width=6,
         style="move.TCombobox")
-    cbox_move_to.grid(row=2, column=0, pady=(0, border), sticky='ne')
+    cbox_move_to.grid(row=0, column=0, pady=(border, 0), sticky='ne')
     cbox_move_to.current(0)
     cbox_move_to.bind(
         "<<ComboboxSelected>>", lambda e: btn_move_trait(p, cbox_move_to))
 
     ttk.Button(frame_traits, text="to hand", width=5,
                command=partial(btn_remove_trait, p, 'hand')
-               ).grid(row=2, column=1, pady=(0, border), sticky='n')
+               ).grid(row=0, column=1, pady=(border, 0), sticky='n')
 
     ttk.Button(frame_traits, text="discard", width=5,
                command=partial(btn_remove_trait, p, 'discard')
-               ).grid(row=2, column=2, pady=(0, border), sticky='nw')
+               ).grid(row=0, column=2, pady=(border, 0), sticky='nw')
 
-    # ----- Meaning of Life -------------------------------------
+    ttk.Separator(
+        frame_traits, orient='horizontal'
+        ).grid(row=1, column=0, columnspan=3, padx=5, pady=5, sticky='we')
+
+    # ----- trait pile ---------------
+    frame_trait_pile[p] = tk.Frame(frame_traits)
+    frame_trait_pile[p].grid(row=2, column=0, columnspan=3, sticky='nesw', padx=border, pady=border)
+    frame_trait_pile[p].columnconfigure(1, weight=1)
+    create_trait_pile(frame_trait_pile[p], p)
+
+    # ----- Meaning of Life ------------------------------------------------------------------------
     frame_MOL = tk.Frame(frame)
     frame_MOL.grid(row=2, column=0, padx=border, pady=(0, border), sticky="nesw")
 

@@ -1488,6 +1488,38 @@ def create_trait_pile(frame_trait_overview, p):
     # call function to insert special-effects from various traits
     irow = rules_tp.special_trait_effects(frame_trait_overview, p, irow, images)
 
+    # --- NEOTENY needs to stay here ---------------------------------------------------------------
+    # --- beacuse trait piles need to be updated once the checkbox is clicked ----------------------
+    neoteny_idx = traits_df.index[traits_df.trait == 'Neoteny'].tolist()[0]
+    neoteny_effect = status_df.loc[neoteny_idx].effects
+    if ("select world's end" not in worlds_end['played'].get()
+            and all(neoteny_idx not in tp for tp in plr['trait_pile'])):
+        # only if no one has it or this player has it
+        if neoteny_effect == 'none' or neoteny_effect == str(p):
+            # create separate frame for NEOTENY
+            irow += 1
+            frame_ntny = tk.Frame(frame_trait_overview)
+            frame_ntny.grid(row=irow, column=0, columnspan=2, sticky='we')
+
+            # add trait
+            tk.Label(frame_ntny, text="NEOTENY", fg="#1C86EE", font='"" 14 bold'
+                     ).grid(row=0, column=0, padx=(10, 0), sticky='en')
+            # if is this hand
+            if neoteny_checkbutton[p].get() == 1:
+                ttk.Checkbutton(frame_ntny, variable=neoteny_checkbutton[p], text=' got it -> ',
+                                # command=lambda: update_traits_current_status('neoteny', int(p))
+                                command=lambda: update_traits_current_status('neoteny', p)
+                                ).grid(row=0, column=1, padx=(0, 0), sticky='wns')
+                ttk.Label(frame_ntny, image=images['drops']
+                          ).grid(row=0, column=2, sticky='ns')
+                tk.Label(frame_ntny, image=images['4']
+                         ).grid(row=0, column=3, sticky='ns')
+            # not in this hand
+            else:
+                ttk.Checkbutton(frame_ntny, variable=neoteny_checkbutton[p], text=' in my hand???',
+                                command=lambda: update_traits_current_status('neoteny', p)
+                                ).grid(row=0, column=1, padx=(0, 0), sticky='wns')
+
     # **********************************************************************************************
     # ------ worlds end -> manual entries ---------------------------------------------------------
     if "select world's end" not in worlds_end['played'].get():

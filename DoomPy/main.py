@@ -37,135 +37,135 @@ def get_sup(tp):
 
 def pre_play():
     start_game()
-    pre_play_set = 'random'
+    pre_play_set = 'test'
 
     if pre_play_set == 'action':
         lisa = [210, 218, 221, 222, 223, 226, 227, 230, 233]
         for t in lisa:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+            trait_idx = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(trait_idx)
             btn_play_trait(0)
 
         julia = [234, 236, 237, 238, 239, 249, 254, 259, 264, 266, 267, 269, 270, 271, 272]
         for t in julia:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+            trait_idx = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(trait_idx)
             btn_play_trait(1)
 
         anton = [276, 281, 286, 294, 295, 298, 304, 316, 322, 323, 325, 326, 327, 328, 330]
         for t in anton:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+            trait_idx = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(trait_idx)
             btn_play_trait(2)
 
         adam = [331, 334, 337, 338, 339, 342, 343, 345, 346, 348, 350, 353, 354, 360, 363]
         for t in adam:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+            trait_idx = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(trait_idx)
             btn_play_trait(3)
 
     if pre_play_set == 'effectless':
         lisa = [0, 1, 9, 11, 18, 19, 21]
         for t in lisa:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+            trait_idx = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(trait_idx)
             btn_play_trait(0)
 
         julia = [26, 28, 44, 52, 62, 68, 72, 76, 77]
         for t in julia:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+            trait_idx = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(trait_idx)
             btn_play_trait(1)
 
         anton = [79, 81, 84, 103, 105, 106, 107, 114, 115]
         for t in anton:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+            trait_idx = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(trait_idx)
             btn_play_trait(2)
 
         adam = [117, 118, 121, 124, 131, 135, 136, 148, 173, 179]
         for t in adam:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+            trait_idx = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(trait_idx)
             btn_play_trait(3)
 
     if pre_play_set == 'attachments':
         lisa = [0, 1, 9, 11, 19, 21, 26, 29, 69, 89, 178, 256, 300]
         for t in lisa:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+            trait_idx = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(trait_idx)
             btn_play_trait(0)
 
         julia = [52, 62, 68, 72, 81, 84, 30, 70, 301, 340]
         for t in julia:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+            trait_idx = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(trait_idx)
             btn_play_trait(1)
 
         anton = [105, 107, 114, 115, 117, 177, 257, 341]
         for t in anton:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+            trait_idx = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(trait_idx)
             btn_play_trait(2)
 
         adam = [362, 356, 347, 336, 320, 291, 283, 127, 128, 182, 183, 199, 200]
         for t in adam:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+            trait_idx = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(trait_idx)
             btn_play_trait(3)
 
     if pre_play_set == 'drops_A':
         lisa = [4, 16, 24, 25, 37, 40, 41, 64, 66, 67, 82, 87]
         for t in lisa:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+            trait_idx = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(trait_idx)
             btn_play_trait(0)
 
         julia = [95, 98, 122, 123, 127, 128, 132, 140, 147, 160, 161, 162, 163, 164, 165, 166]
         for t in julia:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+            trait_idx = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(trait_idx)
             btn_play_trait(1)
 
         anton = [167, 168, 169, 170, 171, 190, 203, 208, 215]
         for t in anton:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+            trait_idx = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(trait_idx)
             btn_play_trait(2)
 
         adam = [228, 232, 247, 260, 274, 275, 277, 278, 287, 290, 296, 317, 318, 324, 333, 352]
         for t in adam:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+            trait_idx = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(trait_idx)
             btn_play_trait(3)
 
     if pre_play_set == 'drops_B':
         lisa = [37, 41, 66, 67]
         for t in lisa:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+            trait_idx = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(trait_idx)
             btn_play_trait(0)
 
         julia = [122, 123]
         for t in julia:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+            trait_idx = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(trait_idx)
             btn_play_trait(1)
 
         anton = [203, 260]
         for t in anton:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+            trait_idx = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(trait_idx)
             btn_play_trait(2)
 
         adam = [274, 275, 296, 333]
         for t in adam:
-            tt = deck_filtered_idx.index(t)
-            lbox_deck[0].selection_set(tt)
+            trait_idx = deck_filtered_idx.index(t)
+            lbox_deck[0].selection_set(trait_idx)
             btn_play_trait(3)
 
     if pre_play_set == 'random':
-        rounds = 16
+        rounds = 6
         for r in range(rounds):
             for p in range(game['n_player']):
                 print(p, ' _ ', r)
@@ -194,22 +194,17 @@ def pre_play():
                 # attach to host if neccessary
                 if traits_df.loc[trait_idx].attachment == 1:
                     host_idx = rules_at.filter_attachables(trait_idx, p)[0]
-                    host = traits_df.loc[host_idx].trait
 
                     write_log(['attach_to', 'attached'], plr['name'][p].get(),
-                              traits_df.loc[trait_idx].trait, trait_idx, host, host_idx)
+                              traits_df.loc[trait_idx].trait, trait_idx,
+                              traits_df.loc[host_idx].trait, host_idx)
 
                     # set new attachment to status_row of host & update effects of attachment on host
                     status_df.loc[trait_idx, 'host'] = host_idx
-                    update_traits_current_status('attachment', host_idx, trait_idx)
+                    status_df.loc[host_idx, 'attachment'] = trait_idx
 
                     # update scoring
-                    update_genes()
-                    update_scoring()
-
-                    # update all trait piles
-                    for p in range(game['n_player']):
-                        create_trait_pile(frame_trait_pile[p], p)
+                    update_all()
 
                 # reset trait to play
                 btn_clear_trait_search()
@@ -223,26 +218,35 @@ def pre_play():
                     catastrophe['cbox'][n_cat].current(c)
                     catastrophe['cbox'][n_cat].event_generate("<<ComboboxSelected>>")
 
-    if pre_play_set == 3:
-        lisa = [5, 27]
-        for t in lisa:
-            lbox_deck[0].selection_set(t)
-            btn_play_trait(0)
+    if pre_play_set == 'test':
+        to_play = [[1, 9, 21, 26, 69, 104, 125],
+                   [44, 52, 62, 68, 177, 340],
+                   [11, 18, 19, 29, 300],
+                   [103, 105, 118, 128, 256]]
+        for p in range(4):
+            for trait_idx in to_play[p]:
+                lbox_deck[0].selection_set(deck_filtered_idx.index(trait_idx))
+                btn_play_trait(p)
 
-        julia = [54, 175]
-        for t in julia:
-            lbox_deck[0].selection_set(t)
-            btn_play_trait(1)
+                # attach to host if neccessary
+                if traits_df.loc[trait_idx].attachment == 1:
+                    host_idx = rules_at.filter_attachables(trait_idx, p)[0]
 
-        anton = [202, 240]
-        for t in anton:
-            lbox_deck[0].selection_set(t)
-            btn_play_trait(2)
+                    write_log(['attach_to', 'attached'], plr['name'][p].get(),
+                              traits_df.loc[trait_idx].trait, trait_idx,
+                              traits_df.loc[host_idx].trait, host_idx)
 
-        adam = [241, 293, 302]
-        for t in adam:
-            lbox_deck[0].selection_set(t)
-            btn_play_trait(3)
+                    # set new attachment to status_row of host & update effects of attachment on host
+                    status_df.loc[trait_idx, 'host'] = host_idx
+                    status_df.loc[host_idx, 'attachment'] = trait_idx
+
+                    # update scoring
+                    update_all()
+
+        for r in range(game['n_catastrophes']):
+            c = np.random.randint(low=0, high=len(catastrophe['possible'][r]))
+            catastrophe['cbox'][r].current(c)
+            catastrophe['cbox'][r].event_generate("<<ComboboxSelected>>")
 
     print('___done___')
 

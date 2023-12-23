@@ -1135,13 +1135,12 @@ def create_trait_pile(frame_trait_overview, p):
         # _true_ face
         if show_icons['face']:
             icol += 1
-            face_value = traits_df.loc[trait_idx].face
-            face_string = face_value if isinstance(face_value, str) else str(int(face_value))
+            trait_face = traits_df.loc[trait_idx].face
+            status_face = status_df.loc[trait_idx].face
 
-            tk.Label(
-                frame_pics,
-                image=images[face_string]
-                ).grid(row=0, column=icol)
+            X = 'X' if trait_face != status_face else ''
+            face_string = trait_face if isinstance(trait_face, str) else str(int(trait_face))
+            tk.Label(frame_pics, image=images[face_string + X]).grid(row=0, column=icol)
 
         # collection
         if show_icons['collection']:
@@ -1258,7 +1257,8 @@ def create_trait_pile(frame_trait_overview, p):
             tk.Label(frame_pics, image=images['attachment']).grid(row=0, column=icol)
 
         # noFX ----------------------------------
-        if status_df.loc[trait_idx].inactive:
+        if (status_df.loc[trait_idx].inactive
+                and 'inactive' not in status_df.loc[trait_idx].effects_WE.lower()):
             icol += 1
             tk.Label(frame_pics, image=images['noFX']).grid(row=0, column=icol)
 
@@ -1283,24 +1283,18 @@ def create_trait_pile(frame_trait_overview, p):
             tk.Label(frame_pics, image=images['noSwap']).grid(row=0, column=icol)
 
         # if WORLDS END effects this trait ------
-        if status_df.loc[trait_idx].we_effect != 'none':
+        if status_df.loc[trait_idx].effects_WE != 'none':
             icol += 1
             tk.Label(frame_pics, image=images['worlds_end']).grid(row=0, column=icol)
 
-            if 'face' in traits_df.loc[trait_idx].cur_worlds_end_effect.lower():
+            if 'face' in status_df.loc[trait_idx].effects_WE.lower():
                 icol += 1
-                we_face_string = str(int(traits_df.loc[trait_idx].cur_face))
-                tk.Label(
-                    frame_pics,
-                    image=images[we_face_string]
-                    ).grid(row=0, column=icol)
+                we_face_string = str(int(status_df.loc[trait_idx].face))
+                tk.Label(frame_pics, image=images[we_face_string]).grid(row=0, column=icol)
 
-            if 'inactive' in traits_df.loc[trait_idx].cur_worlds_end_effect.lower():
+            if 'inactive' in status_df.loc[trait_idx].effects_WE.lower():
                 icol += 1
-                tk.Label(
-                    frame_pics,
-                    image=images['noFX']
-                    ).grid(row=0, column=icol)
+                tk.Label(frame_pics, image=images['noFX']).grid(row=0, column=icol)
 
         # ----- SLEEPY may affect gene pool ?!?!  --------------------------------------------------
         if traits_df.loc[trait_idx].trait == 'Sleepy':

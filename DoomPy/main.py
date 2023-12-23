@@ -508,7 +508,7 @@ def btn_traits_world_end(from_, trait_idx, event):
         status_df.loc[trait_idx, 'traits_WE'] = effect
 
     # apply traits_WE-effects and update status of traits in this trait pile
-    rules_tr.traits_WE_effects(trait_idx, plr['trait_pile'][from_])
+    rules_tr.assign_traits_WE_effects(trait_idx, plr['trait_pile'][from_])
 
     # update
     update_all()
@@ -1000,14 +1000,14 @@ def update_stars():
 def resolve_effects():
     # loop players
     for p in range(game['n_player']):
-        tp = plr['trait_pile'][p]
-        for trait_idx in tp:
-            # 1) attachment effect
+        # loop trait pile
+        for trait_idx in plr['trait_pile'][p]:
+            # 1: attachment effect
             rules_at.apply_effects(trait_idx)
 
-            # 2) traits WE effect(s)
+            # 2: traits WE effect(s)
 
-            # 3) worlds end effect
+            # 3: worlds end effect
 
 
 def update_all():
@@ -1065,7 +1065,7 @@ def create_trait_pile(frame_trait_overview, p):
         w.grid_forget()
 
     # then, scan trait pile for any effects by any traits, like protecting other traits...
-    rules_tr.traits_effects(plr['trait_pile'][p])
+    rules_tr.permanent_effects(plr['trait_pile'][p])
 
     # then, update n_tp
     plr['n_tp'][p].set(get_sup(plr['trait_pile'][p]))

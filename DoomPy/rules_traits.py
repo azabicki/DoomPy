@@ -35,7 +35,7 @@ def traits_WE_tasks(trait_idx):
 
 
 # handle worlds end effects of trait
-def traits_WE_effects(trait_idx, trait_pile):
+def assign_traits_WE_effects(trait_idx, trait_pile):
     task = traits_df.loc[trait_idx].worlds_end_task
     effect = status_df.loc[trait_idx].traits_WE
 
@@ -75,7 +75,7 @@ def traits_WE_effects(trait_idx, trait_pile):
 
 
 # handle worlds end effects of trait
-def traits_effects(tp):
+def permanent_effects(tp):
     for trait_idx in tp:
         trait = status_df.loc[trait_idx].trait
 

@@ -57,7 +57,7 @@ catastrophes_df = (xlsx_catastrophes
 # MOLs
 xlsx_MOLs = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="MOL")
 MOLs_df = (xlsx_MOLs
-           .sort_values(by='name')
+           .sort_values(by='MOL')
            .reset_index(drop=True)
            .drop(columns='game'))
 

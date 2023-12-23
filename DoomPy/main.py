@@ -467,40 +467,6 @@ def btn_traits_world_end(from_, trait_idx, event):
     else:
         write_log(['traits_WE', 'set'], traits_df.loc[trait_idx].trait, trait_idx, effect)
 
-    # reverse traits_WE-effects, if it is changed, therefore check if WE-effect was selected
-    # previously & if its different than the current, reset old effect
-    old_effect = status_df.loc[trait_idx].traits_WE
-    if old_effect != 'none' and old_effect != effect:
-        # loop every trait in this trait pile
-        for trait in plr['trait_pile'][from_]:
-            # skip if its current worlds-end-trait
-            if trait == trait_idx:
-                continue
-
-            # get current status before reseting
-            prev_drops = status_df.loc[trait].drops
-            prev_host = status_df.loc[trait].host
-            prev_attachment = status_df.loc[trait].attachment
-            prev_traits_WE = status_df.loc[trait].traits_WE
-
-            # reset trait
-            update_traits_current_status('reset', trait, [])
-
-            # redo attachment effects
-            if prev_attachment != 'none':
-                update_traits_current_status('attachment', trait, prev_attachment)
-
-            # restore host in attachment
-            status_df.loc[trait, 'cur_host'] = prev_host
-
-            # restore cur_drop points
-            status_df.loc[trait, 'cur_drops'] = prev_drops
-
-            # redo worlds_end effects
-            if prev_traits_WE != 'none':
-                status_df.loc[trait, 'cur_worlds_end_trait'] = prev_traits_WE
-                update_traits_current_status('worlds_end', trait, plr['trait_pile'][from_])
-
     # set traits_WE-effect to status_df of trait
     if effect_idx == 0:
         status_df.loc[trait_idx, 'traits_WE'] = 'none'
@@ -1006,6 +972,7 @@ def resolve_effects():
             rules_at.apply_effects(trait_idx)
 
             # 2: traits WE effect(s)
+            rules_tr.apply_traits_WE_effects(trait_idx)
 
             # 3: worlds end effect
 

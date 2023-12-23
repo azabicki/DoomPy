@@ -51,7 +51,9 @@ def filter_attachables(attachment, p):
 
 
 # apply effects to host
-def apply_effects(host):
+def apply_effects(host, *args):
+    log = False if args == () else args[1]
+
     # get attachment
     attachment = status_df.loc[host].attachment
 
@@ -94,5 +96,6 @@ def apply_effects(host):
                     status_df.loc[host, 'no_steal'] = True
 
         # print log
-        write_log(['update_trait_status', 'attachment'],
-                  traits_df.loc[host].trait, traits_df.loc[attachment].trait)
+        if log:
+            write_log(['update_trait_status', 'attachment'],
+                      traits_df.loc[host].trait, traits_df.loc[attachment].trait)

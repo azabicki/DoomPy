@@ -995,10 +995,9 @@ def update_stars():
                 lbl2.configure(image=images['heroic_star'])
 
 
-def resolve_effects():
-    # loop players
+def update_all():
+    # first, resolve all effects on traits
     for p in range(game['n_player']):
-        # loop trait pile
         for trait_idx in plr['trait_pile'][p]:
             # 1: attachment effect
             rules_at.apply_effects(trait_idx)
@@ -1007,11 +1006,7 @@ def resolve_effects():
             rules_tr.apply_traits_WE_effects(trait_idx)
 
             # 3: worlds end effect
-
-
-def update_all():
-    # first, resolve all effects on traits
-    resolve_effects()
+            rules_we.apply_WE_effects(trait_idx)
 
     # update stuff
     update_stars()

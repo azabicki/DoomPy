@@ -45,7 +45,6 @@ status_df['effects_attachment'] = 'none'
 status_df['effects_traits_WE'] = 'none'
 status_df['effects_WE'] = 'none'
 status_df['traits_WE'] = 'none'
-status_df['we_effect'] = 'none'
 
 # catastrophes
 xlsx_ages = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="ages")

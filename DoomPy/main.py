@@ -797,7 +797,6 @@ def update_traits_current_status(todo, *args):
             status_df.loc[trait, 'effects_traits_WE'] = 'none'
             status_df.loc[trait, 'effects_WE'] = 'none'
             status_df.loc[trait, 'traits_WE'] = 'none'
-            status_df.loc[trait, 'we_effect'] = 'none'
 
             # apply rule after resetting
             match reset_rule:
@@ -2024,7 +2023,6 @@ def reset_variables():
     status_df['effects_traits_WE'] = 'none'
     status_df['effects_WE'] = 'none'
     status_df['traits_WE'] = 'none'
-    status_df['we_effect'] = 'none'
 
 
 def start_game():

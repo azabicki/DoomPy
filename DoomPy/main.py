@@ -422,7 +422,7 @@ def btn_play_catastrophe(event, c):
     else:
         worlds_end['cbox'].configure(state="readonly")
 
-    # update worlds end combobox
+    # update worlds_end-combobox
     played_catastrophes = [catastrophes_df.loc[catastrophe['played'][i], "name"]
                            for i in range(game['n_catastrophes'])
                            if catastrophe['played'][i] is not None]
@@ -441,7 +441,7 @@ def btn_play_catastrophe(event, c):
         game['first_player'] = game['first_player'] - game['n_player']
     write_log(['catastrophe', 'first_player'], plr['name'][game['first_player']].get(), n_cat)
 
-    # update label_style
+    # update all player's label_style
     for p in range(game['n_player']):
         tmp_frame = frame_player[p].winfo_children()
         lbl1 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.!label')
@@ -714,9 +714,6 @@ def update_manual_drops(event, trait, p, change):
 
     # update this players trait pile
     create_trait_pile(frame_trait_pile[p], p)
-
-    # focus back to search field
-    ent_trait_search[0].focus_set()
 
 
 def update_traits_current_status(todo, *args):
@@ -1098,12 +1095,9 @@ def create_trait_pile(frame_trait_overview, p):
             X = 'X' if status_df.loc[trait_idx].color.lower() != traits_df.loc[trait_idx].color.lower() else ''
 
             # show color icon
-            tk.Label(
-                frame_pics,
-                image=images[cc+cb+cg+cp+cr+X]
-                ).grid(row=0, column=icol)
+            tk.Label(frame_pics, image=images[cc+cb+cg+cp+cr+X]).grid(row=0, column=icol)
 
-        # face
+        # _true_ face
         if show_icons['face']:
             icol += 1
             face_value = traits_df.loc[trait_idx].face
@@ -1117,10 +1111,7 @@ def create_trait_pile(frame_trait_overview, p):
         # collection
         if show_icons['collection']:
             icol += 1
-            lbl_collection = tk.Label(
-                frame_pics,
-                image=images['no_star'],
-                )
+            lbl_collection = tk.Label(frame_pics, image=images['no_star'])
             lbl_collection.grid(row=0, column=icol)
 
             match traits_df.loc[trait_idx].game.lower():
@@ -1142,58 +1133,37 @@ def create_trait_pile(frame_trait_overview, p):
         # dominant
         if show_icons['dominant'] and traits_df.loc[trait_idx].dominant == 1:
             icol += 1
-            tk.Label(
-                frame_pics,
-                image=images['dominant']
-                ).grid(row=0, column=icol)
+            tk.Label(frame_pics, image=images['dominant']).grid(row=0, column=icol)
 
         # action
         if show_icons['action'] and traits_df.loc[trait_idx].action == 1:
             icol += 1
-            tk.Label(
-                frame_pics,
-                image=images['action']
-                ).grid(row=0, column=icol)
+            tk.Label(frame_pics, image=images['action']).grid(row=0, column=icol)
 
         # drops
         if show_icons['drops'] and traits_df.loc[trait_idx].drops == 1:
             icol += 1
-            tk.Label(
-                frame_pics,
-                image=images['drops']
-                ).grid(row=0, column=icol)
+            tk.Label(frame_pics, image=images['drops']).grid(row=0, column=icol)
 
         # gene pool
         if show_icons['gene_pool'] and traits_df.loc[trait_idx].gene_pool == 1:
             icol += 1
-            tk.Label(
-                frame_pics,
-                image=images['gene_pool']
-                ).grid(row=0, column=icol)
+            tk.Label(frame_pics, image=images['gene_pool']).grid(row=0, column=icol)
 
         # worlds_end
         if show_icons['worlds_end'] and traits_df.loc[trait_idx].worlds_end == 1:
             icol += 1
-            tk.Label(
-                frame_pics,
-                image=images['worlds_end']
-                ).grid(row=0, column=icol)
+            tk.Label(frame_pics, image=images['worlds_end']).grid(row=0, column=icol)
 
         # effectless
         if show_icons['effectless'] and traits_df.loc[trait_idx].effectless == 1:
             icol += 1
-            tk.Label(
-                frame_pics,
-                image=images['effectless']
-                ).grid(row=0, column=icol)
+            tk.Label(frame_pics, image=images['effectless']).grid(row=0, column=icol)
 
         # attachment
         if show_icons['attachment'] and traits_df.loc[trait_idx].attachment == 1:
             icol += 1
-            tk.Label(
-                frame_pics,
-                image=images['attachment']
-                ).grid(row=0, column=icol)
+            tk.Label(frame_pics, image=images['attachment']).grid(row=0, column=icol)
 
         # add SEPERATOR after _true_ icons
         icol += 1
@@ -1223,27 +1193,18 @@ def create_trait_pile(frame_trait_overview, p):
 
             # add new color icon
             icol += 1
-            tk.Label(
-                frame_pics,
-                image=images[cc+cb+cg+cp+cr+X]
-                ).grid(row=0, column=icol)
+            tk.Label(frame_pics, image=images[cc+cb+cg+cp+cr+X]).grid(row=0, column=icol)
 
         # drop value ----------------------------
         cur_drops = status_df.loc[trait_idx].drops
         if traits_df.loc[trait_idx].drops == 1:
             icol += 1
-            tk.Label(
-                frame_pics,
-                image=images['drops']
-                ).grid(row=0, column=icol)
+            tk.Label(frame_pics, image=images['drops']).grid(row=0, column=icol)
 
             if np.isnan(cur_drops):
                 # add question mark as long as no drop value is calculated
                 icol += 1
-                tk.Label(
-                    frame_pics,
-                    image=images['question_mark']
-                    ).grid(row=0, column=icol)
+                tk.Label(frame_pics, image=images['question_mark']).grid(row=0, column=icol)
             else:
                 # check if values are higher/lower than drop icons exist
                 if int(cur_drops) > 20:
@@ -1254,66 +1215,42 @@ def create_trait_pile(frame_trait_overview, p):
                     drop_string = str(int(cur_drops))
                 # add value icon
                 icol += 1
-                tk.Label(
-                    frame_pics,
-                    image=images[drop_string]
-                    ).grid(row=0, column=icol)
+                tk.Label(frame_pics, image=images[drop_string]).grid(row=0, column=icol)
 
         # has attachment ------------------------
         if status_df.loc[trait_idx].attachment != 'none':
             icol += 1
-            tk.Label(
-                frame_pics,
-                image=images['attachment']
-                ).grid(row=0, column=icol)
+            tk.Label(frame_pics, image=images['attachment']).grid(row=0, column=icol)
 
         # noFX ----------------------------------
         if status_df.loc[trait_idx].inactive:
             icol += 1
-            tk.Label(
-                frame_pics,
-                image=images['noFX']
-                ).grid(row=0, column=icol)
+            tk.Label(frame_pics, image=images['noFX']).grid(row=0, column=icol)
 
         # noRemove ------------------------------
         if status_df.loc[trait_idx].no_remove:
             icol += 1
-            tk.Label(
-                frame_pics,
-                image=images['noRemove']
-                ).grid(row=0, column=icol)
+            tk.Label(frame_pics, image=images['noRemove']).grid(row=0, column=icol)
 
         # noDiscard -----------------------------
         if status_df.loc[trait_idx].no_discard:
             icol += 1
-            tk.Label(
-                frame_pics,
-                image=images['noDiscard']
-                ).grid(row=0, column=icol)
+            tk.Label(frame_pics, image=images['noDiscard']).grid(row=0, column=icol)
 
         # noSteal -------------------------------
         if status_df.loc[trait_idx].no_steal:
             icol += 1
-            tk.Label(
-                frame_pics,
-                image=images['noSteal']
-                ).grid(row=0, column=icol)
+            tk.Label(frame_pics, image=images['noSteal']).grid(row=0, column=icol)
 
         # noSwap --------------------------------
         if status_df.loc[trait_idx].no_swap:
             icol += 1
-            tk.Label(
-                frame_pics,
-                image=images['noSwap']
-                ).grid(row=0, column=icol)
+            tk.Label(frame_pics, image=images['noSwap']).grid(row=0, column=icol)
 
         # if WORLDS END effects this trait ------
         if status_df.loc[trait_idx].we_effect != 'none':
             icol += 1
-            tk.Label(
-                frame_pics,
-                image=images['worlds_end']
-                ).grid(row=0, column=icol)
+            tk.Label(frame_pics, image=images['worlds_end']).grid(row=0, column=icol)
 
             if 'face' in traits_df.loc[trait_idx].cur_worlds_end_effect.lower():
                 icol += 1
@@ -1430,7 +1367,7 @@ def create_trait_pile(frame_trait_overview, p):
             drop_sbox.bind("<<Increment>>", lambda e, t=trait_idx: update_manual_drops(e, t, p, '+'))
             drop_sbox.bind("<<Decrement>>", lambda e, t=trait_idx: update_manual_drops(e, t, p, '-'))
 
-            # fill entry, depending on drops_status
+            # fill spinbox, depending on drops_status
             if np.isnan(status_df.loc[trait_idx].drops):
                 drop_sbox.set('-')
             else:

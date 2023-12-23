@@ -21,7 +21,7 @@ with open(os.path.join(curdir, "config.json")) as json_file:
     cfg = json.load(json_file)
 
 # load cards.xlsx ----------------------------------------------------------------------------------
-global traits_df, status_df, catastrophes_df
+global traits_df, status_df, catastrophes_df, MOLs_df
 
 # traits
 xlsx_traits = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="traits")
@@ -53,6 +53,13 @@ catastrophes_df = (xlsx_catastrophes
                    .sort_values(by='name')
                    .reset_index(drop=True)
                    .drop(columns=['game', 'type']))
+
+# MOLs
+xlsx_MOLs = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="MOL")
+MOLs_df = (xlsx_MOLs
+           .sort_values(by='name')
+           .reset_index(drop=True)
+           .drop(columns='game'))
 
 # load images --------------------------------------------------------------------------------------
 global images_dict

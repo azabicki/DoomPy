@@ -237,7 +237,7 @@ def write_log(what, *args):
                     print("   >>> dominant_stars <<< EPIC fills both dominant spots")
                     f.write("   >>> dominant_stars <<< EPIPC fills both dominant spots\n")
 
-        case '_scoring':
+        case 'scoring':
             match what[1]:
                 case 'update':
                     print(">>> scoring <<< current points 4 '{}': face={} | drops={} | WE={} | MOL={} | total={}"

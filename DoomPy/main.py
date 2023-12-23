@@ -1422,8 +1422,7 @@ def create_trait_pile(frame_trait_overview, p):
     # --- because 'create_trait_pile' needs to be run once the checkbox is clicked -----------------
     neoteny_idx = traits_df.index[traits_df.trait == 'Neoteny'].tolist()[0]
     neoteny_effect = status_df.loc[neoteny_idx].effects
-    if ("select world's end" not in worlds_end['played'].get()
-            and all(neoteny_idx not in tp for tp in plr['trait_pile'])):
+    if (worlds_end['played'] != 'none') and (all(neoteny_idx not in tp for tp in plr['trait_pile'])):
         # only if no one has it or this player has it
         if neoteny_effect == 'none' or neoteny_effect == str(p):
             # create separate frame for NEOTENY

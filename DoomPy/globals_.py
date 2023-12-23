@@ -58,9 +58,10 @@ catastrophes_df = (xlsx_catastrophes
 # load images --------------------------------------------------------------------------------------
 global images_dict
 images_dict = {}
-img_size_star = 30
 img_size_scoreboard = 24
+img_size_star = 30
 img_size_icons = 20
+img_size_WE = 40
 
 # basic
 for files in glob.glob(os.path.join(dir_images, "*.png")):
@@ -82,6 +83,10 @@ for files in glob.glob(os.path.join(dir_images, "trait_properties", cfg["img_tra
     var_name = os.path.splitext(os.path.basename(files))[0]
     images_dict[var_name] = Image.open(files).resize((img_size_icons, img_size_icons))
 
+    if var_name == 'catastrophe':
+        var_WE = var_name + '_WE'
+        images_dict[var_WE] = Image.open(files).resize((img_size_WE, img_size_WE))
+
 # scoreboard icons
 for files in glob.glob(os.path.join(dir_images, "trait_properties", cfg["img_trait_properties_set"], "*.png")):
     var_name = os.path.splitext(os.path.basename(files))[0] + '_sb'
@@ -100,12 +105,11 @@ for files in glob.glob(os.path.join(dir_images, "effects", "*.png")):
 # points
 for files in glob.glob(os.path.join(dir_images, "points", "*.png")):
     var_name = os.path.splitext(os.path.basename(files))[0]
-    images_dict[var_name] = Image.open(files)
+    images_dict[var_name] = Image.open(files).resize((img_size_icons, img_size_icons))
 
-    # pay attention to w/h-ratio
-    w, h = images_dict[var_name].size
-    actual_img_w = int(w / h * img_size_icons)
-    images_dict[var_name] = images_dict[var_name].resize((actual_img_w, img_size_icons))
+    # create red-crossed-point-icons
+    images_dict[var_name + 'X'] = images_dict[var_name].copy()
+    images_dict[var_name + 'X'].paste(images_dict['red_cross'], (0, 0), images_dict['red_cross'])
 
 # load sounds --------------------------------------------------------------------------------------
 global sounds

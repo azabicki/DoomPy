@@ -28,16 +28,9 @@ from globals_ import neoteny_checkbutton, sleepy_spinbox
 
 
 # functions ##############################################################
-def get_sup(tp):
-    lib = {'0': '\u2070', '1': '\u00B9', '2': '\u00B2', '3': '\u00B3', '4': '\u2074',
-           '5': '\u2075', '6': '\u2076', '7': '\u2077', '8': '\u2078', '9': '\u2079'}
-
-    return ''.join(lib[i] for i in str(len(tp)))
-
-
-def pre_play():
+def simulate():
     start_game()
-    pre_play_set = 'test'
+    pre_play_set = 'effectless'
 
     if pre_play_set == 'action':
         lisa = [210, 218, 221, 222, 223, 226, 227, 230, 233]
@@ -219,9 +212,9 @@ def pre_play():
                     catastrophe['cbox'][n_cat].event_generate("<<ComboboxSelected>>")
 
     if pre_play_set == 'test':
-        to_play = [[1, 9, 21, 26, 69, 104, 125],
-                   [44, 52, 62, 68, 177, 340],
-                   [11, 18, 19, 29, 300],
+        to_play = [[1, 9, 21, 26, 69, 104, 125, 183, 245],
+                   [44, 52, 62, 68, 177, 200, 340],
+                   [11, 18, 19, 29, 66, 275, 300],
                    [103, 105, 118, 128, 256]]
         for p in range(4):
             for trait_idx in to_play[p]:
@@ -243,12 +236,29 @@ def pre_play():
                     # update scoring
                     update_all()
 
-        for r in range(game['n_catastrophes']):
-            c = np.random.randint(low=0, high=len(catastrophe['possible'][r]))
-            catastrophe['cbox'][r].current(c)
-            catastrophe['cbox'][r].event_generate("<<ComboboxSelected>>")
+        # for r in range(game['n_catastrophes']):
+        #     c = np.random.randint(low=0, high=len(catastrophe['possible'][r]))
+        #     catastrophe['cbox'][r].current(c)
+        #     catastrophe['cbox'][r].event_generate("<<ComboboxSelected>>")
+
+    # catastrophies for all test_cases
+    catastrophe['cbox'][0].current(1)
+    catastrophe['cbox'][0].event_generate("<<ComboboxSelected>>")
+    catastrophe['cbox'][1].current(2)
+    catastrophe['cbox'][1].event_generate("<<ComboboxSelected>>")
+    catastrophe['cbox'][2].current(6)
+    catastrophe['cbox'][2].event_generate("<<ComboboxSelected>>")
+    catastrophe['cbox'][3].current(6)
+    catastrophe['cbox'][3].event_generate("<<ComboboxSelected>>")
 
     print('___done___')
+
+
+def get_sup(tp):
+    lib = {'0': '\u2070', '1': '\u00B9', '2': '\u00B2', '3': '\u00B3', '4': '\u2074',
+           '5': '\u2075', '6': '\u2076', '7': '\u2077', '8': '\u2078', '9': '\u2079'}
+
+    return ''.join(lib[i] for i in str(len(tp)))
 
 
 def switch(inp):
@@ -2069,7 +2079,7 @@ root.rowconfigure(0, weight=1)
 # create gui_wide F-key bindings
 root.bind("<F7>", lambda e: btn_clear_trait_search())
 root.bind("<F8>", lambda e: start_game())
-root.bind("<F9>", lambda e: pre_play())
+root.bind("<F9>", lambda e: simulate())
 
 # create _content_ frame ---------------------------------------------------------------------------
 content = tk.Frame(root, width=1200, height=800, bg=cfg["bg_content"])

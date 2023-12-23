@@ -1078,7 +1078,7 @@ def create_trait_pile(frame_trait_overview, p):
                                                                      t_idx)
                            ).grid(row=irow, column=0, padx=3, pady=ypad, sticky='nsw')
 
-        # ----- icons ------------------------------------------------------------------------------
+        # ----- TRAIT_icons -> inherent trait properties -------------------------------------------
         frame_pics = tk.Frame(frame_trait_overview)
         frame_pics.grid(row=irow, column=1, sticky='sw')
         icol = -1  # initialize column index which changes depending on card
@@ -1086,6 +1086,7 @@ def create_trait_pile(frame_trait_overview, p):
         # _true_ color
         if show_icons['color']:
             icol += 1
+            # get color
             color = traits_df.loc[trait_idx].color
             cc = 'c' if 'colorless' in color.lower() else ''
             cb = 'b' if 'blue' in color.lower() else ''
@@ -1093,9 +1094,13 @@ def create_trait_pile(frame_trait_overview, p):
             cp = 'p' if 'purple' in color.lower() else ''
             cr = 'r' if 'red' in color.lower() else ''
 
+            # check if color changed
+            X = 'X' if status_df.loc[trait_idx].color.lower() != traits_df.loc[trait_idx].color.lower() else ''
+
+            # show color icon
             tk.Label(
                 frame_pics,
-                image=images[cc+cb+cg+cp+cr]
+                image=images[cc+cb+cg+cp+cr+X]
                 ).grid(row=0, column=icol)
 
         # face
@@ -1195,17 +1200,35 @@ def create_trait_pile(frame_trait_overview, p):
         ttk.Separator(frame_pics, orient='vertical'
                       ).grid(row=0, column=icol, padx=3, pady=3, sticky='ns')
 
-        # ----- current drop/attachment effects  ---------------------------------------------------
+        # ----- STATE_icons -> current drop/attachment effects  ------------------------------------
         # *new* color ---------------------------
         cur_color = status_df.loc[trait_idx].color.lower()
         if cur_color != traits_df.loc[trait_idx].color.lower():
-            icol += 1
+            # find current color
             cc = 'c' if 'colorless' in cur_color.lower() else ''
             cb = 'b' if 'blue' in cur_color.lower() else ''
             cg = 'g' if 'green' in cur_color.lower() else ''
             cp = 'p' if 'purple' in cur_color.lower() else ''
             cr = 'r' if 'red' in cur_color.lower() else ''
 
+            # add 'causing' icon
+            # if cur_color in status_df.loc[trait_idx].effects_traits_WE:
+            if any(col in status_df.loc[trait_idx].effects_traits_WE
+                   for col in cur_color.split('_')):
+                icol += 1
+                tk.Label(
+                    frame_pics,
+                    image=images['worlds_end']
+                    ).grid(row=0, column=icol)
+            elif status_df.loc[trait_idx].attachment != 'none':
+                icol += 1
+                tk.Label(
+                    frame_pics,
+                    image=images['attachment']
+                    ).grid(row=0, column=icol)
+
+            # add new color icon
+            icol += 1
             tk.Label(
                 frame_pics,
                 image=images[cc+cb+cg+cp+cr]

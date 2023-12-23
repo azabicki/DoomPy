@@ -197,6 +197,10 @@ def write_log(what, *args):
                     print(">>> world's end <<< '{}' is selected as worlds end event".format(*args))
                     f.write(">>> world's end <<< '{}' is selected as worlds end event\n".format(*args))
 
+                case 'button_ready':
+                    print(">>> world's end <<< all trait-WE-effects & WE-event selected -> ready to GO!")
+                    f.write(">>> world's end <<< all trait-WE-effects & WE-event selected -> ready to GO!\n")
+
         case 'update_trait_status':
             match what[1]:
                 case 'reset':
@@ -212,9 +216,15 @@ def write_log(what, *args):
                             .format(*args))
 
                 case 'traits_WE':
-                    print(">>> current effects <<< '{}' is updated due to worlds end effects of '{}'"
+                    print(">>> current effects <<< '{}' is updated due to TRAITS worlds end effects of '{}'"
                           .format(*args))
-                    f.write(">>> current effects <<< '{}' is updated due to worlds end effects of '{}'\n"
+                    f.write(">>> current effects <<< '{}' is updated due to TRAITS worlds end effects of '{}'\n"
+                            .format(*args))
+
+                case 'WE_effect':
+                    print(">>> current effects <<< '{}' is updated due to WORLDS END effects of '{}'"
+                          .format(*args))
+                    f.write(">>> current effects <<< '{}' is updated due to WORLDS END effects of '{}'\n"
                             .format(*args))
 
                 case 'neoteny_no_one':

@@ -171,7 +171,8 @@ catastrophe['played'] = []      # occured catastrophes / needed for worlds end
 catastrophe['cbox'] = []        # comboxes containing possible catastrophes
 
 worlds_end = {}
-worlds_end['played'] = None     # selected worlds end
+worlds_end['selected'] = None   # selected world-ends
+worlds_end['played'] = 'none'   # play this world-end-event
 worlds_end['cbox'] = [None]     # combobox 4 worlds end
 worlds_end['btn'] = [None]      # button running worlds end
 

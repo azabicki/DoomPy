@@ -350,22 +350,57 @@ def btn_clear_trait_search():
     lbox_deck[0].see(0)
 
 
-def btn_worlds_end_apply():
-    print('_____ WE _____')
+def btn_worlds_end_GO():
+    # check if WE was played before, if so: remove effects from status_df
+    if worlds_end['played'] != 'none':
+        # loop all traits in all trait piles
+        for p in range(game['n_player']):
+            for trait_idx in plr['trait_pile'][p]:
+                pre_WE_effects = status_df.loc[trait_idx].effects_WE
+
+                for effect in pre_WE_effects.split():
+                    match effect.lower():
+                        case 'face':
+                            status_df.loc[trait_idx, 'face'] = traits_df.loc[trait_idx].face
+
+                        case 'inactive':
+                            status_df.loc[trait_idx, 'inactive'] = False
+
+                status_df.loc[trait_idx, 'effects_WE'] = 'none'
+
+        # log
+        write_log(['worlds_end', 'button_ready'], worlds_end['played'])
+
+    # save played WE
+    worlds_end['played'] = worlds_end['selected'].get()
+
+    # log
+    write_log(['worlds_end', 'play_WE'], worlds_end['played'])
+
+    # update
+    update_all()
 
 
-def btn_worlds_end_select():
-    # do nothing if no catastrophy selected
-    if worlds_end['cbox'].current() == 0:
-        worlds_end['btn'].configure(state="disabled", style="disabled.TButton")
-        write_log(['worlds_end', 'error_no_event'])
-        return
+def check_WE_status(todo):
+    match todo:
+        case 'select_WE':
+            # log
+            write_log(['worlds_end', 'select'], worlds_end['selected'].get())
 
-    # print log
-    write_log(['worlds_end', 'select'], worlds_end['played'].get())
+            # and check button
+            check_WE_status('check_button')
 
-    # enable WE_button
-    worlds_end['btn'].configure(state="normal", style="TButton")
+        case 'check_button':
+            if not any(status_df.loc[trait_idx].traits_WE == 'none'
+                       for tp in plr['trait_pile']
+                       for trait_idx in tp
+                       if isinstance(traits_df.loc[trait_idx].worlds_end_task, str)):
+
+                # enable WE_button
+                worlds_end['btn'].configure(state="normal", style="TButton")
+
+                # log
+                write_log(['worlds_end', 'button_ready'])
 
 
 def btn_play_catastrophe(event, c):
@@ -478,6 +513,9 @@ def btn_traits_world_end(from_, trait_idx, event):
 
     # update
     update_all()
+
+    # check if WE_button should be enabled
+    check_WE_status('check_button')
 
 
 def btn_remove_trait(from_, where_to):
@@ -670,24 +708,22 @@ def btn_play_trait(to):
     return 1
 
 
-def update_manual_we(event, p):
-    value = event.widget.get()
+def update_manual_we(event, p, change):
+    cur_value = int(event.widget.get())
 
     # check if input is numeric
-    if (value.isnumeric() or (len(value) > 1 and value.lstrip('-').isnumeric())):
-        # check limit of (hard-coded) 20
-        if int(value) > 20:
-            value = '20'
-            plr['points_WE_effect'][p].set(value)
-        if int(value) < -20:
-            value = '-20'
-            plr['points_WE_effect'][p].set(value)
+    if change == '+':
+        value = cur_value + 1
+    else:
+        value = cur_value - 1
 
-        # update scoring
-        update_scoring()
+    plr['points_WE_effect'][p].set(value)
 
-        # update this players trait pile
-        create_trait_pile(frame_trait_pile[p], p)
+    # update scoring
+    update_scoring()
+
+    # update this players trait pile
+    create_trait_pile(frame_trait_pile[p], p)
 
 
 def update_manual_drops(event, trait, p, change):
@@ -784,8 +820,7 @@ def update_scoring():
         trait_pile = plr['trait_pile'][p]
 
         # calculate world's end points
-        p_worlds_end = rules_we.worlds_end(traits_df, worlds_end['played'].get(), plr['trait_pile'],
-                                           p, plr['genes'], plr['points_WE_effect'])
+        p_worlds_end = rules_we.calc_WE_points(p) if worlds_end['played'] != 'none' else 0
 
         # calculate face value
         p_face = int(sum([status_df.loc[trait_idx].face for trait_idx in trait_pile
@@ -1353,7 +1388,7 @@ def create_trait_pile(frame_trait_overview, p):
                      ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
 
             # set state depending on 'played' worlds end
-            state = 'readonly' if worlds_end['played'].get() != " select world's end ..." else 'disabled'
+            state = 'readonly' if worlds_end['played'] != "none" else 'disabled'
 
             # create spinbox
             drop_sbox = ttk.Spinbox(
@@ -1417,56 +1452,54 @@ def create_trait_pile(frame_trait_overview, p):
 
     # **********************************************************************************************
     # ------ worlds end -> manual entries ---------------------------------------------------------
-    if "select world's end" not in worlds_end['played'].get():
+    if worlds_end['played'] != 'none':
         irow += 1
         ttk.Separator(frame_trait_overview, orient='horizontal'
                       ).grid(row=irow, column=0, columnspan=2, padx=5, pady=10, sticky='we')
 
         # get world's end name & index
-        we = worlds_end['played'].get()
+        we = worlds_end['played']
         we_idx = catastrophes_df[catastrophes_df['name'] == we].index.values[0]
-        we_eff = catastrophes_df.loc[we_idx].worlds_end
+        we_type = catastrophes_df.loc[we_idx].worlds_end_type
 
         # create separate frame for WE_TITLE
         irow += 1
-        frame_weA = tk.Frame(frame_trait_overview)
-        frame_weA.grid(row=irow, column=0, columnspan=2, sticky='we')
+        frame_WE = tk.Frame(frame_trait_overview)
+        frame_WE.grid(row=irow, column=0, columnspan=2, sticky='nwe')
+        frame_WE.columnconfigure(0, weight=1)
+        frame_WE.columnconfigure(1, weight=0)
+        frame_WE.columnconfigure(2, weight=1)
 
         # add label & drop icon
-        tk.Label(frame_weA,
-                 image=images["catastrophe"],
-                 ).grid(row=0, column=0, padx=(20, 0), sticky='e')
-        tk.Label(frame_weA,
-                 text=" " + we + " ",
-                 fg="#FF3030",
-                 font="'', 14"
-                 ).grid(row=0, column=1, sticky='ns')
-        tk.Label(frame_weA,
-                 image=images["catastrophe"],
-                 ).grid(row=0, column=2, padx=(0, 20), sticky='w')
+        tk.Label(frame_WE, image=images["catastrophe_WE"]
+                 ).grid(row=0, column=0, rowspan=2, padx=(20, 0), sticky='e')
+        lbl_we = tk.Label(frame_WE, text=" " + we + " ", fg="#E1484A", font="'' 14 bold")
+        lbl_we.grid(row=0, column=1, sticky='ns')
+        tk.Label(frame_WE, image=images["catastrophe_WE"]
+                 ).grid(row=0, column=2, rowspan=2, padx=(0, 20), sticky='w')
 
-        # create separate frame for WE_EFFECTS
-        irow += 1
-        frame_weB = tk.Frame(frame_trait_overview)
-        frame_weB.grid(row=irow, column=0, columnspan=2, sticky='we')
-        frame_weB.columnconfigure(0, weight=1)
-        frame_weB.columnconfigure(1, weight=0)
-        frame_weB.columnconfigure(2, weight=1)
+        # WE_EFFECTS
+        if we_type == 'hand' or we_type == 'draw':
+            # create spinbox
+            we_sbox = ttk.Spinbox(
+                frame_WE,
+                state='readonly',
+                from_=-30,
+                to=30,
+                width=3,
+                wrap=False)
+            we_sbox.grid(row=1, column=1)
+            we_sbox.bind("<<Increment>>", lambda e: update_manual_we(e, p, '+'))
+            we_sbox.bind("<<Decrement>>", lambda e: update_manual_we(e, p, '-'))
 
-        tk.Label(frame_weB, text=">>>").grid(row=0, column=0, sticky='e')
-        tk.Label(frame_weB, text="<<<").grid(row=0, column=2, sticky='w')
-
-        if isinstance(we_eff, str) and ('hand' in we_eff or 'draw' in we_eff):
-            we_entry = ttk.Entry(frame_weB,
-                                 textvariable=plr['points_WE_effect'][p],
-                                 justify=tk.CENTER,
-                                 width=3)
-            we_entry.grid(row=0, column=1)
-            we_entry.bind("<KeyRelease>", lambda e: update_manual_we(e, p))
-        else:
+            # fill spinbox with players manually calculated WE points
+            we_sbox.set(plr['points_WE_effect'][p].get())
+        elif we_type == 'calculate':
             we_points = str(plr['points'][p]['worlds_end'].get())
-            tk.Label(frame_weB, image=images[we_points],
-                     ).grid(row=0, column=1, sticky='w')
+            tk.Label(frame_WE, image=images[we_points],
+                     ).grid(row=1, column=1)
+        else:
+            lbl_we.grid(row=0, column=1, rowspan=2, sticky='ns')
 
 
 def create_player_frame(p):
@@ -1856,16 +1889,16 @@ def create_menu_frame():
 
     worlds_end['cbox'] = ttk.Combobox(
         frame_menu_catastrophe,
-        values=[" select world's end ..."],
+        values=[" ... "],
         exportselection=0,
         state="disabled",
         width=10,
         style="move.TCombobox",
-        textvariable=worlds_end['played'])
+        textvariable=worlds_end['selected'])
     worlds_end['cbox'].current(0)
     worlds_end['cbox'].grid(row=game['n_catastrophes']+2, column=0,
                             padx=(4, 0), pady=(0, 5), sticky='ns')
-    worlds_end['cbox'].bind("<<ComboboxSelected>>", lambda e: btn_worlds_end_select())
+    worlds_end['cbox'].bind("<<ComboboxSelected>>", lambda e: check_WE_status('select_WE'))
 
     worlds_end['btn'] = ttk.Button(
         frame_menu_catastrophe,
@@ -1873,7 +1906,7 @@ def create_menu_frame():
         width=3,
         state="disabled",
         style="disabled.TButton",
-        command=lambda: btn_worlds_end_apply())
+        command=lambda: btn_worlds_end_GO())
     worlds_end['btn'].grid(row=game['n_catastrophes']+2, column=1, padx=(0, 4), pady=(0, 5), sticky="nse")
 
     # ----- frame for control buttons --------------------------------------------------------------
@@ -1935,7 +1968,7 @@ def reset_variables():
         plr['trait_pile'].append([])
         plr['n_tp'].append(tk.StringVar(value='0'))
         plr['trait_selected'].append(tk.Variable(value=np.nan))
-        plr['points_WE_effect'].append(tk.StringVar(value='0'))
+        plr['points_WE_effect'].append(tk.IntVar(value=0))
         plr['points_MOL'].append([])
 
         frame_trait_pile.append(None)
@@ -1967,7 +2000,8 @@ def reset_variables():
         catastrophe['cbox'].append([])
 
     # reset worlds end
-    worlds_end['played'] = tk.StringVar(value="")
+    worlds_end['selected'] = tk.StringVar(value="")
+    worlds_end['played'] = 'none'
     worlds_end['cbox'] = [None]
     worlds_end['btn'] = [None]
 

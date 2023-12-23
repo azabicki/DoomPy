@@ -201,6 +201,14 @@ def write_log(what, *args):
                     print(">>> world's end <<< all trait-WE-effects & WE-event selected -> ready to GO!")
                     f.write(">>> world's end <<< all trait-WE-effects & WE-event selected -> ready to GO!\n")
 
+                case 'revert_WE':
+                    print(">>> world's end <<< revert previously applied effects of WE '{}'").format(*args)
+                    f.write(">>> world's end <<< revert previously applied effects of WE '{}'\n".format(*args))
+
+                case 'play_WE':
+                    print(">>> world's end <<< play WE '{}'".format(*args))
+                    f.write(">>> world's end <<< play WE '{}'\n".format(*args))
+
         case 'update_trait_status':
             match what[1]:
                 case 'reset':

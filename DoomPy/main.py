@@ -454,14 +454,19 @@ def btn_play_catastrophe(event, c):
     # enable next catastrophe
     if c < game['n_catastrophes']-1:
         catastrophe['cbox'][c+1].configure(state="readonly")
-    else:
-        worlds_end['cbox'].configure(state="readonly")
 
     # update worlds_end-combobox
     played_catastrophes = [catastrophes_df.loc[catastrophe['played'][i], "name"]
                            for i in range(game['n_catastrophes'])
                            if catastrophe['played'][i] is not None]
-    worlds_end['cbox']['values'] = [" select world's end ..."] + played_catastrophes
+    # worlds_end['cbox']['values'] = [" select world's end ..."] + played_catastrophes
+    worlds_end['cbox']['values'] = played_catastrophes
+
+    # enable worlds_end-combobox and select last entry
+    if c == game['n_catastrophes']-1:
+        worlds_end['cbox'].configure(state="readonly")
+        worlds_end['cbox'].current(game['n_catastrophes']-1)
+        check_WE_status('select_WE')
 
     # --- if DENIAL is out there, save first catastrophe he sees ---
     denial_idx = status_df.index[status_df.trait == 'Denial'].tolist()[0]

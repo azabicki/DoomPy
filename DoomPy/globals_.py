@@ -155,8 +155,8 @@ plr['points'] = []
 plr['trait_pile'] = []
 plr['n_tp'] = []
 plr['trait_selected'] = []
-plr['WE_effect'] = []
-plr['MOL'] = []
+plr['points_WE_effect'] = []
+plr['points_MOL'] = []
 
 deck = []                       # all traits in deck (or discard pile) left to be drawn / list of idx
 deck_filtered_idx = []          # _filtered_ deck of trait_idx in listbox after searching -> idx

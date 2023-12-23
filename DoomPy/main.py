@@ -678,10 +678,10 @@ def update_manual_we(event, p):
         # check limit of (hard-coded) 20
         if int(value) > 20:
             value = '20'
-            plr['WE_effect'][p].set(value)
+            plr['points_WE_effect'][p].set(value)
         if int(value) < -20:
             value = '-20'
-            plr['WE_effect'][p].set(value)
+            plr['points_WE_effect'][p].set(value)
 
         # update scoring
         update_scoring()
@@ -788,7 +788,7 @@ def update_scoring():
 
         # calculate world's end points
         p_worlds_end = rules_we.worlds_end(traits_df, worlds_end['played'].get(), plr['trait_pile'],
-                                           p, plr['genes'], plr['WE_effect'])
+                                           p, plr['genes'], plr['points_WE_effect'])
 
         # calculate face value
         p_face = int(sum([status_df.loc[trait_idx].face for trait_idx in trait_pile
@@ -797,9 +797,9 @@ def update_scoring():
         # calculate drops points
         p_drop = rules_dr.drop_points(p)
 
-        # calculate drops points
+        # calculate MOL points
         p_MOL = 0
-        for x in [x.get() for x in plr['MOL'][p]]:
+        for x in [x.get() for x in plr['points_MOL'][p]]:
             if x.isnumeric():
                 p_MOL += int(x)
 
@@ -1387,7 +1387,7 @@ def create_trait_pile(frame_trait_overview, p):
                      ).grid(row=irow, column=0, padx=(40, 0), sticky='e')
 
             # get task what to do at worlds end
-            we_effect = rules_tr.traits_WE_tasks(trait_idx)
+            twe_effect = rules_tr.traits_WE_tasks(trait_idx)
 
             # set state depending on 'played' catastrophes
             state = 'readonly' if sum(i is None for i in catastrophe['played']) == 0 else 'disabled'
@@ -1395,8 +1395,8 @@ def create_trait_pile(frame_trait_overview, p):
             # create combobox
             cbox_attach_to = ttk.Combobox(
                 frame_trait_overview,
-                height=len(we_effect),
-                values=we_effect,
+                height=len(twe_effect),
+                values=twe_effect,
                 exportselection=0,
                 state=state,
                 width=11)
@@ -1409,7 +1409,7 @@ def create_trait_pile(frame_trait_overview, p):
                 cbox_attach_to.current(0)
             else:
                 cur_effect = status_df.loc[trait_idx].traits_WE
-                cbox_attach_to.current(we_effect.index(cur_effect))
+                cbox_attach_to.current(twe_effect.index(cur_effect))
 
         # ----- manual DROP points spinbox -----------------------------------------------------------
         cur_drop_eff = traits_df.loc[trait_idx].drop_effect
@@ -1527,7 +1527,7 @@ def create_trait_pile(frame_trait_overview, p):
 
         if isinstance(we_eff, str) and ('hand' in we_eff or 'draw' in we_eff):
             we_entry = ttk.Entry(frame_weB,
-                                 textvariable=plr['WE_effect'][p],
+                                 textvariable=plr['points_WE_effect'][p],
                                  justify=tk.CENTER,
                                  width=3)
             we_entry.grid(row=0, column=1)
@@ -1660,7 +1660,7 @@ def create_player_frame(p):
                   ).grid(row=1, column=2*m, sticky='e')
         MOL_ent = ttk.Entry(frame_MOL,
                             width=4,
-                            textvariable=plr['MOL'][p][m])
+                            textvariable=plr['points_MOL'][p][m])
         MOL_ent.grid(row=1, column=2*m+1, sticky='w')
         MOL_ent.bind("<KeyRelease>", lambda e: update_scoring())
     return frame
@@ -1984,8 +1984,8 @@ def reset_variables():
     plr['trait_pile'].clear()
     plr['n_tp'].clear()
     plr['trait_selected'].clear()
-    plr['WE_effect'].clear()
-    plr['MOL'].clear()
+    plr['points_WE_effect'].clear()
+    plr['points_MOL'].clear()
     frame_trait_pile.clear()
 
     # reset trait_specific variables
@@ -2004,15 +2004,15 @@ def reset_variables():
         plr['trait_pile'].append([])
         plr['n_tp'].append(tk.StringVar(value='0'))
         plr['trait_selected'].append(tk.Variable(value=np.nan))
-        plr['WE_effect'].append(tk.StringVar(value='0'))
-        plr['MOL'].append([])
+        plr['points_WE_effect'].append(tk.StringVar(value='0'))
+        plr['points_MOL'].append([])
 
         frame_trait_pile.append(None)
         neoteny_checkbutton.append(tk.IntVar(value=0))
         sleepy_spinbox.append(tk.IntVar(value=0))
 
         for m in range(game['n_MOLs']):
-            plr['MOL'][i].append(tk.StringVar(value="0"))  # for now, manually editing MOL points in entries
+            plr['points_MOL'][i].append(tk.StringVar(value="0"))  # for now, manually editing MOL points in entries
 
     # first player
     game['first_player'] = options['first_player'].get()

@@ -1104,7 +1104,7 @@ def create_trait_pile(frame_trait_overview, p):
                 ).grid(row=0, column=icol)
 
         # face
-        if (show_icons['face'] and 'face' not in status_df.loc[trait_idx].we_effect.lower()):
+        if show_icons['face']:
             icol += 1
             face_value = traits_df.loc[trait_idx].face
             face_string = face_value if isinstance(face_value, str) else str(int(face_value))
@@ -1211,27 +1211,21 @@ def create_trait_pile(frame_trait_overview, p):
             cp = 'p' if 'purple' in cur_color.lower() else ''
             cr = 'r' if 'red' in cur_color.lower() else ''
 
-            # add 'causing' icon
-            # if cur_color in status_df.loc[trait_idx].effects_traits_WE:
+            # change to 'causing' color-icon
             if any(col in status_df.loc[trait_idx].effects_traits_WE
                    for col in cur_color.split('_')):
-                icol += 1
-                tk.Label(
-                    frame_pics,
-                    image=images['worlds_end']
-                    ).grid(row=0, column=icol)
+                X = 'WE'
             elif status_df.loc[trait_idx].attachment != 'none':
                 icol += 1
-                tk.Label(
-                    frame_pics,
-                    image=images['attachment']
-                    ).grid(row=0, column=icol)
+                X = 'AT'
+            else:
+                X = ''
 
             # add new color icon
             icol += 1
             tk.Label(
                 frame_pics,
-                image=images[cc+cb+cg+cp+cr]
+                image=images[cc+cb+cg+cp+cr+X]
                 ).grid(row=0, column=icol)
 
         # drop value ----------------------------

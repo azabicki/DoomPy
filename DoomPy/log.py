@@ -202,16 +202,28 @@ def write_log(what, *args):
                 case 'reset':
                     print(">>> current effects <<< '{}' is reseted to defaults"
                           .format(*args))
+                    f.write(">>> current effects <<< '{}' is reseted to defaults\n"
+                            .format(*args))
 
                 case 'attachment':
-                    print(">>> current effects <<< '{}' is updated due to effects of '{}'"
+                    print(">>> current effects <<< '{}' is updated due to attachment effects of '{}'"
                           .format(*args))
+                    f.write(">>> current effects <<< '{}' is updated due to attachment effects of '{}'\n"
+                            .format(*args))
+
+                case 'traits_WE':
+                    print(">>> current effects <<< '{}' is updated due to worlds end effects of '{}'"
+                          .format(*args))
+                    f.write(">>> current effects <<< '{}' is updated due to worlds end effects of '{}'\n"
+                            .format(*args))
 
                 case 'neoteny_no_one':
                     print('>>> Neoteny <<< in no one`s hand')
+                    f.write('>>> Neoteny <<< in no one`s hand\n')
 
                 case 'neoteny_that_one':
                     print('>>> Neoteny <<< in {}`s hand'.format(*args))
+                    f.write('>>> Neoteny <<< in {}`s hand\n'.format(*args))
 
         case 'stars':
             match what[1]:

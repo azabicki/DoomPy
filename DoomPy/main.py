@@ -174,7 +174,7 @@ def pre_play():
                 lbox_deck[0].selection_set(t)
                 trait_idx = deck_filtered_idx[lbox_deck[0].curselection()[0]]
 
-                # write log
+                # log
                 write_log(['select', 'deck'],
                           traits_df.loc[deck_filtered_idx[lbox_deck[0].curselection()[0]]].trait,
                           trait_idx)
@@ -392,7 +392,7 @@ def btn_play_catastrophe(event, c):
         write_log(['catastrophe', 'error_same_catastrophe'], c+1, played_str)
         return
 
-    # print log
+    # log
     write_log(['catastrophe', 'catastrophe'], c+1, played_str, played_idx)
 
     # set played catastrophe
@@ -461,7 +461,7 @@ def btn_traits_world_end(from_, trait_idx, event):
     effect = event.widget.get()
     effect_idx = event.widget.current()
 
-    # print log
+    # log
     if effect_idx == 0:
         write_log(['traits_WE', 'reset'], traits_df.loc[trait_idx].trait, trait_idx)
     else:
@@ -491,7 +491,7 @@ def btn_remove_trait(from_, where_to):
         write_log(['remove', 'error_no_trait'])
         return
 
-    # print log
+    # log
     if where_to == 'hand':
         write_log(['remove', 'hand'], plr['name'][from_].get(), traits_df.loc[trait_idx].trait, trait_idx)
     else:
@@ -550,7 +550,7 @@ def btn_move_trait(from_, cbox_move_to):
         write_log(['move', 'error_source_target'])
         return
 
-    # print log
+    # log
     add_txt = "(and its attachment '{}' (id:{}))".format(traits_df.loc[attachment].trait, attachment) \
         if attachment != 'none' else ''
     write_log(['move', 'move_to'],
@@ -588,7 +588,7 @@ def btn_attach_to(from_, attachment_idx, event, possible_hosts):
         write_log(['attach_to', 'error_own_host'])
         return
 
-    # print log
+    # log
     if host == ' ... ':
         write_log(['attach_to', 'detached'], attachment, attachment_idx)
     else:
@@ -648,7 +648,7 @@ def btn_play_trait(to):
             write_log(['play', 'error_no_attachables'])
             return 0
 
-    # print log
+    # log
     write_log(['play', 'play'], plr['name'][to].get(), trait, trait_idx)
 
     # check for rules/effects to apply when playing this trait
@@ -706,7 +706,7 @@ def update_manual_drops(event, trait, p, change):
     # save value in status_df
     status_df.loc[trait, 'drops'] = value
 
-    # print log
+    # log
     write_log(['scoring', 'manual_drops'], traits_df.iloc[trait].trait, trait, value)
 
     # update scoring
@@ -756,7 +756,7 @@ def update_traits_current_status(todo, *args):
                 case 'keep_trait_effect':
                     status_df.loc[trait, 'effects'] = bkp.effects
 
-            # print log
+            # log
             write_log(['update_trait_status', 'reset'], traits_df.loc[trait].trait)
 
         # Neoteny-Checkbox is clicked somewhere
@@ -820,7 +820,7 @@ def update_scoring():
             plr['points'][p]['MOL'].set('**')
             plr['points'][p]['total'].set('**')
 
-        # print log
+        # log
         write_log(['scoring', 'update'], plr['name'][p].get(), p_face, p_drop, p_worlds_end, p_MOL, total)
 
 
@@ -849,7 +849,7 @@ def update_genes():
                                       if i != p else g
                                       for i, g in enumerate(diff_genes)]
 
-                # print log
+                # log
                 write_log(['genes', 'trait'],
                           plr['name'][p].get(), traits_df.loc[trait_idx].trait, int(effect), who, diff_genes)
 
@@ -863,14 +863,14 @@ def update_genes():
         dnl_p = dnl_in.index(True)
 
         if dnl_effect == 'The Four Horsemen':
-            # write log
+            # log
             write_log(['genes', 'denial_t4h'], dnl_idx, plr['name'][dnl_p].get(), dnl_effect, diff_genes)
         else:
             # reverse effect
             reverse_effect = catastrophes_df[catastrophes_df.name == dnl_effect].gene_pool.values[0] * -1
             diff_genes[dnl_p] += int(reverse_effect)
 
-            # write log
+            # log
             write_log(['genes', 'denial'], dnl_idx, plr['name'][dnl_p].get(), dnl_effect, diff_genes)
 
     # ----- Sleepy --------------
@@ -898,7 +898,7 @@ def update_genes():
             p = int(eff)
             diff_genes[p] += 1
 
-            # print log
+            # log
             write_log(['genes', 'spores'], sprs_idx, plr['name'][p].get(), diff_genes)
 
     # check what catastrophes were played alread ---------------------------------------
@@ -913,7 +913,7 @@ def update_genes():
             effect = int(catastrophes_df.loc[c_idx].gene_pool)
             diff_genes = [i + effect for i in diff_genes]
 
-            # print log
+            # log
             write_log(['genes', 'catastrophe'], c_str, effect, diff_genes)
 
     # update gene values ----------------------------------------------------------------
@@ -926,7 +926,7 @@ def update_genes():
         else:
             plr['genes'][p].set(new_gp)
 
-    # print log - if genes are effected
+    # log - if genes are effected
     if any(i > 0 for i in diff_genes):
         write_log(['genes', 'total_effect'],
                   diff_genes, [plr['genes'][i].get() for i in range(game['n_player'])])
@@ -938,7 +938,7 @@ def update_stars():
         # number of dominant traits
         n_dominant = np.nansum([traits_df.loc[trait_idx].dominant for trait_idx in plr['trait_pile'][p]])
 
-        # write log
+        # log
         write_log(['stars', 'n'], plr['name'][p].get(), int(n_dominant))
 
         # check special cases

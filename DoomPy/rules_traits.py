@@ -231,7 +231,7 @@ def apply_traits_WE_effects(host, *args):
                     case 'NoSteal':
                         status_df.loc[host, 'no_steal'] = True
 
-            # print log
+            # log
             if log:
                 write_log(['update_trait_status', 'traits_WE'],
                           traits_df.loc[host].trait, traits_df.loc[effect.split(':')[0]].trait)
@@ -269,7 +269,7 @@ def permanent_effects(tp):
                     # update status_df
                     status_df.loc[trait_idx, 'effects'] = ' '.join(str(x) for x in new_effects)
 
-                    # print log
+                    # log
                     write_log(['*'], ">>> trait pile <<< '{}' (id:{}) is protecting {} green trait(s)"
                               .format(trait, trait_idx, len(new_effects)))
                 else:
@@ -279,7 +279,7 @@ def permanent_effects(tp):
                         for t in protected:
                             status_df.loc[t, 'no_remove'] = False
 
-                        # write log
+                        # log
                         write_log(['*'], ">>> trait pile <<< '{}' (id:{}) does not protect anymore"
                                   .format(trait, trait_idx))
 
@@ -310,7 +310,7 @@ def permanent_effects(tp):
                     # update status_df
                     status_df.loc[trait_idx, 'effects'] = ' '.join(str(x) for x in new_effects)
 
-                    # print log
+                    # log
                     write_log(['*'], ">>> trait pile <<< '{}' (id:{}) is protecting {} red trait(s)"
                               .format(trait, trait_idx, len(new_effects)))
                 else:
@@ -320,7 +320,7 @@ def permanent_effects(tp):
                         for t in protected:
                             status_df.loc[t, 'no_remove'] = False
 
-                        # write log
+                        # log
                         write_log(['*'], ">>> trait pile <<< '{}' (id:{}) does not protect anymore"
                                   .format(trait, trait_idx))
 

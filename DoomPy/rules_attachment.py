@@ -95,7 +95,7 @@ def apply_effects(host, *args):
                 case 'NoSteal':
                     status_df.loc[host, 'no_steal'] = True
 
-        # print log
+        # log
         if log:
             write_log(['update_trait_status', 'attachment'],
                       traits_df.loc[host].trait, traits_df.loc[attachment].trait)

@@ -233,7 +233,7 @@ def worlds_end(traits_df, we_catastrophe, player_traits, p, genes, player_we_eff
         case _:
             points = 0
 
-    # print log
     print(">>> world's end <<< '{}' is responsible for {} points".format(we_catastrophe, points))
+    # log
 
     return points

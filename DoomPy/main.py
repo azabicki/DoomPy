@@ -350,6 +350,27 @@ def play_sound(trait):
             write_log(['music', 'play'], trait)
 
 
+def btn_MOLS(event, p, m):
+    pass
+
+
+def check_MOL_state():
+    if (not any(np.isnan(status_df.loc[trait_idx].drops)
+                for tp in plr['trait_pile']
+                for trait_idx in tp
+                if isinstance(traits_df.loc[trait_idx].drop_effect, str))
+            and worlds_end['played'] != 'none'):
+
+        for p in range(game['n_player']):
+            for m in range(game['n_MOLs']):
+                MOLs['cbox'][p][m].configure(state='readonly')
+
+    else:
+        for p in range(game['n_player']):
+            for m in range(game['n_MOLs']):
+                MOLs['cbox'][p][m].configure(state='disabled')
+
+
 def btn_clear_trait_search():
     str_trait_search.set("")
     deck_filtered_idx.clear()
@@ -1033,6 +1054,9 @@ def update_all():
 
     # focus back to search field
     ent_trait_search[0].focus_set()
+
+    # check if last drop was set and MOLs are ready to be selected
+    check_MOL_state()
 
 
 def search_trait_in_list(inp):

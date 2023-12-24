@@ -149,7 +149,7 @@ frame_trait_pile = []       # frame containing players traits -> needed to be ab
 
 # define game variables ############################################################################
 # settings -----------------------------------------------------------------------------------------
-global game, plr, deck, deck_filtered_idx, catastrophe, worlds_end
+global game, plr, deck, deck_filtered_idx, catastrophe, worlds_end, MOLs
 game = {}
 game['n_player'] = []            # number of current players
 game['n_genes'] = []             # gene pool at start
@@ -181,6 +181,10 @@ worlds_end['selected'] = None   # selected world-ends
 worlds_end['played'] = 'none'   # play this world-end-event
 worlds_end['cbox'] = [None]     # combobox 4 worlds end
 worlds_end['btn'] = [None]      # button running worlds end
+
+MOLs = {}
+MOLs['cbox'] = []        # comboxes containing MOLs
+MOLs['icon'] = []        # icon showing MOL points
 
 # logfile to store debug lines ---------------------------------------------------------------------
 global logfile

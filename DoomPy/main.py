@@ -20,10 +20,10 @@ import rules_worlds_end as rules_we
 
 from globals_ import logfile, dir_log
 from globals_ import cfg, images_dict, sounds, music_onoff, icons_onoff, points_onoff
-from globals_ import traits_df, status_df, catastrophes_df
+from globals_ import traits_df, status_df, catastrophes_df, MOLs_df
 from globals_ import lbl_music_switch, lbl_icons_switch, lbl_points_switch, ent_trait_search, lbox_deck
 from globals_ import frame_player, frame_trait_pile
-from globals_ import game, plr, deck, deck_filtered_idx, catastrophe, worlds_end
+from globals_ import game, plr, deck, deck_filtered_idx, catastrophe, worlds_end, MOLs
 from globals_ import neoteny_checkbutton, sleepy_spinbox
 
 
@@ -1614,21 +1614,30 @@ def create_player_frame(p):
     frame_MOL = tk.Frame(frame)
     frame_MOL.grid(row=2, column=0, padx=border, pady=(0, border), sticky="nesw")
 
-    ttk.Label(frame_MOL, text="Meaning of Life", font="'' 18"
+    ttk.Label(frame_MOL, text="Meaning(s) of Life", font="'' 16"
               ).grid(row=0, column=0, padx=5, columnspan=2*game['n_MOLs'], sticky='ns')
+    #   ).grid(row=0, column=0, padx=5, columnspan=2*game['n_MOLs'], sticky='ns')
 
     for m in range(game['n_MOLs']):
-        frame_MOL.columnconfigure(2*m, weight=1)
-        frame_MOL.columnconfigure(2*m+1, weight=1)
+        frame_MOL.columnconfigure(m, weight=1)
+        frame_MOL.columnconfigure(m+1, weight=3)
 
-        ttk.Label(frame_MOL,
-                  text="MOL #{}:".format(m+1)
-                  ).grid(row=1, column=2*m, sticky='e')
-        MOL_ent = ttk.Entry(frame_MOL,
-                            width=4,
-                            textvariable=plr['points_MOL'][p][m])
-        MOL_ent.grid(row=1, column=2*m+1, sticky='w')
-        MOL_ent.bind("<KeyRelease>", lambda e: update_scoring())
+        pos_MOLs = ["select MOL #{}".format(m)] + MOLs_df.MOL.values.tolist()
+        MOLs['cbox'][p][m] = ttk.Combobox(
+            frame_MOL,
+            values=pos_MOLs,
+            exportselection=0,
+            state='disabled',
+            width=12,
+            style="move.TCombobox")
+        MOLs['cbox'][p][m].current(0)
+        MOLs['cbox'][p][m].grid(row=1, column=2*m, padx=(4, 0), pady=(0, 5), stick='nesw')
+        MOLs['cbox'][p][m].bind("<<ComboboxSelected>>", lambda ev, m=m: btn_MOLS(ev, p, m))
+
+        MOLs['icon'][p][m] = ttk.Label(
+            frame_MOL, image=images['question_mark']
+            ).grid(row=1, column=2*m+1, padx=(0, 4), pady=(0, 5), sticky='nsw')
+
     return frame
 
 
@@ -1954,6 +1963,10 @@ def reset_variables():
     plr['points_MOL'].clear()
     frame_trait_pile.clear()
 
+    # reset MOLs
+    MOLs['cbox'].clear()
+    MOLs['icon'].clear()
+
     # reset trait_specific variables
     neoteny_checkbutton.clear()
     sleepy_spinbox.clear()
@@ -1972,6 +1985,8 @@ def reset_variables():
         plr['trait_selected'].append(tk.Variable(value=np.nan))
         plr['points_WE_effect'].append(tk.IntVar(value=0))
         plr['points_MOL'].append([])
+        MOLs['cbox'].append([])
+        MOLs['icon'].append([])
 
         frame_trait_pile.append(None)
         neoteny_checkbutton.append(tk.IntVar(value=0))
@@ -1979,6 +1994,8 @@ def reset_variables():
 
         for m in range(game['n_MOLs']):
             plr['points_MOL'][i].append(tk.StringVar(value="0"))  # for now, manually editing MOL points in entries
+            MOLs['cbox'][i].append([])
+            MOLs['icon'][i].append([])
 
     # first player
     game['first_player'] = options['first_player'].get()

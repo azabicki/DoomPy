@@ -33,6 +33,8 @@ def drop_traits(trait_idx, p, *args):
             n = [len(i) for i in plr['trait_pile']]
             if n.index(max(n)) == p and n.count(max(n)) == 1:
                 dp = 4
+            else:
+                dp = 0
 
         case 'Backbitter':
             # 3 self if_one_negative own
@@ -111,6 +113,8 @@ def drop_traits(trait_idx, p, *args):
                                      for color in status_df.iloc[trait_pile].color.tolist()))
             if all(col_in_tp):
                 dp = 4
+            else:
+                dp = 0
 
         case 'Egg Clusters':
             # 1 self n_blue own
@@ -139,8 +143,11 @@ def drop_traits(trait_idx, p, *args):
             for col in colors:
                 n_col.append(sum(col in color.lower()
                                  for color in status_df.iloc[trait_pile].color.tolist()))
+
             if n_col.index(max(n_col)) == colors.index('green') and n_col.count(max(n_col)) == 1:
                 dp = 2
+            else:
+                dp = 0
 
         case 'GMO':
             # 1 self n_color_host own
@@ -255,6 +262,8 @@ def drop_traits(trait_idx, p, *args):
                                        for color in status_df.iloc[trait_pile].color.tolist()) / 2))
             if sum(n_pairs) > 0:
                 dp = sum(n_pairs)
+            else:
+                dp = 0
 
         case 'Pollination':
             # 1 self n_face_is_1 own
@@ -307,6 +316,7 @@ def drop_traits(trait_idx, p, *args):
         case 'Rainbow Keratin':
             # -2 self n_drops own&2 self n_highest_color_if4colors own
             dp = -2 * (sum(traits_df.loc[t].drops == 1 for t in trait_pile) - 1)
+
             n_cols = []
             for col in colors:
                 n_cols.append(sum(col in color.lower()
@@ -370,6 +380,8 @@ def drop_traits(trait_idx, p, *args):
                                   for color in status_df.iloc[trait_pile].color.tolist()))
             if all(n >= 2 for n in n_cols):
                 dp = 5
+            else:
+                dp = 0
 
         case 'Sour Grapes':
             # 1 self each_lower_count_blue_or_red own
@@ -412,9 +424,12 @@ def drop_traits(trait_idx, p, *args):
             for tp in plr['trait_pile']:
                 n_red.append(sum('red' in color.lower()
                                  for color in status_df.iloc[tp].color.tolist()))
+
             n_red.pop(p)
             if any(n >= 5 for n in n_red):
                 dp = 5
+            else:
+                dp = 0
 
         case 'Symbiosis':
             # 2 self lowest_color_count own
@@ -422,9 +437,12 @@ def drop_traits(trait_idx, p, *args):
             for col in colors:
                 n_cols.append(sum(col in color.lower()
                                   for color in status_df.iloc[trait_pile].color.tolist()))
+
             n_cols = [i for i in n_cols if i > 0]
             if len(n_cols) >= 2:
                 dp = min(n_cols) * 2
+            else:
+                dp = 0
 
         case 'Tenacious':
             # 6 self 4_or_more_red own

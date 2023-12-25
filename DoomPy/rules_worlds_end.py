@@ -30,7 +30,7 @@ def apply_WE_effects(host, *args):
                   traits_df.loc[host].trait, worlds_end['played'])
 
 
-# handle worlds end effect of catastrophies
+# handle worlds end effect of catastrophes
 def calc_WE_points(p):
     # init variable
     colors = ['blue', 'green', 'purple', 'red']

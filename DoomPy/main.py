@@ -242,7 +242,7 @@ def simulate():
         #     catastrophe['cbox'][r].current(c)
         #     catastrophe['cbox'][r].event_generate("<<ComboboxSelected>>")
 
-    # catastrophies for all test_cases
+    # catastrophes for all test_cases
     catastrophe['cbox'][0].current(1)
     catastrophe['cbox'][0].event_generate("<<ComboboxSelected>>")
     catastrophe['cbox'][1].current(2)
@@ -517,9 +517,8 @@ def btn_play_catastrophe(event, c):
     catastrophe['played'][c] = played_idx
 
     # update possible catastrophes for other catastrophes
-    # for i in range(1, game['n_catastrophes']):
     for i in [i for i in range(game['n_catastrophes']) if i != c]:
-        # begin with ALL possible catastrophes
+        # begin with ALL possible catastrophes - neccessary bc this catastrophe may have changed
         catastrophe['possible'][i] = catastrophes_df.index.tolist()
 
         # remove other catastrophes from possible ones
@@ -1689,7 +1688,6 @@ def create_player_frame(p):
 
     ttk.Label(frame_MOL, text="Meaning(s) of Life", font="'' 16"
               ).grid(row=0, column=0, padx=5, columnspan=2*game['n_MOLs'], sticky='ns')
-    #   ).grid(row=0, column=0, padx=5, columnspan=2*game['n_MOLs'], sticky='ns')
 
     for m in range(game['n_MOLs']):
         frame_MOL.columnconfigure(m, weight=1)

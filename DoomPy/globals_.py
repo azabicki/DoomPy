@@ -138,12 +138,12 @@ points_onoff = 'on'     # 'off' / 'on'
 global lbl_music_switch, lbl_icons_switch, lbl_points_switch, ent_trait_search, lbox_menu_deck
 lbl_music_switch = [None]   # label containing music-switch-icon
 lbl_icons_switch = [None]   # label containing icon-switch-icon
-lbl_points_switch = [None]   # label containing icon-switch-icon
+lbl_points_switch = [None]  # label containing icon-switch-icon
 ent_trait_search = [None]   # entry for trait_search
-lbox_deck = [None]     # listbox widget of deck cards -> needed to be able to edit selected traits
+lbox_deck = [None]          # listbox widget of deck cards -> needed to be able to edit selected traits
 
 global frame_player, frame_trait_pile
-frame_player = []          # list of all players frames
+frame_player = []           # list of all players frames
 frame_trait_pile = []       # frame containing players traits -> needed to be able to edit selected traits
 
 
@@ -153,7 +153,7 @@ global game, plr, deck, deck_filtered_idx, catastrophe, worlds_end, MOLs
 game = {}
 game['n_player'] = []            # number of current players
 game['n_genes'] = []             # gene pool at start
-game['n_catastrophes'] = []     # number of catastrophes
+game['n_catastrophes'] = []      # number of catastrophes
 game['n_MOLs'] = []              # number of MOLs
 game['first_player'] = []        # keep track of first player
 game['first_player_start'] = []  # keep track of first player AT START
@@ -172,7 +172,7 @@ deck = []                       # all traits in deck (or discard pile) left to b
 deck_filtered_idx = []          # _filtered_ deck of trait_idx in listbox after searching -> idx
 
 catastrophe = {}
-catastrophe['possible'] = []    # list of  possibles catastrophes
+catastrophe['possible'] = []    # list of possibles catastrophes
 catastrophe['played'] = []      # occured catastrophes / needed for worlds end
 catastrophe['cbox'] = []        # comboxes containing possible catastrophes
 

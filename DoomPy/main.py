@@ -417,16 +417,16 @@ def btn_select_MOLS(event, p, m):
                 # begin with ALL possible MOLs - neccessary bc this MOL may have changed
                 MOLs['possible'][i][j] = MOLs_df.index.tolist()
 
-                # remove other catastrophes from possible ones
+                # remove other MOLs from possible ones
                 for i2 in range(game['n_player']):
                     for j2 in range(game['n_MOLs']):
                         if i != i2 or j != j2:
-                            # only, if j'th catastrophe was played already
+                            # only, if j'th MOL was played already
                             if MOLs['played'][i2][j2] is not None:
                                 # remove from list of possibles
                                 MOLs['possible'][i][j].remove(MOLs['played'][i2][j2])
 
-                # create list of catastrophe names & update combobox
+                # create list of MOL names & update combobox
                 pos_MOLs = ["select MOL #{}".format(j+1)] \
                     + MOLs_df.loc[MOLs['possible'][i][j]].MOL.values.tolist()
                 MOLs['cbox'][i][j].configure(values=pos_MOLs)
@@ -1722,7 +1722,7 @@ def create_player_frame(p):
         frame_MOL.columnconfigure(m, weight=1)
         frame_MOL.columnconfigure(m+1, weight=3)
 
-        pos_MOLs = ["select MOL #{}".format(m)] + MOLs_df.MOL.values.tolist()
+        pos_MOLs = ["select MOL #{}".format(m+1)] + MOLs_df.MOL.values.tolist()
         MOLs['cbox'][p][m] = ttk.Combobox(
             frame_MOL,
             values=pos_MOLs,

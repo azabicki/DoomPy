@@ -122,7 +122,7 @@ def calc_MOL_points(p, m):
                 points = 3
 
         case "The Tigris":
-            n = sum(status_df.iloc[t].action == 1
+            n = sum(traits_df.loc[t].action == 1
                     for t in trait_pile)
 
             if n >= 6:

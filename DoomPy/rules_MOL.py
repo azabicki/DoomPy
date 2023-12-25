@@ -167,7 +167,11 @@ def calc_MOL_points(p, m):
                 points = 3
 
         case "The Weaver":
-            points = 0
+            n_cols = []
+            for col in colors:
+                n_cols.append(sum(col in color.lower()
+                                  for color in status_df.iloc[trait_pile].color.tolist()))
+            points = 3 * min(n_cols)
 
         case _:
             points = 0

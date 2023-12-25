@@ -363,7 +363,7 @@ def calc_MOLs(p):
             MOLs['icon'][p][m].configure(image=images[str(p_MOL_m)])
 
             # update sum of MOL points
-            p_MOL *= p_MOL_m
+            p_MOL += p_MOL_m
 
             # log
             write_log(['MOLs', 'MOL_points'],

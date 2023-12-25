@@ -369,11 +369,14 @@ def calc_MOLs(p):
             write_log(['MOLs', 'MOL_points'],
                       plr['name'][p].get(), MOLs_df.loc[MOLs['played'][p][m]].MOL,
                       MOLs['played'][p][m], p_MOL_m)
+        else:
+            # update points_icon
+            MOLs['icon'][p][m].configure(image=images['question_mark'])
 
     return p_MOL
 
 
-def btn_MOLS(event, p, m):
+def btn_select_MOLS(event, p, m):
     # get selected MOL
     cbox_idx = event.widget.current()   # selected item_idx in combobox
     played_str = event.widget.get()
@@ -381,19 +384,31 @@ def btn_MOLS(event, p, m):
     if cbox_idx > 0:
         played_idx = MOLs['possible'][p][m][cbox_idx-1]
 
-    # return, if no MOL was selected
-    if cbox_idx == 0:
-        # OR -> force to keep previous selection -> NO WAY BACK
-        if played_previously is None:
-            write_log(['MOLs', 'error_no_MOL'], m+1, plr['name'][p].get())
-        else:
-            old_cbox_idx = MOLs['possible'][p][m].index(played_previously) + 1
-            MOLs['cbox'][p][m].current(old_cbox_idx)
-            write_log(['MOLs', 'error_keep_MOL'], m+1, plr['name'][p].get(), played_str)
+    # return, if no MOL selected now and previously
+    if cbox_idx == 0 and played_previously is None:
+        # log
+        write_log(['MOLs', 'error_no_MOL'], m+1, plr['name'][p].get())
         return
 
-    # set played catastrophe
-    MOLs['played'][p][m] = played_idx
+    # return, if same MOL selected
+    if (cbox_idx) != 0 and (played_idx == played_previously):
+        # log
+        write_log(['MOLs', 'error_keep_MOL'], m+1, plr['name'][p].get(), played_str)
+        return
+
+    # if MOL is de-selected
+    if cbox_idx == 0:
+        # set played MOL
+        MOLs['played'][p][m] = None
+
+        # log
+        write_log(['MOLs', 'deselected_MOL'], plr['name'][p].get(), m+1, played_previously)
+    else:
+        # set played MOL
+        MOLs['played'][p][m] = played_idx
+
+        # log
+        write_log(['MOLs', 'MOL'], m+1, plr['name'][p].get(), played_str, played_idx)
 
     # update possible MOLs for all other MOL_slots
     for i in range(game['n_player']):
@@ -415,9 +430,6 @@ def btn_MOLS(event, p, m):
                 pos_MOLs = ["select MOL #{}".format(j+1)] \
                     + MOLs_df.loc[MOLs['possible'][i][j]].MOL.values.tolist()
                 MOLs['cbox'][i][j].configure(values=pos_MOLs)
-
-    # log
-    write_log(['MOLs', 'MOL'], m+1, plr['name'][p].get(), played_str, played_idx)
 
     # update
     update_all()
@@ -1720,7 +1732,7 @@ def create_player_frame(p):
             style="move.TCombobox")
         MOLs['cbox'][p][m].current(0)
         MOLs['cbox'][p][m].grid(row=1, column=2*m, padx=(4, 0), pady=(0, 5), stick='nesw')
-        MOLs['cbox'][p][m].bind("<<ComboboxSelected>>", lambda ev, m=m: btn_MOLS(ev, p, m))
+        MOLs['cbox'][p][m].bind("<<ComboboxSelected>>", lambda ev, m=m: btn_select_MOLS(ev, p, m))
 
         MOLs['icon'][p][m] = ttk.Label(frame_MOL, image=images['question_mark'])
         MOLs['icon'][p][m].grid(row=1, column=2*m+1, padx=(0, 4), pady=(0, 5), sticky='nsw')

@@ -219,6 +219,10 @@ def write_log(what, *args):
                     print(">>> MOL <<< ERROR - keep selected MOL (#{} by {}): '{}'".format(*args))
                     f.write(">>> MOL <<< ERROR - keep selected MOL (#{} by {}): '{}'\n".format(*args))
 
+                case 'deselected_MOL':
+                    print(">>> MOL <<< {} de-selected MOL #{}: '{}'".format(*args))
+                    f.write(">>> MOL <<< {} de-selected MOL #{}: '{}'\n".format(*args))
+
                 case 'MOL':
                     print(">>> MOL <<< played MOL #{} by {}: '{}' (id:{})"
                           .format(*args))

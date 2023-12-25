@@ -351,6 +351,28 @@ def play_sound(trait):
             write_log(['music', 'play'], trait)
 
 
+def calc_MOLs(p):
+    p_MOL = 0
+    for m in range(game['n_MOLs']):
+        # calcuate, if MOL is selected
+        if MOLs['played'][p][m] is not None:
+            # calculte points
+            p_MOL_m = rules_mol.calc_MOL_points(p, m)
+
+            # update points_icon
+            MOLs['icon'][p][m].configure(image=images[str(p_MOL_m)])
+
+            # update sum of MOL points
+            p_MOL *= p_MOL_m
+
+            # log
+            write_log(['MOLs', 'MOL_points'],
+                      plr['name'][p].get(), MOLs_df.loc[MOLs['played'][p][m]].MOL,
+                      MOLs['played'][p][m], p_MOL_m)
+
+    return p_MOL
+
+
 def btn_MOLS(event, p, m):
     # get selected MOL
     cbox_idx = event.widget.current()   # selected item_idx in combobox
@@ -394,16 +416,11 @@ def btn_MOLS(event, p, m):
                     + MOLs_df.loc[MOLs['possible'][i][j]].MOL.values.tolist()
                 MOLs['cbox'][i][j].configure(values=pos_MOLs)
 
-    # check if MOL is fulfilled & update icon
-    points = rules_mol.calc_MOL_points(p, m)
-    MOLs['icon'][p][m].configure(image=images[str(points)])
-
     # log
     write_log(['MOLs', 'MOL'], m+1, plr['name'][p].get(), played_str, played_idx)
 
     # update
     update_all()
-    print('___ {} ___'.format(points))
 
 
 def check_MOL_state():
@@ -916,7 +933,7 @@ def update_scoring():
         p_drop = rules_dr.drop_points(p)
 
         # calculate MOL points
-        p_MOL = sum(rules_mol.calc_MOL_points(p, m) for m in range(game['n_MOLs']))
+        p_MOL = calc_MOLs(p)
 
         # calculate total score
         total = p_face + p_drop + p_worlds_end + p_MOL

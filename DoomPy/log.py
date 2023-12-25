@@ -215,11 +215,9 @@ def write_log(what, *args):
                     print(">>> MOL <<< ERROR - no MOL (#{} by {}) selected".format(*args))
                     f.write(">>> MOL <<< ERROR - no MOL (#{} by {}) selected\n".format(*args))
 
-                case 'error_same_MOL':
-                    print(">>> MOL <<< ERROR - same MOL (#{} by {}) selected as before: '{}'"
-                          .format(*args))
-                    f.write(">>> MOL <<< ERROR - same MOL (#{} by {}) selected as before: '{}'\n"
-                            .format(*args))
+                case 'error_keep_MOL':
+                    print(">>> MOL <<< ERROR - keep selected MOL (#{} by {}): '{}'".format(*args))
+                    f.write(">>> MOL <<< ERROR - keep selected MOL (#{} by {}): '{}'\n".format(*args))
 
                 case 'MOL':
                     print(">>> MOL <<< played MOL #{} by {}: '{}' (id:{})"
@@ -227,6 +225,11 @@ def write_log(what, *args):
                     f.write(">>> MOL <<< played MOL #{} by {}: '{}' (id:{})\n"
                             .format(*args))
 
+                case 'MOL_points':
+                    print(">>> MOL <<< '{}'s MOL '{}' (id:{}) scores {} points"
+                          .format(*args))
+                    f.write(">>> MOL <<< '{}'s MOL '{}' (id:{}) scores {} points\n"
+                            .format(*args))
 
         case 'update_trait_status':
             match what[1]:

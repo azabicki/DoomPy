@@ -173,6 +173,126 @@ def calc_MOL_points(p, m):
                                   for color in status_df.iloc[trait_pile].color.tolist()))
             points = 3 * min(n_cols)
 
+        case "The Rain Golem":
+            n_cols = []
+            for pl in range(len(plr['trait_pile'])):
+                n_cols.append(sum('blue' in color.lower()
+                                  for color in status_df.loc[plr['trait_pile'][pl]].color.values.tolist()))
+
+            if n_cols[p] == max(n_cols) and sum(i == n_cols[p] for i in n_cols) == 1:
+                points = 4
+
+            for i in [i for i in range(len(n_cols)) if i != p]:
+                if n_cols[p] > n_cols[i]:
+                    points += 1
+
+        case "The Forest Keeper":
+            n_cols = []
+            for pl in range(len(plr['trait_pile'])):
+                n_cols.append(sum('green' in color.lower()
+                                  for color in status_df.loc[plr['trait_pile'][pl]].color.values.tolist()))
+
+            if n_cols[p] == max(n_cols) and sum(i == n_cols[p] for i in n_cols) == 1:
+                points = 4
+
+            for i in [i for i in range(len(n_cols)) if i != p]:
+                if n_cols[p] > n_cols[i]:
+                    points += 1
+
+        case "The Bramble Brawler":
+            n_cols = []
+            for pl in range(len(plr['trait_pile'])):
+                n_cols.append(sum('purple' in color.lower()
+                                  for color in status_df.loc[plr['trait_pile'][pl]].color.values.tolist()))
+
+            if n_cols[p] == max(n_cols) and sum(i == n_cols[p] for i in n_cols) == 1:
+                points = 4
+
+            for i in [i for i in range(len(n_cols)) if i != p]:
+                if n_cols[p] > n_cols[i]:
+                    points += 1
+
+        case "The Fire Bandit":
+            n_cols = []
+            for pl in range(len(plr['trait_pile'])):
+                n_cols.append(sum('red' in color.lower()
+                                  for color in status_df.loc[plr['trait_pile'][pl]].color.values.tolist()))
+
+            if n_cols[p] == max(n_cols) and sum(i == n_cols[p] for i in n_cols) == 1:
+                points = 4
+
+            for i in [i for i in range(len(n_cols)) if i != p]:
+                if n_cols[p] > n_cols[i]:
+                    points += 1
+
+        case "The Jungler":
+            n_cols = []
+            for pl in range(len(plr['trait_pile'])):
+                n_cols.append(sum('colorless' in color.lower()
+                                  for color in status_df.loc[plr['trait_pile'][pl]].color.values.tolist()))
+
+            if n_cols[p] == max(n_cols) and sum(i == n_cols[p] for i in n_cols) == 1:
+                points = 4
+
+            for i in [i for i in range(len(n_cols)) if i != p]:
+                if n_cols[p] > n_cols[i]:
+                    points += 1
+
+        case "The Diamond Butterfly":
+            n_cols = [[], []]
+            check_cols = ['blue', 'green']
+            for c in range(len(check_cols)):
+                for pl in range(len(plr['trait_pile'])):
+                    n_cols[c].append(sum(check_cols[c] in color.lower()
+                                         for color in status_df.loc[plr['trait_pile'][pl]].color.values.tolist()))
+
+            check = []
+            check.append(2 if n_cols[0][p] == min(n_cols[0]) else 0)
+            check.append(2 if n_cols[1][p] == min(n_cols[1]) else 0)
+
+            points = 6 if sum(check) == 4 else sum(check)
+
+        case "The Ruby Tortoise":
+            n_cols = [[], []]
+            check_cols = ['green', 'purple']
+            for c in range(len(check_cols)):
+                for pl in range(len(plr['trait_pile'])):
+                    n_cols[c].append(sum(check_cols[c] in color.lower()
+                                         for color in status_df.loc[plr['trait_pile'][pl]].color.values.tolist()))
+
+            check = []
+            check.append(2 if n_cols[0][p] == min(n_cols[0]) else 0)
+            check.append(2 if n_cols[1][p] == min(n_cols[1]) else 0)
+
+            points = 6 if sum(check) == 4 else sum(check)
+
+        case "The Sapphire Ladybug":
+            n_cols = [[], []]
+            check_cols = ['purple', 'red']
+            for c in range(len(check_cols)):
+                for pl in range(len(plr['trait_pile'])):
+                    n_cols[c].append(sum(check_cols[c] in color.lower()
+                                         for color in status_df.loc[plr['trait_pile'][pl]].color.values.tolist()))
+
+            check = []
+            check.append(2 if n_cols[0][p] == min(n_cols[0]) else 0)
+            check.append(2 if n_cols[1][p] == min(n_cols[1]) else 0)
+
+            points = 6 if sum(check) == 4 else sum(check)
+
+        case "The Emerald Slug":
+            n_cols = [[], []]
+            check_cols = ['red', 'blue']
+            for c in range(len(check_cols)):
+                for pl in range(len(plr['trait_pile'])):
+                    n_cols[c].append(sum(check_cols[c] in color.lower()
+                                         for color in status_df.loc[plr['trait_pile'][pl]].color.values.tolist()))
+
+            check = []
+            check.append(2 if n_cols[0][p] == min(n_cols[0]) else 0)
+            check.append(2 if n_cols[1][p] == min(n_cols[1]) else 0)
+
+            points = 6 if sum(check) == 4 else sum(check)
         case _:
             points = 0
 

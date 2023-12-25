@@ -293,6 +293,46 @@ def calc_MOL_points(p, m):
             check.append(2 if n_cols[1][p] == min(n_cols[1]) else 0)
 
             points = 6 if sum(check) == 4 else sum(check)
+
+        case "The Tracker":
+            n_cols = []
+            for col in colors:
+                n_cols.append(sum(col in color.lower()
+                                  for color in status_df.loc[trait_pile].color.values.tolist()))
+            n_cl = sum('colorless' in color.lower()
+                       for color in status_df.loc[trait_pile].color.values.tolist())
+
+            points = n_cl if all(n_cols) else 0
+
+        case "The Clashing Crabs":
+            n_neg = sum(face < 0
+                        for face in status_df.loc[trait_pile].face.values.tolist())
+
+            n_high = sum(face >= 4
+                         for face in status_df.loc[trait_pile].face.values.tolist())
+
+            if n_neg == n_high:
+                points = 8
+            elif n_neg > n_high:
+                points = 4
+
+        case "Thunder Frogs":
+            n_twos = []
+            for col in colors:
+                n_twos.append(sum(status_df.loc[t].face == 2
+                                  for t in trait_pile
+                                  if col in status_df.loc[t].color.lower()))
+
+            points = sum(i == 1 for i in n_twos) * 2
+
+        case "The Truffle Hunter":
+            n = sum(face == 1
+                    for face in status_df.loc[trait_pile].face.values.tolist())
+
+            if n >= 6:
+                points = 6
+            elif n >= 3:
+                points = 3
         case _:
             points = 0
 

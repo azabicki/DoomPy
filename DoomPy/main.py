@@ -17,6 +17,7 @@ import rules_remove as rules_re
 import rules_traits as rules_tr
 import rules_trait_pile as rules_tp
 import rules_worlds_end as rules_we
+import rules_MOL as rules_mol
 
 from globals_ import logfile, dir_log
 from globals_ import cfg, images_dict, sounds, music_onoff, icons_onoff, points_onoff
@@ -351,7 +352,58 @@ def play_sound(trait):
 
 
 def btn_MOLS(event, p, m):
-    pass
+    # get selected MOL
+    cbox_idx = event.widget.current()   # selected item_idx in combobox
+    played_str = event.widget.get()
+    played_previously = MOLs['played'][p][m]
+    if cbox_idx > 0:
+        played_idx = MOLs['possible'][p][m][cbox_idx-1]
+
+    # return, if no MOL was selected
+    if cbox_idx == 0:
+        # OR -> force to keep previous selection -> NO WAY BACK
+        if played_previously is None:
+            write_log(['MOLs', 'error_no_MOL'], m+1, plr['name'][p].get())
+        else:
+            old_cbox_idx = MOLs['possible'][p][m].index(played_previously) + 1
+            MOLs['cbox'][p][m].current(old_cbox_idx)
+            write_log(['MOLs', 'error_keep_MOL'], m+1, plr['name'][p].get(), played_str)
+        return
+
+    # set played catastrophe
+    MOLs['played'][p][m] = played_idx
+
+    # update possible MOLs for all other MOL_slots
+    for i in range(game['n_player']):
+        for j in range(game['n_MOLs']):
+            if i != p or j != m:
+                # begin with ALL possible MOLs - neccessary bc this MOL may have changed
+                MOLs['possible'][i][j] = MOLs_df.index.tolist()
+
+                # remove other catastrophes from possible ones
+                for i2 in range(game['n_player']):
+                    for j2 in range(game['n_MOLs']):
+                        if i != i2 or j != j2:
+                            # only, if j'th catastrophe was played already
+                            if MOLs['played'][i2][j2] is not None:
+                                # remove from list of possibles
+                                MOLs['possible'][i][j].remove(MOLs['played'][i2][j2])
+
+                # create list of catastrophe names & update combobox
+                pos_MOLs = ["select MOL #{}".format(j+1)] \
+                    + MOLs_df.loc[MOLs['possible'][i][j]].MOL.values.tolist()
+                MOLs['cbox'][i][j].configure(values=pos_MOLs)
+
+    # check if MOL is fulfilled & update icon
+    points = rules_mol.calc_MOL_points(p, m)
+    MOLs['icon'][p][m].configure(image=images[str(points)])
+
+    # log
+    write_log(['MOLs', 'MOL'], m+1, plr['name'][p].get(), played_str, played_idx)
+
+    # update
+    update_all()
+    print('___ {} ___'.format(points))
 
 
 def check_MOL_state():
@@ -865,10 +917,7 @@ def update_scoring():
         p_drop = rules_dr.drop_points(p)
 
         # calculate MOL points
-        p_MOL = 0
-        for x in [x.get() for x in plr['points_MOL'][p]]:
-            if x.isnumeric():
-                p_MOL += int(x)
+        p_MOL = sum(rules_mol.calc_MOL_points(p, m) for m in range(game['n_MOLs']))
 
         # calculate total score
         total = p_face + p_drop + p_worlds_end + p_MOL
@@ -1658,9 +1707,8 @@ def create_player_frame(p):
         MOLs['cbox'][p][m].grid(row=1, column=2*m, padx=(4, 0), pady=(0, 5), stick='nesw')
         MOLs['cbox'][p][m].bind("<<ComboboxSelected>>", lambda ev, m=m: btn_MOLS(ev, p, m))
 
-        MOLs['icon'][p][m] = ttk.Label(
-            frame_MOL, image=images['question_mark']
-            ).grid(row=1, column=2*m+1, padx=(0, 4), pady=(0, 5), sticky='nsw')
+        MOLs['icon'][p][m] = ttk.Label(frame_MOL, image=images['question_mark'])
+        MOLs['icon'][p][m].grid(row=1, column=2*m+1, padx=(0, 4), pady=(0, 5), sticky='nsw')
 
     return frame
 
@@ -1988,6 +2036,8 @@ def reset_variables():
     frame_trait_pile.clear()
 
     # reset MOLs
+    MOLs['possible'].clear()
+    MOLs['played'].clear()
     MOLs['cbox'].clear()
     MOLs['icon'].clear()
 
@@ -2009,6 +2059,8 @@ def reset_variables():
         plr['trait_selected'].append(tk.Variable(value=np.nan))
         plr['points_WE_effect'].append(tk.IntVar(value=0))
         plr['points_MOL'].append([])
+        MOLs['possible'].append([])
+        MOLs['played'].append([])
         MOLs['cbox'].append([])
         MOLs['icon'].append([])
 
@@ -2018,6 +2070,8 @@ def reset_variables():
 
         for m in range(game['n_MOLs']):
             plr['points_MOL'][i].append(tk.StringVar(value="0"))  # for now, manually editing MOL points in entries
+            MOLs['possible'][i].append(MOLs_df.index.tolist())
+            MOLs['played'][i].append(None)
             MOLs['cbox'][i].append([])
             MOLs['icon'][i].append([])
 

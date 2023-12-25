@@ -209,6 +209,25 @@ def write_log(what, *args):
                     print(">>> world's end <<< play WE '{}'".format(*args))
                     f.write(">>> world's end <<< play WE '{}'\n".format(*args))
 
+        case 'MOLs':
+            match what[1]:
+                case 'error_no_MOL':
+                    print(">>> MOL <<< ERROR - no MOL (#{} by {}) selected".format(*args))
+                    f.write(">>> MOL <<< ERROR - no MOL (#{} by {}) selected\n".format(*args))
+
+                case 'error_same_MOL':
+                    print(">>> MOL <<< ERROR - same MOL (#{} by {}) selected as before: '{}'"
+                          .format(*args))
+                    f.write(">>> MOL <<< ERROR - same MOL (#{} by {}) selected as before: '{}'\n"
+                            .format(*args))
+
+                case 'MOL':
+                    print(">>> MOL <<< played MOL #{} by {}: '{}' (id:{})"
+                          .format(*args))
+                    f.write(">>> MOL <<< played MOL #{} by {}: '{}' (id:{})\n"
+                            .format(*args))
+
+
         case 'update_trait_status':
             match what[1]:
                 case 'reset':

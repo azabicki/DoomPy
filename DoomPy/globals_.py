@@ -142,10 +142,10 @@ lbl_points_switch = [None]  # label containing icon-switch-icon
 ent_trait_search = [None]   # entry for trait_search
 lbox_deck = [None]          # listbox widget of deck cards -> needed to be able to edit selected traits
 
-global frame_player, frame_trait_pile
+global frame_player, frame_trait_pile, frame_MOL
 frame_player = []           # list of all players frames
 frame_trait_pile = []       # frame containing players traits -> needed to be able to edit selected traits
-
+frame_MOL = []              # frame containing MOLs
 
 # define game variables ############################################################################
 # settings -----------------------------------------------------------------------------------------

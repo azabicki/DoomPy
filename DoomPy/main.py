@@ -23,7 +23,7 @@ from globals_ import logfile, dir_log
 from globals_ import cfg, images_dict, sounds, music_onoff, icons_onoff, points_onoff
 from globals_ import traits_df, status_df, catastrophes_df, MOLs_df
 from globals_ import lbl_music_switch, lbl_icons_switch, lbl_points_switch, ent_trait_search, lbox_deck
-from globals_ import frame_player, frame_trait_pile
+from globals_ import frame_player, frame_trait_pile, frame_MOL
 from globals_ import game, plr, deck, deck_filtered_idx, catastrophe, worlds_end, MOLs
 from globals_ import neoteny_checkbutton, sleepy_spinbox
 
@@ -411,25 +411,25 @@ def btn_select_MOLS(event, p, m):
         write_log(['MOLs', 'MOL'], m+1, plr['name'][p].get(), played_str, played_idx)
 
     # update possible MOLs for all other MOL_slots
-    for i in range(game['n_player']):
-        for j in range(MOLs['n'][p]):
-            if i != p or j != m:
+    for ip in range(game['n_player']):
+        for im in range(MOLs['n'][ip]):
+            if ip != p or im != m:
                 # begin with ALL possible MOLs - neccessary bc this MOL may have changed
-                MOLs['possible'][i][j] = MOLs_df.index.tolist()
+                MOLs['possible'][ip][im] = MOLs_df.index.tolist()
 
                 # remove other MOLs from possible ones
-                for i2 in range(game['n_player']):
-                    for j2 in range(MOLs['n'][p]):
-                        if i != i2 or j != j2:
+                for ip2 in range(game['n_player']):
+                    for im2 in range(MOLs['n'][ip2]):
+                        if ip2 != ip or im2 != im:
                             # only, if j'th MOL was played already
-                            if MOLs['played'][i2][j2] is not None:
+                            if MOLs['played'][ip2][im2] is not None:
                                 # remove from list of possibles
-                                MOLs['possible'][i][j].remove(MOLs['played'][i2][j2])
+                                MOLs['possible'][ip][im].remove(MOLs['played'][ip2][im2])
 
                 # create list of MOL names & update combobox
-                pos_MOLs = ["select MOL #{}".format(j+1)] \
-                    + MOLs_df.loc[MOLs['possible'][i][j]].MOL.values.tolist()
-                MOLs['cbox'][i][j].configure(values=pos_MOLs)
+                pos_MOLs = ["select MOL #{}".format(im+1)] \
+                    + MOLs_df.loc[MOLs['possible'][ip][im]].MOL.values.tolist()
+                MOLs['cbox'][ip][im].configure(values=pos_MOLs)
 
     # update
     update_all()
@@ -1602,6 +1602,46 @@ def create_trait_pile(frame_trait_overview, p):
             lbl_we.grid(row=0, column=1, rowspan=2, sticky='ns')
 
 
+def create_MOL_frame(p, reset):
+    if reset:
+        # forget all previous widgets
+        for w in frame_MOL[p].grid_slaves():
+            w.grid_forget()
+
+    ttk.Label(frame_MOL[p], text="Meaning(s) of Life", font="'' 16"
+              ).grid(row=0, column=0, pady=(3, 0), columnspan=2*MOLs['n'][p], sticky='ns')
+
+    cur_row = 0
+    for m in range(MOLs['n'][p]):
+        frame_MOL[p].columnconfigure(m, weight=1)
+        frame_MOL[p].columnconfigure(m+1, weight=2)
+
+        cur_row = cur_row + 1 if (m % 2 == 0) else cur_row
+        cur_col = 2 if m % 2 == 1 else 0
+        print(p, m, cur_row, cur_col)
+        xpad_L = 0 if m % 2 == 1 else 4
+        xpad_R = 4 if m % 2 == 1 else 0
+
+        pos_MOLs = ["select MOL #{}".format(m+1)] + MOLs_df.MOL.values.tolist()
+        MOLs['cbox'][p][m] = ttk.Combobox(
+            frame_MOL[p],
+            values=pos_MOLs,
+            exportselection=0,
+            state='disabled',
+            width=12,
+            style="move.TCombobox")
+        MOLs['cbox'][p][m].current(0)
+        MOLs['cbox'][p][m].grid(row=cur_row, column=cur_col, padx=(xpad_L, 0), pady=(0, 5), stick='nesw')
+        MOLs['cbox'][p][m].bind("<<ComboboxSelected>>", lambda ev, m=m: btn_select_MOLS(ev, p, m))
+
+        MOLs['icon'][p][m] = ttk.Label(frame_MOL[p], image=images['question_mark'])
+        MOLs['icon'][p][m].grid(row=cur_row, column=cur_col+1, padx=(0, xpad_R), pady=(0, 5), sticky='nsw')
+
+        # set current selection if played
+        if MOLs['played'][p][m] is not None:
+            MOLs['cbox'][p][m].current(MOLs['played'][p][m]+1)
+
+
 def create_player_frame(p):
     border = cfg["color_frame_width"]
 
@@ -1709,37 +1749,11 @@ def create_player_frame(p):
     create_trait_pile(frame_trait_pile[p], p)
 
     # ----- Meaning of Life ------------------------------------------------------------------------
-    frame_MOL = tk.Frame(frame)
-    frame_MOL.grid(row=2, column=0, padx=border, pady=(0, border), sticky="nesw")
+    frame_MOL[p] = tk.Frame(frame)
+    frame_MOL[p].grid(row=2, column=0, padx=border, pady=(0, border), sticky="nesw")
 
-    ttk.Label(frame_MOL, text="Meaning(s) of Life", font="'' 16"
-              ).grid(row=0, column=0, pady=(3, 0), columnspan=2*MOLs['n'][p], sticky='ns')
-
-    cur_row = 0
-    for m in range(MOLs['n'][p]):
-        frame_MOL.columnconfigure(m, weight=1)
-        frame_MOL.columnconfigure(m+1, weight=2)
-
-        cur_row = cur_row + 1 if (m % 2 == 0) else cur_row
-        cur_col = 2 if m % 2 == 1 else 0
-        print(cur_row)
-        xpad_L = 0 if m % 2 == 1 else 4
-        xpad_R = 4 if m % 2 == 1 else 0
-
-        pos_MOLs = ["select MOL #{}".format(m+1)] + MOLs_df.MOL.values.tolist()
-        MOLs['cbox'][p][m] = ttk.Combobox(
-            frame_MOL,
-            values=pos_MOLs,
-            exportselection=0,
-            state='disabled',
-            width=12,
-            style="move.TCombobox")
-        MOLs['cbox'][p][m].current(0)
-        MOLs['cbox'][p][m].grid(row=cur_row, column=cur_col, padx=(xpad_L, 0), pady=(0, 5), stick='nesw')
-        MOLs['cbox'][p][m].bind("<<ComboboxSelected>>", lambda ev, m=m: btn_select_MOLS(ev, p, m))
-
-        MOLs['icon'][p][m] = ttk.Label(frame_MOL, image=images['question_mark'])
-        MOLs['icon'][p][m].grid(row=cur_row, column=cur_col+1, padx=(0, xpad_R), pady=(0, 5), sticky='nsw')
+    # call function to create MOL comboboxes
+    create_MOL_frame(p, reset=False)
 
     return frame
 
@@ -2185,8 +2199,10 @@ def start_game():
     # fill _playground_ frame with _player_ frames -------------------------------------------------
     write_log(['init', 'playground'])
     frame_player.clear()
+    frame_MOL.clear()
     for i in range(game['n_player']):
         # frame_playground.columnconfigure(i, weight=1)
+        frame_MOL.append([])
         frame_player.append(create_player_frame(i))
 
     # clear traits listbox -------------------------------------------------------------------------

@@ -27,6 +27,8 @@ def drop_traits(trait_idx, p, *args):
             if (trait_idx not in trait_pile) and (traits_WE != 'none'):
                 # colors discarded * -2
                 dp = int(traits_WE) * -2
+            else:
+                dp = 0
 
         case 'Apex Predator':
             # 4 self if_most_traits all
@@ -313,6 +315,9 @@ def drop_traits(trait_idx, p, *args):
                 # get this players dp
                 dp = prowler_dp[p]
 
+            else:
+                dp = 0
+
         case 'Rainbow Keratin':
             # -2 self n_drops own&2 self n_highest_color_if4colors own
             dp = -2 * (sum(traits_df.loc[t].drops == 1 for t in trait_pile) - 1)
@@ -483,6 +488,8 @@ def drop_traits(trait_idx, p, *args):
 
                 # get this players dp
                 dp = viral_dp[p]
+            else:
+                dp = 0
 
         case 'Vivacious':
             # 6 self 4_or_more_blue own

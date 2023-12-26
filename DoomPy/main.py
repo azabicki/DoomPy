@@ -861,11 +861,8 @@ def update_manual_drops(event, trait, p, change):
     # log
     write_log(['scoring', 'manual_drops'], traits_df.iloc[trait].trait, trait, value)
 
-    # update scoring
-    update_scoring()
-
-    # update this players trait pile
-    create_trait_pile(frame_trait_pile[p], p)
+    # update all
+    update_all()
 
 
 def update_traits_current_status(todo, *args):

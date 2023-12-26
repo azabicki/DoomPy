@@ -410,6 +410,29 @@ def btn_select_MOLS(event, p, m):
         # log
         write_log(['MOLs', 'MOL'], m+1, plr['name'][p].get(), played_str, played_idx)
 
+    # if ***The Blind Dragon*** is selected
+    if played_str == 'The Blind Dragon':
+        # -> add 2 MOLs
+        MOLs['n'][p] += 2
+        for ip in range(2):
+            plr['points_MOL'][p].append(tk.StringVar(value="0"))  # for now, manually editing MOL points in entries
+            MOLs['possible'][p].append(MOLs_df.index.tolist())
+            MOLs['played'][p].append(None)
+            MOLs['cbox'][p].append([])
+            MOLs['icon'][p].append([])
+    elif played_previously is not None and MOLs_df.loc[played_previously].MOL == 'The Blind Dragon':
+        # respectively, remove the last 2 MOLs, if *TBD* is de-selected
+        MOLs['n'][p] -= 2
+        plr['points_MOL'][p][MOLs['n'][p]:] = []
+        MOLs['possible'][p][MOLs['n'][p]:] = []
+        MOLs['played'][p][MOLs['n'][p]:] = []
+        MOLs['cbox'][p][MOLs['n'][p]:] = []
+        MOLs['icon'][p][MOLs['n'][p]:] = []
+
+    # update MOLs on playground
+    create_MOL_frame(p, reset=True)
+    check_MOL_state()
+
     # update possible MOLs for all other MOL_slots
     for ip in range(game['n_player']):
         for im in range(MOLs['n'][ip]):

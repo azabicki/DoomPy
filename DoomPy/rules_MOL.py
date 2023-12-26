@@ -407,6 +407,9 @@ def calc_MOL_points(p, m):
             elif n <= 12:
                 points = 4
 
+        case "The Blind Dragon":
+            points = 0
+
         case "The Painter":
             n = []
             for col in colors:

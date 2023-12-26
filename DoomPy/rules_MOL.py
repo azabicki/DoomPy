@@ -415,28 +415,40 @@ def calc_MOL_points(p, m):
             points = sum(i % 2 == 0 for i in n if i > 0) * 3
 
         case "The Genial Outsider":
-            n_drop = sum(traits_df.loc[t].drops == 1
+            n_drops = sum(traits_df.loc[t].drops == 1
                          for t in trait_pile)
 
-            n_action = sum(traits_df.loc[t].action == 1
+            n_actions = sum(traits_df.loc[t].action == 1
                            for t in trait_pile)
 
-            if n_drop <= 2:
+            if n_drops <= 2:
                 points += 3
-                if n_action <= 3:
+                if n_actions <= 3:
                     points += 6
 
         case "The Bush Kid":
-            n_drop = sum(traits_df.loc[t].drops == 1
-                         for t in trait_pile)
+            n_drops = sum(traits_df.loc[t].drops == 1
+                          for t in trait_pile)
 
-            n_action = sum(traits_df.loc[t].action == 1
-                           for t in trait_pile)
+            n_actions = sum(traits_df.loc[t].action == 1
+                            for t in trait_pile)
 
-            if n_drop >= 3:
+            if n_drops >= 3:
                 points += 3
-                if n_action >= 5:
+                if n_actions >= 5:
                     points += 6
+
+        case "The Parrots Riddle":
+            n_actions = sum(traits_df.loc[t].action == 1
+                            for t in trait_pile)
+
+            points = 9 - (2*n_actions)
+
+        case "The Monkey Thief":
+            n_drops = sum(traits_df.loc[t].drops == 1
+                          for t in trait_pile)
+
+            points = 8 - (3*n_drops)
 
         case "The Lunar Guard":
             n = []

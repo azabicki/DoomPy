@@ -353,7 +353,7 @@ def play_sound(trait):
 
 def calc_MOLs(p):
     p_MOL = 0
-    for m in range(game['n_MOLs']):
+    for m in range(MOLs['n'][p]):
         # calcuate, if MOL is selected
         if MOLs['played'][p][m] is not None:
             # calculte points
@@ -412,14 +412,14 @@ def btn_select_MOLS(event, p, m):
 
     # update possible MOLs for all other MOL_slots
     for i in range(game['n_player']):
-        for j in range(game['n_MOLs']):
+        for j in range(MOLs['n'][p]):
             if i != p or j != m:
                 # begin with ALL possible MOLs - neccessary bc this MOL may have changed
                 MOLs['possible'][i][j] = MOLs_df.index.tolist()
 
                 # remove other MOLs from possible ones
                 for i2 in range(game['n_player']):
-                    for j2 in range(game['n_MOLs']):
+                    for j2 in range(MOLs['n'][p]):
                         if i != i2 or j != j2:
                             # only, if j'th MOL was played already
                             if MOLs['played'][i2][j2] is not None:
@@ -443,12 +443,12 @@ def check_MOL_state():
             and worlds_end['played'] != 'none'):
 
         for p in range(game['n_player']):
-            for m in range(game['n_MOLs']):
+            for m in range(MOLs['n'][p]):
                 MOLs['cbox'][p][m].configure(state='readonly')
 
     else:
         for p in range(game['n_player']):
-            for m in range(game['n_MOLs']):
+            for m in range(MOLs['n'][p]):
                 MOLs['cbox'][p][m].configure(state='disabled')
 
 
@@ -1713,10 +1713,10 @@ def create_player_frame(p):
     frame_MOL.grid(row=2, column=0, padx=border, pady=(0, border), sticky="nesw")
 
     ttk.Label(frame_MOL, text="Meaning(s) of Life", font="'' 16"
-              ).grid(row=0, column=0, pady=(3, 0), columnspan=2*game['n_MOLs'], sticky='ns')
+              ).grid(row=0, column=0, pady=(3, 0), columnspan=2*MOLs['n'][p], sticky='ns')
 
     cur_row = 0
-    for m in range(game['n_MOLs']):
+    for m in range(MOLs['n'][p]):
         frame_MOL.columnconfigure(m, weight=1)
         frame_MOL.columnconfigure(m+1, weight=2)
 
@@ -2071,15 +2071,16 @@ def reset_variables():
     MOLs['played'].clear()
     MOLs['cbox'].clear()
     MOLs['icon'].clear()
+    MOLs['n'].clear()
 
     # reset trait_specific variables
     neoteny_checkbutton.clear()
     sleepy_spinbox.clear()
 
     # fill variables
-    for i in range(game['n_player']):
-        plr['name'].append(tk.StringVar(value=options["names"][i].get()))
-        write_log(['init', 'names'], i+1, plr['name'][i].get())
+    for p in range(game['n_player']):
+        plr['name'].append(tk.StringVar(value=options["names"][p].get()))
+        write_log(['init', 'names'], p+1, plr['name'][p].get())
 
         plr['genes'].append(tk.IntVar(value=game['n_genes']))
         plr['points'].append({'face': tk.IntVar(value=0), 'drops': tk.IntVar(value=0),
@@ -2094,17 +2095,18 @@ def reset_variables():
         MOLs['played'].append([])
         MOLs['cbox'].append([])
         MOLs['icon'].append([])
+        MOLs['n'].append(options['n_MOLs'].get())
 
         frame_trait_pile.append(None)
         neoteny_checkbutton.append(tk.IntVar(value=0))
         sleepy_spinbox.append(tk.IntVar(value=0))
 
         for m in range(game['n_MOLs']):
-            plr['points_MOL'][i].append(tk.StringVar(value="0"))  # for now, manually editing MOL points in entries
-            MOLs['possible'][i].append(MOLs_df.index.tolist())
-            MOLs['played'][i].append(None)
-            MOLs['cbox'][i].append([])
-            MOLs['icon'][i].append([])
+            plr['points_MOL'][p].append(tk.StringVar(value="0"))  # for now, manually editing MOL points in entries
+            MOLs['possible'][p].append(MOLs_df.index.tolist())
+            MOLs['played'][p].append(None)
+            MOLs['cbox'][p].append([])
+            MOLs['icon'][p].append([])
 
     # first player
     game['first_player'] = options['first_player'].get()

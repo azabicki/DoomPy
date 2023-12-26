@@ -306,10 +306,12 @@ def calc_MOL_points(p, m):
 
         case "The Clashing Crabs":
             n_neg = sum(face < 0
-                        for face in status_df.loc[trait_pile].face.values.tolist())
+                        for face in status_df.loc[trait_pile].face.values.tolist()
+                        if not isinstance(face, str))
 
             n_high = sum(face >= 4
-                         for face in status_df.loc[trait_pile].face.values.tolist())
+                         for face in status_df.loc[trait_pile].face.values.tolist()
+                         if not isinstance(face, str))
 
             if n_neg == n_high:
                 points = 8
@@ -327,7 +329,8 @@ def calc_MOL_points(p, m):
 
         case "The Truffle Hunter":
             n = sum(face == 1
-                    for face in status_df.loc[trait_pile].face.values.tolist())
+                    for face in status_df.loc[trait_pile].face.values.tolist()
+                    if not isinstance(face, str))
 
             if n >= 6:
                 points = 6

@@ -1715,13 +1715,16 @@ def create_player_frame(p):
     ttk.Label(frame_MOL, text="Meaning(s) of Life", font="'' 16"
               ).grid(row=0, column=0, pady=(3, 0), columnspan=2*game['n_MOLs'], sticky='ns')
 
+    cur_row = 0
     for m in range(game['n_MOLs']):
         frame_MOL.columnconfigure(m, weight=1)
         frame_MOL.columnconfigure(m+1, weight=2)
 
+        cur_row = cur_row + 1 if (m % 2 == 0) else cur_row
+        cur_col = 2 if m % 2 == 1 else 0
+        print(cur_row)
         xpad_L = 0 if m % 2 == 1 else 4
         xpad_R = 4 if m % 2 == 1 else 0
-        print(m, xpad_L, xpad_R)
 
         pos_MOLs = ["select MOL #{}".format(m+1)] + MOLs_df.MOL.values.tolist()
         MOLs['cbox'][p][m] = ttk.Combobox(
@@ -1732,11 +1735,11 @@ def create_player_frame(p):
             width=12,
             style="move.TCombobox")
         MOLs['cbox'][p][m].current(0)
-        MOLs['cbox'][p][m].grid(row=1, column=2*m, padx=(xpad_L, 0), pady=(0, 5), stick='nesw')
+        MOLs['cbox'][p][m].grid(row=cur_row, column=cur_col, padx=(xpad_L, 0), pady=(0, 5), stick='nesw')
         MOLs['cbox'][p][m].bind("<<ComboboxSelected>>", lambda ev, m=m: btn_select_MOLS(ev, p, m))
 
         MOLs['icon'][p][m] = ttk.Label(frame_MOL, image=images['question_mark'])
-        MOLs['icon'][p][m].grid(row=1, column=2*m+1, padx=(0, xpad_R), pady=(0, 5), sticky='nsw')
+        MOLs['icon'][p][m].grid(row=cur_row, column=cur_col+1, padx=(0, xpad_R), pady=(0, 5), sticky='nsw')
 
     return frame
 

@@ -1,5 +1,34 @@
 from globals_ import plr, traits_df, status_df, MOLs, MOLs_df
 import numpy as np
+import tkinter as tk
+
+
+# effect for selecting specific MOLs
+def select_MOL(p, MOL, prev_MOL):
+    # if __The Blind Dragon__ is selected
+    if MOL == 'The Blind Dragon':
+        # -> add 2 MOLs
+        MOLs['n'][p] += 2
+        for ip in range(2):
+            plr['points_MOL'][p].append(tk.StringVar(value="0"))  # for now, manually editing MOL points in entries
+            MOLs['possible'][p].append(MOLs_df.index.tolist())
+            MOLs['played'][p].append(None)
+            MOLs['cbox'][p].append([])
+            MOLs['icon'][p].append([])
+        return True
+
+    # if __The Blind Dragon__ is de-selected
+    if prev_MOL is not None and MOLs_df.loc[prev_MOL].MOL == 'The Blind Dragon':
+        # -> remove the last 2 MOLs
+        MOLs['n'][p] -= 2
+        plr['points_MOL'][p][MOLs['n'][p]:] = []
+        MOLs['possible'][p][MOLs['n'][p]:] = []
+        MOLs['played'][p][MOLs['n'][p]:] = []
+        MOLs['cbox'][p][MOLs['n'][p]:] = []
+        MOLs['icon'][p][MOLs['n'][p]:] = []
+        return True
+
+    return False
 
 
 # handle worlds end effect of catastrophes

@@ -414,6 +414,44 @@ def calc_MOL_points(p, m):
 
             points = sum(i % 2 == 0 for i in n if i > 0) * 3
 
+        case "The Genial Outsider":
+            n_drop = sum(traits_df.loc[t].drops == 1
+                         for t in trait_pile)
+
+            n_action = sum(traits_df.loc[t].action == 1
+                           for t in trait_pile)
+
+            if n_drop <= 2:
+                points += 3
+                if n_action <= 3:
+                    points += 6
+
+        case "The Bush Kid":
+            n_drop = sum(traits_df.loc[t].drops == 1
+                         for t in trait_pile)
+
+            n_action = sum(traits_df.loc[t].action == 1
+                           for t in trait_pile)
+
+            if n_drop >= 3:
+                points += 3
+                if n_action >= 5:
+                    points += 6
+
+        case "The Lunar Guard":
+            n = []
+            for col in colors:
+                n.append(sum(col in color.lower()
+                             for color in status_df.loc[trait_pile].color.values.tolist()))
+            n.append(sum('colorless' in color.lower()
+                         for color in status_df.loc[trait_pile].color.values.tolist()))
+
+            missing = sum(i == 0 for i in n)
+            if missing >= 2:
+                points = 9
+            elif missing == 1:
+                points = 4
+
         case _:
             points = 0
 

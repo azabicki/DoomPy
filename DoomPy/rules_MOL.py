@@ -1,4 +1,5 @@
 from globals_ import plr, traits_df, status_df, MOLs, MOLs_df
+import numpy as np
 
 
 # handle worlds end effect of catastrophes
@@ -414,12 +415,26 @@ def calc_MOL_points(p, m):
 
             points = sum(i % 2 == 0 for i in n if i > 0) * 3
 
+        case "The Child And The Bear":
+            dominants = [t for t in trait_pile if traits_df.loc[t].dominant == 1]
+
+            n_dom_cols = []
+            n_pairs = []
+            for col in colors:
+                n_dom_cols.append(sum(col in color.lower()
+                                      for color in status_df.loc[dominants].color.tolist()))
+                n_pairs.append(int(sum(col in status_df.iloc[t].color.lower()
+                                       for t in trait_pile
+                                       if traits_df.iloc[t].dominant != 1) / 2))
+
+            points = np.dot(n_dom_cols, n_pairs)
+
         case "The Genial Outsider":
             n_drops = sum(traits_df.loc[t].drops == 1
-                         for t in trait_pile)
+                          for t in trait_pile)
 
             n_actions = sum(traits_df.loc[t].action == 1
-                           for t in trait_pile)
+                            for t in trait_pile)
 
             if n_drops <= 2:
                 points += 3

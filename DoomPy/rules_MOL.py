@@ -336,6 +336,84 @@ def calc_MOL_points(p, m):
                 points = 6
             elif n >= 3:
                 points = 3
+
+        case "The Hero":
+            dominants = [t for t in trait_pile if traits_df.loc[t].dominant == 1]
+
+            d_points = []
+            for d in dominants:
+                d_col = status_df.loc[d].color
+                pile_colors = status_df.iloc[trait_pile].color.tolist()
+
+                n = 0
+                for col in colors:
+                    n += sum(col in i.lower()
+                             for i in pile_colors
+                             if col in d_col.lower())
+
+                d_points.append(4 if n-1 <= 1 else 0)
+
+            if len(dominants) == 3:
+                points = 12
+            else:
+                points = sum(d_points)
+
+        case "The Wilted Flower":
+            n = [gp.get() for gp in plr['genes']]
+
+            if n[p] == min(n):
+                if len(set(n)) == len(n):
+                    points = 7
+                else:
+                    points = 4
+
+        case "The Stylite":
+            dp = plr['points'][p]['drops'].get()
+
+            if dp <= 2:
+                points = 7
+            elif dp <= 6:
+                points = 3
+
+        case "The Medicine Master":
+            n = sum(face < 0
+                    for face in status_df.loc[trait_pile].face.values.tolist()
+                    if not isinstance(face, str))
+
+            if n >= 3:
+                points = 7
+            elif n >= 1:
+                points = 3
+
+        case "The Fortunate Alchemist":
+            n = 0
+            for face in status_df.loc[trait_pile].face.values.tolist():
+                if (isinstance(face, str) and face == 'variable') or face == 0:
+                    n += 1
+
+            if n >= 5:
+                points = 9
+            elif n >= 2:
+                points = 2
+            elif n == 0:
+                points = -4
+
+        case "The Godlen Shrew":
+            n = len(plr['trait_pile'][p])
+
+            if n <= 8:
+                points = 7
+            elif n <= 12:
+                points = 4
+
+        case "The Painter":
+            n = []
+            for col in colors:
+                n.append(sum(col in color.lower()
+                             for color in status_df.loc[trait_pile].color.values.tolist()))
+
+            points = sum(i % 2 == 0 for i in n if i > 0) * 3
+
         case _:
             points = 0
 

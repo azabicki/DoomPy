@@ -5,7 +5,8 @@ import tkinter as tk
 import rules_drop as rules_dr
 import rules_worlds_end as rules_we
 
-# effects when selecting specific MOLs
+
+# effects when selecting specific MOLs -------------------------------------------------------------
 def select_MOL(p, MOL, prev_MOL):
     # if __The Blind Dragon__ is selected
     if MOL == 'The Blind Dragon':
@@ -39,7 +40,7 @@ def select_MOL(p, MOL, prev_MOL):
         plr['n_tp_xtra'][p] -= 2
 
 
-# handle worlds end effect of catastrophes
+# handle worlds end effect of catastrophes ---------------------------------------------------------
 def calc_MOL_points(p, m):
     # if MOLSs not selected
     if MOLs['played'][p][m] is None:

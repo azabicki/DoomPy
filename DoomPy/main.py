@@ -1695,7 +1695,7 @@ def create_player_frame(p):
     frame.columnconfigure(0, weight=1)  # stretch sub_frames to playground (=1!)
     frame.rowconfigure(1, weight=1)  # stretch trait-pile to bottom of playground
     # frame.rowconfigure(2, weight=1)  # MOL
-    frame.grid(column=p, row=0, padx=5, pady=5, sticky="nesw")  # or use nsw for non-x-streched frames!
+    frame.grid(column=p, row=0, padx=10, pady=10, sticky="nesw")  # or use nsw for non-x-streched frames!
 
     # ----- name + overview current points ---------------------------------------------------------
     frame_points = tk.Frame(frame)
@@ -2281,7 +2281,7 @@ content.columnconfigure(1, weight=1)  # complete playground, set =1 to stretch i
 
 # create _menu_ frame ------------------------------------------------------------------------------
 frame_menu = tk.Frame(content, bg=cfg["menu_frame_color"])
-frame_menu.grid(row=0, column=0, padx=5, pady=5, stick="nesw")
+frame_menu.grid(row=0, column=0, padx=10, pady=10, stick="nesw")
 
 # create _playground_ frame ------------------------------------------------------------------------
 frame_playground = tk.Frame(content, bg=cfg["bg_content"])

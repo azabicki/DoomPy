@@ -255,11 +255,13 @@ def simulate():
     print('___done___')
 
 
-def get_sup(tp):
+def get_sup(tp, xtra):
     lib = {'0': '\u2070', '1': '\u00B9', '2': '\u00B2', '3': '\u00B3', '4': '\u2074',
-           '5': '\u2075', '6': '\u2076', '7': '\u2077', '8': '\u2078', '9': '\u2079'}
+           '5': '\u2075', '6': '\u2076', '7': '\u2077', '8': '\u2078', '9': '\u2079',
+           '+': '\u207A', '(': '\u207D', ')': '\u207E'}
 
-    return ''.join(lib[i] for i in str(len(tp)))
+    txt = str(len(tp)) if xtra == 0 else (str(len(tp)) + "+" + str(xtra))
+    return ''.join(lib[i] if i in lib else i for i in txt)
 
 
 def switch(inp):
@@ -1128,6 +1130,10 @@ def update_stars():
 def update_all():
     # first, resolve all effects on traits
     for p in range(game['n_player']):
+        # update n_tp
+        plr['n_tp'][p] = len(plr['trait_pile'][p]) + plr['n_tp_xtra'][p]
+        plr['n_tp_score'][p].set(get_sup(plr['trait_pile'][p], plr['n_tp_xtra'][p]))
+
         for trait_idx in plr['trait_pile'][p]:
             # 1: attachment effect
             rules_at.apply_effects(trait_idx)
@@ -1195,7 +1201,7 @@ def create_trait_pile(frame_trait_overview, p):
     rules_tr.permanent_effects(plr['trait_pile'][p])
 
     # then, update n_tp
-    plr['n_tp'][p].set(get_sup(plr['trait_pile'][p]))
+    # plr['n_tp_score'][p].set(get_sup(plr['trait_pile'][p]))
 
     # --- loop traits in trait pile ------------------------------------------------
     irow = -1
@@ -1704,12 +1710,12 @@ def create_player_frame(p):
     frame_points.columnconfigure(6, weight=1)
 
     # name
-    ttk.Label(frame_points, textvariable=plr['n_tp'][p],
+    ttk.Label(frame_points, textvariable=plr['n_tp_score'][p],
               style="n_traitsFirstPlayer.TLabel" if game['first_player'] == p else "n_traits.TLabel"
-              ).grid(row=0, column=0, padx=5, pady=(5, 0), columnspan=1, sticky='ns')
+              ).grid(row=0, column=0, padx=5, pady=(5, 0), columnspan=2, sticky='ns')
     ttk.Label(frame_points, textvariable=plr['name'][p],
               style="nameFirstPlayer.TLabel" if game['first_player'] == p else "name.TLabel"
-              ).grid(row=0, column=1, padx=5, pady=(5, 0), columnspan=4, sticky='ns')
+              ).grid(row=0, column=2, padx=5, pady=(5, 0), columnspan=3, sticky='ns')
 
     # stars
     ttk.Label(frame_points, image=images['no_star']
@@ -2116,6 +2122,8 @@ def reset_variables():
     plr['points'].clear()
     plr['trait_pile'].clear()
     plr['n_tp'].clear()
+    plr['n_tp_xtra'].clear()
+    plr['n_tp_score'].clear()
     plr['trait_selected'].clear()
     plr['points_WE_effect'].clear()
     plr['points_MOL'].clear()
@@ -2142,7 +2150,9 @@ def reset_variables():
                               'worlds_end': tk.IntVar(value=0), 'MOL': tk.IntVar(value=0),
                               'total': tk.IntVar(value=0)})
         plr['trait_pile'].append([])
-        plr['n_tp'].append(tk.StringVar(value='0'))
+        plr['n_tp'].append([])
+        plr['n_tp_xtra'].append(0)
+        plr['n_tp_score'].append(tk.StringVar(value=get_sup([], 0)))
         plr['trait_selected'].append(tk.Variable(value=np.nan))
         plr['points_WE_effect'].append(tk.IntVar(value=0))
         plr['points_MOL'].append([])
@@ -2284,8 +2294,8 @@ gui_style = ttk.Style()
 gui_style.configure("game_info.TLabel", font=("", 10, "italic"))
 gui_style.configure("name.TLabel", font=("Comic Sans MS", 38, "bold"))
 gui_style.configure("nameFirstPlayer.TLabel", font=("Comic Sans MS", 38, "bold"), foreground='#00CD66')
-gui_style.configure("n_traits.TLabel", font=("Arial", 38, "bold"))
-gui_style.configure("n_traitsFirstPlayer.TLabel", font=("Arial", 38, "bold"), foreground='#00CD66')
+gui_style.configure("n_traits.TLabel", font=("Arial", 30, "bold"))
+gui_style.configure("n_traitsFirstPlayer.TLabel", font=("Arial", 30, "bold"), foreground='#00CD66')
 gui_style.configure("points.TLabel", font=("", 20))
 gui_style.configure("total.TLabel", font=("", 80, "bold"), foreground="orangered1")
 gui_style.configure("genes.TLabel", font=("", 38, "bold"), foreground="hotpink1")

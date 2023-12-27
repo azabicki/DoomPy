@@ -32,7 +32,7 @@ def drop_traits(trait_idx, p, *args):
 
         case 'Apex Predator':
             # 4 self if_most_traits all
-            n = [len(i) for i in plr['trait_pile']]
+            n = [i for i in plr['n_tp']]
             if n.index(max(n)) == p and n.count(max(n)) == 1:
                 dp = 4
             else:

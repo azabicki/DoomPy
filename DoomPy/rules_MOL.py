@@ -26,6 +26,16 @@ def select_MOL(p, MOL, prev_MOL):
         MOLs['cbox'][p][MOLs['n'][p]:] = []
         MOLs['icon'][p][MOLs['n'][p]:] = []
 
+    # if __The River Mist__ is selected
+    if MOL == 'The River Mist':
+        # -> add 2 to xtra trait pile count
+        plr['n_tp_xtra'][p] += 2
+
+    # if __The River Mist__ is de-selected
+    if prev_MOL is not None and MOLs_df.loc[prev_MOL].MOL == 'The River Mist':
+        # -> remove 2 from xtra trait pile count
+        plr['n_tp_xtra'][p] -= 2
+
 
 # handle worlds end effect of catastrophes
 def calc_MOL_points(p, m):

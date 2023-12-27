@@ -1669,13 +1669,17 @@ def create_MOL_frame(p, reset):
         m_idx = MOLs['played'][p][m]
         if (MOLs['played'][p][m] is not None and ('hand' in MOLs_df.loc[m_idx].MOL_type.lower()
                                                   or 'draw' in MOLs_df.loc[m_idx].MOL_type.lower())):
-
+            # new frame
             cur_row += 1
-            tk.Label(frame_MOL[p], text=MOLs_df.loc[m_idx].MOL + ":"
+            sbox_frame = tk.Frame(frame_MOL[p])
+            sbox_frame.grid(row=cur_row, column=0, columnspan=3, sticky="nesw")
+
+            # label
+            tk.Label(sbox_frame, text=MOLs_df.loc[m_idx].MOL + ":"
                      ).grid(row=cur_row, column=0, padx=(5, 0), sticky='e')
 
             # create spinbox
-            MOL_sbox = ttk.Spinbox(frame_MOL[p], state='readonly', from_=-50, to=500, width=2, wrap=False)
+            MOL_sbox = ttk.Spinbox(sbox_frame, state='readonly', from_=-50, to=500, width=2, wrap=False)
             MOL_sbox.grid(row=cur_row, column=1, sticky='w')
             MOL_sbox.bind("<<Increment>>", lambda e, m=m: update_manual_MOL(e, p, m, '+'))
             MOL_sbox.bind("<<Decrement>>", lambda e, m=m: update_manual_MOL(e, p, m, '-'))

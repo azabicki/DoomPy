@@ -415,7 +415,6 @@ def btn_select_MOLS(event, p, m):
     # check for MOL_specific select_effects
     rules_mol.select_MOL(p, played_str, played_previously)
     create_MOL_frame(p, reset=True)
-    check_MOL_state()
 
     # update possible MOLs for all other MOL_slots
     for ip in range(game['n_player']):
@@ -443,20 +442,16 @@ def btn_select_MOLS(event, p, m):
 
 
 def check_MOL_state():
-    if (not any(np.isnan(status_df.loc[trait_idx].drops)
-                for tp in plr['trait_pile']
-                for trait_idx in tp
-                if isinstance(traits_df.loc[trait_idx].drop_effect, str))
-            and worlds_end['played'] != 'none'):
-
-        for p in range(game['n_player']):
-            for m in range(MOLs['n'][p]):
-                MOLs['cbox'][p][m].configure(state='readonly')
-
+    # check if WE was played
+    if worlds_end['played'] != 'none':
+        new_state = 'readonly'
     else:
-        for p in range(game['n_player']):
-            for m in range(MOLs['n'][p]):
-                MOLs['cbox'][p][m].configure(state='disabled')
+        new_state = 'disabled'
+
+    # set new state
+    for p in range(game['n_player']):
+        for m in range(MOLs['n'][p]):
+            MOLs['cbox'][p][m].configure(state=new_state)
 
 
 def btn_clear_trait_search():

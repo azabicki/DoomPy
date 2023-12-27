@@ -15,7 +15,6 @@ def select_MOL(p, MOL, prev_MOL):
             MOLs['played'][p].append(None)
             MOLs['cbox'][p].append([])
             MOLs['icon'][p].append([])
-        return True
 
     # if __The Blind Dragon__ is de-selected
     if prev_MOL is not None and MOLs_df.loc[prev_MOL].MOL == 'The Blind Dragon':
@@ -26,9 +25,6 @@ def select_MOL(p, MOL, prev_MOL):
         MOLs['played'][p][MOLs['n'][p]:] = []
         MOLs['cbox'][p][MOLs['n'][p]:] = []
         MOLs['icon'][p][MOLs['n'][p]:] = []
-        return True
-
-    return False
 
 
 # handle worlds end effect of catastrophes
@@ -397,6 +393,9 @@ def calc_MOL_points(p, m):
                 else:
                     points = 4
 
+        case "The Armored Melon":
+            points = plr['points_MOL'][p][m].get()
+
         case "The Stylite":
             dp = plr['points'][p]['drops'].get()
 
@@ -438,6 +437,9 @@ def calc_MOL_points(p, m):
 
         case "The Blind Dragon":
             points = 0
+
+        case "The Silent Elder":
+            points = plr['points_MOL'][p][m].get()
 
         case "The Painter":
             n = []

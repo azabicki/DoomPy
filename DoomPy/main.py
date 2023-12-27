@@ -411,10 +411,9 @@ def btn_select_MOLS(event, p, m):
         write_log(['MOLs', 'MOL'], m+1, plr['name'][p].get(), played_str, played_idx)
 
     # check for MOL_specific select_effects
-    redo = rules_mol.select_MOL(p, played_str, played_previously)
-    if redo:
-        create_MOL_frame(p, reset=True)
-        check_MOL_state()
+    rules_mol.select_MOL(p, played_str, played_previously)
+    create_MOL_frame(p, reset=True)
+    check_MOL_state()
 
     # update possible MOLs for all other MOL_slots
     for ip in range(game['n_player']):
@@ -828,6 +827,22 @@ def btn_play_trait(to):
     update_all()
 
     return 1
+
+
+def update_manual_MOL(event, p, m, change):
+    cur_value = int(event.widget.get())
+
+    # change value according to button
+    if change == '+':
+        value = cur_value + 1
+    else:
+        value = cur_value - 1
+
+    # save current value
+    plr['points_MOL'][p][m].set(value)
+
+    # update all
+    update_all()
 
 
 def update_manual_we(event, p, change):
@@ -1648,6 +1663,25 @@ def create_MOL_frame(p, reset):
         if MOLs['played'][p][m] is not None:
             MOLs['cbox'][p][m].current(MOLs['played'][p][m]+1)
 
+    # --- spinboxes for manual entry ------------------------------------------
+    for m in range(MOLs['n'][p]):
+        m_idx = MOLs['played'][p][m]
+        if (MOLs['played'][p][m] is not None and ('hand' in MOLs_df.loc[m_idx].MOL_type.lower()
+                                                  or 'draw' in MOLs_df.loc[m_idx].MOL_type.lower())):
+
+            cur_row += 1
+            tk.Label(frame_MOL[p], text=MOLs_df.loc[m_idx].MOL + ":"
+                     ).grid(row=cur_row, column=0, padx=(5, 0), sticky='e')
+
+            # create spinbox
+            MOL_sbox = ttk.Spinbox(frame_MOL[p], state='readonly', from_=-50, to=500, width=2, wrap=False)
+            MOL_sbox.grid(row=cur_row, column=1, sticky='w')
+            MOL_sbox.bind("<<Increment>>", lambda e, m=m: update_manual_MOL(e, p, m, '+'))
+            MOL_sbox.bind("<<Decrement>>", lambda e, m=m: update_manual_MOL(e, p, m, '-'))
+
+            # fill spinbox, depending on drops_status
+            MOL_sbox.set(plr['points_MOL'][p][m].get())
+
 
 def create_player_frame(p):
     border = cfg["color_frame_width"]
@@ -2123,7 +2157,7 @@ def reset_variables():
         sleepy_spinbox.append(tk.IntVar(value=0))
 
         for m in range(game['n_MOLs']):
-            plr['points_MOL'][p].append(tk.StringVar(value="0"))  # for now, manually editing MOL points in entries
+            plr['points_MOL'][p].append(tk.IntVar(value=0))  # for now, manually editing MOL points in entries
             MOLs['possible'][p].append(MOLs_df.index.tolist())
             MOLs['played'][p].append(None)
             MOLs['cbox'][p].append([])

@@ -437,6 +437,16 @@ def calc_MOL_points(p, m):
             elif n == 0:
                 points = -4
 
+        case "The River Mist":
+            n = [i for i in plr['n_tp']]
+
+            if n[p] == max(n) and sum(i == n[p] for i in n) == 1:
+                points = 4
+
+            for i in [i for i in range(len(n)) if i != p]:
+                if n[p] > n[i]:
+                    points += 1
+
         case "The Godlen Shrew":
             n = len(plr['trait_pile'][p])
 

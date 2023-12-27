@@ -402,7 +402,7 @@ def btn_select_MOLS(event, p, m):
         MOLs['played'][p][m] = None
 
         # log
-        write_log(['MOLs', 'deselected_MOL'], plr['name'][p].get(), m+1, played_previously)
+        write_log(['MOLs', 'deselected_MOL'], plr['name'][p].get(), m+1, MOLs_df.loc[played_previously].MOL)
     else:
         # set played MOL
         MOLs['played'][p][m] = played_idx
@@ -833,7 +833,7 @@ def btn_play_trait(to):
 def update_manual_we(event, p, change):
     cur_value = int(event.widget.get())
 
-    # check if input is numeric
+    # change value according to button
     if change == '+':
         value = cur_value + 1
     else:
@@ -848,7 +848,7 @@ def update_manual_we(event, p, change):
     create_trait_pile(frame_trait_pile[p], p)
 
 
-def update_manual_drops(event, trait, p, change):
+def update_manual_drops(event, trait, change):
     cur_value = event.widget.get()
 
     # check, if spinbox is in initial state
@@ -1506,8 +1506,8 @@ def create_trait_pile(frame_trait_overview, p):
                 width=3,
                 wrap=False)
             drop_sbox.grid(row=irow, column=1, sticky='w')
-            drop_sbox.bind("<<Increment>>", lambda e, t=trait_idx: update_manual_drops(e, t, p, '+'))
-            drop_sbox.bind("<<Decrement>>", lambda e, t=trait_idx: update_manual_drops(e, t, p, '-'))
+            drop_sbox.bind("<<Increment>>", lambda e, t=trait_idx: update_manual_drops(e, t, '+'))
+            drop_sbox.bind("<<Decrement>>", lambda e, t=trait_idx: update_manual_drops(e, t, '-'))
 
             # fill spinbox, depending on drops_status
             if np.isnan(status_df.loc[trait_idx].drops):
@@ -1614,9 +1614,11 @@ def create_MOL_frame(p, reset):
         for w in frame_MOL[p].grid_slaves():
             w.grid_forget()
 
+    # --- title ---------------------------------------------------------------
     ttk.Label(frame_MOL[p], text="Meaning(s) of Life", font="'' 16"
               ).grid(row=0, column=0, pady=(3, 0), columnspan=2*MOLs['n'][p], sticky='ns')
 
+    # --- MOLS - 2 per row ----------------------------------------------------
     cur_row = 0
     for m in range(MOLs['n'][p]):
         frame_MOL[p].columnconfigure(m, weight=1)
@@ -1624,7 +1626,6 @@ def create_MOL_frame(p, reset):
 
         cur_row = cur_row + 1 if (m % 2 == 0) else cur_row
         cur_col = 2 if m % 2 == 1 else 0
-        print(p, m, cur_row, cur_col)
         xpad_L = 0 if m % 2 == 1 else 4
         xpad_R = 4 if m % 2 == 1 else 0
 

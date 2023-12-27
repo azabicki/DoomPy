@@ -3,7 +3,7 @@ import numpy as np
 import tkinter as tk
 
 
-# effect for selecting specific MOLs
+# effects when selecting specific MOLs
 def select_MOL(p, MOL, prev_MOL):
     # if __The Blind Dragon__ is selected
     if MOL == 'The Blind Dragon':

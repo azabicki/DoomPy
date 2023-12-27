@@ -1617,8 +1617,8 @@ def create_trait_pile(frame_trait_overview, p):
             # fill spinbox with players manually calculated WE points
             we_sbox.set(plr['points_WE_effect'][p].get())
         elif we_type == 'calculate':
-            we_points = str(plr['points'][p]['worlds_end'].get())
-            tk.Label(frame_WE, image=images[we_points],
+            we_points = rules_we.calc_WE_points(p) if worlds_end['played'] != 'none' else 0
+            tk.Label(frame_WE, image=images[str(we_points)],
                      ).grid(row=1, column=1)
         else:
             lbl_we.grid(row=0, column=1, rowspan=2, sticky='ns')

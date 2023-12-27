@@ -1,7 +1,9 @@
-from globals_ import plr, traits_df, status_df, MOLs, MOLs_df
+from globals_ import plr, traits_df, status_df, MOLs, MOLs_df, game, worlds_end
 import numpy as np
 import tkinter as tk
 
+import rules_drop as rules_dr
+import rules_worlds_end as rules_we
 
 # effects when selecting specific MOLs
 def select_MOL(p, MOL, prev_MOL):
@@ -54,14 +56,6 @@ def calc_MOL_points(p, m):
     match thisMOL:
         case "The Armored Melon":
             points = int(plr['points_MOL'][p][m].get())
-
-        case "The Stylite":
-            dp = plr['points'][p]['drops'].get()
-
-            if dp <= 2:
-                points = 7
-            elif dp <= 6:
-                points = 3
 
         case "The Bilbies":
             n = sum(traits_df.loc[t].dominant == 1
@@ -144,8 +138,14 @@ def calc_MOL_points(p, m):
                 points = 4
 
         case "The Dancer":
-            n = [i['face'].get() + i['drops'].get() + i['worlds_end'].get()
-                 for i in plr['points']]
+            n = []
+            for p in range(game['n_player']):
+                p_WE = rules_we.calc_WE_points(p) if worlds_end['played'] != 'none' else 0
+                p_face = int(sum([status_df.loc[trait_idx].face
+                                  for trait_idx in plr['trait_pile'][p]
+                                  if not isinstance(status_df.loc[trait_idx].face, str)]))
+                p_drop = rules_dr.drop_points(p)
+                n.append(p_WE + p_face + p_drop)
 
             if n[p] == min(n):
                 if len(set(n)) == len(n):
@@ -293,7 +293,7 @@ def calc_MOL_points(p, m):
                     points += 1
 
         case "The Logician":
-            n = sum(status_df.iloc[t].effectless == 1
+            n = sum(traits_df.iloc[t].effectless == 1
                     for t in trait_pile)
 
             if n >= 6:
@@ -441,6 +441,14 @@ def calc_MOL_points(p, m):
             if n >= 6:
                 points = 6
             elif n >= 3:
+                points = 3
+
+        case "The Stylite":
+            dp = rules_dr.drop_points(p)
+
+            if dp <= 2:
+                points = 7
+            elif dp <= 6:
                 points = 3
 
         case "Thunder Frogs":

@@ -608,11 +608,9 @@ def btn_play_catastrophe(event, c):
     update_all()
 
 
-def btn_traits_world_end(from_, trait_idx, event):
-    # get trait & its WE effect
-    # trait = traits_df.loc[trait_idx].trait
-    effect = event.widget.get()
-    effect_idx = event.widget.current()
+def btn_traits_world_end(from_, trait_idx, effect):
+    # get index of WE_effect
+    effect_idx = rules_tr.traits_WE_tasks(trait_idx).index(effect)
 
     # log
     if effect_idx == 0:
@@ -826,9 +824,7 @@ def btn_play_trait(to):
     return 1
 
 
-def update_manual_MOL(event, p, m, change):
-    cur_value = int(event.widget.get())
-
+def update_manual_MOL(cur_value, p, m, change):
     # change value according to button
     if change == '+':
         value = cur_value + 1
@@ -842,9 +838,7 @@ def update_manual_MOL(event, p, m, change):
     update_all()
 
 
-def update_manual_we(event, p, change):
-    cur_value = int(event.widget.get())
-
+def update_manual_we(cur_value, p, change):
     # change value according to button
     if change == '+':
         value = cur_value + 1
@@ -860,9 +854,7 @@ def update_manual_we(event, p, change):
     create_trait_pile(frame_trait_pile[p], p)
 
 
-def update_manual_drops(event, trait, change):
-    cur_value = event.widget.get()
-
+def update_manual_drops(cur_value, trait, change):
     # check, if spinbox is in initial state
     if cur_value == '-':
         cur_value = '0'
@@ -1491,7 +1483,8 @@ def create_trait_pile(frame_trait_overview, p):
                 width=11)
             cbox_attach_to.grid(row=irow, column=1, sticky='w')
             cbox_attach_to.bind(
-               "<<ComboboxSelected>>", lambda e, t=trait_idx: btn_traits_world_end(p, t, e))
+               "<<ComboboxSelected>>",
+               lambda e, t=trait_idx: btn_traits_world_end(p, t, e.widget.get()))
 
             # check if effect already selected
             if status_df.loc[trait_idx].traits_WE == 'none':
@@ -1522,8 +1515,8 @@ def create_trait_pile(frame_trait_overview, p):
                 width=3,
                 wrap=False)
             drop_sbox.grid(row=irow, column=1, sticky='w')
-            drop_sbox.bind("<<Increment>>", lambda e, t=trait_idx: update_manual_drops(e, t, '+'))
-            drop_sbox.bind("<<Decrement>>", lambda e, t=trait_idx: update_manual_drops(e, t, '-'))
+            drop_sbox.bind("<<Increment>>", lambda e, t=trait_idx: update_manual_drops(e.widget.get(), t, '+'))
+            drop_sbox.bind("<<Decrement>>", lambda e, t=trait_idx: update_manual_drops(e.widget.get(), t, '-'))
 
             # fill spinbox, depending on drops_status
             if np.isnan(status_df.loc[trait_idx].drops):
@@ -1611,8 +1604,8 @@ def create_trait_pile(frame_trait_overview, p):
                 width=3,
                 wrap=False)
             we_sbox.grid(row=1, column=1)
-            we_sbox.bind("<<Increment>>", lambda e: update_manual_we(e, p, '+'))
-            we_sbox.bind("<<Decrement>>", lambda e: update_manual_we(e, p, '-'))
+            we_sbox.bind("<<Increment>>", lambda e: update_manual_we(int(e.widget.get()), p, '+'))
+            we_sbox.bind("<<Decrement>>", lambda e: update_manual_we(int(e.widget.get()), p, '-'))
 
             # fill spinbox with players manually calculated WE points
             we_sbox.set(plr['points_WE_effect'][p].get())
@@ -1681,8 +1674,8 @@ def create_MOL_frame(p, reset):
             # create spinbox
             MOL_sbox = ttk.Spinbox(sbox_frame, state='readonly', from_=-50, to=500, width=2, wrap=False)
             MOL_sbox.grid(row=cur_row, column=1, sticky='w')
-            MOL_sbox.bind("<<Increment>>", lambda e, m=m: update_manual_MOL(e, p, m, '+'))
-            MOL_sbox.bind("<<Decrement>>", lambda e, m=m: update_manual_MOL(e, p, m, '-'))
+            MOL_sbox.bind("<<Increment>>", lambda e, m=m: update_manual_MOL(int(e.widget.get()), p, m, '+'))
+            MOL_sbox.bind("<<Decrement>>", lambda e, m=m: update_manual_MOL(int(e.widget.get()), p, m, '-'))
 
             # fill spinbox, depending on drops_status
             MOL_sbox.set(plr['points_MOL'][p][m].get())

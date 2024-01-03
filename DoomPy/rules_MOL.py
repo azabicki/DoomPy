@@ -488,7 +488,7 @@ def calc_MOL_points(p, m):
             if n >= 6:
                 points = 6
             elif n >= 3:
-                points = 3
+                points = 2
 
         case "The Vagrant":
             n = [len(tp) for tp in plr['trait_pile']]

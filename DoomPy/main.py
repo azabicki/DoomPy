@@ -1791,12 +1791,12 @@ def create_player_frame(p):
     frame = tk.Frame(frame_playground, bg=cfg["color_frames"], name="f_p" + str(p))
     frame.columnconfigure(0, weight=1)  # stretch sub_frames to width of playground (=1!)
     frame.rowconfigure(1, weight=1)  # stretch trait-pile to bottom of playground
-    # frame.rowconfigure(2, weight=1)  # MOL
     frame.grid(column=p, row=0, padx=(0, 10), pady=10, sticky="nesw")  # or use nsw for non-x-streched frames!
 
-    # ----- name + overview current points ---------------------------------------------------------
+    # ----- score_board ----------------------------------------------------------------------------
     frame_points = tk.Frame(frame, name="scoreboard")
     frame_points.grid(row=0, column=0, padx=border, pady=border, ipady=3, sticky="nesw")
+
     frame_points.columnconfigure(0, weight=1)
     frame_points.columnconfigure(1, weight=1)
     frame_points.columnconfigure(2, weight=1)
@@ -1849,7 +1849,7 @@ def create_player_frame(p):
     ttk.Label(frame_points, textvariable=plr['genes'][p], style="genes.TLabel"
               ).grid(row=2, column=5, columnspan=2, padx=0, pady=0, sticky='n')
 
-    # ----- gaming ares ------------------------------------------------------------------
+    # ----- gaming area ----------------------------------------------------------------------------
     frame_traits = tk.Frame(frame)
     frame_traits.grid(row=1, column=0, padx=border, pady=(0, border), sticky="nesw")
     frame_traits.rowconfigure(2, weight=1)
@@ -1876,7 +1876,6 @@ def create_player_frame(p):
     ttk.Button(frame_traits, text="to hand", width=5,
                command=partial(btn_remove_trait, p, 'hand')
                ).grid(row=0, column=1, pady=(border, 0), sticky='n')
-
     ttk.Button(frame_traits, text="discard", width=5,
                command=partial(btn_remove_trait, p, 'discard')
                ).grid(row=0, column=2, pady=(border, 0), sticky='nw')
@@ -2343,7 +2342,6 @@ def start_game():
     frame_player.clear()
     frame_MOL.clear()
     for i in range(game['n_player']):
-        # frame_playground.columnconfigure(i, weight=1)
         frame_MOL.append([])
         frame_player.append(create_player_frame(i))
 
@@ -2369,7 +2367,7 @@ root.bind("<F9>", lambda e: simulate())
 content = tk.Frame(root, width=1200, height=800, bg=cfg["color_bg"], name="f_content")
 content.grid(column=0, row=0, sticky="nesw")
 content.columnconfigure(0, weight=0)  # menu on the left
-content.columnconfigure(1, weight=1)  # complete playground, set =1 to stretch it to the right side
+content.columnconfigure(1, weight=1)  # full playground -> set =1 to stretch it to the right side
 
 # create _menu_ frame ------------------------------------------------------------------------------
 frame_menu = tk.Frame(content, bg=cfg["color_frames"], name="f_menu")
@@ -2378,7 +2376,7 @@ frame_menu.grid(row=0, column=0, padx=10, pady=10, sticky="n")
 # create _playground_ frame ------------------------------------------------------------------------
 frame_playground = tk.Frame(content, bg=cfg["color_bg"], name="f_playground")
 frame_playground.grid(row=0, column=1, padx=0, pady=0, stick="nesw")
-frame_playground.rowconfigure(0, weight=1)  # stretch playground to bottom
+frame_playground.rowconfigure(0, weight=1)  # =1 -> stretch playground to bottom
 
 # styling ------------------------------------------------------------------------------------------
 gui_style = ttk.Style()

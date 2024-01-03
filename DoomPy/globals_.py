@@ -188,7 +188,6 @@ worlds_end['cbox'] = [None]     # combobox 4 worlds end
 worlds_end['btn'] = [None]      # button running worlds end
 
 MOLs = {}
-MOLs['possible'] = []   # list of possibles MOLs
 MOLs['played'] = []     # played MOLs
 MOLs['cbox'] = []       # comboxes containing MOLs
 MOLs['icon'] = []       # labels for icon showing MOL points

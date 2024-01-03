@@ -321,7 +321,7 @@ def simulate():
             # select MOLs
             for p in range(game['n_player']):
                 for m in range(MOLs['n'][p]):
-                    im = np.random.randint(low=1, high=len(MOLs['possible'][p][m]))
+                    im = np.random.randint(low=1, high=len(MOLs_df))
                     if MOLs_df.loc[im].MOL == 'The Blind Dragon':
                         print('_')
                         im += 1
@@ -329,7 +329,7 @@ def simulate():
                     # if blind dragon
                     if MOLs_df.loc[im].MOL == 'The Blind Dragon':
                         for mm in [2, 3]:
-                            im = np.random.randint(low=1, high=len(MOLs['possible'][p][mm])-1)
+                            im = np.random.randint(low=1, high=len(MOLs_df)-1)
                             btn_select_MOLS(im, p, mm)
                 # if manual MOL points
                 for m in range(MOLs['n'][p]):
@@ -510,7 +510,7 @@ def btn_select_MOLS(cbox_idx, p, m):
     # get infos of played/selected MOLs
     played_previously = MOLs['played'][p][m]
     if cbox_idx > 0:
-        played_idx = MOLs['possible'][p][m][cbox_idx-1]
+        played_idx = cbox_idx-1
         played_str = MOLs_df.loc[played_idx].MOL
 
     # return, if no MOL selected now and previously
@@ -543,42 +543,8 @@ def btn_select_MOLS(cbox_idx, p, m):
     rules_mol.select_MOL(p, played_str, played_previously)
     create_MOL_frame(p, reset=True)
 
-    # update possible MOLs for all other MOL_slots
-    for ip in range(game['n_player']):
-        for im in range(MOLs['n'][ip]):
-            if ip != p or im != m:
-                # begin with ALL possible MOLs - neccessary bc this MOL may have changed
-                MOLs['possible'][ip][im] = MOLs_df.index.tolist()
-
-                # remove other MOLs from possible ones
-                for ip2 in range(game['n_player']):
-                    for im2 in range(MOLs['n'][ip2]):
-                        if ip2 != ip or im2 != im:
-                            # only, if j'th MOL was played already
-                            if MOLs['played'][ip2][im2] is not None:
-                                # remove from list of possibles
-                                MOLs['possible'][ip][im].remove(MOLs['played'][ip2][im2])
-
-                # create list of MOL names & update combobox
-                pos_MOLs = ["select MOL #{}".format(im+1)] \
-                    + MOLs_df.loc[MOLs['possible'][ip][im]].MOL.values.tolist()
-                MOLs['cbox'][ip][im].configure(values=pos_MOLs)
-
     # update
     update_all()
-
-
-def check_MOL_state():
-    # check if WE was played
-    if worlds_end['played'] != 'none':
-        new_state = 'readonly'
-    else:
-        new_state = 'disabled'
-
-    # set new state
-    for p in range(game['n_player']):
-        for m in range(MOLs['n'][p]):
-            MOLs['cbox'][p][m].configure(state=new_state)
 
 
 def btn_clear_trait_search():
@@ -1270,9 +1236,6 @@ def update_all():
     # focus back to search field
     ent_trait_search[0].focus_set()
 
-    # check if last drop was set and MOLs are ready to be selected
-    check_MOL_state()
-
 
 def search_trait_in_list(inp):
     value = inp.get()
@@ -1770,8 +1733,8 @@ def create_MOL_frame(p, reset):
             frame_MOL[p],
             values=pos_MOLs,
             exportselection=0,
-            state='disabled',
-            width=12,
+            state='enabled',
+            width=10,
             style="move.TCombobox")
         MOLs['cbox'][p][m].current(0)
         MOLs['cbox'][p][m].grid(row=cur_row, column=cur_col, padx=(xpad_L, 0), pady=(0, 5), stick='nesw')
@@ -2250,7 +2213,6 @@ def reset_variables():
     frame_trait_pile.clear()
 
     # reset MOLs
-    MOLs['possible'].clear()
     MOLs['played'].clear()
     MOLs['cbox'].clear()
     MOLs['icon'].clear()
@@ -2276,7 +2238,6 @@ def reset_variables():
         plr['trait_selected'].append(tk.Variable(value=np.nan))
         plr['points_WE_effect'].append(tk.IntVar(value=0))
         plr['points_MOL'].append([])
-        MOLs['possible'].append([])
         MOLs['played'].append([])
         MOLs['cbox'].append([])
         MOLs['icon'].append([])
@@ -2288,7 +2249,6 @@ def reset_variables():
 
         for m in range(game['n_MOLs']):
             plr['points_MOL'][p].append(tk.IntVar(value=0))  # for now, manually editing MOL points in entries
-            MOLs['possible'][p].append(MOLs_df.index.tolist())
             MOLs['played'][p].append(None)
             MOLs['cbox'][p].append([])
             MOLs['icon'][p].append([])

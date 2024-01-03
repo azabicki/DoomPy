@@ -35,7 +35,7 @@ def calc_WE_points(p):
     # init variable
     colors = ['blue', 'green', 'purple', 'red']
     trait_pile = plr['trait_pile'][p]
-    genes = plr['genes'][p]
+    genes = plr['genes'][p].get()
     points = 0
 
     match worlds_end['played']:
@@ -71,7 +71,9 @@ def calc_WE_points(p):
 
         case "Ecological Collapse":
             # +2 each_negative_face
-            points = sum(status_df.loc[trait].face < 0 for trait in trait_pile) * 2
+            points = sum(status_df.loc[trait].face < 0
+                         for trait in trait_pile
+                         if not isinstance(status_df.loc[trait].face, str)) * 2
 
         case "Endless Monsoon":
             # -1 hand
@@ -96,7 +98,9 @@ def calc_WE_points(p):
 
         case "Impact Event":
             # -1 each_trait_>=3_face
-            points = -1 * sum(status_df.loc[trait].face >= 3 for trait in trait_pile)
+            points = -1 * sum(status_df.loc[trait].face >= 3
+                              for trait in trait_pile
+                              if not isinstance(status_df.loc[trait].face, str))
 
         case "Invasive Species":
             # add_max7_face_from_hand
@@ -116,7 +120,7 @@ def calc_WE_points(p):
 
         case "Planetary Deforestation":
             # -gene_pool
-            points = -1 * genes[p].get()
+            points = -1 * genes
 
         case "Retrovirus":
             # -1 each_green

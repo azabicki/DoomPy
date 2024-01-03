@@ -683,20 +683,13 @@ def btn_play_catastrophe(event, c):
 
     # update first player
     n_cat = sum(i is not None for i in catastrophe['played'])
-    game['first_player'] = game['first_player_start'] + n_cat
-    if game['first_player'] > game['n_player']-1:
-        game['first_player'] = game['first_player'] - game['n_player']
-    write_log(['catastrophe', 'first_player'], plr['name'][game['first_player']].get(), n_cat)
+    options['first_player'].set(options['first_player'].get() + 1)
+    if options['first_player'].get() > game['n_player']-1:
+        options['first_player'].set(options['first_player'].get() - game['n_player'])
+    write_log(['catastrophe', 'first_player'], plr['name'][options['first_player'].get()].get(), n_cat)
 
     # update all player's label_style
-    for p in range(game['n_player']):
-        tmp_frame = frame_player[p].winfo_children()
-        lbl1 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.!label')
-        lbl2 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.!label2')
-        lbl1.configure(style="n_traitsFirstPlayer.TLabel"
-                       if game['first_player'] == p else "n_traits.TLabel")
-        lbl2.configure(style="n_traitsFirstPlayer.TLabel"
-                       if game['first_player'] == p else "n_traits.TLabel")
+    update_first_player()
 
     # update
     update_all()
@@ -1033,6 +1026,18 @@ def update_traits_current_status(todo, *args):
             update_all()
 
 
+def update_first_player():
+    # update all palyer frames
+    for p in range(game['n_player']):
+        tmp_frame = frame_player[p].winfo_children()
+        lbl1 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.n_tp')
+        lbl2 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.name')
+        lbl1.configure(style="n_tpFP.TLabel"
+                       if options['first_player'].get() == p else "n_traits.TLabel")
+        lbl2.configure(style="nameFP.TLabel"
+                       if options['first_player'].get() == p else "name.TLabel")
+
+
 def update_scoring():
     for p in range(game['n_player']):
         # get cards
@@ -1200,8 +1205,8 @@ def update_stars():
 
         # find label widgets
         tmp_frame = frame_player[p].winfo_children()
-        lbl1 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.!label3')
-        lbl2 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.!label4')
+        lbl1 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.star1')
+        lbl2 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.star2')
 
         # edit images
         lbl1.configure(image=images['no_star'])
@@ -1307,14 +1312,14 @@ def create_trait_pile(frame_trait_overview, p):
 
             # it also could be a DOMINANT
             if traits_df.loc[trait_idx].dominant == 1:
-                lbl.config(fg=cfg["font_color_trait_pile_dominant"], font="'' 14 bold")
+                lbl.config(fg=cfg["font_color_dominant"], font="'' 14 bold")
 
         elif traits_df.loc[trait_idx].dominant == 1:
             tk.Label(frame_trait_overview,
                      text=" " + trait,
                      image=images["dominant"],
                      compound=tk.LEFT,
-                     fg=cfg["font_color_trait_pile_dominant"],
+                     fg=cfg["font_color_dominant"],
                      font="'' 14 bold"
                      ).grid(row=irow, column=0, padx=2, pady=ypad, sticky='nsw')
         else:
@@ -1781,16 +1786,16 @@ def create_MOL_frame(p, reset):
 
 
 def create_player_frame(p):
-    border = cfg["color_frame_width"]
+    border = cfg["width_frames"]
 
-    frame = tk.Frame(frame_playground, bg=cfg["player_frame_color"])
-    frame.columnconfigure(0, weight=1)  # stretch sub_frames to playground (=1!)
+    frame = tk.Frame(frame_playground, bg=cfg["color_frames"], name="f_p" + str(p))
+    frame.columnconfigure(0, weight=1)  # stretch sub_frames to width of playground (=1!)
     frame.rowconfigure(1, weight=1)  # stretch trait-pile to bottom of playground
     # frame.rowconfigure(2, weight=1)  # MOL
     frame.grid(column=p, row=0, padx=(0, 10), pady=10, sticky="nesw")  # or use nsw for non-x-streched frames!
 
     # ----- name + overview current points ---------------------------------------------------------
-    frame_points = tk.Frame(frame)
+    frame_points = tk.Frame(frame, name="scoreboard")
     frame_points.grid(row=0, column=0, padx=border, pady=border, ipady=3, sticky="nesw")
     frame_points.columnconfigure(0, weight=1)
     frame_points.columnconfigure(1, weight=1)
@@ -1801,17 +1806,17 @@ def create_player_frame(p):
     frame_points.columnconfigure(6, weight=1)
 
     # name
-    ttk.Label(frame_points, textvariable=plr['n_tp_score'][p],
-              style="n_traitsFirstPlayer.TLabel" if game['first_player'] == p else "n_traits.TLabel"
+    ttk.Label(frame_points, textvariable=plr['n_tp_score'][p], name="n_tp",
+              style="n_tpFP.TLabel" if options['first_player'].get() == p else "n_traits.TLabel"
               ).grid(row=0, column=0, padx=5, pady=(5, 0), columnspan=2, sticky='ns')
-    ttk.Label(frame_points, textvariable=plr['name'][p],
-              style="nameFirstPlayer.TLabel" if game['first_player'] == p else "name.TLabel"
+    ttk.Label(frame_points, textvariable=plr['name'][p], name="name",
+              style="nameFP.TLabel" if options['first_player'].get() == p else "name.TLabel"
               ).grid(row=0, column=2, padx=5, pady=(5, 0), columnspan=3, sticky='ns')
 
     # stars
-    ttk.Label(frame_points, image=images['no_star']
+    ttk.Label(frame_points, image=images['no_star'], name="star1"
               ).grid(row=0, column=5, padx=0, pady=0, sticky="nes")
-    ttk.Label(frame_points, image=images['no_star']
+    ttk.Label(frame_points, image=images['no_star'], name="star2"
               ).grid(row=0, column=6, padx=0, pady=0, sticky="nsw")
 
     # single points
@@ -1881,13 +1886,13 @@ def create_player_frame(p):
         ).grid(row=1, column=0, columnspan=3, padx=5, pady=5, sticky='we')
 
     # ----- trait pile ---------------
-    frame_trait_pile[p] = tk.Frame(frame_traits)
+    frame_trait_pile[p] = tk.Frame(frame_traits, name="trait_pile")
     frame_trait_pile[p].grid(row=2, column=0, columnspan=3, sticky='nesw', padx=border, pady=border)
     frame_trait_pile[p].columnconfigure(1, weight=1)
     create_trait_pile(frame_trait_pile[p], p)
 
     # ----- Meaning of Life ------------------------------------------------------------------------
-    frame_MOL[p] = tk.Frame(frame)
+    frame_MOL[p] = tk.Frame(frame, name="f_MOLs")
     frame_MOL[p].grid(row=2, column=0, padx=border, pady=(0, border), sticky="nesw")
 
     # call function to create MOL comboboxes
@@ -1919,12 +1924,13 @@ def create_name_entries(frame_menu_names):
                   ).grid(row=i+1, column=1, sticky='we')
         tk.Radiobutton(frame_menu_names,
                        variable=options['first_player'],
-                       value=i
+                       value=i,
+                       command=lambda: update_first_player()
                        ).grid(row=i+1, column=2, sticky='e')
 
 
 def create_menu_frame():
-    border = cfg["color_frame_width"]
+    border = cfg["width_frames"]
 
     frame_menu.columnconfigure(0, weight=1)
     frame_menu.rowconfigure(0, weight=1)
@@ -2262,9 +2268,7 @@ def reset_variables():
             MOLs['icon'][p].append([])
 
     # first player
-    game['first_player'] = options['first_player'].get()
-    game['first_player_start'] = options['first_player'].get()
-    write_log(['init', 'first_player'], plr['name'][game['first_player']].get())
+    write_log(['init', 'first_player'], plr['name'][options['first_player'].get()].get())
 
     # reset deck/lbox card-lists
     deck.clear()
@@ -2353,7 +2357,7 @@ def start_game():
 root = tk.Tk()
 root.title("LIVE Doomlings Calculator")
 root.geometry("1600x900")
-root.configure(background=cfg["bg_content"])
+root.configure(background=cfg["color_bg"])
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
 
@@ -2363,17 +2367,17 @@ root.bind("<F8>", lambda e: start_game())
 root.bind("<F9>", lambda e: simulate())
 
 # create _content_ frame ---------------------------------------------------------------------------
-content = tk.Frame(root, width=1200, height=800, bg=cfg["bg_content"])
+content = tk.Frame(root, width=1200, height=800, bg=cfg["color_bg"], name="f_content")
 content.grid(column=0, row=0, sticky="nesw")
 content.columnconfigure(0, weight=0)  # menu on the left
 content.columnconfigure(1, weight=1)  # complete playground, set =1 to stretch it to the right side
 
 # create _menu_ frame ------------------------------------------------------------------------------
-frame_menu = tk.Frame(content, bg=cfg["menu_frame_color"])
 frame_menu.grid(row=0, column=0, padx=10, pady=10, stick="nesw")
+frame_menu = tk.Frame(content, bg=cfg["color_frames"], name="f_menu")
 
 # create _playground_ frame ------------------------------------------------------------------------
-frame_playground = tk.Frame(content, bg=cfg["bg_content"])
+frame_playground = tk.Frame(content, bg=cfg["color_bg"], name="f_playground")
 frame_playground.grid(row=0, column=1, padx=0, pady=0, stick="nesw")
 frame_playground.rowconfigure(0, weight=1)  # stretch playground to bottom
 
@@ -2381,12 +2385,16 @@ frame_playground.rowconfigure(0, weight=1)  # stretch playground to bottom
 gui_style = ttk.Style()
 gui_style.configure("game_info.TLabel", font=("", 10, "italic"))
 gui_style.configure("name.TLabel", font=("Comic Sans MS", 38, "bold"))
-gui_style.configure("nameFirstPlayer.TLabel", font=("Comic Sans MS", 38, "bold"), foreground='#00CD66')
+gui_style.configure("nameFP.TLabel", font=("Comic Sans MS", 38, "bold"),
+                    foreground=cfg["font_color_first_player"])
 gui_style.configure("n_traits.TLabel", font=("Arial", 30, "bold"))
-gui_style.configure("n_traitsFirstPlayer.TLabel", font=("Arial", 30, "bold"), foreground='#00CD66')
+gui_style.configure("n_tpFP.TLabel", font=("Arial", 30, "bold"),
+                    foreground=cfg["font_color_first_player"])
 gui_style.configure("points.TLabel", font=("", 20))
-gui_style.configure("total.TLabel", font=("", 80, "bold"), foreground="orangered1")
-gui_style.configure("genes.TLabel", font=("", 38, "bold"), foreground="hotpink1")
+gui_style.configure("total.TLabel", font=("", 80, "bold"),
+                    foreground=cfg["font_color_total_score"])
+gui_style.configure("genes.TLabel", font=("", 38, "bold"),
+                    foreground=cfg["font_color_genes"])
 gui_style.configure("move.TCombobox", selectbackground="none")
 gui_style.configure("disabled.TButton", foreground="grey")
 
@@ -2399,7 +2407,7 @@ options['n_MOLs'] = tk.IntVar(value=cfg["n_MOLs"])                    # OPTIONS:
 options['names'] = []
 for i in range(len(cfg["names"])):
     options['names'].append(tk.StringVar(value=cfg["names"][i]))      # OPTIONS: name of players
-options['first_player'] = tk.IntVar(value=0)                          # OPTIONS: first player at begining
+options['first_player'] = tk.IntVar(value=0)                        # OPTIONS: set current first player
 
 str_trait_search = tk.StringVar(value="")   # string searching for traits in DECK
 deck_filtered_str = tk.Variable(value="")   # _filtered_ deck of traits_strings in listbox after searching -> str

@@ -5,11 +5,17 @@
     "n_catastrophes": 4,
     "n_MOLs": 2,
     "max_player": 6,
+
     "img_colors_set": "circle",
     "img_trait_properties_set": "official_setA",
-    "font_color_trait_pile_dominant": "#EE7621",
-    "bg_content": "#CD6090",
-    "menu_frame_color": "white",
-    "player_frame_color": "white",    
-    "color_frame_width": 6
+
+    "font_color_dominant": "#EE7621",
+    "font_color_first_player": "#0da953",
+    "font_color_total_score": "#e1484a",
+    "font_color_genes": "#bf3eff",
+    
+    "color_bg": "#CD6090",
+    "color_frames": "white",
+
+    "width_frames": 6
 }

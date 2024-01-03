@@ -161,8 +161,6 @@ game['n_player'] = []            # number of current players
 game['n_genes'] = []             # gene pool at start
 game['n_catastrophes'] = []      # number of catastrophes
 game['n_MOLs'] = []              # number of MOLs
-game['first_player'] = []        # keep track of first player
-game['first_player_start'] = []  # keep track of first player AT START
 
 plr = {}
 plr['name'] = []

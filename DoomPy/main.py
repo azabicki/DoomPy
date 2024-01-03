@@ -506,13 +506,12 @@ def calc_MOLs(p):
     return p_MOL
 
 
-def btn_select_MOLS(event, p, m):
-    # get selected MOL
-    cbox_idx = event.widget.current()   # selected item_idx in combobox
-    played_str = event.widget.get()
+def btn_select_MOLS(cbox_idx, p, m):
+    # get infos of played/selected MOLs
     played_previously = MOLs['played'][p][m]
     if cbox_idx > 0:
         played_idx = MOLs['possible'][p][m][cbox_idx-1]
+        played_str = MOLs_df.loc[played_idx].MOL
 
     # return, if no MOL selected now and previously
     if cbox_idx == 0 and played_previously is None:
@@ -1776,7 +1775,8 @@ def create_MOL_frame(p, reset):
             style="move.TCombobox")
         MOLs['cbox'][p][m].current(0)
         MOLs['cbox'][p][m].grid(row=cur_row, column=cur_col, padx=(xpad_L, 0), pady=(0, 5), stick='nesw')
-        MOLs['cbox'][p][m].bind("<<ComboboxSelected>>", lambda ev, m=m: btn_select_MOLS(ev, p, m))
+        MOLs['cbox'][p][m].bind("<<ComboboxSelected>>",
+                                lambda e, m=m: btn_select_MOLS(e.widget.current(), p, m))
 
         MOLs['icon'][p][m] = ttk.Label(frame_MOL[p], image=images['question_mark'])
         MOLs['icon'][p][m].grid(row=cur_row, column=cur_col+1, padx=(0, xpad_R), pady=(0, 5), sticky='nsw')

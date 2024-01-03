@@ -1,4 +1,4 @@
-from globals_ import status_df, traits_df, plr
+from globals_ import status_df, traits_df, plr, sim_running
 from log import write_log
 import tkinter as tk
 
@@ -82,7 +82,10 @@ def check_requirement(trait_idx, p):
 
         case 'Heroic':
             # first, ask if HEROIC is born during 'Birth of a Hero'
-            is_heroic_born(trait_idx)
+            if not sim_running:
+                is_heroic_born(trait_idx)
+            else:
+                status_df.loc[trait_idx, 'effects'] = True
             is_born = status_df.loc[trait_idx, 'effects']
 
             # if not born during that age, check if there are less than 3 green traits in trait pile

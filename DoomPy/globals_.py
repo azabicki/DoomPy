@@ -16,9 +16,12 @@ dir_files = os.path.join(curdir, "files")
 dir_images = os.path.join(curdir, "images")
 
 # load config file ---------------------------------------------------------------------------------
-global cfg
+global cfg, sim_running
 with open(os.path.join(curdir, "config.json")) as json_file:
     cfg = json.load(json_file)
+
+# flag for simulation
+sim_running = [False]
 
 # load cards.xlsx ----------------------------------------------------------------------------------
 global traits_df, status_df, catastrophes_df, MOLs_df

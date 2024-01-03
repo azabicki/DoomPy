@@ -465,12 +465,17 @@ def switch(inp):
             if points_onoff == 'off':
                 points_onoff = 'on'
                 lbl_points_switch[0].configure(image=images['points_123'])
-                write_log(['music', 'on'])
+                write_log(['points', 'on'])
+                update_scoring()
+            elif points_onoff == 'on':
+                points_onoff = 'rank'
+                lbl_points_switch[0].configure(image=images['rank'])
+                write_log(['points', 'rank'])
                 update_scoring()
             else:
                 points_onoff = 'off'
                 lbl_points_switch[0].configure(image=images['question_mark'])
-                write_log(['music', 'off'])
+                write_log(['points', 'off'])
                 update_scoring()
 
 
@@ -1039,33 +1044,54 @@ def update_first_player():
 
 
 def update_scoring():
+    # first, calculate all scores
+    p_worlds_end = []
+    p_face = []
+    p_drop = []
+    p_MOL = []
+    total = []
     for p in range(game['n_player']):
         # get cards
         trait_pile = plr['trait_pile'][p]
 
         # calculate world's end points
-        p_worlds_end = rules_we.calc_WE_points(p) if worlds_end['played'] != 'none' else 0
+        p_worlds_end.append(rules_we.calc_WE_points(p) if worlds_end['played'] != 'none' else 0)
 
         # calculate face value
-        p_face = int(sum([status_df.loc[trait_idx].face for trait_idx in trait_pile
-                          if not isinstance(status_df.loc[trait_idx].face, str)]))
+        p_face.append(int(sum([status_df.loc[trait_idx].face for trait_idx in trait_pile
+                               if not isinstance(status_df.loc[trait_idx].face, str)])))
 
         # calculate drops points
-        p_drop = rules_dr.drop_points(p)
+        p_drop.append(rules_dr.drop_points(p))
 
         # calculate MOL points
-        p_MOL = calc_MOLs(p)
+        p_MOL.append(calc_MOLs(p))
 
         # calculate total score
-        total = p_face + p_drop + p_worlds_end + p_MOL
+        total.append(p_face[p] + p_drop[p] + p_worlds_end[p] + p_MOL[p])
 
+    # second, display scores as wished & calculate RANK
+    r_face = [sorted(p_face, reverse=True).index(x) + 1 for x in p_face]
+    r_drop = [sorted(p_drop, reverse=True).index(x) + 1 for x in p_drop]
+    r_WE = [sorted(p_worlds_end, reverse=True).index(x) + 1 for x in p_worlds_end]
+    r_MOL = [sorted(p_MOL, reverse=True).index(x) + 1 for x in p_MOL]
+    r_total = [sorted(total, reverse=True).index(x) + 1 for x in total]
+    add = {1: 'st', 2: 'nd', 3: 'rd', 4: 'th', 5: 'th', 6: 'th'}
+
+    for p in range(game['n_player']):
         # update points
         if points_onoff == 'on':
-            plr['points'][p]['face'].set(p_face)
-            plr['points'][p]['drops'].set(p_drop)
-            plr['points'][p]['worlds_end'].set(p_worlds_end)
-            plr['points'][p]['MOL'].set(p_MOL)
-            plr['points'][p]['total'].set(total)
+            plr['points'][p]['face'].set(p_face[p])
+            plr['points'][p]['drops'].set(p_drop[p])
+            plr['points'][p]['worlds_end'].set(p_worlds_end[p])
+            plr['points'][p]['MOL'].set(p_MOL[p])
+            plr['points'][p]['total'].set(total[p])
+        elif points_onoff == 'rank':
+            plr['points'][p]['face'].set(str(r_face[p]) + add[r_face[p]])
+            plr['points'][p]['drops'].set(str(r_drop[p]) + add[r_drop[p]])
+            plr['points'][p]['worlds_end'].set(str(r_WE[p]) + add[r_WE[p]])
+            plr['points'][p]['MOL'].set(str(r_MOL[p]) + add[r_MOL[p]])
+            plr['points'][p]['total'].set(str(r_total[p]) + add[r_total[p]])
         else:
             plr['points'][p]['face'].set('**')
             plr['points'][p]['drops'].set('**')
@@ -2431,6 +2457,8 @@ else:
 
 if points_onoff == 'on':
     init_switch['points'] = images['points_123']
+elif points_onoff == 'rank':
+    init_switch['points'] = images['rank']
 else:
     init_switch['points'] = images['question_mark']
 

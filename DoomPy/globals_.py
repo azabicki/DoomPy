@@ -137,7 +137,7 @@ for files in glob.glob(os.path.join(curdir, "sounds", "*.mp3")):
 global music_onoff, icons_onoff, points_onoff
 music_onoff = 'off'     # 'off' / 'on'
 icons_onoff = 'on'      # 'off' / 'on' / 'full'
-points_onoff = 'on'     # 'off' / 'on'
+points_onoff = 'on'     # 'off' / 'on' / 'rank'
 
 
 # tk_inter variables ###############################################################################

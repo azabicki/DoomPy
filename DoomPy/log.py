@@ -365,6 +365,20 @@ def write_log(what, *args):
                     f.write(">>> trait effects <<< '{}' acts on '{}' traits in '{}'s trait pile -> drop points = {}\n"
                             .format(*args))
 
+        case 'points':
+            match what[1]:
+                case 'off':
+                    print(">>> points <<< turned to **")
+                    f.write(">>> points <<< turned to **\n")
+
+                case 'on':
+                    print(">>> points <<< turned on")
+                    f.write(">>> points <<< turned on\n")
+
+                case 'rank':
+                    print(">>> points <<< turned to RANKs")
+                    f.write(">>> points <<< turned to RANKs\n")
+
         case 'music':
             match what[1]:
                 case 'off':

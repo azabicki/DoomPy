@@ -812,7 +812,7 @@ def btn_move_trait(from_, cbox_move_to):
         attachment = status_df.loc[trait_idx].attachment
     cbox_str = cbox_move_to.get().split()
     if cbox_str[0] != 'move':
-        to = cfg["names"].index(cbox_str[-1])
+        to = [i.get() for i in plr['name']].index(cbox_str[-1])
 
     # return, if no target selected
     if cbox_move_to.current() == 0:

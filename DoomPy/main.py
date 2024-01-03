@@ -1727,7 +1727,7 @@ def create_MOL_frame(p, reset):
             w.grid_forget()
 
     # --- title ---------------------------------------------------------------
-    ttk.Label(frame_MOL[p], text="Meaning(s) of Life", font="'' 16"
+    ttk.Label(frame_MOL[p], text="Meaning(s) of Life", font="'' 18"
               ).grid(row=0, column=0, pady=(3, 0), columnspan=2*MOLs['n'][p], sticky='ns')
 
     # --- MOLS - 2 per row ----------------------------------------------------
@@ -1945,21 +1945,15 @@ def create_menu_frame():
     frame_menu_options.columnconfigure(1, weight=1)
 
     # title -----
-    frame_options = tk.Frame(frame_menu_options)
-    frame_options.grid(row=0, column=0, columnspan=2, sticky="nesw")
-    frame_options.columnconfigure(0, weight=3)
+    # frame_options = tk.Frame(frame_menu_options)
+    # frame_options.grid(row=0, column=0, columnspan=2, sticky="nesw")
+    # frame_options.columnconfigure(0, weight=3)
 
     ttk.Label(
-        frame_options,
+        frame_menu_options,
         text="OPTIONS",
-        font="'' 24"
-        ).grid(row=0, column=0, pady=(5, 5))
-    lbl_music_switch[0] = ttk.Label(
-        frame_options,
-        image=init_switch['music'],
-        cursor="heart")
-    lbl_music_switch[0].grid(row=0, column=1, padx=(0, 10))
-    lbl_music_switch[0].bind("<Button-1>", lambda e: switch('music'))
+        font="'' 18"
+        ).grid(row=0, column=0, columnspan=2, pady=(5, 5))
 
     # nr players -----
     ttk.Label(
@@ -2184,26 +2178,31 @@ def create_menu_frame():
     # ----- frame for control buttons --------------------------------------------------------------
     frame_menu_controls = tk.Frame(frame_menu)
     frame_menu_controls.grid(row=4, column=0, padx=border, pady=(0, border), sticky="nesw")
-    frame_menu_controls.columnconfigure(0, weight=0)
-    frame_menu_controls.columnconfigure(1, weight=0)
-    frame_menu_controls.columnconfigure(1, weight=1)
+    frame_menu_controls.columnconfigure(0, weight=2)
+    frame_menu_controls.columnconfigure(1, weight=2)
+    frame_menu_controls.columnconfigure(2, weight=2)
+    frame_menu_controls.columnconfigure(3, weight=0)
 
+    lbl_music_switch[0] = ttk.Label(
+        frame_menu_controls,
+        image=init_switch['music'],
+        cursor="heart")
+    lbl_music_switch[0].grid(row=0, column=0, padx=(10, 0))
+    lbl_music_switch[0].bind("<Button-1>", lambda e: switch('music'))
     lbl_icons_switch[0] = ttk.Label(
         frame_menu_controls,
-        image=init_switch['icons'],
-        cursor="target")
-    lbl_icons_switch[0].grid(row=0, column=0, padx=(10, 0))
+        image=init_switch['icons'])
+    lbl_icons_switch[0].grid(row=0, column=1, padx=5)
     lbl_icons_switch[0].bind("<Button-1>", lambda e: switch('icons'))
     lbl_points_switch[0] = ttk.Label(
         frame_menu_controls,
-        image=init_switch['points'],
-        cursor="target")
-    lbl_points_switch[0].grid(row=0, column=1, padx=5)
+        image=init_switch['points'])
+    lbl_points_switch[0].grid(row=0, column=2, padx=5)
     lbl_points_switch[0].bind("<Button-1>", lambda e: switch('points'))
     ttk.Button(frame_menu_controls,
                text="quit",
                command=root.quit
-               ).grid(row=0, column=2, padx=(0, 10), pady=5, sticky="we")
+               ).grid(row=0, column=3, padx=(0, 10), pady=5, sticky="we")
 
 
 def reset_variables():

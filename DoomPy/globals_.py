@@ -28,6 +28,7 @@ global traits_df, status_df, catastrophes_df, MOLs_df
 
 # traits
 xlsx_traits = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="traits")
+xlsx_traits = xlsx_traits[xlsx_traits['in_game'] == 'yes']
 traits_df = (xlsx_traits
              .sort_values(by='trait')
              .reset_index(drop=True)
@@ -52,6 +53,7 @@ status_df['traits_WE'] = 'none'
 # catastrophes
 xlsx_ages = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="ages")
 xlsx_catastrophes = xlsx_ages.loc[xlsx_ages['type'] == 'Catastrophe']
+xlsx_catastrophes = xlsx_catastrophes.loc[xlsx_catastrophes['in_game'] == 'yes']
 catastrophes_df = (xlsx_catastrophes
                    .sort_values(by='name')
                    .reset_index(drop=True)
@@ -59,6 +61,7 @@ catastrophes_df = (xlsx_catastrophes
 
 # MOLs
 xlsx_MOLs = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="MOL")
+xlsx_MOLs = xlsx_MOLs[xlsx_MOLs['in_game'] == 'yes']
 MOLs_df = (xlsx_MOLs
            .sort_values(by='MOL')
            .reset_index(drop=True)

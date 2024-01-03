@@ -675,10 +675,11 @@ def btn_play_catastrophe(event, c):
         check_WE_status('select_WE')
 
     # --- if DENIAL is out there, save first catastrophe he sees ---
-    denial_idx = status_df.index[status_df.trait == 'Denial'].tolist()[0]
-    if (any(denial_idx in tp for tp in plr['trait_pile'])
-            and status_df.loc[denial_idx].effects == 'none'):
-        status_df.loc[denial_idx, "effects"] = played_str
+    denial_idx = traits_df.index[traits_df.trait == 'Denial'].tolist()
+    if (denial_idx != []
+            and any(denial_idx[0] in tp for tp in plr['trait_pile'])
+            and status_df.loc[denial_idx[0]].effects == 'none'):
+        status_df.loc[denial_idx[0], "effects"] = played_str
 
     # update first player
     n_cat = sum(i is not None for i in catastrophe['played'])
@@ -878,11 +879,14 @@ def btn_play_trait(to):
     if traits_df.loc[trait_idx].dominant == 1:
         if sum([1 for t in plr['trait_pile'][to] if traits_df.loc[t].dominant == 1]) >= 2:
             # check if HEROIC is born during 'Birth of a Hero'
-            heroic_idx = traits_df.index[traits_df.trait == 'Heroic'].tolist()[0]
-            is_born = status_df.loc[heroic_idx, 'effects']
+            heroic_idx = traits_df.index[traits_df.trait == 'Heroic'].tolist()
+            if heroic_idx != []:
+                is_born = status_df.loc[heroic_idx[0], 'effects']
+            else:
+                is_born = False
 
             # no hero, then return
-            if trait_idx == heroic_idx and is_born:
+            if is_born and trait_idx == heroic_idx[0]:
                 write_log(['play', 'heroic'])
             else:
                 write_log(['play', 'error_2dominants'])
@@ -1099,51 +1103,54 @@ def update_genes():
 
     # check for special effects by specific traits --------------------------------------
     # ----- Denial --------------
-    dnl_idx = status_df.index[status_df.trait == 'Denial'].tolist()[0]
-    dnl_effect = status_df.loc[dnl_idx].effects
-    if (dnl_effect != 'none'):
-        # find player
-        dnl_in = [dnl_idx in tp for tp in plr['trait_pile']]
-        dnl_p = dnl_in.index(True)
+    dnl_idx = traits_df.index[traits_df.trait == 'Denial'].tolist()
+    if dnl_idx != []:
+        dnl_effect = status_df.loc[dnl_idx[0]].effects
+        if (dnl_effect != 'none'):
+            # find player
+            dnl_in = [dnl_idx[0] in tp for tp in plr['trait_pile']]
+            dnl_p = dnl_in.index(True)
 
-        if dnl_effect == 'The Four Horsemen':
-            # log
-            write_log(['genes', 'denial_t4h'], dnl_idx, plr['name'][dnl_p].get(), dnl_effect, diff_genes)
-        else:
-            # reverse effect
-            reverse_effect = catastrophes_df[catastrophes_df.name == dnl_effect].gene_pool.values[0] * -1
-            diff_genes[dnl_p] += int(reverse_effect)
+            if dnl_effect == 'The Four Horsemen':
+                # log
+                write_log(['genes', 'denial_t4h'], dnl_idx[0], plr['name'][dnl_p].get(), dnl_effect, diff_genes)
+            else:
+                # reverse effect
+                reverse_effect = catastrophes_df[catastrophes_df.name == dnl_effect].gene_pool.values[0] * -1
+                diff_genes[dnl_p] += int(reverse_effect)
 
-            # log
-            write_log(['genes', 'denial'], dnl_idx, plr['name'][dnl_p].get(), dnl_effect, diff_genes)
+                # log
+                write_log(['genes', 'denial'], dnl_idx[0], plr['name'][dnl_p].get(), dnl_effect, diff_genes)
 
     # ----- Sleepy --------------
-    slp_idx = traits_df.index[traits_df.trait == 'Sleepy'].tolist()[0]
-    if any(slp_idx in tp for tp in plr['trait_pile']):
-        slp_eff = [i.get() for i in sleepy_spinbox]
-        diff_genes = [diff_genes[x]+slp_eff[x] for x in range(len(diff_genes))]
-        if any(slp_eff):
-            p = [i for i, e in enumerate(slp_eff) if e != 0]
-            write_log(['genes', 'sleepy'], plr['name'][p[0]].get(), slp_eff[p[0]], diff_genes)
-    else:  # sleepy in no trait pile -> reset values
-        for i in range(game['n_player']):
-            sleepy_spinbox[i].set(0)
+    slp_idx = traits_df.index[traits_df.trait == 'Sleepy'].tolist()
+    if slp_idx != []:
+        if any(slp_idx[0] in tp for tp in plr['trait_pile']):
+            slp_eff = [i.get() for i in sleepy_spinbox]
+            diff_genes = [diff_genes[x]+slp_eff[x] for x in range(len(diff_genes))]
+            if any(slp_eff):
+                p = [i for i, e in enumerate(slp_eff) if e != 0]
+                write_log(['genes', 'sleepy'], plr['name'][p[0]].get(), slp_eff[p[0]], diff_genes)
+        else:  # sleepy in no trait pile -> reset values
+            for i in range(game['n_player']):
+                sleepy_spinbox[i].set(0)
 
     # ----- Spores ---------------
-    sprs_idx = traits_df.index[traits_df.trait == 'Spores'].tolist()[0]
-    sprs_eff = status_df.loc[sprs_idx].effects
-    if sprs_eff != 'none':
-        # check if more players are affected
-        if '_' in sprs_eff:
-            sprs_eff = sprs_eff.split('_')
+    sprs_idx = traits_df.index[traits_df.trait == 'Spores'].tolist()
+    if sprs_idx != []:
+        sprs_eff = status_df.loc[sprs_idx[0]].effects
+        if sprs_eff != 'none':
+            # check if more players are affected
+            if '_' in sprs_eff:
+                sprs_eff = sprs_eff.split('_')
 
-        # apply effects
-        for eff in sprs_eff:
-            p = int(eff)
-            diff_genes[p] += 1
+            # apply effects
+            for eff in sprs_eff:
+                p = int(eff)
+                diff_genes[p] += 1
 
-            # log
-            write_log(['genes', 'spores'], sprs_idx, plr['name'][p].get(), diff_genes)
+                # log
+                write_log(['genes', 'spores'], sprs_idx[0], plr['name'][p].get(), diff_genes)
 
     # check what catastrophes were played alread ---------------------------------------
     for c in range(game['n_catastrophes']):
@@ -1186,8 +1193,8 @@ def update_stars():
         write_log(['stars', 'n'], plr['name'][p].get(), int(n_dominant))
 
         # check special cases
-        Epic_idx = traits_df.index[traits_df.trait == 'Epic'].tolist()[0]
-        if Epic_idx in plr['trait_pile'][p]:
+        Epic_idx = traits_df.index[traits_df.trait == 'Epic'].tolist()
+        if Epic_idx != [] and Epic_idx[0] in plr['trait_pile'][p]:
             n_dominant = 2
             write_log(['stars', 'epic'])
 
@@ -1626,34 +1633,35 @@ def create_trait_pile(frame_trait_overview, p):
 
     # --- NEOTENY needs to stay here ---------------------------------------------------------------
     # --- because 'create_trait_pile' needs to be run once the checkbox is clicked -----------------
-    neoteny_idx = traits_df.index[traits_df.trait == 'Neoteny'].tolist()[0]
-    neoteny_effect = status_df.loc[neoteny_idx].effects
-    if (worlds_end['played'] != 'none') and (all(neoteny_idx not in tp for tp in plr['trait_pile'])):
-        # only if no one has it or this player has it
-        if neoteny_effect == 'none' or neoteny_effect == str(p):
-            # create separate frame for NEOTENY
-            irow += 1
-            frame_ntny = tk.Frame(frame_trait_overview)
-            frame_ntny.grid(row=irow, column=0, columnspan=2, sticky='we')
+    neoteny_idx = traits_df.index[traits_df.trait == 'Neoteny'].tolist()
+    if neoteny_idx != []:
+        neoteny_effect = status_df.loc[neoteny_idx[0]].effects
+        if (worlds_end['played'] != 'none') and (all(neoteny_idx[0] not in tp for tp in plr['trait_pile'])):
+            # only if no one has it or this player has it
+            if neoteny_effect == 'none' or neoteny_effect == str(p):
+                # create separate frame for NEOTENY
+                irow += 1
+                frame_ntny = tk.Frame(frame_trait_overview)
+                frame_ntny.grid(row=irow, column=0, columnspan=2, sticky='we')
 
-            # add trait
-            tk.Label(frame_ntny, text="NEOTENY", fg="#1C86EE", font='"" 14 bold'
-                     ).grid(row=0, column=0, padx=(10, 0), sticky='en')
-            # if is this hand
-            if neoteny_checkbutton[p].get() == 1:
-                ttk.Checkbutton(frame_ntny, variable=neoteny_checkbutton[p], text=' got it -> ',
-                                # command=lambda: update_traits_current_status('neoteny', int(p))
-                                command=lambda: update_traits_current_status('neoteny', p)
-                                ).grid(row=0, column=1, padx=(0, 0), sticky='wns')
-                ttk.Label(frame_ntny, image=images['drops']
-                          ).grid(row=0, column=2, sticky='ns')
-                tk.Label(frame_ntny, image=images['4']
-                         ).grid(row=0, column=3, sticky='ns')
-            # not in this hand
-            else:
-                ttk.Checkbutton(frame_ntny, variable=neoteny_checkbutton[p], text=' in my hand???',
-                                command=lambda: update_traits_current_status('neoteny', p)
-                                ).grid(row=0, column=1, padx=(0, 0), sticky='wns')
+                # add trait
+                tk.Label(frame_ntny, text="NEOTENY", fg="#1C86EE", font='"" 14 bold'
+                         ).grid(row=0, column=0, padx=(10, 0), sticky='en')
+                # if is this hand
+                if neoteny_checkbutton[p].get() == 1:
+                    ttk.Checkbutton(frame_ntny, variable=neoteny_checkbutton[p], text=' got it -> ',
+                                    # command=lambda: update_traits_current_status('neoteny', int(p))
+                                    command=lambda: update_traits_current_status('neoteny', p)
+                                    ).grid(row=0, column=1, padx=(0, 0), sticky='wns')
+                    ttk.Label(frame_ntny, image=images['drops']
+                              ).grid(row=0, column=2, sticky='ns')
+                    tk.Label(frame_ntny, image=images['4']
+                             ).grid(row=0, column=3, sticky='ns')
+                # not in this hand
+                else:
+                    ttk.Checkbutton(frame_ntny, variable=neoteny_checkbutton[p], text=' in my hand???',
+                                    command=lambda: update_traits_current_status('neoteny', p)
+                                    ).grid(row=0, column=1, padx=(0, 0), sticky='wns')
 
     # **********************************************************************************************
     # ------ worlds end -> manual entries ---------------------------------------------------------

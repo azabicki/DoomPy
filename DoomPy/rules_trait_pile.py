@@ -157,51 +157,57 @@ def viral(frame_trait_overview, p, irow, images, trait_idx, trait_name):
 def special_trait_effects(frame_trait_overview, p, irow, images):
 
     # --- AMATOXINS --- add passively Amatoxins to this trait pile ---------------------------------
-    amatoxins_idx = traits_df.index[traits_df.trait == 'Amatoxins'].tolist()[0]
-    if (any([amatoxins_idx in tp for tp in plr['trait_pile']])
-            and amatoxins_idx not in plr['trait_pile'][p]):
-        irow = amatoxins(frame_trait_overview, irow, images, amatoxins_idx, 'Amatoxins')
+    amatoxins_idx = traits_df.index[traits_df.trait == 'Amatoxins'].tolist()
+    if (amatoxins_idx != []
+            and any([amatoxins_idx[0] in tp for tp in plr['trait_pile']])
+            and amatoxins_idx[0] not in plr['trait_pile'][p]):
+        irow = amatoxins(frame_trait_overview, irow, images, amatoxins_idx[0], 'Amatoxins')
 
     # --- PROWLER --- add passively Prowler to this trait pile -------------------------------------
-    prowler_idx = traits_df.index[traits_df.trait == 'Prowler'].tolist()[0]
-    if (any([prowler_idx in tp for tp in plr['trait_pile']])
-            and prowler_idx not in plr['trait_pile'][p]):
-        irow = prowler(frame_trait_overview, p, irow, images, prowler_idx, 'Prowler')
+    prowler_idx = traits_df.index[traits_df.trait == 'Prowler'].tolist()
+    if (prowler_idx != []
+            and any([prowler_idx[0] in tp for tp in plr['trait_pile']])
+            and prowler_idx[0] not in plr['trait_pile'][p]):
+        irow = prowler(frame_trait_overview, p, irow, images, prowler_idx[0], 'Prowler')
 
     # --- SHINY --- add passively Shiny to this trait pile -----------------------------------------
-    shiny_idx = traits_df.index[traits_df.trait == 'Shiny'].tolist()[0]
-    if (any([shiny_idx in tp for tp in plr['trait_pile']])
-            and shiny_idx not in plr['trait_pile'][p]):
-        irow = shiny(frame_trait_overview, p, irow, images, shiny_idx)
+    shiny_idx = traits_df.index[traits_df.trait == 'Shiny'].tolist()
+    if (shiny_idx != []
+            and any([shiny_idx[0] in tp for tp in plr['trait_pile']])
+            and shiny_idx[0] not in plr['trait_pile'][p]):
+        irow = shiny(frame_trait_overview, p, irow, images, shiny_idx[0])
 
     # --- SPORES --- add passively Viral to this trait pile ----------------------------------------
-    spores_idx = traits_df.index[traits_df.trait == 'Spores'].tolist()[0]
-    spores_effect = status_df.iloc[spores_idx].effects
-    if spores_effect != 'none':
-        irow = spores(frame_trait_overview, p, irow, images, spores_effect)
+    spores_idx = traits_df.index[traits_df.trait == 'Spores'].tolist()
+    if spores_idx != []:
+        spores_effect = status_df.iloc[spores_idx[0]].effects
+        if spores_effect != 'none':
+            irow = spores(frame_trait_overview, p, irow, images, spores_effect)
 
     # --- VIRAL --- add passively Viral to this trait pile -----------------------------------------
-    viral_idx = traits_df.index[traits_df.trait == 'Viral'].tolist()[0]
-    if (any([viral_idx in tp for tp in plr['trait_pile']])
-            and viral_idx not in plr['trait_pile'][p]):
-        irow = viral(frame_trait_overview, p, irow, images, viral_idx, 'Viral')
+    viral_idx = traits_df.index[traits_df.trait == 'Viral'].tolist()
+    if (viral_idx != []
+            and any([viral_idx[0] in tp for tp in plr['trait_pile']])
+            and viral_idx[0] not in plr['trait_pile'][p]):
+        irow = viral(frame_trait_overview, p, irow, images, viral_idx[0], 'Viral')
 
     # --- OPPOSABLE THUMBS --- copy first traits effects, if listed here ---------------------------
-    oppo_idx = traits_df.index[traits_df.trait == 'Opposable Thumbs'].tolist()[0]
-    if (any(oppo_idx in tp for tp in plr['trait_pile'])
-            and oppo_idx not in plr['trait_pile'][p]):
+    oppo_idx = traits_df.index[traits_df.trait == 'Opposable Thumbs'].tolist()
+    if (oppo_idx != []
+            and any(oppo_idx[0] in tp for tp in plr['trait_pile'])
+            and oppo_idx[0] not in plr['trait_pile'][p]):
 
-        oppo_at = [i for i, tp in enumerate(plr['trait_pile']) if oppo_idx in tp][0]
+        oppo_at = [i for i, tp in enumerate(plr['trait_pile']) if oppo_idx[0] in tp][0]
         first_D = [traits_df.loc[i].trait for i in plr['trait_pile'][oppo_at]
-                   if (traits_df.loc[i].dominant == 1 and i != oppo_idx)][0]
+                   if (traits_df.loc[i].dominant == 1 and i != oppo_idx[0])][0]
         match first_D:
             case 'Amatoxins':
-                irow = amatoxins(frame_trait_overview, irow, images, oppo_idx, 'Opp. Thumbs')
+                irow = amatoxins(frame_trait_overview, irow, images, oppo_idx[0], 'Opp. Thumbs')
 
             case 'Prowler':
-                irow = prowler(frame_trait_overview, p, irow, images, oppo_idx, 'Opp. Thumbs')
+                irow = prowler(frame_trait_overview, p, irow, images, oppo_idx[0], 'Opp. Thumbs')
 
             case 'Viral':
-                irow = viral(frame_trait_overview, p, irow, images, oppo_idx, 'Opp. Thumbs')
+                irow = viral(frame_trait_overview, p, irow, images, oppo_idx[0], 'Opp. Thumbs')
 
     return irow

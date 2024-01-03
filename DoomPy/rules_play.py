@@ -35,8 +35,8 @@ def check_requirement(trait_idx, p):
     tp = plr['trait_pile'][p]
 
     # if EPIC is already in trait pile -> no more dominant
-    Epic_idx = traits_df.index[traits_df.trait == 'Epic'].tolist()[0]
-    if traits_df.loc[trait_idx].dominant == 1 and Epic_idx in tp:
+    Epic_idx = traits_df.index[traits_df.trait == 'Epic'].tolist()
+    if Epic_idx != [] and traits_df.loc[trait_idx].dominant == 1 and Epic_idx[0] in tp:
         write_log(['*'],
                   '>>> play <<< ERROR - EPIC already in trait pile - no more dominants allowed')
         return True

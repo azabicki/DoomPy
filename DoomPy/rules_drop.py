@@ -524,65 +524,69 @@ def drop_points(p):
 
     # --- drop-effects of OPPONENTS traits / HAND traits -------------------------------------------
     # AMATOXINS ----- if played by another player ---------------
-    amatoxins_idx = status_df.index[status_df.trait == 'Amatoxins'].tolist()[0]
-    if (amatoxins_idx not in trait_pile
-            and status_df.loc[amatoxins_idx].traits_WE != 'none'):
+    amatoxins_idx = status_df.index[status_df.trait == 'Amatoxins'].tolist()
+    if (amatoxins_idx != []
+            and amatoxins_idx[0] not in trait_pile
+            and status_df.loc[amatoxins_idx[0]].traits_WE != 'none'):
         # colors discarded * -2
-        total += drop_traits(amatoxins_idx, p)
+        total += drop_traits(amatoxins_idx[0], p)
 
     # NEOTENY ----- if in Hand after Worlds End ---------------
-    neoteny_idx = status_df.index[status_df.trait == 'Neoteny'].tolist()[0]
-    if status_df.loc[neoteny_idx].effects == str(p):
+    neoteny_idx = status_df.index[status_df.trait == 'Neoteny'].tolist()
+    if neoteny_idx != [] and status_df.loc[neoteny_idx[0]].effects == str(p):
         # 4 if NEOTENY is in hand
         total += 4
 
     # PROWLER ----- if played by another player ---------------
-    prowler_idx = status_df.index[status_df.trait == 'Prowler'].tolist()[0]
-    prowler_played_by = [i for i, tp in enumerate(plr['trait_pile']) if prowler_idx in tp]
-    if (prowler_played_by != []
-            and prowler_played_by[0] != p):
-        # less colors as host * -2
-        total += drop_traits(prowler_idx, p)
+    prowler_idx = status_df.index[status_df.trait == 'Prowler'].tolist()
+    if prowler_idx != []:
+        prowler_played_by = [i for i, tp in enumerate(plr['trait_pile']) if prowler_idx[0] in tp]
+        if prowler_played_by != [] and prowler_played_by[0] != p:
+            # less colors as host * -2
+            total += drop_traits(prowler_idx[0], p)
 
     # SHINY ----- if played by another player ---------------
-    shiny_idx = status_df.index[status_df.trait == 'Shiny'].tolist()[0]
-    if (any(shiny_idx in tp for tp in plr['trait_pile'])
-            and shiny_idx not in trait_pile
-            and not status_df.loc[shiny_idx].inactive):
+    shiny_idx = status_df.index[status_df.trait == 'Shiny'].tolist()
+    if (shiny_idx != []
+            and any(shiny_idx[0] in tp for tp in plr['trait_pile'])
+            and shiny_idx[0] not in trait_pile
+            and not status_df.loc[shiny_idx[0]].inactive):
         # -1 all n_colorless own
-        total += drop_traits(shiny_idx, p)
+        total += drop_traits(shiny_idx[0], p)
 
     # VIRAL ----- if played by another player ---------------
-    viral_idx = status_df.index[status_df.trait == 'Viral'].tolist()[0]
-    if (viral_idx not in trait_pile
-            and status_df.loc[viral_idx].traits_WE != 'none'):
+    viral_idx = status_df.index[status_df.trait == 'Viral'].tolist()
+    if (viral_idx != []
+            and viral_idx[0] not in trait_pile
+            and status_df.loc[viral_idx[0]].traits_WE != 'none'):
         # -1 self n_selected_colorless own
-        total += drop_traits(viral_idx, p)
+        total += drop_traits(viral_idx[0], p)
 
     # lastly: OPPOSABLE THUMBS --- copy first dominants drop effect ---------------
-    oppo_idx = traits_df.index[traits_df.trait == 'Opposable Thumbs'].tolist()[0]
-    oppo_at = [i for i, tp in enumerate(plr['trait_pile']) if oppo_idx in tp]
-    # if played by any OPPONENT
-    if (oppo_at != []) and (oppo_at[0] != p):
-        # check first dominant & run respective drop_code
-        copy_idx = [i for i in plr['trait_pile'][oppo_at[0]]
-                    if (traits_df.loc[i].dominant == 1 and i != oppo_idx)][0]
+    oppo_idx = traits_df.index[traits_df.trait == 'Opposable Thumbs'].tolist()
+    if oppo_idx != []:
+        oppo_at = [i for i, tp in enumerate(plr['trait_pile']) if oppo_idx[0] in tp]
+        # if played by any OPPONENT
+        if (oppo_at != []) and (oppo_at[0] != p):
+            # check first dominant & run respective drop_code
+            copy_idx = [i for i in plr['trait_pile'][oppo_at[0]]
+                        if (traits_df.loc[i].dominant == 1 and i != oppo_idx[0])][0]
 
-        # else, check if OT copies traits with "cross-player-effects"
-        match traits_df.loc[copy_idx].trait:
-            case 'Prowler':
-                # less colors as host * -2
-                total += drop_traits(copy_idx, p, oppo_idx)
+            # else, check if OT copies traits with "cross-player-effects"
+            match traits_df.loc[copy_idx].trait:
+                case 'Prowler':
+                    # less colors as host * -2
+                    total += drop_traits(copy_idx, p, oppo_idx[0])
 
-            case 'Amatoxins':
-                # colors discarded * -2
-                if status_df.loc[oppo_idx].traits_WE != 'none':
-                    total += drop_traits(copy_idx, p, oppo_idx)
+                case 'Amatoxins':
+                    # colors discarded * -2
+                    if status_df.loc[oppo_idx[0]].traits_WE != 'none':
+                        total += drop_traits(copy_idx, p, oppo_idx[0])
 
-            case 'Viral':
-                # -1 self n_selected_colorless own
-                if status_df.loc[oppo_idx].traits_WE != 'none':
-                    total += drop_traits(copy_idx, p, oppo_idx)
+                case 'Viral':
+                    # -1 self n_selected_colorless own
+                    if status_df.loc[oppo_idx[0]].traits_WE != 'none':
+                        total += drop_traits(copy_idx, p, oppo_idx[0])
 
     # return final drop score ######################################################################
     return total

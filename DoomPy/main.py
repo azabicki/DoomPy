@@ -2373,8 +2373,8 @@ content.columnconfigure(0, weight=0)  # menu on the left
 content.columnconfigure(1, weight=1)  # complete playground, set =1 to stretch it to the right side
 
 # create _menu_ frame ------------------------------------------------------------------------------
-frame_menu.grid(row=0, column=0, padx=10, pady=10, stick="nesw")
 frame_menu = tk.Frame(content, bg=cfg["color_frames"], name="f_menu")
+frame_menu.grid(row=0, column=0, padx=10, pady=10, sticky="n")
 
 # create _playground_ frame ------------------------------------------------------------------------
 frame_playground = tk.Frame(content, bg=cfg["color_bg"], name="f_playground")

@@ -1334,7 +1334,6 @@ def create_trait_pile(frame_trait_overview, p):
             # it also could be a DOMINANT
             if traits_df.loc[trait_idx].dominant == 1:
                 lbl.config(fg=cfg["font_color_dominant"], font="'' 14 bold")
-
         elif traits_df.loc[trait_idx].dominant == 1:
             tk.Label(frame_trait_overview,
                      text=" " + trait,

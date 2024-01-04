@@ -338,7 +338,7 @@ def simulate():
                                                               or 'draw' in MOLs_df.loc[m_idx].MOL_type.lower())):
                         rnd = np.random.randint(low=1, high=10)
                         update_manual_MOL(rnd, p, m, '+')
-                        create_MOL_frame(p, True)
+                        create_MOL_frame(p)
 
         if pre_play_set == 'test':  # -------------------------------------------------------
             to_play = [[1, 9, 21, 26, 69, 104, 125, 183, 245],
@@ -546,7 +546,7 @@ def btn_select_MOLS(cbox_idx, p, m):
 
     # check for MOL_specific select_effects
     rules_mol.select_MOL(p, played_str, played_previously)
-    create_MOL_frame(p, reset=True)
+    create_MOL_frame(p)
 
     # update
     update_all()
@@ -1746,11 +1746,10 @@ def create_trait_pile(frame_trait_overview, p):
             lbl_we.grid(row=0, column=1, rowspan=2, sticky='ns')
 
 
-def create_MOL_frame(p, reset):
-    if reset:
-        # forget all previous widgets
-        for w in frame_MOL[p].grid_slaves():
-            w.grid_forget()
+def create_MOL_frame(p):
+    # forget all previous widgets
+    for w in frame_MOL[p].grid_slaves():
+        w.grid_forget()
 
     # --- title ---------------------------------------------------------------
     ttk.Label(frame_MOL[p], text="Meaning(s) of Life", font="'' 18"
@@ -1922,7 +1921,7 @@ def create_player_frame(p):
     frame_MOL[p].grid(row=2, column=0, padx=border, pady=(0, border), sticky="nesw")
 
     # call function to create MOL comboboxes
-    create_MOL_frame(p, reset=False)
+    create_MOL_frame(p)
 
     return frame
 

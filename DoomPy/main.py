@@ -1812,6 +1812,7 @@ def create_MOL_frame(p, reset):
 
 
 def create_player_frame(p):
+    # this is a one-time call -> all created frames needs to be stored for later usage
     border = cfg["width_frames"]
 
     frame = tk.Frame(frame_playground, bg=cfg["color_frames"], name="f_p" + str(p))

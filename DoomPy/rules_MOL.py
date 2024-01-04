@@ -14,7 +14,6 @@ def select_MOL(p, MOL, prev_MOL):
         MOLs['n'][p] += 2
         for ip in range(2):
             plr['points_MOL'][p].append(tk.StringVar(value="0"))  # for now, manually editing MOL points in entries
-            MOLs['possible'][p].append(MOLs_df.index.tolist())
             MOLs['played'][p].append(None)
             MOLs['cbox'][p].append([])
             MOLs['icon'][p].append([])
@@ -24,7 +23,6 @@ def select_MOL(p, MOL, prev_MOL):
         # -> remove the last 2 MOLs
         MOLs['n'][p] -= 2
         plr['points_MOL'][p][MOLs['n'][p]:] = []
-        MOLs['possible'][p][MOLs['n'][p]:] = []
         MOLs['played'][p][MOLs['n'][p]:] = []
         MOLs['cbox'][p][MOLs['n'][p]:] = []
         MOLs['icon'][p][MOLs['n'][p]:] = []

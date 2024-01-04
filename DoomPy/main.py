@@ -284,10 +284,7 @@ def simulate():
                                 case 'is_color_of_most_colors':
                                     btn_traits_world_end(p, t, 'count them!')
 
-                        case 244:  # Rainbow Horn #1
-                            btn_traits_world_end(p, t, 'count them!')
-
-                        case 245:  # Rainbow Horn #2
+                        case 245:  # Rainbow Horn (WE)
                             btn_traits_world_end(p, t, 'count them!')
 
                         case 273:  # Sentience

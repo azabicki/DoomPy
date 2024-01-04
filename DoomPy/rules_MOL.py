@@ -56,7 +56,7 @@ def calc_MOL_points(p, m):
         case "The Armored Melon":
             points = int(plr['points_MOL'][p][m].get())
 
-        case "The Bilbies":
+        case "The Bilbies (4/10)":
             n = sum(traits_df.loc[t].dominant == 1
                     for t in trait_pile)
 
@@ -130,13 +130,13 @@ def calc_MOL_points(p, m):
             elif n_neg > n_high:
                 points = 4
 
-        case "The Cosmic Jinx":
+        case "The Cosmic Jinx (4/8)":
             if genes <= 2:
                 points = 8
             elif genes == 3:
                 points = 4
 
-        case "The Dancer":
+        case "The Dancer (12/8)":
             n = []
             for p in range(game['n_player']):
                 p_WE = rules_we.calc_WE_points(p) if worlds_end['played'] != 'none' else 0
@@ -488,7 +488,7 @@ def calc_MOL_points(p, m):
             elif n >= 3:
                 points = 2
 
-        case "The Vagrant":
+        case "The Vagrant (8/6)":
             n = [len(tp) for tp in plr['trait_pile']]
 
             if n[p] == min(n):

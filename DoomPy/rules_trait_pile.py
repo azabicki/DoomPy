@@ -1,4 +1,4 @@
-from globals_ import status_df, traits_df, plr
+from globals_ import status_df, traits_df, plr, cfg
 from log import write_log
 import tkinter as tk
 
@@ -12,7 +12,7 @@ def amatoxins(frame_trait_overview, irow, images, trait_idx, trait_name):
     frame.grid(row=irow, column=0, columnspan=2, sticky='we')
 
     # add trait
-    tk.Label(frame, text=trait_name.upper(), fg="mediumorchid1", font='"" 14 bold'
+    tk.Label(frame, text=trait_name.upper(), fg=cfg["color_purple"], font='"" 14 bold'
              ).grid(row=0, column=0, padx=(10, 0), sticky='ens')
     # add effect
     tk.Label(frame, text=" discarded", image=images["bgpr"], compound=tk.LEFT
@@ -44,7 +44,7 @@ def prowler(frame_trait_overview, p, irow, images, trait_idx, trait_name):
     frame.grid(row=irow, column=0, columnspan=2, sticky='we')
 
     # add trait
-    tk.Label(frame, text=trait_name.upper(), fg="mediumorchid1", font='"" 14 bold'
+    tk.Label(frame, text=trait_name.upper(), fg=cfg["color_purple"], font='"" 14 bold'
              ).grid(row=0, column=0, padx=(10, 0), sticky='e')
     # add effect
     tk.Label(frame, text="less ", image=images["bgpr"], compound=tk.RIGHT
@@ -73,7 +73,7 @@ def shiny(frame_trait_overview, p, irow, images, trait_idx):
     frame.grid(row=irow, column=0, columnspan=2, sticky='we')
 
     # add trait
-    tk.Label(frame, text="SHINY", fg="#228B22", font="'' 14 bold"
+    tk.Label(frame, text="SHINY", fg=cfg["color_green"], font="'' 14 bold"
              ).grid(row=0, column=0, padx=(10, 0), sticky='ens')
     # add effect
     tk.Label(frame, text="punishes ", image=images["c"], compound=tk.RIGHT
@@ -106,7 +106,7 @@ def spores(frame_trait_overview, p, irow, images, spores_effect):
         frame.grid(row=irow, column=0, columnspan=2, sticky='we')
 
         # add trait
-        tk.Label(frame, text="SPORES", fg="#228B22", font="'' 14 bold"
+        tk.Label(frame, text="SPORES", fg=cfg["color_green"], font="'' 14 bold"
                  ).grid(row=0, column=0, padx=(10, 0), sticky='ens')
         # add effect
         tk.Label(frame, text="adds genes "
@@ -127,7 +127,7 @@ def viral(frame_trait_overview, p, irow, images, trait_idx, trait_name):
     frame.grid(row=irow, column=0, columnspan=2, sticky='we')
 
     # add trait & drop icon
-    tk.Label(frame, text=trait_name.upper(), fg="mediumorchid1", font='"" 14 bold'
+    tk.Label(frame, text=trait_name.upper(), fg=cfg["color_purple"], font='"" 14 bold'
              ).grid(row=0, column=0, padx=(10, 0), sticky='ens')
     # add effect
     lbl = tk.Label(frame, text=" punishes ", image=images["question_mark"], compound=tk.RIGHT)

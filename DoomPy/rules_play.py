@@ -1,4 +1,4 @@
-from globals_ import status_df, traits_df, plr, sim_running
+from globals_ import status_df, traits_df, plr, sim_running, cfg
 from log import write_log
 import tkinter as tk
 
@@ -11,7 +11,7 @@ def is_heroic_born(trait_idx):
     top = tk.Toplevel(width=500, height=75)
     top.title("Birth of a Hero")
 
-    msg1 = tk.Label(top, text='HEROIC', font='"" 28 bold', fg="#228B22")
+    msg1 = tk.Label(top, text='HEROIC', font='"" 28 bold', fg=cfg["color_green"])
     msg1.grid(row=0, column=0, columnspan=2, padx=10, sticky='nesw')
     msg2 = tk.Label(top, text='born during\n"Birth of a Hero" ???', font='"" 20 bold')
     msg2.grid(row=1, column=0, columnspan=2, padx=10, sticky='nesw')

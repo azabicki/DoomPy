@@ -1676,7 +1676,7 @@ def create_trait_pile(frame_trait_overview, p):
                 frame_ntny.grid(row=irow, column=0, columnspan=2, sticky='we')
 
                 # add trait
-                tk.Label(frame_ntny, text="NEOTENY", fg="#1C86EE", font='"" 14 bold'
+                tk.Label(frame_ntny, text="NEOTENY", fg=cfg["color_blue"], font='"" 14 bold'
                          ).grid(row=0, column=0, padx=(10, 0), sticky='en')
                 # if is this hand
                 if neoteny_checkbutton[p].get() == 1:
@@ -1717,7 +1717,7 @@ def create_trait_pile(frame_trait_overview, p):
         # add label & drop icon
         tk.Label(frame_WE, image=images["catastrophe_WE"]
                  ).grid(row=0, column=0, rowspan=2, padx=(20, 0), sticky='e')
-        lbl_we = tk.Label(frame_WE, text=" " + we + " ", fg="#E1484A", font="'' 14 bold")
+        lbl_we = tk.Label(frame_WE, text=" " + we + " ", fg=cfg["color_red"], font="'' 14 bold")
         lbl_we.grid(row=0, column=1, sticky='ns')
         tk.Label(frame_WE, image=images["catastrophe_WE"]
                  ).grid(row=0, column=2, rowspan=2, padx=(0, 20), sticky='w')
@@ -2407,17 +2407,19 @@ frame_playground.rowconfigure(0, weight=1)  # =1 -> stretch playground to bottom
 # styling ------------------------------------------------------------------------------------------
 gui_style = ttk.Style()
 gui_style.configure("game_info.TLabel", font=("", 10, "italic"))
+
 gui_style.configure("name.TLabel", font=("Comic Sans MS", 38, "bold"))
-gui_style.configure("nameFP.TLabel", font=("Comic Sans MS", 38, "bold"),
-                    foreground=cfg["font_color_first_player"])
+gui_style.configure("nameFP.TLabel", font=("Comic Sans MS", 38, "bold"), foreground=cfg["font_color_1st_player"])
+
 gui_style.configure("n_traits.TLabel", font=("Arial", 30, "bold"))
-gui_style.configure("n_tpFP.TLabel", font=("Arial", 30, "bold"),
-                    foreground=cfg["font_color_first_player"])
-gui_style.configure("points.TLabel", font=("", 20))
-gui_style.configure("total.TLabel", font=("", 80, "bold"),
-                    foreground=cfg["font_color_total_score"])
-gui_style.configure("genes.TLabel", font=("", 38, "bold"),
-                    foreground=cfg["font_color_genes"])
+
+gui_style.configure("colorcount.TLabel", font=("", 14))
+gui_style.configure("total.TLabel", font=("", 70, "bold"), foreground=cfg["font_color_total_score"])
+gui_style.configure("points.TLabel", font=("", 14))
+
+gui_style.configure("genesTXT.TLabel", font=("", 12, "bold"), foreground=cfg["font_color_genes"])
+gui_style.configure("genes.TLabel", font=("", 38, "bold"), foreground=cfg["font_color_genes"])
+
 gui_style.configure("move.TCombobox", selectbackground="none")
 gui_style.configure("disabled.TButton", foreground="grey")
 

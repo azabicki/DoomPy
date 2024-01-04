@@ -1886,8 +1886,7 @@ def create_player_frame(p):
                                    if i != p],
         exportselection=0,
         state="readonly",
-        width=6,
-        style="move.TCombobox")
+        width=6)
     cbox_move_to.grid(row=0, column=0, pady=(border, 0), sticky='ne')
     cbox_move_to.current(0)
     cbox_move_to.bind(
@@ -1926,9 +1925,9 @@ def create_name_entries(frame_menu_names):
         w.grid_forget()
 
     # note to keep order
-    ttk.Label(frame_menu_names, text="important:", font="'' 12 underline"
+    ttk.Label(frame_menu_names, text="important:", style="menu_h2u.TLabel"
               ).grid(row=0, column=0, columnspan=1, pady=(0, 5), sticky='e')
-    ttk.Label(frame_menu_names, text="keep order", font="'' 12"
+    ttk.Label(frame_menu_names, text="keep order", style="menu_h2.TLabel"
               ).grid(row=0, column=1, columnspan=2, pady=(0, 5), sticky='w')
 
     # fix 1st player radiobutton if outside
@@ -1939,7 +1938,7 @@ def create_name_entries(frame_menu_names):
     for i in range(options['n_player'].get()):
         ttk.Label(frame_menu_names, text="player {}: ".format(i+1)
                   ).grid(row=i+1, column=0, sticky='e')
-        ttk.Entry(frame_menu_names, textvariable=options['names'][i], width=6
+        ttk.Entry(frame_menu_names, textvariable=options['names'][i], width=5
                   ).grid(row=i+1, column=1, sticky='we')
         tk.Radiobutton(frame_menu_names,
                        variable=options['first_player'],
@@ -1951,12 +1950,6 @@ def create_name_entries(frame_menu_names):
 def create_menu_frame():
     border = cfg["width_frames"]
 
-    frame_menu.columnconfigure(0, weight=1)
-    frame_menu.rowconfigure(0, weight=1)
-    frame_menu.rowconfigure(1, weight=1)
-    frame_menu.rowconfigure(2, weight=4)
-    frame_menu.rowconfigure(3, weight=1)
-
     # ----- frame 4 options ------------------------------------------------------------------------
     frame_menu_options = tk.Frame(frame_menu)
     frame_menu_options.grid(row=0, column=0, padx=border, pady=border, sticky="nesw")
@@ -1964,15 +1957,11 @@ def create_menu_frame():
     frame_menu_options.columnconfigure(1, weight=1)
 
     # title -----
-    # frame_options = tk.Frame(frame_menu_options)
-    # frame_options.grid(row=0, column=0, columnspan=2, sticky="nesw")
-    # frame_options.columnconfigure(0, weight=3)
-
     ttk.Label(
         frame_menu_options,
-        text="OPTIONS",
-        font="'' 18"
-        ).grid(row=0, column=0, columnspan=2, pady=(5, 5))
+        text="Next Game",
+        style="menu_h1.TLabel"
+        ).grid(row=0, column=0, columnspan=2, pady=(border, 0))
 
     # nr players -----
     ttk.Label(
@@ -1983,7 +1972,7 @@ def create_menu_frame():
         frame_menu_options,
         from_=2,
         to=cfg["max_player"],
-        width=3,
+        width=2,
         textvariable=options['n_player'],
         wrap=False,
         command=lambda: create_name_entries(frame_menu_names),
@@ -1998,7 +1987,7 @@ def create_menu_frame():
         frame_menu_options,
         from_=3,
         to=8,
-        width=3,
+        width=2,
         textvariable=options['n_genes'],
         wrap=False
     ).grid(row=2, column=1, sticky='w')
@@ -2012,7 +2001,7 @@ def create_menu_frame():
         frame_menu_options,
         from_=2,
         to=6,
-        width=3,
+        width=2,
         textvariable=options['n_catastrophes'],
         wrap=False
     ).grid(row=3, column=1, sticky='w')
@@ -2026,7 +2015,7 @@ def create_menu_frame():
         frame_menu_options,
         from_=0,
         to=4,
-        width=3,
+        width=2,
         textvariable=options['n_MOLs'],
         wrap=False
     ).grid(row=4, column=1, sticky='w')
@@ -2047,40 +2036,42 @@ def create_menu_frame():
         frame_menu_options,
         text="restart game",
         command=start_game,
-    ).grid(row=7, column=0, columnspan=2, padx=10, pady=5, sticky="we")
+        style="menu.TButton",
+        width=12
+    ).grid(row=7, column=0, columnspan=2, padx=border, pady=border)
 
     # info current game -----
     ttk.Label(
         frame_menu_options,
         text="running game",
-        font="'' 12 underline",
+        style="menu_h2u.TLabel"
     ).grid(row=8, column=0, columnspan=2)
     ttk.Label(
         frame_menu_options,
-        text="{} catastrophes + {} genes + {} MOLs"
+        text="{} catast. + {} genes + {} MOLs"
         .format(game['n_catastrophes'], game['n_genes'], game['n_MOLs']),
         style="game_info.TLabel",
     ).grid(row=9, column=0, columnspan=2, pady=(0, 8))
 
     # ----- frame 4 trait selection ----------------------------------------------------------------
     frame_menu_traits = tk.Frame(frame_menu)
-    frame_menu_traits.grid(row=2, column=0, padx=border, pady=(0, border), sticky="nesw")
+    frame_menu_traits.grid(row=1, column=0, padx=border, pady=(0, border), sticky="nesw")
     frame_menu_traits.columnconfigure(0, weight=1)
     frame_menu_traits.columnconfigure(1, weight=1)
 
     # 'play trait' -----
     ttk.Label(
         frame_menu_traits,
-        text="play trait",
-        font="'' 18",
+        text="who plays a trait",
+        style="menu_h1.TLabel"
     ).grid(row=0, column=0, columnspan=2, pady=(5, 0))
 
     # search field -----
     ent_trait_search[0] = ttk.Entry(
         frame_menu_traits,
-        width=10,
+        width=7,
         textvariable=str_trait_search)
-    ent_trait_search[0].grid(row=1, column=0, padx=(10, 0), sticky="w")
+    ent_trait_search[0].grid(row=1, column=0, padx=(border, 0), sticky="e")
     ent_trait_search[0].bind("<KeyRelease>",
                              lambda e: search_trait_in_list(str_trait_search))
     ent_trait_search[0].bind('<Down>',
@@ -2098,18 +2089,20 @@ def create_menu_frame():
 
     ttk.Button(
         frame_menu_traits,
-        text="clear",
-        width=4,
+        text="clr",
+        width=3,
+        style="menu.TButton",
         command=btn_clear_trait_search,
     ).grid(row=1, column=1, padx=(0, 10), sticky="w")
 
     # listbox with (filtered) deck-cards -----
     lbox_deck[0] = tk.Listbox(
         frame_menu_traits,
-        height=4,
+        height=3,
+        width=16,
         listvariable=deck_filtered_str,
         exportselection=False)
-    lbox_deck[0].grid(row=2, column=0, columnspan=2, padx=10)
+    lbox_deck[0].grid(row=2, column=0, columnspan=2, padx=2*border)
     lbox_deck[0].bind("<<ListboxSelect>>",
                       lambda e: write_log(['select', 'deck'],
                                           traits_df.loc[deck_filtered_idx[lbox_deck[0].curselection()[0]]].trait,
@@ -2120,36 +2113,32 @@ def create_menu_frame():
     for p in range(game['n_player']):
         lbox_deck[0].bind('{}'.format(p+1), lambda e, pp=p: btn_play_trait(pp))
 
-    # 'who gets it?' -----
-    ttk.Label(
-        frame_menu_traits,
-        text="who gets the trait?",
-        font="'' 18",
-    ).grid(row=3, column=0, columnspan=2, pady=(10, 0))
-
     # player buttons -----
     frame_menu_buttons = tk.Frame(frame_menu_traits)
-    frame_menu_buttons.grid(row=4, column=0, columnspan=2, pady=(0, 5))
+    frame_menu_buttons.grid(row=3, column=0, columnspan=2, pady=(0, 5))
     for i in range(game['n_player']):
         clspn = int(i + 1 == game['n_player'] and (i + 1) % 2 == 1) + 1
         ttk.Button(
             frame_menu_buttons,
             textvariable=plr['name'][i],
+            width=4,
+            style="menu.TButton",
             command=partial(btn_play_trait, i),
         ).grid(row=floor(i / 2), column=i % 2, columnspan=clspn)
 
     # ----- frame 4 catastrophy selection ----------------------------------------------------------
     frame_menu_catastrophe = tk.Frame(frame_menu)
-    frame_menu_catastrophe.grid(row=3, column=0, padx=border, pady=(0, border), sticky="nesw")
+    frame_menu_catastrophe.grid(row=2, column=0, padx=border, pady=(0, border), sticky="nesw")
     frame_menu_catastrophe.columnconfigure(0, weight=1)
     frame_menu_catastrophe.columnconfigure(1, weight=1)
 
     # catastrophes -----
     ttk.Label(
         frame_menu_catastrophe,
-        text="catastrophes",
-        font="'' 18",
+        text="Catastrophes",
+        style="menu_h1.TLabel"
     ).grid(row=0, column=0, columnspan=2, pady=(5, 0))
+
     for c in range(game['n_catastrophes']):
         pos_cat_values = [" catastrophe {}...".format(c+1)] + \
             catastrophes_df.loc[catastrophe['possible'][c]].name.values.tolist()
@@ -2159,8 +2148,7 @@ def create_menu_frame():
             values=pos_cat_values,
             exportselection=0,
             state="readonly" if c == 0 else "disabled",
-            width=18,
-            style="move.TCombobox")
+            width=14)
         catastrophe['cbox'][c].current(0)
         catastrophe['cbox'][c].grid(row=c+1, column=0, columnspan=2, padx=4, sticky='ns')
         catastrophe['cbox'][c].bind("<<ComboboxSelected>>", lambda ev, c=c: btn_play_catastrophe(ev, c))
@@ -2169,20 +2157,19 @@ def create_menu_frame():
     ttk.Label(
         frame_menu_catastrophe,
         text="World's End",
-        font="'' 18",
-    ).grid(row=game['n_catastrophes']+1, column=0, columnspan=2, pady=(5, 0))
+        style="menu_h1.TLabel"
+    ).grid(row=game['n_catastrophes']+1, column=0, columnspan=2)
 
     worlds_end['cbox'] = ttk.Combobox(
         frame_menu_catastrophe,
         values=[" ... "],
         exportselection=0,
         state="disabled",
-        width=10,
-        style="move.TCombobox",
+        width=7,
         textvariable=worlds_end['selected'])
     worlds_end['cbox'].current(0)
-    worlds_end['cbox'].grid(row=game['n_catastrophes']+2, column=0,
-                            padx=(4, 0), pady=(0, 5), sticky='ns')
+    worlds_end['cbox'].grid(row=game['n_catastrophes']+2, column=0, columnspan=1,
+                            padx=(border, 0), pady=(0, 5), sticky='nes')
     worlds_end['cbox'].bind("<<ComboboxSelected>>", lambda e: check_WE_status('select_WE'))
 
     worlds_end['btn'] = ttk.Button(
@@ -2192,11 +2179,12 @@ def create_menu_frame():
         state="disabled",
         style="disabled.TButton",
         command=lambda: btn_worlds_end_GO())
-    worlds_end['btn'].grid(row=game['n_catastrophes']+2, column=1, padx=(0, 4), pady=(0, 5), sticky="nse")
+    worlds_end['btn'].grid(row=game['n_catastrophes']+2, column=1, columnspan=1,
+                           padx=(0, border), pady=(0, 5), sticky="nsw")
 
     # ----- frame for control buttons --------------------------------------------------------------
     frame_menu_controls = tk.Frame(frame_menu)
-    frame_menu_controls.grid(row=4, column=0, padx=border, pady=(0, border), sticky="nesw")
+    frame_menu_controls.grid(row=3, column=0, padx=border, pady=(0, border), sticky="nesw")
     frame_menu_controls.columnconfigure(0, weight=2)
     frame_menu_controls.columnconfigure(1, weight=2)
     frame_menu_controls.columnconfigure(2, weight=2)
@@ -2206,22 +2194,24 @@ def create_menu_frame():
         frame_menu_controls,
         image=init_switch['music'],
         cursor="heart")
-    lbl_music_switch[0].grid(row=0, column=0, padx=(10, 0))
+    lbl_music_switch[0].grid(row=0, column=0, padx=(border, 0))
     lbl_music_switch[0].bind("<Button-1>", lambda e: switch('music'))
     lbl_icons_switch[0] = ttk.Label(
         frame_menu_controls,
         image=init_switch['icons'])
-    lbl_icons_switch[0].grid(row=0, column=1, padx=5)
+    lbl_icons_switch[0].grid(row=0, column=1, padx=0)
     lbl_icons_switch[0].bind("<Button-1>", lambda e: switch('icons'))
     lbl_points_switch[0] = ttk.Label(
         frame_menu_controls,
         image=init_switch['points'])
-    lbl_points_switch[0].grid(row=0, column=2, padx=5)
+    lbl_points_switch[0].grid(row=0, column=2, padx=0)
     lbl_points_switch[0].bind("<Button-1>", lambda e: switch('points'))
     ttk.Button(frame_menu_controls,
                text="quit",
-               command=root.quit
-               ).grid(row=0, column=3, padx=(0, 10), pady=5, sticky="we")
+               command=root.quit,
+               width=3,
+               style="menu.TButton"
+               ).grid(row=0, column=3, padx=(0, border), pady=5)
 
 
 def reset_variables():
@@ -2400,6 +2390,10 @@ frame_playground.rowconfigure(0, weight=1)  # =1 -> stretch playground to bottom
 
 # styling ------------------------------------------------------------------------------------------
 gui_style = ttk.Style()
+gui_style.configure("menu.TButton", font=("", 12))
+gui_style.configure("menu_h1.TLabel", font=("", 14))
+gui_style.configure("menu_h2.TLabel", font=("", 12))
+gui_style.configure("menu_h2u.TLabel", font=("", 12, "underline"))
 gui_style.configure("game_info.TLabel", font=("", 10, "italic"))
 
 gui_style.configure("name.TLabel", font=("Comic Sans MS", 38, "bold"))
@@ -2408,14 +2402,24 @@ gui_style.configure("nameFP.TLabel", font=("Comic Sans MS", 38, "bold"), foregro
 gui_style.configure("n_traits.TLabel", font=("Arial", 30, "bold"))
 
 gui_style.configure("colorcount.TLabel", font=("", 14))
-gui_style.configure("total.TLabel", font=("", 70, "bold"), foreground=cfg["font_color_total_score"])
+gui_style.configure("cc_b.TLabel", font=("", 18, "bold"), foreground=cfg["color_blue"])
+gui_style.configure("cc_g.TLabel", font=("", 18, "bold"), foreground=cfg["color_green"])
+gui_style.configure("cc_p.TLabel", font=("", 18, "bold"), foreground=cfg["color_purple"])
+gui_style.configure("cc_r.TLabel", font=("", 18, "bold"), foreground=cfg["color_red"])
+gui_style.configure("cc_c.TLabel", font=("", 18, "bold"), foreground=cfg["color_colorless"])
+gui_style.configure("cc_total.TLabel", font=("", 18, "bold"))
+
+gui_style.configure("total.TLabel", font=("", 60, "bold"), foreground=cfg["font_color_total_score"])
 gui_style.configure("points.TLabel", font=("", 14))
 
 gui_style.configure("genesTXT.TLabel", font=("", 12, "bold"), foreground=cfg["font_color_genes"])
 gui_style.configure("genes.TLabel", font=("", 38, "bold"), foreground=cfg["font_color_genes"])
 
-gui_style.configure("move.TCombobox", selectbackground="none")
-gui_style.configure("disabled.TButton", foreground="grey")
+root.option_add("*TCombobox*Listbox.font", "'' 10")
+
+gui_style.configure("disabled.TButton", foreground="grey", font="'', 11")
+
+f2 = tkFont.Font(size=10)
 
 # tk_inter_variables -------------------------------------------------------------------------------
 options = {}

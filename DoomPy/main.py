@@ -1025,13 +1025,9 @@ def update_traits_current_status(todo, *args):
 def update_first_player():
     # update all palyer frames
     for p in range(game['n_player']):
-        tmp_frame = frame_player[p].winfo_children()
-        lbl1 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.n_tp')
-        lbl2 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.name')
-        lbl1.configure(style="n_tpFP.TLabel"
-                       if options['first_player'].get() == p else "n_traits.TLabel")
-        lbl2.configure(style="nameFP.TLabel"
-                       if options['first_player'].get() == p else "name.TLabel")
+        lbl = root.nametowidget('.content.playground.p{}.scoreboard.up.name'.format(p))
+        lbl.configure(style="nameFP.TLabel"
+                      if options['first_player'].get() == p else "name.TLabel")
 
 
 def update_scoring():
@@ -1222,8 +1218,8 @@ def update_stars():
 
         # find label widgets
         tmp_frame = frame_player[p].winfo_children()
-        lbl1 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.star1')
-        lbl2 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.star2')
+        lbl1 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.up.star1')
+        lbl2 = frame_player[p].nametowidget(str(tmp_frame[0]) + '.up.star2')
 
         # edit images
         lbl1.configure(image=images['no_star'])
@@ -1237,17 +1233,27 @@ def update_stars():
 
 
 def update_all():
-    # first, resolve all effects on traits
+    # first, update n_TP (count) & resolve all effects on traits
     for p in range(game['n_player']):
-        # update n_tp
-        plr['n_tp'][p] = len(plr['trait_pile'][p]) + plr['n_tp_xtra'][p]
+        tp = plr['trait_pile'][p]
+        # update n_tp ------------------------------------------------------------------------------
+        # colors ------------------------
+        for col in ['blue', 'green', 'purple', 'red', 'colorless']:
+            plr['n_tp'][p][col[0]].set(sum(col in color.lower()
+                                           for color in status_df.iloc[tp].color.tolist()))
 
-        txt = (str(len(plr['trait_pile'][p]))
-               if plr['n_tp_xtra'][p] == 0
-               else (str(len(plr['trait_pile'][p])) + "\n+" + str(plr['n_tp_xtra'][p])))
-        plr['n_tp_score'][p].set(txt)
+        # total -------------------------
+        plr['n_tp'][p]['t'].set(len(tp) + plr['n_tp'][p]['xtra'])
 
-        for trait_idx in plr['trait_pile'][p]:
+        # scoreboard --------------------
+        if plr['n_tp'][p]['xtra'] == 0:
+            txt = '\u2211' + str(len(tp))
+        else:
+            txt = str(len(tp)) + '+' + str(plr['n_tp'][p]['xtra'])
+        plr['n_tp'][p]['sb'].set(txt)
+
+        # resolve all effects on traits ------------------------------------------------------------
+        for trait_idx in tp:
             # 1: attachment effect
             rules_at.apply_effects(trait_idx)
 
@@ -1257,16 +1263,16 @@ def update_all():
             # 3: worlds end effect
             rules_we.apply_WE_effects(trait_idx)
 
-    # update stuff
+    # update stuff ---------------------------------------------------------------------------------
     update_stars()
     update_genes()
     update_scoring()
 
-    # update all trait piles
+    # update all trait piles -----------------------------------------------------------------------
     for p in range(game['n_player']):
         create_trait_pile(frame_trait_pile[p], p)
 
-    # focus back to search field
+    # focus back to search field -------------------------------------------------------------------
     ent_trait_search[0].focus_set()
 
 
@@ -1302,6 +1308,69 @@ def search_trait_in_list(inp):
                       deck_filtered_idx[0])
 
 
+def create_MOL_frame(p):
+    # forget all previous widgets
+    for w in frame_MOL[p].grid_slaves():
+        w.grid_forget()
+
+    # --- title ---------------------------------------------------------------
+    ttk.Label(frame_MOL[p], text="Meaning(s) of Life", style="menu_h1.TLabel"
+              ).grid(row=0, column=0, pady=(3, 0), columnspan=2*MOLs['n'][p], sticky='ns')
+
+    # --- MOLS - 2 per row ----------------------------------------------------
+    cur_row = 0
+    for m in range(MOLs['n'][p]):
+        frame_MOL[p].columnconfigure(m, weight=1)
+        frame_MOL[p].columnconfigure(m+1, weight=2)
+
+        cur_row = cur_row + 1 if (m % 2 == 0) else cur_row
+        cur_col = 2 if m % 2 == 1 else 0
+        xpad_L = 0 if m % 2 == 1 else 4
+        xpad_R = 4 if m % 2 == 1 else 0
+
+        pos_MOLs = ["select MOL #{}".format(m+1)] + MOLs_df.MOL.values.tolist()
+        MOLs['cbox'][p][m] = ttk.Combobox(
+            frame_MOL[p],
+            values=pos_MOLs,
+            exportselection=0,
+            state='enabled',
+            width=10)
+        MOLs['cbox'][p][m].current(0)
+        MOLs['cbox'][p][m].grid(row=cur_row, column=cur_col, padx=(xpad_L, 0), pady=(0, 5), stick='nesw')
+        MOLs['cbox'][p][m].bind("<<ComboboxSelected>>",
+                                lambda e, m=m: btn_select_MOLS(e.widget.current(), p, m))
+
+        MOLs['icon'][p][m] = ttk.Label(frame_MOL[p], image=images['question_mark'])
+        MOLs['icon'][p][m].grid(row=cur_row, column=cur_col+1, padx=(0, xpad_R), pady=(0, 5), sticky='nsw')
+
+        # set current selection if played
+        if MOLs['played'][p][m] is not None:
+            MOLs['cbox'][p][m].current(MOLs['played'][p][m]+1)
+
+    # --- spinboxes for manual entry ------------------------------------------
+    for m in range(MOLs['n'][p]):
+        m_idx = MOLs['played'][p][m]
+        if (MOLs['played'][p][m] is not None and ('hand' in MOLs_df.loc[m_idx].MOL_type.lower()
+                                                  or 'draw' in MOLs_df.loc[m_idx].MOL_type.lower())):
+            # new frame
+            cur_row += 1
+            sbox_frame = tk.Frame(frame_MOL[p])
+            sbox_frame.grid(row=cur_row, column=0, columnspan=3, sticky="nesw")
+
+            # label
+            tk.Label(sbox_frame, text=MOLs_df.loc[m_idx].MOL + ":"
+                     ).grid(row=cur_row, column=0, padx=(5, 0), sticky='e')
+
+            # create spinbox
+            MOL_sbox = ttk.Spinbox(sbox_frame, state='readonly', from_=-50, to=500, width=2, wrap=False)
+            MOL_sbox.grid(row=cur_row, column=1, sticky='w')
+            MOL_sbox.bind("<<Increment>>", lambda e, m=m: update_manual_MOL(int(e.widget.get()), p, m, '+'))
+            MOL_sbox.bind("<<Decrement>>", lambda e, m=m: update_manual_MOL(int(e.widget.get()), p, m, '-'))
+
+            # fill spinbox, depending on drops_status
+            MOL_sbox.set(plr['points_MOL'][p][m].get())
+
+
 def create_trait_pile(frame_trait_overview, p):
     # first, clean up frame
     for w in frame_trait_overview.grid_slaves():
@@ -1311,7 +1380,7 @@ def create_trait_pile(frame_trait_overview, p):
     rules_tr.permanent_effects(plr['trait_pile'][p])
 
     # then, update n_tp
-    # plr['n_tp_score'][p].set(get_sup(plr['trait_pile'][p]))
+    # plr['n_tp'][p]['sb'].set(get_sup(plr['trait_pile'][p]))
 
     # --- loop traits in trait pile ------------------------------------------------
     irow = -1
@@ -1740,134 +1809,147 @@ def create_trait_pile(frame_trait_overview, p):
             lbl_we.grid(row=0, column=1, rowspan=2, sticky='ns')
 
 
-def create_MOL_frame(p):
-    # forget all previous widgets
-    for w in frame_MOL[p].grid_slaves():
-        w.grid_forget()
+def create_scoreboard(frame, p):
+    frame.columnconfigure(0, weight=1)
 
-    # --- title ---------------------------------------------------------------
-    ttk.Label(frame_MOL[p], text="Meaning(s) of Life", font="'' 18"
-              ).grid(row=0, column=0, pady=(3, 0), columnspan=2*MOLs['n'][p], sticky='ns')
+    # upper part: stars / name / gene_pool ---------------------------------------------------------
+    fr_up = tk.Frame(frame, name="up")
+    fr_up.grid(row=0, column=0, padx=5, pady=0, sticky="nesw")
+    fr_up.columnconfigure(0, weight=1)
+    fr_up.columnconfigure(1, weight=1)
+    fr_up.columnconfigure(2, weight=6)
 
-    # --- MOLS - 2 per row ----------------------------------------------------
-    cur_row = 0
-    for m in range(MOLs['n'][p]):
-        frame_MOL[p].columnconfigure(m, weight=1)
-        frame_MOL[p].columnconfigure(m+1, weight=2)
+    # stars
+    ttk.Label(fr_up, image=images['no_star'], name="star1"
+              ).grid(row=0, column=0, sticky="e")
+    ttk.Label(fr_up, image=images['no_star'], name="star2"
+              ).grid(row=0, column=1, sticky="w")
 
-        cur_row = cur_row + 1 if (m % 2 == 0) else cur_row
-        cur_col = 2 if m % 2 == 1 else 0
-        xpad_L = 0 if m % 2 == 1 else 4
-        xpad_R = 4 if m % 2 == 1 else 0
+    # name
+    ttk.Label(fr_up, textvariable=plr['name'][p], name="name",
+              style="nameFP.TLabel" if options['first_player'].get() == p else "name.TLabel"
+              ).grid(row=0, column=2, sticky='ns')
 
-        pos_MOLs = ["select MOL #{}".format(m+1)] + MOLs_df.MOL.values.tolist()
-        MOLs['cbox'][p][m] = ttk.Combobox(
-            frame_MOL[p],
-            values=pos_MOLs,
-            exportselection=0,
-            state='enabled',
-            width=10,
-            style="move.TCombobox")
-        MOLs['cbox'][p][m].current(0)
-        MOLs['cbox'][p][m].grid(row=cur_row, column=cur_col, padx=(xpad_L, 0), pady=(0, 5), stick='nesw')
-        MOLs['cbox'][p][m].bind("<<ComboboxSelected>>",
-                                lambda e, m=m: btn_select_MOLS(e.widget.current(), p, m))
+    # gene pool
+    ttk.Label(fr_up, text="gene\npool", justify=tk.RIGHT, style="genesTXT.TLabel"
+              ).grid(row=0, column=3, sticky='e')
 
-        MOLs['icon'][p][m] = ttk.Label(frame_MOL[p], image=images['question_mark'])
-        MOLs['icon'][p][m].grid(row=cur_row, column=cur_col+1, padx=(0, xpad_R), pady=(0, 5), sticky='nsw')
+    ttk.Label(fr_up, textvariable=plr['genes'][p], style="genes.TLabel"
+              ).grid(row=0, column=4, sticky='w')
 
-        # set current selection if played
-        if MOLs['played'][p][m] is not None:
-            MOLs['cbox'][p][m].current(MOLs['played'][p][m]+1)
+    # seperator ------------------------------------------------------------------------------------
+    ttk.Separator(frame, orient='horizontal'
+                  ).grid(row=1, column=0, padx=10, pady=0, sticky='we')
 
-    # --- spinboxes for manual entry ------------------------------------------
-    for m in range(MOLs['n'][p]):
-        m_idx = MOLs['played'][p][m]
-        if (MOLs['played'][p][m] is not None and ('hand' in MOLs_df.loc[m_idx].MOL_type.lower()
-                                                  or 'draw' in MOLs_df.loc[m_idx].MOL_type.lower())):
-            # new frame
-            cur_row += 1
-            sbox_frame = tk.Frame(frame_MOL[p])
-            sbox_frame.grid(row=cur_row, column=0, columnspan=3, sticky="nesw")
+    # lower part: points / n_traits ----------------------------------------------------------------
+    mgn = 1     # defines space between rows of colors/points
+    fr_down = tk.Frame(frame, name="down")
+    fr_down.grid(row=2, column=0, padx=5, pady=0, sticky="new")
+    fr_down.columnconfigure((0, 1, 2, 3, 4, 5), weight=1)
+    fr_down.columnconfigure(7, weight=5)
+    fr_down.columnconfigure((9, 10, 11, 12), weight=1)
 
-            # label
-            tk.Label(sbox_frame, text=MOLs_df.loc[m_idx].MOL + ":"
-                     ).grid(row=cur_row, column=0, padx=(5, 0), sticky='e')
+    # color counts --------------------
+    set = 1
+    if set == 1:
+        # simple version with colored text_labels
+        ttk.Label(fr_down, textvariable=plr['n_tp'][p]['b'], style="cc_b.TLabel"
+                  ).grid(row=0, column=0, columnspan=2, pady=(0, mgn), sticky='se')
 
-            # create spinbox
-            MOL_sbox = ttk.Spinbox(sbox_frame, state='readonly', from_=-50, to=500, width=2, wrap=False)
-            MOL_sbox.grid(row=cur_row, column=1, sticky='w')
-            MOL_sbox.bind("<<Increment>>", lambda e, m=m: update_manual_MOL(int(e.widget.get()), p, m, '+'))
-            MOL_sbox.bind("<<Decrement>>", lambda e, m=m: update_manual_MOL(int(e.widget.get()), p, m, '-'))
+        ttk.Label(fr_down, textvariable=plr['n_tp'][p]['g'], style="cc_g.TLabel"
+                  ).grid(row=0, column=2, columnspan=2, pady=(0, mgn), sticky='s')
 
-            # fill spinbox, depending on drops_status
-            MOL_sbox.set(plr['points_MOL'][p][m].get())
+        ttk.Label(fr_down, textvariable=plr['n_tp'][p]['c'], style="cc_c.TLabel"
+                  ).grid(row=0, column=4, columnspan=2, pady=(0, mgn), sticky='sw')
+
+        ttk.Label(fr_down, textvariable=plr['n_tp'][p]['p'], style="cc_p.TLabel"
+                  ).grid(row=1, column=0, columnspan=2, pady=(mgn, 0), sticky='ne')
+
+        ttk.Label(fr_down, textvariable=plr['n_tp'][p]['r'], style="cc_r.TLabel"
+                  ).grid(row=1, column=2, columnspan=2, pady=(mgn, 0), sticky='n')
+
+        ttk.Label(fr_down, textvariable=plr['n_tp'][p]['sb'], style="cc_total.TLabel"
+                  ).grid(row=1, column=4, columnspan=2, pady=(mgn, 0), sticky='nw')
+    else:
+        # keep more beautiful version with colored circles... but this takes more space... maybe later...
+        ttk.Label(fr_down, textvariable=plr['n_tp'][p]['b'], style="colorcount.TLabel"
+                  ).grid(row=0, column=0, sticky="e")
+        ttk.Label(fr_down, image=images['b']
+                  ).grid(row=0, column=1, sticky="w")
+
+        ttk.Label(fr_down, textvariable=plr['n_tp'][p]['g'], style="colorcount.TLabel"
+                  ).grid(row=1, column=0, sticky="e")
+        ttk.Label(fr_down, image=images['g']
+                  ).grid(row=1, column=1, sticky="w")
+
+        ttk.Label(fr_down, textvariable=plr['n_tp'][p]['p'], style="colorcount.TLabel"
+                  ).grid(row=0, column=2, sticky="e")
+        ttk.Label(fr_down, image=images['p']
+                  ).grid(row=0, column=3, sticky="w")
+
+        ttk.Label(fr_down, textvariable=plr['n_tp'][p]['r'], style="colorcount.TLabel"
+                  ).grid(row=1, column=2, sticky="e")
+        ttk.Label(fr_down, image=images['r']
+                  ).grid(row=1, column=3, sticky="w")
+
+        ttk.Label(fr_down, textvariable=plr['n_tp'][p]['c'], style="colorcount.TLabel"
+                  ).grid(row=0, column=4, sticky="e")
+        ttk.Label(fr_down, image=images['c']
+                  ).grid(row=0, column=5, sticky="w")
+
+        ttk.Label(fr_down, textvariable=plr['n_tp'][p]['sb'], style="colorcount.TLabel", justify=tk.RIGHT
+                  ).grid(row=1, column=4, sticky="e")
+        ttk.Label(fr_down, image=images['sum']
+                  ).grid(row=1, column=5, sticky="w")
+
+    # seperator --------------------
+    ttk.Separator(fr_down, orient='vertical'
+                  ).grid(row=0, column=6, rowspan=2, padx=5, pady=10, sticky='ns')
+
+    # total points --------------------
+    ttk.Label(fr_down, textvariable=plr['points'][p]['total'], style="total.TLabel"
+              ).grid(row=0, column=7, rowspan=2, padx=0, pady=0, sticky='ns')
+
+    # seperator --------------------
+    ttk.Separator(fr_down, orient='vertical'
+                  ).grid(row=0, column=8, rowspan=2, padx=5, pady=10, sticky='ns')
+
+    # single points --------------------
+    mgn = 7
+    ttk.Label(fr_down, image=images['blank_sb']
+              ).grid(row=0, column=9, pady=(mgn, 0), sticky="e")
+    ttk.Label(fr_down, textvariable=plr['points'][p]['face'], style="points.TLabel"
+              ).grid(row=0, column=10, pady=(mgn, 0), sticky="w")
+
+    ttk.Label(fr_down, image=images['drops_sb']
+              ).grid(row=0, column=11, pady=(mgn, 0), sticky="e")
+    ttk.Label(fr_down, textvariable=plr['points'][p]['drops'], style="points.TLabel"
+              ).grid(row=0, column=12, pady=(mgn, 0), sticky="w")
+
+    ttk.Label(fr_down, image=images['worlds_end_sb']
+              ).grid(row=1, column=9, pady=(0, mgn), sticky="e")
+    ttk.Label(fr_down, textvariable=plr['points'][p]['worlds_end'], style="points.TLabel"
+              ).grid(row=1, column=10, pady=(0, mgn), sticky="w")
+
+    ttk.Label(fr_down, image=images['MOL_sb']
+              ).grid(row=1, column=11, pady=(0, mgn), sticky="e")
+    ttk.Label(fr_down, textvariable=plr['points'][p]['MOL'], style="points.TLabel"
+              ).grid(row=1, column=12, pady=(0, mgn), sticky="w")
 
 
 def create_player_frame(p):
     # this is a one-time call -> all created frames needs to be stored for later usage
     border = cfg["width_frames"]
 
-    frame = tk.Frame(frame_playground, bg=cfg["color_frames"], name="f_p" + str(p))
+    frame = tk.Frame(frame_playground, bg=cfg["color_frames"], name="p" + str(p))
     frame.columnconfigure(0, weight=1)  # stretch sub_frames to width of playground (=1!)
     frame.rowconfigure(1, weight=1)  # stretch trait-pile to bottom of playground
     frame.grid(column=p, row=0, padx=(0, 10), pady=10, sticky="nesw")  # or use nsw for non-x-streched frames!
 
     # ----- score_board ----------------------------------------------------------------------------
-    frame_points = tk.Frame(frame, name="scoreboard")
-    frame_points.grid(row=0, column=0, padx=border, pady=border, ipady=3, sticky="nesw")
-
-    frame_points.columnconfigure(0, weight=1)
-    frame_points.columnconfigure(1, weight=1)
-    frame_points.columnconfigure(2, weight=1)
-    frame_points.columnconfigure(3, weight=1)
-    frame_points.columnconfigure(4, weight=3)
-    frame_points.columnconfigure(5, weight=1)
-    frame_points.columnconfigure(6, weight=1)
-
-    # name
-    ttk.Label(frame_points, textvariable=plr['n_tp_score'][p], name="n_tp",
-              style="n_tpFP.TLabel" if options['first_player'].get() == p else "n_traits.TLabel"
-              ).grid(row=0, column=0, padx=5, pady=(5, 0), columnspan=2, sticky='ns')
-    ttk.Label(frame_points, textvariable=plr['name'][p], name="name",
-              style="nameFP.TLabel" if options['first_player'].get() == p else "name.TLabel"
-              ).grid(row=0, column=2, padx=5, pady=(5, 0), columnspan=3, sticky='ns')
-
-    # stars
-    ttk.Label(frame_points, image=images['no_star'], name="star1"
-              ).grid(row=0, column=5, padx=0, pady=0, sticky="nes")
-    ttk.Label(frame_points, image=images['no_star'], name="star2"
-              ).grid(row=0, column=6, padx=0, pady=0, sticky="nsw")
-
-    # single points
-    ttk.Label(frame_points, image=images['blank_sb']
-              ).grid(row=1, column=0, sticky="se")
-    ttk.Label(frame_points, image=images['drops_sb']
-              ).grid(row=1, column=2, sticky="se")
-    ttk.Label(frame_points, image=images['worlds_end_sb']
-              ).grid(row=2, column=0, sticky="e")
-    ttk.Label(frame_points, image=images['MOL_sb']
-              ).grid(row=2, column=2, sticky="e")
-
-    ttk.Label(frame_points, textvariable=plr['points'][p]['face'], style="points.TLabel"
-              ).grid(row=1, column=1, sticky="sw")
-    ttk.Label(frame_points, textvariable=plr['points'][p]['drops'], style="points.TLabel"
-              ).grid(row=1, column=3, sticky="sw")
-    ttk.Label(frame_points, textvariable=plr['points'][p]['worlds_end'], style="points.TLabel"
-              ).grid(row=2, column=1, sticky="w")
-    ttk.Label(frame_points, textvariable=plr['points'][p]['MOL'], style="points.TLabel"
-              ).grid(row=2, column=3, sticky="w")
-
-    # total points
-    ttk.Label(frame_points, textvariable=plr['points'][p]['total'], style="total.TLabel"
-              ).grid(row=1, column=4, rowspan=2, padx=0, pady=0, sticky='ns')
-
-    # gene pool
-    ttk.Label(frame_points, text="gene pool"
-              ).grid(row=1, column=5, columnspan=2, padx=0, pady=0, sticky='s')
-
-    ttk.Label(frame_points, textvariable=plr['genes'][p], style="genes.TLabel"
-              ).grid(row=2, column=5, columnspan=2, padx=0, pady=0, sticky='n')
+    frame_scoreboard = tk.Frame(frame, name="scoreboard")
+    frame_scoreboard.grid(row=0, column=0, padx=border, pady=border, ipady=0, sticky="nesw")
+    create_scoreboard(frame_scoreboard, p)
 
     # ----- gaming area ----------------------------------------------------------------------------
     frame_traits = tk.Frame(frame)
@@ -2227,8 +2309,6 @@ def reset_variables():
     plr['points'].clear()
     plr['trait_pile'].clear()
     plr['n_tp'].clear()
-    plr['n_tp_xtra'].clear()
-    plr['n_tp_score'].clear()
     plr['trait_selected'].clear()
     plr['points_WE_effect'].clear()
     plr['points_MOL'].clear()
@@ -2254,9 +2334,10 @@ def reset_variables():
                               'worlds_end': tk.IntVar(value=0), 'MOL': tk.IntVar(value=0),
                               'total': tk.IntVar(value=0)})
         plr['trait_pile'].append([])
-        plr['n_tp'].append([])
-        plr['n_tp_xtra'].append(0)
-        plr['n_tp_score'].append(tk.StringVar(value="0"))
+        plr['n_tp'].append({'b': tk.StringVar(value='0'), 'g': tk.StringVar(value='0'),
+                            'p': tk.StringVar(value='0'), 'r': tk.StringVar(value='0'),
+                            'c': tk.StringVar(value='0'), 't': tk.StringVar(value='0'),
+                            'xtra': 0, 'sb': tk.StringVar(value='\u2211 0')})
         plr['trait_selected'].append(tk.Variable(value=np.nan))
         plr['points_WE_effect'].append(tk.IntVar(value=0))
         plr['points_MOL'].append([])
@@ -2374,17 +2455,17 @@ root.bind("<F8>", lambda e: start_game())
 root.bind("<F9>", lambda e: simulate())
 
 # create _content_ frame ---------------------------------------------------------------------------
-content = tk.Frame(root, width=1200, height=800, bg=cfg["color_bg"], name="f_content")
+content = tk.Frame(root, width=1200, height=800, bg=cfg["color_bg"], name="content")
 content.grid(column=0, row=0, sticky="nesw")
 content.columnconfigure(0, weight=0)  # menu on the left
 content.columnconfigure(1, weight=1)  # full playground -> set =1 to stretch it to the right side
 
 # create _menu_ frame ------------------------------------------------------------------------------
-frame_menu = tk.Frame(content, bg=cfg["color_frames"], name="f_menu")
+frame_menu = tk.Frame(content, bg=cfg["color_frames"], name="menu")
 frame_menu.grid(row=0, column=0, padx=10, pady=10, sticky="n")
 
 # create _playground_ frame ------------------------------------------------------------------------
-frame_playground = tk.Frame(content, bg=cfg["color_bg"], name="f_playground")
+frame_playground = tk.Frame(content, bg=cfg["color_bg"], name="playground")
 frame_playground.grid(row=0, column=1, padx=0, pady=0, stick="nesw")
 frame_playground.rowconfigure(0, weight=1)  # =1 -> stretch playground to bottom
 
@@ -2418,8 +2499,6 @@ gui_style.configure("genes.TLabel", font=("", 38, "bold"), foreground=cfg["font_
 root.option_add("*TCombobox*Listbox.font", "'' 10")
 
 gui_style.configure("disabled.TButton", foreground="grey", font="'', 11")
-
-f2 = tkFont.Font(size=10)
 
 # tk_inter_variables -------------------------------------------------------------------------------
 options = {}

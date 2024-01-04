@@ -383,15 +383,6 @@ def simulate():
         print('___done___')
 
 
-def get_sup(tp, xtra):
-    lib = {'0': '\u2070', '1': '\u00B9', '2': '\u00B2', '3': '\u00B3', '4': '\u2074',
-           '5': '\u2075', '6': '\u2076', '7': '\u2077', '8': '\u2078', '9': '\u2079',
-           '+': '\u207A', '(': '\u207D', ')': '\u207E'}
-
-    txt = str(len(tp)) if xtra == 0 else (str(len(tp)) + "+" + str(xtra))
-    return ''.join(lib[i] if i in lib else i for i in txt)
-
-
 def switch(inp):
     global icons_onoff, music_onoff, points_onoff
 
@@ -1250,7 +1241,11 @@ def update_all():
     for p in range(game['n_player']):
         # update n_tp
         plr['n_tp'][p] = len(plr['trait_pile'][p]) + plr['n_tp_xtra'][p]
-        plr['n_tp_score'][p].set(get_sup(plr['trait_pile'][p], plr['n_tp_xtra'][p]))
+
+        txt = (str(len(plr['trait_pile'][p]))
+               if plr['n_tp_xtra'][p] == 0
+               else (str(len(plr['trait_pile'][p])) + "\n+" + str(plr['n_tp_xtra'][p])))
+        plr['n_tp_score'][p].set(txt)
 
         for trait_idx in plr['trait_pile'][p]:
             # 1: attachment effect
@@ -2272,7 +2267,7 @@ def reset_variables():
         plr['trait_pile'].append([])
         plr['n_tp'].append([])
         plr['n_tp_xtra'].append(0)
-        plr['n_tp_score'].append(tk.StringVar(value=get_sup([], 0)))
+        plr['n_tp_score'].append(tk.StringVar(value="0"))
         plr['trait_selected'].append(tk.Variable(value=np.nan))
         plr['points_WE_effect'].append(tk.IntVar(value=0))
         plr['points_MOL'].append([])

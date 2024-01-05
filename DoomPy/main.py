@@ -958,15 +958,11 @@ def update_manual_we(cur_value, p, change):
 
 
 def update_manual_drops(cur_value, trait, change):
-    # check, if spinbox is in initial state
-    if cur_value == '-':
-        cur_value = '0'
-
     # change value according to button
     if change == '+':
-        value = int(cur_value) + 1
+        value = cur_value + 1
     else:
-        value = int(cur_value) - 1
+        value = cur_value - 1
 
     # save value in status_df
     status_df.loc[trait, 'drops'] = value
@@ -1719,8 +1715,8 @@ def create_trait_pile(frame_trait_overview, p):
             drop_sbox = ttk.Spinbox(
                 frame_trait_overview,
                 state=state,
-                from_=-100,
-                to=100,
+                from_=-50,
+                to=50,
                 width=3,
                 wrap=False)
             drop_sbox.grid(row=irow, column=1, sticky='w')
@@ -1728,11 +1724,11 @@ def create_trait_pile(frame_trait_overview, p):
             drop_sbox.bind("<<Decrement>>", lambda e, t=trait_idx: update_manual_drops(e.widget.get(), t, '-'))
 
             # fill spinbox, depending on drops_status
-            if np.isnan(status_df.loc[trait_idx].drops):
-                drop_sbox.set('-')
-            else:
-                dp = str(int(status_df.loc[trait_idx].drops))
+            if not np.isnan(status_df.loc[trait_idx].drops):
+                dp = status_df.loc[trait_idx].drops
                 drop_sbox.set(dp)
+            else:
+                drop_sbox.set(0)
 
     # *********** special, individual case *** !!! *************************************************
     # Some Drop-of-Life-Effects are affecting other players! hence, effects of these traits need to

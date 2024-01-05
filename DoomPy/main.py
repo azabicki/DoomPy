@@ -714,11 +714,21 @@ def btn_traits_world_end(from_, trait_idx, effect):
     check_WE_status('check_button')
 
 
-def btn_remove_trait(from_, where_to):
+def btn_remove_trait(from_, where_to, *args):
     # get card & its attachment
     trait_idx = plr['trait_selected'][from_].get()
     if not np.isnan(trait_idx):
         attachment = status_df.loc[trait_idx].attachment
+
+    # check if "emergency-removal" of attachmant/dominant is triggered
+    if args != ():
+        trait_idx = args[0]
+        attachment = 'none'
+
+        # reset possible host
+        host = [i for i, v in enumerate(status_df.attachment.values.tolist()) if trait_idx == v]
+        if host != []:
+            status_df.loc[host[0], 'attachment'] = 'none'
 
     # return, if no trait selected
     if np.isnan(trait_idx):
@@ -1510,8 +1520,12 @@ def create_trait_pile(frame_trait_overview, p):
 
         # add SEPERATOR after _true_ icons
         icol += 1
-        ttk.Separator(frame_pics, orient='vertical'
-                      ).grid(row=0, column=icol, padx=3, pady=3, sticky='ns')
+        sep = ttk.Separator(frame_pics, orient='vertical')
+        sep.grid(row=0, column=icol, padx=3, pady=3, sticky='ns')
+
+        if traits_df.loc[trait_idx].attachment == 1 or traits_df.loc[trait_idx].dominant == 1:
+            sep.bind("<Button-1>", lambda e: btn_remove_trait(p, 'discard', trait_idx))
+            print('_add discard_')
 
         # ----- STATE_icons -> current drop/attachment effects  ------------------------------------
         # *new* color ---------------------------

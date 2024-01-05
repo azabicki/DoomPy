@@ -1665,7 +1665,7 @@ def create_trait_pile(frame_trait_overview, p):
                 values=traits_filtered_str,
                 exportselection=0,
                 state="readonly",
-                width=10)
+                width=9)
             cbox_attach_to.grid(row=irow, column=1, sticky='w')
             cbox_attach_to.bind("<<ComboboxSelected>>",
                                 lambda e, t=trait_idx, idx=traits_filtered_idx:
@@ -1697,7 +1697,7 @@ def create_trait_pile(frame_trait_overview, p):
                 values=twe_effect,
                 exportselection=0,
                 state=state,
-                width=11)
+                width=9)
             cbox_attach_to.grid(row=irow, column=1, sticky='w')
             cbox_attach_to.bind(
                "<<ComboboxSelected>>",

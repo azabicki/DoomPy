@@ -32,7 +32,7 @@ from globals_ import neoteny_checkbutton, sleepy_spinbox
 def simulate():
     sim_running[0] = True
 
-    loops = 50
+    loops = 1
     for loop in range(loops):
         start_game()
         pre_play_set = 'random'
@@ -163,7 +163,7 @@ def simulate():
                 btn_play_trait(3)
 
         if pre_play_set == 'random':  # -----------------------------------------------------
-            rounds = 12
+            rounds = 18
             cats = 4
             cats_at = [int(rounds/cats*(i+1))-1 for i in range(cats)]
             colors = ['blue', 'green', 'purple', 'red']
@@ -308,7 +308,7 @@ def simulate():
                         and ('own_hand' in traits_df.loc[t].drop_effect
                              or 'discarded' in traits_df.loc[t].drop_effect)):
                         rnd = np.random.randint(low=1, high=10)
-                        update_manual_drops(str(rnd), t, '+')
+                        update_manual_drops(rnd, t, '+')
 
             # neoteny ?
             nt = np.random.randint(low=0, high=9)

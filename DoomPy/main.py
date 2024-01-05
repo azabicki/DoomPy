@@ -451,18 +451,33 @@ def switch(inp):
 
         case 'points':
             if points_onoff == 'off':
+                # show actual points
                 points_onoff = 'on'
                 lbl_points_switch[0].configure(image=images['points_123'])
+
+                gui_style.configure("total.TLabel", font=("", 50, "bold"), foreground=cfg["font_color_total_score"])
+                gui_style.configure("points.TLabel", font=("", 14))
+
                 write_log(['points', 'on'])
                 update_scoring()
             elif points_onoff == 'on':
+                # show rank
                 points_onoff = 'rank'
                 lbl_points_switch[0].configure(image=images['rank'])
+
+                gui_style.configure("total.TLabel", font=("Arial", 40, "bold"), foreground=cfg["font_color_total_score"])
+                gui_style.configure("points.TLabel", font=("Arial", 14))
+
                 write_log(['points', 'rank'])
                 update_scoring()
             else:
+                # show ***
                 points_onoff = 'off'
                 lbl_points_switch[0].configure(image=images['question_mark'])
+
+                gui_style.configure("total.TLabel", font=("", 50, "bold"), foreground=cfg["font_color_total_score"])
+                gui_style.configure("points.TLabel", font=("", 18))
+
                 write_log(['points', 'off'])
                 update_scoring()
 
@@ -1070,7 +1085,8 @@ def update_scoring():
     r_WE = [sorted(p_worlds_end, reverse=True).index(x) + 1 for x in p_worlds_end]
     r_MOL = [sorted(p_MOL, reverse=True).index(x) + 1 for x in p_MOL]
     r_total = [sorted(total, reverse=True).index(x) + 1 for x in total]
-    add = {1: 'st', 2: 'nd', 3: 'rd', 4: 'th', 5: 'th', 6: 'th'}
+    add = {1: '\u02e2\u1d57', 2: '\u207f\u1d48', 3: '\u02b3\u1d48',
+           4: '\u1d57\u02b0', 5: '\u1d57\u02b0', 6: '\u1d57\u02b0'}
 
     for p in range(game['n_player']):
         # update points
@@ -1087,11 +1103,11 @@ def update_scoring():
             plr['points'][p]['MOL'].set(str(r_MOL[p]) + add[r_MOL[p]])
             plr['points'][p]['total'].set(str(r_total[p]) + add[r_total[p]])
         else:
-            plr['points'][p]['face'].set('**')
-            plr['points'][p]['drops'].set('**')
-            plr['points'][p]['worlds_end'].set('**')
-            plr['points'][p]['MOL'].set('**')
-            plr['points'][p]['total'].set('**')
+            plr['points'][p]['face'].set('\u2736')
+            plr['points'][p]['drops'].set('\u2736')
+            plr['points'][p]['worlds_end'].set('\u2736')
+            plr['points'][p]['MOL'].set('\u2736')
+            plr['points'][p]['total'].set('\u2736')
 
         # log
         write_log(['scoring', 'update'], plr['name'][p].get(), p_face, p_drop, p_worlds_end, p_MOL, total)
@@ -2500,7 +2516,7 @@ gui_style.configure("cc_r.TLabel", font=("", 18, "bold"), foreground=cfg["color_
 gui_style.configure("cc_c.TLabel", font=("", 18, "bold"), foreground=cfg["color_colorless"])
 gui_style.configure("cc_total.TLabel", font=("", 18, "bold"))
 
-gui_style.configure("total.TLabel", font=("", 60, "bold"), foreground=cfg["font_color_total_score"])
+gui_style.configure("total.TLabel", font=("", 50, "bold"), foreground=cfg["font_color_total_score"])
 gui_style.configure("points.TLabel", font=("", 14))
 
 gui_style.configure("genesTXT.TLabel", font=("", 12, "bold"), foreground=cfg["font_color_genes"])

@@ -384,7 +384,7 @@ def calc_MOL_points(p, m):
                     points += 1
 
         case "The River Mist":
-            n = [i for i in plr['n_tp']]
+            n = [i['t'].get() for i in plr['n_tp']]
 
             if n[p] == max(n) and sum(i == n[p] for i in n) == 1:
                 points = 4

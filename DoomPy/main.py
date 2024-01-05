@@ -372,11 +372,6 @@ def simulate():
             catastrophe['cbox'][3].current(6)
             catastrophe['cbox'][3].event_generate("<<ComboboxSelected>>")
 
-        # for r in range(game['n_catastrophes']):
-        #     c = np.random.randint(low=0, high=len(catastrophe['possible'][r]))
-        #     catastrophe['cbox'][r].current(c)
-        #     catastrophe['cbox'][r].event_generate("<<ComboboxSelected>>")
-
         print('___done___')
 
 
@@ -1401,9 +1396,6 @@ def create_trait_pile(frame_trait_overview, p):
 
     # then, scan trait pile for any effects by any traits, like protecting other traits...
     rules_tr.permanent_effects(plr['trait_pile'][p])
-
-    # then, update n_tp
-    # plr['n_tp'][p]['sb'].set(get_sup(plr['trait_pile'][p]))
 
     # --- loop traits in trait pile ------------------------------------------------
     irow = -1

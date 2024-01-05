@@ -1525,7 +1525,6 @@ def create_trait_pile(frame_trait_overview, p):
 
         if traits_df.loc[trait_idx].attachment == 1 or traits_df.loc[trait_idx].dominant == 1:
             sep.bind("<Button-1>", lambda e: btn_remove_trait(p, 'discard', trait_idx))
-            print('_add discard_')
 
         # ----- STATE_icons -> current drop/attachment effects  ------------------------------------
         # *new* color ---------------------------

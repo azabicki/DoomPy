@@ -1726,7 +1726,7 @@ def create_trait_pile(frame_trait_overview, p):
             # fill spinbox, depending on drops_status
             if not np.isnan(status_df.loc[trait_idx].drops):
                 dp = status_df.loc[trait_idx].drops
-                drop_sbox.set(dp)
+                drop_sbox.set(int(dp))
             else:
                 drop_sbox.set(0)
 

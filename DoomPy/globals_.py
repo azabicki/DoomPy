@@ -100,8 +100,8 @@ for files in glob.glob(os.path.join(dir_images, "trait_properties", cfg["img_tra
         images_dict[var_WE] = Image.open(files).resize((img_size_WE, img_size_WE))
 
 # scoreboard icons
-for files in glob.glob(os.path.join(dir_images, "trait_properties", cfg["img_trait_properties_set"], "*.png")):
-    var_name = os.path.splitext(os.path.basename(files))[0] + '_sb'
+for files in glob.glob(os.path.join(dir_images, "trait_properties", cfg["img_trait_properties_set"], "*_sb.png")):
+    var_name = os.path.splitext(os.path.basename(files))[0]
     images_dict[var_name] = Image.open(files).resize((img_size_scoreboard, img_size_scoreboard))
 
 # effects on traits

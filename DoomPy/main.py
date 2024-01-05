@@ -460,7 +460,7 @@ def switch(inp):
                 points_onoff = 'rank'
                 lbl_points_switch[0].configure(image=images['rank'])
 
-                gui_style.configure("total.TLabel", font=("Arial", 40, "bold"), foreground=cfg["font_color_total_score"])
+                gui_style.configure("total.TLabel", font=("Arial", 40, "bold"))
                 gui_style.configure("points.TLabel", font=("Arial", 14))
 
                 write_log(['points', 'rank'])

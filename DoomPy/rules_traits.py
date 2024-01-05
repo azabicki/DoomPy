@@ -273,7 +273,7 @@ def permanent_effects(tp):
                     write_log(['*'], ">>> trait pile <<< '{}' (id:{}) is protecting {} green trait(s)"
                               .format(trait, trait_idx, len(new_effects)))
                 else:
-                    # if pretected previously, remove protection
+                    # if protected previously, but now >=5 green traits, remove protection
                     if prev_effects != 'none':
                         protected = [int(i) for i in prev_effects.split()]
                         for t in protected:
@@ -314,7 +314,7 @@ def permanent_effects(tp):
                     write_log(['*'], ">>> trait pile <<< '{}' (id:{}) is protecting {} red trait(s)"
                               .format(trait, trait_idx, len(new_effects)))
                 else:
-                    # if pretected previously, remove protection
+                    # if protected previously, but now >=3 red traits, remove protection
                     if prev_effects != 'none':
                         protected = [int(i) for i in prev_effects.split()]
                         for t in protected:

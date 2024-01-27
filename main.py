@@ -1157,15 +1157,11 @@ def update_genes():
     # ----- Sleepy --------------
     slp_idx = traits_df.index[traits_df.trait == 'Sleepy'].tolist()
     if slp_idx != []:
-        if any(slp_idx[0] in tp for tp in plr['trait_pile']):
-            slp_eff = [i.get() for i in sleepy_spinbox]
-            diff_genes = [diff_genes[x]+slp_eff[x] for x in range(len(diff_genes))]
-            if any(slp_eff):
-                p = [i for i, e in enumerate(slp_eff) if e != 0]
-                write_log(['genes', 'sleepy'], plr['name'][p[0]].get(), slp_eff[p[0]], diff_genes)
-        else:  # sleepy in no trait pile -> reset values
-            for i in range(game['n_player']):
-                sleepy_spinbox[i].set(0)
+        slp_eff = [i.get() for i in sleepy_spinbox]
+        diff_genes = [diff_genes[x]+slp_eff[x] for x in range(len(diff_genes))]
+        if any(slp_eff):
+            p = [i for i, e in enumerate(slp_eff) if e != 0]
+            write_log(['genes', 'sleepy'], plr['name'][p[0]].get(), slp_eff[p[0]], diff_genes)
 
     # ----- Spores ---------------
     sprs_idx = traits_df.index[traits_df.trait == 'Spores'].tolist()
@@ -1630,7 +1626,7 @@ def create_trait_pile(frame_trait_overview, p):
 
             # create combobox
             ttk.Spinbox(frame_trait_overview,
-                        from_=-1, to=1, width=3, wrap=False,
+                        from_=-5, to=5, width=3, wrap=False,
                         textvariable=sleepy_spinbox[p],
                         command=lambda: update_all()
                         ).grid(row=irow, column=1, sticky='w')

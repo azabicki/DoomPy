@@ -960,9 +960,9 @@ def update_manual_we(cur_value, p, change):
 def update_manual_drops(cur_value, trait, change):
     # change value according to button
     if change == '+':
-        value = cur_value + 1
+        value = int(cur_value) + 1
     else:
-        value = cur_value - 1
+        value = int(cur_value) - 1
 
     # save value in status_df
     status_df.loc[trait, 'drops'] = value

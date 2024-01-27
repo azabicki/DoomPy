@@ -2193,8 +2193,9 @@ def create_menu_frame():
         height=3,
         width=16,
         listvariable=deck_filtered_str,
-        exportselection=False)
-    lbox_deck[0].grid(row=2, column=0, columnspan=2, padx=2*border)
+        exportselection=False,
+        font="'', 11")
+    lbox_deck[0].grid(row=2, column=0, columnspan=2, padx=2*border, sticky="ew")
     lbox_deck[0].bind("<<ListboxSelect>>",
                       lambda e: write_log(['select', 'deck'],
                                           traits_df.loc[deck_filtered_idx[lbox_deck[0].curselection()[0]]].trait,

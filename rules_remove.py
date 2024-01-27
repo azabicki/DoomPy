@@ -33,7 +33,7 @@ def check_trait(trait_idx, from_, where_to):
             return None
 
         case 'Spores':
-            # save player id for every time, spores is discarded! this string, which becomes longer
+            # save player id for each time spores is discarded! this string, which becomes longer
             # every time spores is discarded, is checked during update_genes()
             if not status_df.loc[trait_idx].inactive and where_to == 'discard':
                 cur_effects = status_df.loc[trait_idx].effects

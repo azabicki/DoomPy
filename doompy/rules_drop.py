@@ -352,6 +352,11 @@ def drop_traits(trait_idx, p, *args):
             if not np.isnan(status_df.loc[trait_idx].drops):
                 dp = int(status_df.loc[trait_idx].drops)
 
+        case 'Serrated Teeth (5)':
+            # 1 self n_dominant discarded
+            # load drop value from status_df, because it was set manually, if its not nan
+            dp = -2 * int(traits_df.loc[trait_pile, 'dominant'].sum())
+
         case 'Shiny':
             # -1 all n_colorless own
             # if PROWLER is in THIS' PLAYERS trait pile
@@ -453,6 +458,11 @@ def drop_traits(trait_idx, p, *args):
             # 6 self 4_or_more_red own
             dp = 6 * (sum('red' in color.lower()
                           for color in status_df.iloc[trait_pile].color.tolist()) >= 4)
+
+        case 'Tetrachromatic':
+            # 6 self 4_or_more_red own
+            dp = -1 * sum('colorless' in color.lower()
+                          for color in status_df.iloc[trait_pile].color.tolist())
 
         case 'Tiny':
             # -1 self n_traits own

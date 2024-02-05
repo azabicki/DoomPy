@@ -185,7 +185,7 @@ def drop_traits(trait_idx, p, *args):
             dp = sum('red' in color.lower()
                      for color in status_df.iloc[trait_pile].color.tolist())
 
-        case 'Hypermyelination':
+        case 'Hyper-Myelination':
             # n self gene_pool_max all
             dp = max(gp.get() for gp in plr['genes'])
 

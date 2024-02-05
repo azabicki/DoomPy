@@ -346,7 +346,7 @@ def drop_traits(trait_idx, p, *args):
                 dp = sum(we in color.lower()
                          for color in status_df.iloc[trait_pile].color.tolist())
 
-        case 'Serrated Teeth':
+        case 'Serrated Teeth (-1)':
             # 1 self n_dominant discarded
             # load drop value from status_df, because it was set manually, if its not nan
             if not np.isnan(status_df.loc[trait_idx].drops):

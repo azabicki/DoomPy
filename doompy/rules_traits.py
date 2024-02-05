@@ -243,6 +243,10 @@ def permanent_effects(tp):
         trait = status_df.loc[trait_idx].trait
 
         match trait:
+            case 'Fulfilled':
+                # apply protection to self
+                status_df.loc[trait_idx, 'no_remove'] = True
+
             case 'Ironwood':
                 # -> protect green if <= 5 (excl. dominants) in trait pile
                 # previous effect

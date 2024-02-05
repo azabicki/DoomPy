@@ -59,7 +59,7 @@ def assign_traits_WE_effects(trait_idx, trait_pile):
                 status_df.loc[trait_idx, 'effects_traits_WE'] = (' ' .join(prev_cleaned)
                                                                  if prev_cleaned != []
                                                                  else 'none')
-            # secondly, apply current slection
+            # secondly, apply current selection
             if traits_WE != 'none':
                 # add effect to status_df
                 prev_WE_effect = status_df.loc[trait_idx].effects_traits_WE
@@ -136,7 +136,7 @@ def assign_traits_WE_effects(trait_idx, trait_pile):
                                                                  if prev_cleaned != []
                                                                  else 'none')
 
-            # secondly, apply current slection
+            # secondly, apply current selection
             if traits_WE != 'none':
                 # calculate amount of each color, but do so AFTER attachment-effects and BEFORE
                 # worlds-end-effects (like 'Faith') !!!
@@ -248,7 +248,7 @@ def permanent_effects(tp):
                 # previous effect
                 prev_effects = status_df.loc[trait_idx].effects
 
-                # how many green (wo dominats) traits in pile?
+                # how many green (wo dominants) traits in pile?
                 n_green = sum('green' in status_df.iloc[t].color.lower()
                               for t in tp
                               if traits_df.iloc[t].dominant != 1)

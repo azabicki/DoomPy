@@ -2,7 +2,7 @@ from globals_ import traits_df, status_df, plr
 from log import write_log
 
 
-# filter which traits from trait pile are available for the attacahment to be attached to
+# filter which traits from trait pile are available for the attachment to be attached to
 def filter_attachables(attachment, p):
     attachable = plr['trait_pile'][p]
 

@@ -240,7 +240,7 @@ def calc_MOL_points(p, m):
                 if n_actions <= 3:
                     points += 6
 
-        case "The Godlen Shrew":
+        case "The Golden Shrew":
             n = len(plr['trait_pile'][p])
 
             if n <= 8:

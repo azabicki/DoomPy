@@ -2216,7 +2216,7 @@ def create_menu_frame():
         ttk.Button(
             frame_menu_buttons,
             textvariable=plr['name'][i],
-            width=4,
+            width=5,
             style="menu.TButton",
             command=partial(btn_play_trait, i),
         ).grid(row=floor(i / 2), column=i % 2, columnspan=clspn)

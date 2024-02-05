@@ -1480,6 +1480,8 @@ def create_trait_pile(frame_trait_overview, p):
                     lbl_collection['image'] = images['dinolings']
                 case 'multi-color':
                     lbl_collection['image'] = images['multicolor']
+                case 'special-edition':
+                    lbl_collection['image'] = images['special_edition']
                 case 'overlush':
                     lbl_collection['image'] = images['overlush']
 

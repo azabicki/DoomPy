@@ -217,7 +217,7 @@ def simulate():
                                   traits_df.loc[deck_filtered_idx[lbox_deck[0].curselection()[0]]].trait,
                                   trait_idx)
 
-                    # attach to host if neccessary
+                    # attach to host if necessary
                     if traits_df.loc[trait_idx].attachment == 1:
                         host_idx = rules_at.filter_attachables(trait_idx, p)[0]
 
@@ -347,7 +347,7 @@ def simulate():
                     lbox_deck[0].selection_set(deck_filtered_idx.index(trait_idx))
                     btn_play_trait(p)
 
-                    # attach to host if neccessary
+                    # attach to host if necessary
                     if traits_df.loc[trait_idx].attachment == 1:
                         host_idx = rules_at.filter_attachables(trait_idx, p)[0]
 
@@ -487,9 +487,9 @@ def play_sound(trait):
 def calc_MOLs(p):
     p_MOL = 0
     for m in range(MOLs['n'][p]):
-        # calcuate, if MOL is selected
+        # calculate, if MOL is selected
         if MOLs['played'][p][m] is not None:
-            # calculte points
+            # calculate points
             p_MOL_m = rules_mol.calc_MOL_points(p, m)
 
             # update points_icon
@@ -645,7 +645,7 @@ def btn_play_catastrophe(event, c):
 
     # update possible catastrophes for other catastrophes
     for i in [i for i in range(game['n_catastrophes']) if i != c]:
-        # begin with ALL possible catastrophes - neccessary bc this catastrophe may have changed
+        # begin with ALL possible catastrophes - necessary bc this catastrophe may have changed
         catastrophe['possible'][i] = catastrophes_df.index.tolist()
 
         # remove other catastrophes from possible ones
@@ -730,7 +730,7 @@ def btn_remove_trait(from_, where_to, *args):
     if not np.isnan(trait_idx):
         attachment = status_df.loc[trait_idx].attachment
 
-    # check if "emergency-removal" of attachmant/dominant is triggered
+    # check if "emergency-removal" of attachment/dominant is triggered
     if args != ():
         trait_idx = args[0]
         attachment = 'none'
@@ -1036,7 +1036,7 @@ def update_traits_current_status(todo, *args):
 
 
 def update_first_player():
-    # update all palyer frames
+    # update all player frames
     for p in range(game['n_player']):
         lbl = root.nametowidget('.content.playground.p{}.scoreboard.up.name'.format(p))
         lbl.configure(style="nameFP.TLabel"
@@ -1180,12 +1180,12 @@ def update_genes():
                 # log
                 write_log(['genes', 'spores'], sprs_idx[0], plr['name'][p].get(), diff_genes)
 
-    # check what catastrophes were played alread ---------------------------------------
+    # check what catastrophes were played already --------------------------------------
     for c in range(game['n_catastrophes']):
         # get card & effect
         c_idx = catastrophe['played'][c]
 
-        # check if catastrophy was played
+        # check if catastrophe was played
         if c_idx is not None:
             c_str = catastrophes_df.loc[c_idx, "name"]
             # get effect and apply it
@@ -1306,7 +1306,7 @@ def search_trait_in_list(inp):
         deck_filtered_idx.extend(filtered_trait_idx)
         deck_filtered_str.set(filtered_trait_str)
 
-        # if only 1 pssibility left, select it automatically
+        # if only 1 possibility left, select it automatically
         if (len(filtered_trait_idx) == 1 or
                 (len(filtered_trait_idx) == 2 and filtered_trait_str[0] == filtered_trait_str[1])):
             lbox_deck[0].selection_clear(0, tk.END)
@@ -1518,7 +1518,7 @@ def create_trait_pile(frame_trait_overview, p):
             icol += 1
             tk.Label(frame_pics, image=images['attachment']).grid(row=0, column=icol)
 
-        # add SEPERATOR after _true_ icons
+        # add SEPARATOR after _true_ icons
         icol += 1
         sep = ttk.Separator(frame_pics, orient='vertical')
         sep.grid(row=0, column=icol, padx=3, pady=3, sticky='ns')
@@ -1847,7 +1847,7 @@ def create_scoreboard(frame, p):
     ttk.Label(fr_up, textvariable=plr['genes'][p], style="genes.TLabel"
               ).grid(row=0, column=4, sticky='w')
 
-    # seperator ------------------------------------------------------------------------------------
+    # separator ------------------------------------------------------------------------------------
     ttk.Separator(frame, orient='horizontal'
                   ).grid(row=1, column=0, padx=10, pady=0, sticky='we')
 
@@ -1912,7 +1912,7 @@ def create_scoreboard(frame, p):
         ttk.Label(fr_down, image=images['sum']
                   ).grid(row=1, column=5, sticky="w")
 
-    # seperator --------------------
+    # separator --------------------
     ttk.Separator(fr_down, orient='vertical'
                   ).grid(row=0, column=6, rowspan=2, padx=5, pady=10, sticky='ns')
 
@@ -1920,7 +1920,7 @@ def create_scoreboard(frame, p):
     ttk.Label(fr_down, textvariable=plr['points'][p]['total'], style="total.TLabel"
               ).grid(row=0, column=7, rowspan=2, padx=0, pady=0, sticky='ns')
 
-    # seperator --------------------
+    # separator --------------------
     ttk.Separator(fr_down, orient='vertical'
                   ).grid(row=0, column=8, rowspan=2, padx=5, pady=10, sticky='ns')
 
@@ -1954,7 +1954,7 @@ def create_player_frame(p):
     frame = tk.Frame(frame_playground, bg=cfg["color_frames"], name="p" + str(p))
     frame.columnconfigure(0, weight=1)  # stretch sub_frames to width of playground (=1!)
     frame.rowconfigure(1, weight=1)  # stretch trait-pile to bottom of playground
-    frame.grid(column=p, row=0, padx=(0, 10), pady=10, sticky="nesw")  # or use nsw for non-x-streched frames!
+    frame.grid(column=p, row=0, padx=(0, 10), pady=10, sticky="nesw")  # or use nsw for non-x-stretched frames!
 
     # ----- score_board ----------------------------------------------------------------------------
     frame_scoreboard = tk.Frame(frame, name="scoreboard")
@@ -2219,7 +2219,7 @@ def create_menu_frame():
             command=partial(btn_play_trait, i),
         ).grid(row=floor(i / 2), column=i % 2, columnspan=clspn)
 
-    # ----- frame 4 catastrophy selection ----------------------------------------------------------
+    # ----- frame 4 catastrophe selection ----------------------------------------------------------
     frame_menu_catastrophe = tk.Frame(frame_menu)
     frame_menu_catastrophe.grid(row=2, column=0, padx=border, pady=(0, border), sticky="nesw")
     frame_menu_catastrophe.columnconfigure(0, weight=1)
@@ -2372,12 +2372,12 @@ def reset_variables():
 
     # reset deck/lbox card-lists
     deck.clear()
-    deck.extend(traits_df.index.tolist())   # complete list of indicies of all traits
+    deck.extend(traits_df.index.tolist())   # complete list of indices of all traits
     deck_filtered_idx.clear()
     deck_filtered_idx.extend(traits_df.index.tolist())  # complete list of indices of traits for menu_listbox
     deck_filtered_str.set(traits_df.loc[deck].trait.values.tolist())  # complete list of names of traits
 
-    # reset occured catastrophes
+    # reset occurred catastrophes
     catastrophe['possible'].clear()
     catastrophe['played'].clear()
     catastrophe['cbox'].clear()

@@ -31,8 +31,7 @@ xlsx_traits = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="t
 xlsx_traits = xlsx_traits[xlsx_traits['in_game'] == 'yes']
 traits_df = (xlsx_traits
              .sort_values(by='trait')
-             .reset_index(drop=True)
-             .drop(columns='id'))
+             .reset_index(drop=True))
 
 # create new status dataframe containing current status of each trait
 status_df = traits_df[['trait', 'color', 'face']].copy()

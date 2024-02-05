@@ -279,7 +279,7 @@ def write_log(what, *args):
 
                 case 'epic':
                     print("   >>> dominant_stars <<< EPIC fills both dominant spots")
-                    f.write("   >>> dominant_stars <<< EPIPC fills both dominant spots\n")
+                    f.write("   >>> dominant_stars <<< EPIC fills both dominant spots\n")
 
         case 'scoring':
             match what[1]:
@@ -342,9 +342,9 @@ def write_log(what, *args):
         case 'trait_effects':
             match what[1]:
                 case 'amatoxins':
-                    print(">>> trait effects <<< '{}' effect is based on amount of discraded colors -> drop points = {}"
+                    print(">>> trait effects <<< '{}' effect is based on amount of discarded colors -> drop points = {}"
                           .format(*args))
-                    f.write(">>> trait effects <<< '{}' effect is based on amount of discraded colors -> drop points = {}\n"  # noqa: E501
+                    f.write(">>> trait effects <<< '{}' effect is based on amount of discarded colors -> drop points = {}\n"  # noqa: E501
                             .format(*args))
 
                 case 'prowler':

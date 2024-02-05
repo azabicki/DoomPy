@@ -90,7 +90,7 @@ for files in glob.glob(os.path.join(dir_images, "colors", cfg["img_colors_set"],
     var_name = os.path.splitext(os.path.basename(files))[0]
     images_dict[var_name] = Image.open(files).resize((img_size_icons, img_size_icons))
 
-# trait porperties
+# trait properties
 for files in glob.glob(os.path.join(dir_images, "trait_properties", cfg["img_trait_properties_set"], "*.png")):
     var_name = os.path.splitext(os.path.basename(files))[0]
     images_dict[var_name] = Image.open(files).resize((img_size_icons, img_size_icons))
@@ -177,7 +177,7 @@ deck_filtered_idx = []          # _filtered_ deck of trait_idx in listbox after 
 
 catastrophe = {}
 catastrophe['possible'] = []    # list of possibles catastrophes
-catastrophe['played'] = []      # occured catastrophes / needed for worlds end
+catastrophe['played'] = []      # occurred catastrophes / needed for worlds end
 catastrophe['cbox'] = []        # comboxes containing possible catastrophes
 
 worlds_end = {}

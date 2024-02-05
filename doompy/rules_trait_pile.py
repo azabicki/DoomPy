@@ -143,7 +143,7 @@ def viral(frame_trait_overview, p, irow, images, trait_idx, trait_name):
         # add drop icon
         tk.Label(frame, image=images['drops']
                  ).grid(row=0, column=2)
-        # add points icono
+        # add points icon
         tk.Label(frame, image=images[WE_drops[p]]
                  ).grid(row=0, column=3)
 

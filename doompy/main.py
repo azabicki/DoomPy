@@ -410,6 +410,7 @@ def switch(inp):
                 show_icons['gene_pool'] = False   # default: False
                 show_icons['worlds_end'] = False  # default: False
                 show_icons['effectless'] = False  # default: False
+                show_icons['persistent'] = False  # default: False
                 show_icons['attachment'] = False  # default: False
             elif icons_onoff == 'full':
                 show_icons['color'] = True          # default: True
@@ -421,6 +422,7 @@ def switch(inp):
                 show_icons['gene_pool'] = True      # default: False
                 show_icons['worlds_end'] = True     # default: False
                 show_icons['effectless'] = True     # default: False
+                show_icons['persistent'] = True     # default: False
                 show_icons['attachment'] = True     # default: False
             elif icons_onoff == 'off':
                 show_icons['color'] = False       # default: True
@@ -432,6 +434,7 @@ def switch(inp):
                 show_icons['gene_pool'] = False   # default: False
                 show_icons['worlds_end'] = False  # default: False
                 show_icons['effectless'] = False  # default: False
+                show_icons['persistent'] = False  # default: False
                 show_icons['attachment'] = False  # default: False
 
         case 'music':
@@ -1514,6 +1517,11 @@ def create_trait_pile(frame_trait_overview, p):
         if show_icons['effectless'] and traits_df.loc[trait_idx].effectless == 1:
             icol += 1
             tk.Label(frame_pics, image=images['effectless']).grid(row=0, column=icol)
+
+        # persistent
+        if show_icons['persistent'] and traits_df.loc[trait_idx].persistent == 1:
+            icol += 1
+            tk.Label(frame_pics, image=images['persistent']).grid(row=0, column=icol)
 
         # attachment
         if show_icons['attachment'] and traits_df.loc[trait_idx].attachment == 1:

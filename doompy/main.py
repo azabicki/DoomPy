@@ -1115,6 +1115,10 @@ def update_genes():
     for p in range(game['n_player']):
         # loop traits in trait_pile
         for trait_idx in plr['trait_pile'][p]:
+            # continue to next trait in tp if current trait is inactive
+            if status_df.loc[trait_idx].inactive:
+                continue
+
             # get gene effect of this card
             who = traits_df.loc[trait_idx].gene_pool_target
             effect = traits_df.loc[trait_idx].gene_pool_effect

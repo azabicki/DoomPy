@@ -375,6 +375,11 @@ def simulate():
         print('___done___')
 
 
+def btn_quit():
+    write_log('*', 'bye')
+    root.quit()
+
+
 def switch(inp):
     global icons_onoff, music_onoff, points_onoff
 
@@ -2313,12 +2318,11 @@ def create_menu_frame():
         image=init_switch['points'])
     lbl_points_switch[0].grid(row=0, column=2, padx=0)
     lbl_points_switch[0].bind("<Button-1>", lambda e: switch('points'))
-    ttk.Button(frame_menu_controls,
-               text="quit",
-               command=root.quit,
-               width=3,
-               style="menu.TButton"
-               ).grid(row=0, column=3, padx=(0, border), pady=5)
+    lbl_exit = ttk.Label(
+        frame_menu_controls,
+        image=images['exit'])
+    lbl_exit.grid(row=0, column=3, padx=(0, border), pady=5)
+    lbl_exit.bind("<Button-1>", lambda e: btn_quit())
 
 
 def reset_variables():

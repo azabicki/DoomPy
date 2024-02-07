@@ -122,6 +122,13 @@ for files in glob.glob(os.path.join(dir_images, "points", "*.png")):
     images_dict[var_name + 'X'] = images_dict[var_name].copy()
     images_dict[var_name + 'X'].paste(images_dict['red_cross'], (0, 0), images_dict['red_cross'])
 
+# fix w/h-ratio of certain images
+img_sizes = {'exit': img_size_star}
+for img in ['exit']:
+    w, h = images_dict[img].size
+    actual_img_w = int(w / h * img_sizes[img])
+    images_dict[img] = images_dict[img].resize((actual_img_w, img_size_icons))
+
 # load sounds --------------------------------------------------------------------------------------
 global sounds
 sounds = {}

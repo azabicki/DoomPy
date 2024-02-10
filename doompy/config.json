@@ -4,8 +4,6 @@
     "n_genes": 6,
     "n_catastrophes": 4,
     "n_MOLs": 2,
-    
-    "max_player": 6,
 
     "img_colors_set": "circle",
     "img_trait_properties_set": "official_setA"

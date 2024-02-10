@@ -496,7 +496,7 @@ def calc_MOLs(p):
     p_MOL = 0
     for m in range(MOLs['n'][p]):
         # calculate, if MOL is selected
-        if MOLs['played'][p][m] is not None:
+        if MOLs['played'][p][m] is not None and points_onoff is 'on':
             # calculate points
             p_MOL_m = rules_mol.calc_MOL_points(p, m)
 

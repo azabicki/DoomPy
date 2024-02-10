@@ -4,29 +4,9 @@
     "n_genes": 6,
     "n_catastrophes": 4,
     "n_MOLs": 2,
+    
     "max_player": 6,
 
     "img_colors_set": "circle",
-    "img_trait_properties_set": "official_setA",
-
-    "font_color_dominant": "#EE7621",
-    "font_color_1st_player": "#0da953",
-    "font_color_total_score": "#e1484a",
-    "font_color_genes": "#bf3eff",
-
-    "color_bg": "#CD6090",
-    "color_frames": "white",
-
-    "color_blue": "#1C86ee",
-    "color_green": "#0da953",
-    "color_purple": "#e066ff",
-    "color_red": "#e1484a",
-    "color_colorless": "#8e8e8e",
-
-    "color_origin_blue": "#0c92ca",
-    "color_origin_green": "#0da953",
-    "color_origin_purple": "#a04796",
-    "color_origin_red": "#e1484a",
-
-    "width_frames": 5
+    "img_trait_properties_set": "official_setA"
 }

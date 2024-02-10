@@ -9,6 +9,10 @@ from PIL import Image
 from pygame import mixer
 
 
+# flag for simulation
+global sim_running
+sim_running = [False]
+
 # loading stuff ####################################################################################
 curdir = os.path.dirname(__file__)
 dir_log = os.path.join(curdir, "logs")
@@ -16,12 +20,33 @@ dir_files = os.path.join(curdir, "files")
 dir_images = os.path.join(curdir, "images")
 
 # load config file ---------------------------------------------------------------------------------
-global cfg, sim_running
+global cfg
 with open(os.path.join(curdir, "config.json")) as json_file:
     cfg = json.load(json_file)
 
-# flag for simulation
-sim_running = [False]
+# set trait colors
+cfg["color_blue"] = "#1C86ee"
+cfg["color_green"] = "#0da953"
+cfg["color_purple"] = "#e066ff"
+cfg["color_red"] = "#e1484a"
+cfg["color_colorless"] = "#8e8e8e"
+
+cfg["color_origin_blue"] = "#0c92ca"
+cfg["color_origin_green"] = "#0da953"
+cfg["color_origin_purple"] = "#a04796"
+cfg["color_origin_red"] = "#e1484a"
+
+# set specific colors
+cfg["font_color_dominant"] = "#EE7621"
+cfg["font_color_1st_player"] = "#0da953"
+cfg["font_color_total_score"] = "#e1484a"
+cfg["font_color_genes"] = "#bf3eff"
+
+# set GUI colors/design options
+cfg["color_bg"] = "#CD6090"
+cfg["color_frames"] = "white"
+cfg["width_frames"] = 5
+cfg["max_player"] = 6
 
 # load cards.xlsx ----------------------------------------------------------------------------------
 global traits_df, status_df, catastrophes_df, MOLs_df

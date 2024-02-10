@@ -29,7 +29,7 @@ global traits_df, status_df, catastrophes_df, MOLs_df
 # traits
 xlsx_traits = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="traits")
 xlsx_traits = xlsx_traits[xlsx_traits['in_game'] == 'yes']
-traits_df = (xlsx_traits
+traits_df = (xlsx_traits.loc[xlsx_traits.index.repeat(xlsx_traits.n_cards)]
              .sort_values(by='trait')
              .reset_index(drop=True))
 

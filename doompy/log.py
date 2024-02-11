@@ -83,14 +83,6 @@ def write_log(what, *args):
                     print(">>> move <<< ERROR - no trait selected")
                     f.write(">>> move <<< ERROR - no trait selected\n")
 
-                case 'error_source_target':
-                    print(">>> move <<< ERROR - 'source' and 'target' player are the same")
-                    f.write(">>> move <<< ERROR - 'source' and 'target' player are the same\n")
-
-                case 'error_attachment':
-                    print(">>> move <<< ERROR - attachment not moveable -> move host instead")
-                    f.write(">>> move <<< ERROR - attachment not moveable -> move host instead\n")
-
                 case 'move_to':
                     print(">>> move <<< '{}' (id:{}) {} is moved from '{}' to '{}'"
                           .format(*args))
@@ -189,10 +181,6 @@ def write_log(what, *args):
 
         case 'worlds_end':
             match what[1]:
-                case 'error_no_event':
-                    print(">>> world's end <<< ERROR - no event selected")
-                    f.write(">>> world's end <<< ERROR - no event selected\n")
-
                 case 'select':
                     print(">>> world's end <<< '{}' is selected as worlds end event".format(*args))
                     f.write(">>> world's end <<< '{}' is selected as worlds end event\n".format(*args))
@@ -200,10 +188,6 @@ def write_log(what, *args):
                 case 'button_ready':
                     print(">>> world's end <<< all trait-WE-effects & WE-event selected -> ready to GO!")
                     f.write(">>> world's end <<< all trait-WE-effects & WE-event selected -> ready to GO!\n")
-
-                case 'revert_WE':
-                    print(">>> world's end <<< revert previously applied effects of WE '{}'").format(*args)
-                    f.write(">>> world's end <<< revert previously applied effects of WE '{}'\n".format(*args))
 
                 case 'play_WE':
                     print(">>> world's end <<< play WE '{}'".format(*args))

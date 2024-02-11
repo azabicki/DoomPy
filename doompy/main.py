@@ -812,12 +812,6 @@ def btn_move_trait(from_, cbox_move_to):
         write_log(['move', 'error_no_trait'])
         return
 
-    # return, if from == to
-    if from_ == to:
-        cbox_move_to.current(0)
-        write_log(['move', 'error_source_target'])
-        return
-
     # log
     add_txt = "(and its attachment '{}' (id:{}))".format(traits_df.loc[attachment].trait, attachment) \
         if attachment != 'none' else ''

@@ -1144,7 +1144,7 @@ def update_genes():
 
                 # log
                 write_log(['genes', 'trait'],
-                          plr['name'][p].get(), traits_df.loc[trait_idx].trait, int(effect), who, diff_genes)
+                          plr['name'][p].get(), traits_df.loc[trait_idx].trait, trait_idx, int(effect), who, diff_genes)
 
     # check for special effects by specific traits --------------------------------------
     # ----- Denial --------------

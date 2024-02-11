@@ -286,9 +286,9 @@ def write_log(what, *args):
         case 'genes':
             match what[1]:
                 case 'trait':
-                    print(">>> genes <<< '{}'s '{}' has gene effect off '{}' on '{}' -> current effect: {}"
+                    print(">>> genes <<< '{}'s '{}' (id:{}) has gene effect off '{}' on '{}' -> current effect: {}"
                           .format(*args))
-                    f.write(">>> genes <<< '{}'s '{}' has gene effect off '{}' on '{}' -> current effect: {}\n"
+                    f.write(">>> genes <<< '{}'s '{}' (id:{}) has gene effect off '{}' on '{}' -> current effect: {}\n"
                             .format(*args))
 
                 case 'catastrophe':

@@ -19,7 +19,7 @@ def apply_WE_effects(host):
         case "AI Takeover (excl. dominant)":
             # 2 colorless_worth ignore_colorless_effects noDominant
             #   --> change cur_face + cur_effect
-            if ('colorless' in status_df.loc[host].color
+            if ('colorless' in status_df.loc[host].color.lower()
                     and traits_df.loc[host].dominant != 1):
                 status_df.loc[host, 'face'] = 2
                 status_df.loc[host, 'inactive'] = True

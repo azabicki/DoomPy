@@ -903,14 +903,14 @@ def btn_play_trait(to):
             if is_born and trait_idx == heroic_idx[0]:
                 write_log(['play', 'heroic'])
             else:
-                write_log(['play', 'error_2dominants'])
+                write_log(['play', 'error_2dominants'], plr['name'][to].get())
                 return 0
 
     # return, if attachment does not have any trait to attach to
     if traits_df.loc[trait_idx].attachment == 1:
         attachables = rules_at.filter_attachables(trait_idx, to)
         if len(attachables) == 0:
-            write_log(['play', 'error_no_attachables'])
+            write_log(['play', 'error_no_attachables'], plr['name'][to].get())
             return 0
 
     # log

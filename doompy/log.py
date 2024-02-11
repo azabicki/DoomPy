@@ -56,12 +56,16 @@ def write_log(what, *args):
                     f.write(">>> play <<< ERROR - no trait selected\n")
 
                 case 'error_2dominants':
-                    print(">>> play <<< ERROR - already 2 dominant traits in trait pile")
-                    f.write(">>> play <<< ERROR - already 2 dominant traits in trait pile\n")
+                    print(">>> play <<< ERROR - already 2 dominants in '{}'s trait pile"
+                          .format(*args))
+                    f.write(">>> play <<< ERROR - already 2 dominants in '{}'s trait pile\n"
+                            .format(*args))
 
                 case 'error_no_attachables':
-                    print(">>> play <<< ERROR - no traits in trait pile for attachment to attach to")
-                    f.write(">>> play <<< ERROR - no traits in trait pile for attachment to attach to\n")
+                    print(">>> play <<< ERROR - no traits in '{}'s trait pile for attachment to attach to"
+                          .format(*args))
+                    f.write(">>> play <<< ERROR - no traits in '{}'s trait pile for attachment to attach to\n"
+                            .format(*args))
 
                 case 'heroic':
                     print(">>> play <<< 'HEROIC' is born as 3rd dominant during 'Birth of a Hero'")

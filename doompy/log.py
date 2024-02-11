@@ -24,29 +24,29 @@ def write_log(what, *args):
                     f.write(">>> initialize <<< create playground\n")
 
                 case 'names':
-                    print("   >>> name of player #{} = {}"
+                    print("   >>> name of player #{} = '{}'"
                           .format(*args))
-                    f.write("   >>> name of player #{} = {}\n"
+                    f.write("   >>> name of player #{} = '{}'\n"
                             .format(*args))
 
                 case 'first_player':
-                    print("   >>> '{}' is first player"
+                    print("   >>> first player is '{}'"
                           .format(*args))
-                    f.write("   >>> '{}' is first player\n"
+                    f.write("   >>> first player is '{}'\n"
                             .format(*args))
 
         case 'select':
             match what[1]:
                 case 'deck':
-                    print(">>> select <<< handle DECK_listbox -> selected trait = '{}' (id:{})"
+                    print(">>> select trait <<< in DECK -> selected trait = '{}' (id:{})"
                           .format(*args))
-                    f.write(">>> select <<< handle DECK_listbox -> selected trait = '{}' (id:{})\n"
+                    f.write(">>> select trait <<< in DECK_listbox -> selected trait = '{}' (id:{})\n"
                             .format(*args))
 
                 case 'trait_pile':
-                    print(">>> select <<< handle PLAYER_listbox -> selected trait = '{}' is selecting '{}' (id:{})"
+                    print(">>> select trait <<< in TRAIT PILE -> selected trait = '{}' is selecting '{}' (id:{})"
                           .format(*args))
-                    f.write(">>> select <<< handle PLAYER_listbox -> selected trait = '{}' is selecting '{}' (id:{})\n"
+                    f.write(">>> select trait <<< in TRAIT PILE -> selected trait = '{}' is selecting '{}' (id:{})\n"
                             .format(*args))
 
         case 'play':
@@ -100,8 +100,8 @@ def write_log(what, *args):
         case 'attach_to':
             match what[1]:
                 case 'error_own_host':
-                    print(">>> attachment <<< ERROR - clicked on own host")
-                    f.write(">>> attachment <<< ERROR - clicked on own host\n")
+                    print(">>> attachment <<< ERROR - clicked on current host")
+                    f.write(">>> attachment <<< ERROR - clicked on current host\n")
 
                 case 'detached':
                     print(">>> attachment <<< detached '{}' (id:{}) from host..."
@@ -116,8 +116,8 @@ def write_log(what, *args):
                             .format(*args))
 
                 case 'change_host':
-                    print("    >>> was until now on old host: {} (id:{})".format(*args))
-                    f.write("    >>> was until now on old host: {} (id:{})\n".format(*args))
+                    print("    >>> was until now on '{}' (id:{})".format(*args))
+                    f.write("    >>> was until now on '{}' (id:{})\n".format(*args))
 
         case 'remove':
             match what[1]:
@@ -130,9 +130,9 @@ def write_log(what, *args):
                     f.write(">>> remove <<< ERROR - attachment not discardable -> discard host instead\n")
 
                 case 'hand':
-                    print(">>> remove <<< '{}' is moving '{}' (id:{}) to his hand"
+                    print(">>> remove <<< '{}' is moving '{}' (id:{}) to his/her hand"
                           .format(*args))
-                    f.write(">>> remove <<< '{}' is moving '{}' (id:{}) to his hand\n"
+                    f.write(">>> remove <<< '{}' is moving '{}' (id:{}) to his/her hand\n"
                             .format(*args))
 
                 case 'discard':
@@ -142,9 +142,9 @@ def write_log(what, *args):
                             .format(*args))
 
                 case 'discard_attachment':
-                    print(">>> remove <<< ___ attachment '{}' (id:{}) is also discarded automatically"
+                    print("   >>> remove <<< attachment '{}' (id:{}) is also discarded automatically"
                           .format(*args))
-                    f.write(">>> remove <<< ___ attachment '{}' (id:{}) is also discarded automatically\n"
+                    f.write("   >>> remove <<< attachment '{}' (id:{}) is also discarded automatically\n"
                             .format(*args))
 
         case 'traits_WE':
@@ -168,8 +168,8 @@ def write_log(what, *args):
                     f.write(">>> catastrophe <<< ERROR - no catastrophe (#{}) selected\n".format(*args))
 
                 case 'error_keep_catastrophe':
-                    print(">>> catastrophe <<< ERROR - keep selected catastrophe (#{})".format(*args))
-                    f.write(">>> catastrophe <<< ERROR - keep selected catastrophe (#{})\n".format(*args))
+                    print(">>> catastrophe <<< ERROR - forced to keep selected catastrophe (#{})".format(*args))
+                    f.write(">>> catastrophe <<< ERROR - forced to keep selected catastrophe (#{})\n".format(*args))
 
                 case 'error_same_catastrophe':
                     print(">>> catastrophe <<< ERROR - same catastrophe (#{}) selected as before: '{}'"
@@ -184,8 +184,8 @@ def write_log(what, *args):
                             .format(*args))
 
                 case 'first_player':
-                    print("   >>> '{}' is now first player after {} catastrophes".format(*args))
-                    f.write("   >>> '{}' is now first player after {} catastrophes\n".format(*args))
+                    print("   >>> catastrophe <<< '{}' is now first player after {} catastrophes".format(*args))
+                    f.write("   >>> catastrophe <<< '{}' is now first player after {} catastrophes\n".format(*args))
 
         case 'worlds_end':
             match what[1]:
@@ -262,12 +262,12 @@ def write_log(what, *args):
                             .format(*args))
 
                 case 'neoteny_no_one':
-                    print('>>> Neoteny <<< in no one`s hand')
-                    f.write('>>> Neoteny <<< in no one`s hand\n')
+                    print(">>> Neoteny <<< in no one's hand")
+                    f.write(">>> Neoteny <<< in no one's hand\n")
 
                 case 'neoteny_that_one':
-                    print('>>> Neoteny <<< in {}`s hand'.format(*args))
-                    f.write('>>> Neoteny <<< in {}`s hand\n'.format(*args))
+                    print(">>> Neoteny <<< in '{}'s hand".format(*args))
+                    f.write(">>> Neoteny <<< in '{}'s hand\n".format(*args))
 
         case 'stars':
             match what[1]:
@@ -284,9 +284,9 @@ def write_log(what, *args):
         case 'scoring':
             match what[1]:
                 case 'update':
-                    print(">>> scoring <<< current points 4 '{}': face={} | drops={} | WE={} | MOL={} | total={}"
+                    print(">>> scoring <<< '{}'s current points: face={} | drops={} | WE={} | MOL={} | total={}"
                           .format(*args))
-                    f.write(">>> scoring <<< current points 4 '{}': face={} | drops={} | WE={} | MOL={} | total={}\n"
+                    f.write(">>> scoring <<< '{}'s current points: face={} | drops={} | WE={} | MOL={} | total={}\n"
                             .format(*args))
 
                 case 'manual_drops':
@@ -334,9 +334,9 @@ def write_log(what, *args):
                             .format(*args))
 
                 case 'total_effect':
-                    print("   >>> total gene effect: {} -> new gene pools are {}"
+                    print("   >>> total gene effect: {} -> current gene pools are {}"
                           .format(*args))
-                    f.write("   >>> total gene effect: {} -> new gene pools are {}\n"
+                    f.write("   >>> total gene effect: {} -> current gene pools are {}\n"
                             .format(*args))
 
         case 'trait_effects':

@@ -19,7 +19,7 @@ def drop_traits(trait_idx, p, *args):
 
         case 'Amatoxins':
             # check if 'Opposable Thumbs' is using this calculations
-            if args != ():
+            if args != () and traits_df.loc[args[0]].trait == 'Opposable Thumbs':
                 trait_idx = args[0]
 
             # only, if AMATOXINS is not in this players trait pile
@@ -31,6 +31,10 @@ def drop_traits(trait_idx, p, *args):
                 dp = 0
 
         case 'Apex Predator':
+            # check if 'Opposable Thumbs' is using this calculations
+            if args != () and traits_df.loc[args[0]].trait == 'Opposable Thumbs':
+                trait_idx = args[0]
+
             # 4 self if_most_traits all
             n = [i['t'].get() for i in plr['n_tp']]
             if n.index(max(n)) == p and n.count(max(n)) == 1:
@@ -45,6 +49,10 @@ def drop_traits(trait_idx, p, *args):
                           if isinstance(f, int)])
 
         case 'Big Feller':
+            # check if 'Opposable Thumbs' is using this calculations
+            if args != () and traits_df.loc[args[0]].trait == 'Opposable Thumbs':
+                trait_idx = args[0]
+
             # 6 self 4_or_less_face_is_1 own
             dp = 6 * (sum([f <= 1
                           for f in status_df.iloc[trait_pile].face.values.tolist()
@@ -85,12 +93,20 @@ def drop_traits(trait_idx, p, *args):
                 dp = int(status_df.loc[trait_idx].drops)
 
         case 'Camouflage (1)':
+            # check if 'Opposable Thumbs' is using this calculations
+            if args != () and traits_df.loc[args[0]].trait == 'Opposable Thumbs':
+                trait_idx = args[0]
+
             # 1 self n_hand own_hand
             # load drop value from status_df, because it was set manually, if its not nan
             if not np.isnan(status_df.loc[trait_idx].drops):
                 dp = int(status_df.loc[trait_idx].drops)
 
         case 'Camouflage (2)':
+            # check if 'Opposable Thumbs' is using this calculations
+            if args != () and traits_df.loc[args[0]].trait == 'Opposable Thumbs':
+                trait_idx = args[0]
+
             # 1 self n_hand own_hand
             # load drop value from status_df, because it was set manually, if its not nan
             if not np.isnan(status_df.loc[trait_idx].drops):
@@ -173,6 +189,10 @@ def drop_traits(trait_idx, p, *args):
             dp = sum(col_in_tp)
 
         case 'Harmony':
+            # check if 'Opposable Thumbs' is using this calculations
+            if args != () and traits_df.loc[args[0]].trait == 'Opposable Thumbs':
+                trait_idx = args[0]
+
             # 2 self each_set_of_4_colors own
             n_cols = []
             for col in colors:
@@ -190,6 +210,10 @@ def drop_traits(trait_idx, p, *args):
             dp = max(gp.get() for gp in plr['genes'])
 
         case 'Immunity':
+            # check if 'Opposable Thumbs' is using this calculations
+            if args != () and traits_df.loc[args[0]].trait == 'Opposable Thumbs':
+                trait_idx = args[0]
+
             # 2 self n_negative own
             dp = sum(face < 0
                      for face in status_df.iloc[trait_pile].face.tolist()
@@ -201,6 +225,10 @@ def drop_traits(trait_idx, p, *args):
                       for t in status_df.iloc[trait_pile].trait.tolist()])
 
         case 'Lily Pad':
+            # check if 'Opposable Thumbs' is using this calculations
+            if args != () and traits_df.loc[args[0]].trait == 'Opposable Thumbs':
+                trait_idx = args[0]
+
             # 1 self each_trait_returned own
             # load drop value from status_df, because it was set manually, if its not nan
             we = status_df.loc[trait_idx].traits_WE
@@ -219,6 +247,10 @@ def drop_traits(trait_idx, p, *args):
                      for color in status_df.iloc[trait_pile].color.tolist())
 
         case 'Mutualism':
+            # check if 'Opposable Thumbs' is using this calculations
+            if args != () and traits_df.loc[args[0]].trait == 'Opposable Thumbs':
+                trait_idx = args[0]
+
             # n self gene_pool_max-2_final_score all
             dp = max(gp.get() for gp in plr['genes'])
 
@@ -237,6 +269,10 @@ def drop_traits(trait_idx, p, *args):
                           for color in status_df.iloc[trait_pile].color.tolist())
 
         case 'Nuptial Plumage':
+            # check if 'Opposable Thumbs' is using this calculations
+            if args != () and traits_df.loc[args[0]].trait == 'Opposable Thumbs':
+                trait_idx = args[0]
+
             # 2 self every_color_count_>=3 own
             n_cols = []
             for col in colors:
@@ -249,7 +285,7 @@ def drop_traits(trait_idx, p, *args):
             copy_idx = [i for i in trait_pile if (traits_df.loc[i].dominant == 1 and i != trait_idx)][0]
 
             # if in OWN trait pile
-            dp = drop_traits(copy_idx, p)
+            dp = drop_traits(copy_idx, p, trait_idx)
 
         case 'Overgrowth':
             # 1 self n_green own
@@ -257,6 +293,10 @@ def drop_traits(trait_idx, p, *args):
                      for color in status_df.iloc[trait_pile].color.tolist())
 
         case 'Pack Behavior':
+            # check if 'Opposable Thumbs' is using this calculations
+            if args != () and traits_df.loc[args[0]].trait == 'Opposable Thumbs':
+                trait_idx = args[0]
+
             # 1 self n_color_pairs own
             n_pairs = []
             for col in colors:
@@ -279,7 +319,7 @@ def drop_traits(trait_idx, p, *args):
 
         case 'Prowler':
             # check if 'Opposable Thumbs' is using this calculations
-            if args != ():
+            if args != () and traits_df.loc[args[0]].trait == 'Opposable Thumbs':
                 trait_idx = args[0]
 
             # only, if PROWLER is not in this players trait pile
@@ -319,6 +359,10 @@ def drop_traits(trait_idx, p, *args):
                 dp = 0
 
         case 'Rainbow Keratin':
+            # check if 'Opposable Thumbs' is using this calculations
+            if args != () and traits_df.loc[args[0]].trait == 'Opposable Thumbs':
+                trait_idx = args[0]
+
             # -2 self n_drops own&2 self n_highest_color_if4colors own
             dp = -2 * (sum(traits_df.loc[t].drops == 1 for t in trait_pile) - 1)
 
@@ -340,6 +384,10 @@ def drop_traits(trait_idx, p, *args):
                 dp = int(status_df.loc[trait_idx].drops)
 
         case 'Sentience':
+            # check if 'Opposable Thumbs' is using this calculations
+            if args != () and traits_df.loc[args[0]].trait == 'Opposable Thumbs':
+                trait_idx = args[0]
+
             # 1 self n_color_worlds_end own
             we = status_df.loc[trait_idx].traits_WE
             if we != 'none':
@@ -442,6 +490,10 @@ def drop_traits(trait_idx, p, *args):
                 dp = 0
 
         case 'Symbiosis':
+            # check if 'Opposable Thumbs' is using this calculations
+            if args != () and traits_df.loc[args[0]].trait == 'Opposable Thumbs':
+                trait_idx = args[0]
+
             # 2 self lowest_color_count own
             n_cols = []
             for col in colors:
@@ -465,6 +517,10 @@ def drop_traits(trait_idx, p, *args):
                           for color in status_df.iloc[trait_pile].color.tolist())
 
         case 'Tiny':
+            # check if 'Opposable Thumbs' is using this calculations
+            if args != () and traits_df.loc[args[0]].trait == 'Opposable Thumbs':
+                trait_idx = args[0]
+
             # -1 self n_traits own
             dp = -1 * len(trait_pile)
 
@@ -476,7 +532,7 @@ def drop_traits(trait_idx, p, *args):
 
         case 'Viral':
             # check if 'Opposable Thumbs' is using this calculations
-            if args != ():
+            if args != () and traits_df.loc[args[0]].trait == 'Opposable Thumbs':
                 trait_idx = args[0]
 
             # only, if VIRAL is not in this players trait pile & WE effect selected

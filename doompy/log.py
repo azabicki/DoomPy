@@ -347,8 +347,28 @@ def write_log(what, *args):
                     f.write(">>> trait effects <<< 'Amatoxins' (id:{}) effect is based on {} discarded colors -> drop = {}\n"  # noqa: E501
                             .format(*args))
 
+                case 'ironwood_protecting':
+                    print(">>> trait effects <<< '{}' (id:{}) is protecting {} green trait(s)"
                           .format(*args))
-                    f.write(">>> trait effects <<< '{}' effect is based on amount of discarded colors -> drop points = {}\n"  # noqa: E501
+                    f.write(">>> trait effects <<< '{}' (id:{}) is protecting {} green trait(s)\n"
+                            .format(*args))
+
+                case 'ironwood_not_protecting':
+                    print(">>> trait effects <<< '{}' (id:{}) does not protect anymore"
+                          .format(*args))
+                    f.write(">>> trait effects <<< '{}' (id:{}) does not protect anymore\n"
+                            .format(*args))
+
+                case 'meek_protecting':
+                    print(">>> trait effects <<< '{}' (id:{}) is protecting {} red trait(s)"
+                          .format(*args))
+                    f.write(">>> trait effects <<< '{}' (id:{}) is protecting {} red trait(s)\n"
+                            .format(*args))
+
+                case 'meek_not_protecting':
+                    print(">>> trait effects <<< '{}' (id:{}) does not protect anymore"
+                          .format(*args))
+                    f.write(">>> trait effects <<< '{}' (id:{}) does not protect anymore\n"
                             .format(*args))
 
                 case 'prowler':

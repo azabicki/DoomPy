@@ -274,8 +274,8 @@ def permanent_effects(tp):
                     status_df.loc[trait_idx, 'effects'] = ' '.join(str(x) for x in new_effects)
 
                     # log
-                    write_log(['*'], ">>> trait pile <<< '{}' (id:{}) is protecting {} green trait(s)"
-                              .format(trait, trait_idx, len(new_effects)))
+                    write_log(['trait_effects', 'ironwood_protecting'], trait, trait_idx, len(new_effects))
+
                 else:
                     # if protected previously, but now >=5 green traits, remove protection
                     if prev_effects != 'none':
@@ -284,8 +284,7 @@ def permanent_effects(tp):
                             status_df.loc[t, 'no_remove'] = False
 
                         # log
-                        write_log(['*'], ">>> trait pile <<< '{}' (id:{}) does not protect anymore"
-                                  .format(trait, trait_idx))
+                        write_log(['trait_effects', 'ironwood_not_protecting'], trait, trait_idx)
 
                     # reset Ironwood's effect if no green trait is protected (anymore)
                     status_df.loc[trait_idx, 'effects'] = 'none'
@@ -315,8 +314,7 @@ def permanent_effects(tp):
                     status_df.loc[trait_idx, 'effects'] = ' '.join(str(x) for x in new_effects)
 
                     # log
-                    write_log(['*'], ">>> trait pile <<< '{}' (id:{}) is protecting {} red trait(s)"
-                              .format(trait, trait_idx, len(new_effects)))
+                    write_log(['trait_effects', 'meek_protecting'], trait, trait_idx, len(new_effects))
                 else:
                     # if protected previously, but now >=3 red traits, remove protection
                     if prev_effects != 'none':
@@ -325,8 +323,7 @@ def permanent_effects(tp):
                             status_df.loc[t, 'no_remove'] = False
 
                         # log
-                        write_log(['*'], ">>> trait pile <<< '{}' (id:{}) does not protect anymore"
-                                  .format(trait, trait_idx))
+                        write_log(['trait_effects', 'meek_not_protecting'], trait, trait_idx)
 
                     # reset Meek's effect if no red trait is protected (anymore)
                     status_df.loc[trait_idx, 'effects'] = 'none'

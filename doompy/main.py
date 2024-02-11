@@ -847,12 +847,15 @@ def btn_attach_to(from_, attachment_idx, event, possible_hosts):
     # return, if clicked on current host
     old_host_idx = status_df[status_df['attachment'] == attachment_idx].index.values.tolist()
     if host_idx in old_host_idx:
-        write_log(['attach_to', 'error_own_host'])
+        write_log(['attach_to', 'error_current_host'])
         return
 
     # log
     if host == ' ... ':
-        write_log(['attach_to', 'detached'], attachment, attachment_idx)
+        if len(old_host_idx) == 0:
+            write_log(['attach_to', 'still_detached'], attachment, attachment_idx)
+        else:
+            write_log(['attach_to', 'detached'], attachment, attachment_idx)
     else:
         write_log(['attach_to', 'attached'],
                   plr['name'][from_].get(), attachment, attachment_idx, host, host_idx)

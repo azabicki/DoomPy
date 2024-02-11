@@ -95,7 +95,7 @@ def write_log(what, *args):
 
         case 'attach_to':
             match what[1]:
-                case 'error_own_host':
+                case 'error_current_host':
                     print(">>> attachment <<< ERROR - clicked on current host")
                     f.write(">>> attachment <<< ERROR - clicked on current host\n")
 
@@ -103,6 +103,12 @@ def write_log(what, *args):
                     print(">>> attachment <<< detached '{}' (id:{}) from host..."
                           .format(*args))
                     f.write(">>> attachment <<< detached '{}' (id:{}) from host...\n"
+                            .format(*args))
+
+                case 'still_detached':
+                    print(">>> attachment <<< '{}' (id:{}) still without host..."
+                          .format(*args))
+                    f.write(">>> attachment <<< '{}' (id:{}) still without host...\n"
                             .format(*args))
 
                 case 'attached':

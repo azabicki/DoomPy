@@ -11,7 +11,7 @@ from pygame import mixer
 
 # flag for simulation
 global sim_running, log_to_terminal
-log_to_terminal = False
+log_to_terminal = True
 sim_running = [False]
 
 # loading stuff ####################################################################################

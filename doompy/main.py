@@ -614,11 +614,15 @@ def check_WE_status(todo):
             check_WE_status('check_button')
 
         case 'check_button':
-            if not any(status_df.loc[trait_idx].traits_WE == 'none'
-                       for tp in plr['trait_pile']
-                       for trait_idx in tp
-                       if isinstance(traits_df.loc[trait_idx].worlds_end_task, str)):
+            if any([status_df.loc[trait_idx].traits_WE == 'none'
+                   for tp in plr['trait_pile']
+                   for trait_idx in tp
+                   if isinstance(traits_df.loc[trait_idx].worlds_end_task, str)]):
 
+                # disable WE_button
+                worlds_end['btn'].configure(state="disabled", style="disabled.TButton")
+
+            else:
                 # enable WE_button
                 worlds_end['btn'].configure(state="normal", style="TButton")
 

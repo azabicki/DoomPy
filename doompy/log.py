@@ -199,6 +199,10 @@ def write_log(what, *args):
                     print(">>> world's end <<< all trait-WE-effects & WE-event selected -> ready to GO!")
                     f.write(">>> world's end <<< all trait-WE-effects & WE-event selected -> ready to GO!\n")
 
+                case 'button_not_ready':
+                    print(">>> world's end <<< still some trait-WE-effects to be selected ...")
+                    f.write(">>> world's end <<< still some trait-WE-effects to be selected ...\n")
+
                 case 'play_WE':
                     print(">>> world's end <<< play WE '{}'".format(*args))
                     f.write(">>> world's end <<< play WE '{}'\n".format(*args))

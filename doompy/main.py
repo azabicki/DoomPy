@@ -622,6 +622,9 @@ def check_WE_status(todo):
                 # disable WE_button
                 worlds_end['btn'].configure(state="disabled", style="disabled.TButton")
 
+                # log
+                write_log(['worlds_end', 'button_not_ready'])
+
             else:
                 # enable WE_button
                 worlds_end['btn'].configure(state="normal", style="TButton")

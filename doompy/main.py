@@ -389,10 +389,12 @@ def switch(inp):
                 icons_onoff = 'on'
                 lbl_icons_switch[0].configure(image=images['icons_on'])
                 write_log(['icons', 'on'])
+
             elif icons_onoff == 'on':
                 icons_onoff = 'full'
                 lbl_icons_switch[0].configure(image=images['icons_full'])
                 write_log(['icons', 'full'])
+
             elif icons_onoff == 'full':
                 icons_onoff = 'off'
                 lbl_icons_switch[0].configure(image=images['icons_off'])
@@ -417,6 +419,7 @@ def switch(inp):
                 show_icons['effectless'] = False  # default: False
                 show_icons['persistent'] = False  # default: False
                 show_icons['attachment'] = False  # default: False
+
             elif icons_onoff == 'full':
                 show_icons['color'] = True          # default: True
                 show_icons['face'] = True           # default: True
@@ -429,6 +432,7 @@ def switch(inp):
                 show_icons['effectless'] = True     # default: False
                 show_icons['persistent'] = True     # default: False
                 show_icons['attachment'] = True     # default: False
+
             elif icons_onoff == 'off':
                 show_icons['color'] = False       # default: True
                 show_icons['face'] = False        # default: True
@@ -447,6 +451,7 @@ def switch(inp):
                 music_onoff = 'on'
                 lbl_music_switch[0].configure(image=images['note_on'])
                 write_log(['music', 'on'])
+
             else:
                 music_onoff = 'off'
                 lbl_music_switch[0].configure(image=images['note_off'])
@@ -463,6 +468,7 @@ def switch(inp):
 
                 write_log(['points', 'on'])
                 update_scoring()
+
             elif points_onoff == 'on':
                 # show rank
                 points_onoff = 'rank'
@@ -473,6 +479,7 @@ def switch(inp):
 
                 write_log(['points', 'rank'])
                 update_scoring()
+
             else:
                 # show ***
                 points_onoff = 'off'
@@ -631,9 +638,10 @@ def btn_play_catastrophe(event, c):
 
     # return, if no catastrophe was selected
     if cbox_idx == 0:
-        # OR -> force to keep previous selection -> NO WAY BACK
+        # if no catastrophe was selected before
         if played_previously is None:
             write_log(['catastrophe', 'error_no_catastrophe'], c+1)
+        # else -> forced to keep previous selection
         else:
             old_cbox_idx = catastrophe['possible'][c].index(played_previously) + 1
             catastrophe['cbox'][c].current(old_cbox_idx)
@@ -1078,7 +1086,7 @@ def update_scoring():
         # calculate total score
         total.append(p_face[p] + p_drop[p] + p_worlds_end[p] + p_MOL[p])
 
-    # second, display scores as wished & calculate RANK
+    # calculate RANK
     r_face = [sorted(p_face, reverse=True).index(x) + 1 for x in p_face]
     r_drop = [sorted(p_drop, reverse=True).index(x) + 1 for x in p_drop]
     r_WE = [sorted(p_worlds_end, reverse=True).index(x) + 1 for x in p_worlds_end]
@@ -1087,6 +1095,7 @@ def update_scoring():
     add = {1: '\u02e2\u1d57', 2: '\u207f\u1d48', 3: '\u02b3\u1d48',
            4: '\u1d57\u02b0', 5: '\u1d57\u02b0', 6: '\u1d57\u02b0'}
 
+    # show current scoring according to setting
     for p in range(game['n_player']):
         # update points
         if points_onoff == 'on':

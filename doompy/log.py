@@ -355,8 +355,11 @@ def write_log(what, *args):
 
                 case 'shiny':
                     print(">>> trait effects <<< Shiny acts on 'colorless' traits in '{}'s trait pile -> drop points = {}"  # noqa: E501
+
+                case 'spores':
+                    print(">>> trait effects <<< 'Spores' (id:{}) adds {} gene(s) to '{}'s gene pool"
                           .format(*args))
-                    f.write(">>> trait effects <<< Shiny acts on 'colorless' traits in '{}'s trait pile -> drop points = {}\n"  # noqa: E501
+                    f.write(">>> trait effects <<< 'Spores' (id:{}) adds {} gene(s) to '{}'s gene pool\n"
                             .format(*args))
 
                 case 'viral':

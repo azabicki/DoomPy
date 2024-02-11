@@ -92,7 +92,7 @@ def shiny(frame_trait_overview, p, irow, images, trait_idx):
 
 
 # --- SPORES ---------------------------------------------------------------------------------------
-def spores(frame_trait_overview, p, irow, images, spores_effect):
+def spores(frame_trait_overview, p, irow, images, spores_effect, trait_idx):
     # check if more players are affected
     if '_' in spores_effect:
         spores_effect = spores_effect.split('_')
@@ -115,6 +115,8 @@ def spores(frame_trait_overview, p, irow, images, spores_effect):
         for i in range(n_genes):
             tk.Label(frame, image=images['gene_pool']
                      ).grid(row=0, column=2+i)
+
+        write_log(['trait_effects', 'spores'], trait_idx, n_genes, plr['name'][p].get())
 
     return irow
 
@@ -182,7 +184,7 @@ def special_trait_effects(frame_trait_overview, p, irow, images):
     if spores_idx != []:
         spores_effect = status_df.iloc[spores_idx[0]].effects
         if spores_effect != 'none':
-            irow = spores(frame_trait_overview, p, irow, images, spores_effect)
+            irow = spores(frame_trait_overview, p, irow, images, spores_effect, spores_idx[0])
 
     # --- VIRAL --- add passively Viral to this trait pile -----------------------------------------
     viral_idx = traits_df.index[traits_df.trait == 'Viral'].tolist()

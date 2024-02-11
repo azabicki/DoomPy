@@ -31,7 +31,7 @@ def amatoxins(frame_trait_overview, irow, images, trait_idx, trait_name):
         # add points icon
         tk.Label(frame, image=images[WE_drops]
                  ).grid(row=0, column=3)
-        write_log(['trait_effects', 'amatoxins'], trait_name, WE_drops)
+        write_log(['trait_effects', 'amatoxins'], trait_idx, int(traits_WE), WE_drops)
 
     return irow
 
@@ -60,7 +60,7 @@ def prowler(frame_trait_overview, p, irow, images, trait_idx, trait_name):
     tk.Label(frame, image=images[WE_drops[p]]
              ).grid(row=0, column=4)
 
-    write_log(['trait_effects', 'prowler'], trait_name, plr['name'][p].get(), WE_drops[p])
+    write_log(['trait_effects', 'prowler'], trait_idx, plr['name'][p].get(), WE_drops[p])
 
     return irow
 
@@ -86,7 +86,7 @@ def shiny(frame_trait_overview, p, irow, images, trait_idx):
     tk.Label(frame, image=images[shiny_dp[p]]
              ).grid(row=0, column=3)
 
-    write_log(['trait_effects', 'shiny'], plr['name'][p].get(), shiny_dp[p])
+    write_log(['trait_effects', 'shiny'], trait_idx, plr['name'][p].get(), shiny_dp[p])
 
     return irow
 
@@ -149,7 +149,7 @@ def viral(frame_trait_overview, p, irow, images, trait_idx, trait_name):
         tk.Label(frame, image=images[WE_drops[p]]
                  ).grid(row=0, column=3)
 
-        write_log(['trait_effects', 'viral'], trait_name, trait_WE, plr['name'][p].get(), WE_drops[p])
+        write_log(['trait_effects', 'viral'], trait_idx, trait_WE, plr['name'][p].get(), WE_drops[p])
 
     return irow
 

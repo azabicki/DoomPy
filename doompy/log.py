@@ -342,19 +342,26 @@ def write_log(what, *args):
         case 'trait_effects':
             match what[1]:
                 case 'amatoxins':
-                    print(">>> trait effects <<< '{}' effect is based on amount of discarded colors -> drop points = {}"
+                    print(">>> trait effects <<< 'Amatoxins' (id:{}) effect is based on {} discarded colors -> drop = {}"  # noqa: E501
+                          .format(*args))
+                    f.write(">>> trait effects <<< 'Amatoxins' (id:{}) effect is based on {} discarded colors -> drop = {}\n"  # noqa: E501
+                            .format(*args))
+
                           .format(*args))
                     f.write(">>> trait effects <<< '{}' effect is based on amount of discarded colors -> drop points = {}\n"  # noqa: E501
                             .format(*args))
 
                 case 'prowler':
-                    print(">>> trait effects <<< '{}' acts on 'color_count' in '{}'s trait pile -> drop points = {}"
+                    print(">>> trait effects <<< 'Prowler' (id:{}) acts on 'color_count' in '{}'s trait pile -> drop = {}"   # noqa: E501
                           .format(*args))
-                    f.write(">>> trait effects <<< '{}' acts on 'color_count' in '{}'s trait pile -> drop points = {}\n"
+                    f.write(">>> trait effects <<< 'Prowler' (id:{}) acts on 'color_count' in '{}'s trait pile -> drop = {}\n"  # noqa: E501
                             .format(*args))
 
                 case 'shiny':
-                    print(">>> trait effects <<< Shiny acts on 'colorless' traits in '{}'s trait pile -> drop points = {}"  # noqa: E501
+                    print(">>> trait effects <<< 'Shiny' (id:{}) acts on '{}'s 'colorless' traits -> drop = {}"
+                          .format(*args))
+                    f.write(">>> trait effects <<< 'Shiny' (id:{}) acts on '{}'s 'colorless' traits -> drop = {}\n"  # noqa: E501
+                            .format(*args))
 
                 case 'spores':
                     print(">>> trait effects <<< 'Spores' (id:{}) adds {} gene(s) to '{}'s gene pool"
@@ -363,9 +370,9 @@ def write_log(what, *args):
                             .format(*args))
 
                 case 'viral':
-                    print(">>> trait effects <<< '{}' acts on '{}' traits in '{}'s trait pile -> drop points = {}"
+                    print(">>> trait effects <<< 'Viral' (id:{}) acts on '{}' traits in '{}'s trait pile -> drop = {}"
                           .format(*args))
-                    f.write(">>> trait effects <<< '{}' acts on '{}' traits in '{}'s trait pile -> drop points = {}\n"
+                    f.write(">>> trait effects <<< 'Viral' (id:{}) acts on '{}' traits in '{}'s trait pile -> drop = {}\n"  # noqa: E501
                             .format(*args))
 
         case 'points':

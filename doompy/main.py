@@ -1026,7 +1026,7 @@ def update_traits_current_status(todo, *args):
                     status_df.loc[trait, 'effects'] = bkp.effects
 
             # log
-            write_log(['update_trait_status', 'reset'], traits_df.loc[trait].trait)
+            write_log(['update_trait_status', 'reset'], traits_df.loc[trait].trait, trait)
 
         # Neoteny-Checkbox is clicked somewhere
         case 'neoteny':

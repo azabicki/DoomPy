@@ -174,9 +174,7 @@ def assign_traits_WE_effects(trait_idx, trait_pile):
 
 
 # apply effects to host
-def apply_traits_WE_effects(host, *args):
-    log = False if args == () else args[1]
-
+def apply_traits_WE_effects(host):
     # apply effect(s) only if there is one assigned
     if status_df.loc[host].effects_traits_WE != 'none':
         # get previously stored trait_WE effect(s)
@@ -232,9 +230,9 @@ def apply_traits_WE_effects(host, *args):
                         status_df.loc[host, 'no_steal'] = True
 
             # log
-            if log:
-                write_log(['update_trait_status', 'traits_WE'],
-                          traits_df.loc[host].trait, traits_df.loc[effect.split(':')[0]].trait)
+            write_log(['update_trait_status', 'traits_WE'],
+                      traits_df.loc[host].trait, host,
+                      traits_df.loc[int(effect.split(':')[0])].trait, effect.split(':')[0])
 
 
 # handle worlds end effects of trait

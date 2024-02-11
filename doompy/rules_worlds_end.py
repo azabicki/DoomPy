@@ -3,8 +3,8 @@ from log import write_log
 
 
 # apply specific WE effects to status of traits
-def apply_WE_effects(host, *args):
-    log = False if args == () else args[1]
+def apply_WE_effects(host):
+    log = False
 
     match worlds_end['played']:
         case "AI Takeover":
@@ -14,6 +14,7 @@ def apply_WE_effects(host, *args):
                 status_df.loc[host, 'face'] = 2
                 status_df.loc[host, 'inactive'] = True
                 status_df.loc[host, 'effects_WE'] = 'Face Inactive'
+                log = True
 
         case "AI Takeover (excl. dominant)":
             # 2 colorless_worth ignore_colorless_effects noDominant
@@ -23,11 +24,12 @@ def apply_WE_effects(host, *args):
                 status_df.loc[host, 'face'] = 2
                 status_df.loc[host, 'inactive'] = True
                 status_df.loc[host, 'effects_WE'] = 'Face Inactive'
+                log = True
 
     # log
     if log:
         write_log(['update_trait_status', 'WE_effect'],
-                  traits_df.loc[host].trait, worlds_end['played'])
+                  traits_df.loc[host].trait, host, worlds_end['played'])
 
 
 # handle worlds end effect of catastrophes

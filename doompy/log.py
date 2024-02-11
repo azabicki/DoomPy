@@ -232,27 +232,27 @@ def write_log(what, *args):
         case 'update_trait_status':
             match what[1]:
                 case 'reset':
-                    print(">>> current effects <<< '{}' is reseted to defaults"
+                    print(">>> trait's status <<< '{}' (id:{}) is reseted to defaults"
                           .format(*args))
-                    f.write(">>> current effects <<< '{}' is reseted to defaults\n"
+                    f.write(">>> trait's status <<< '{}' (id:{}) is reseted to defaults\n"
                             .format(*args))
 
                 case 'attachment':
-                    print(">>> current effects <<< '{}' is updated due to attachment effects of '{}'"
+                    print(">>> trait's status <<< '{}' (id:{}) is updated due to attachment effects of '{}' (id:{})"
                           .format(*args))
-                    f.write(">>> current effects <<< '{}' is updated due to attachment effects of '{}'\n"
+                    f.write(">>> trait's status <<< '{}' (id:{}) is updated due to attachment effects of '{}' (id:{})\n"
                             .format(*args))
 
                 case 'traits_WE':
-                    print(">>> current effects <<< '{}' is updated due to TRAITS worlds end effects of '{}'"
+                    print(">>> trait's status <<< '{}' (id:{}) is updated due to TRAITS_we effects of '{}' (id:{})"
                           .format(*args))
-                    f.write(">>> current effects <<< '{}' is updated due to TRAITS worlds end effects of '{}'\n"
+                    f.write(">>> trait's status <<< '{}' (id:{}) is updated due to TRAITS_we effects of '{}' (id:{})\n"
                             .format(*args))
 
                 case 'WE_effect':
-                    print(">>> current effects <<< '{}' is updated due to WORLDS END effects of '{}'"
+                    print(">>> trait's status <<< '{}' (id:{}) is updated due to WORLDS END effects of '{}'"
                           .format(*args))
-                    f.write(">>> current effects <<< '{}' is updated due to WORLDS END effects of '{}'\n"
+                    f.write(">>> trait's status <<< '{}' (id:{}) is updated due to WORLDS END effects of '{}'\n"
                             .format(*args))
 
                 case 'neoteny_no_one':

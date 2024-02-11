@@ -7,7 +7,9 @@ import rules_worlds_end as rules_we
 
 
 # effects when selecting specific MOLs -------------------------------------------------------------
-def select_MOL(p, MOL, prev_MOL):
+def select_MOL(p, MOL_idx, prev_MOL):
+    MOL = None if MOL_idx is None else MOLs_df.loc[MOL_idx].MOL
+
     # if __The Blind Dragon__ is selected
     if MOL == 'The Blind Dragon':
         # -> add 2 MOLs

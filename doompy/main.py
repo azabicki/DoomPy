@@ -526,6 +526,7 @@ def calc_MOLs(p):
 
 def btn_select_MOLS(cbox_idx, p, m):
     # get infos of played/selected MOLs
+    played_idx = None
     played_previously = MOLs['played'][p][m]
     if cbox_idx > 0:
         played_idx = cbox_idx-1
@@ -545,20 +546,17 @@ def btn_select_MOLS(cbox_idx, p, m):
 
     # if MOL is de-selected
     if cbox_idx == 0:
-        # set played MOL
-        MOLs['played'][p][m] = None
-
         # log
         write_log(['MOLs', 'deselected_MOL'], plr['name'][p].get(), m+1, MOLs_df.loc[played_previously].MOL)
     else:
-        # set played MOL
-        MOLs['played'][p][m] = played_idx
-
         # log
         write_log(['MOLs', 'MOL'], m+1, plr['name'][p].get(), played_str, played_idx)
 
+    # set played MOL
+    MOLs['played'][p][m] = played_idx
+
     # check for MOL_specific select_effects
-    rules_mol.select_MOL(p, played_str, played_previously)
+    rules_mol.select_MOL(p, played_idx, played_previously)
     create_MOL_frame(p)
 
     # update

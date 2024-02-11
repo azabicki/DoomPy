@@ -239,7 +239,7 @@ def simulate():
                             btn_traits_world_end(p, t, str(rnd))
 
                         case 'Opposable Thumbs':
-                            match traits_df.loc[211].worlds_end_task:
+                            match traits_df.loc[t].worlds_end_task:
                                 case 'choose_color':
                                     btn_traits_world_end(p, t, 'blue')
                                 case 'is_color_of_choice':

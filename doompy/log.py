@@ -255,15 +255,19 @@ def write_log(what, *args):
 
         case 'stars':
             match what[1]:
-                case 'n':
-                    print(">>> dominant_stars <<< '{}' currently has {} dominant traits"
-                          .format(*args))
-                    f.write(">>> dominant_stars <<< '{}' currently has {} dominant traits\n"
-                            .format(*args))
+                case 'n_dom':
+                    s = ">>> dominants <<< in trait piles: "
+                    for k, v in args[0].items():
+                        s += f"{k} = {v} / "
+
+                    print(s[:-3])
+                    f.write(s[:-3])
 
                 case 'epic':
-                    print("   >>> dominant_stars <<< EPIC fills both dominant spots")
-                    f.write("   >>> dominant_stars <<< EPIC fills both dominant spots\n")
+                    print("   >>> dominant <<< EPIC fills both spots in '{}'s trait pile"
+                          .format(*args))
+                    f.write("   >>> dominant <<< EPIC fills both spots in '{}'s trait pile\n"
+                            .format(*args))
 
         case 'scoring':
             match what[1]:

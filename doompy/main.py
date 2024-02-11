@@ -1226,18 +1226,17 @@ def update_genes():
 
 def update_stars():
     # loop players
+    nd_dict = {}
     for p in range(game['n_player']):
         # number of dominant traits
         n_dominant = np.nansum([traits_df.loc[trait_idx].dominant for trait_idx in plr['trait_pile'][p]])
-
-        # log
-        write_log(['stars', 'n'], plr['name'][p].get(), int(n_dominant))
+        nd_dict[plr['name'][p].get()] = int(n_dominant)
 
         # check special cases
         Epic_idx = traits_df.index[traits_df.trait == 'Epic'].tolist()
         if Epic_idx != [] and Epic_idx[0] in plr['trait_pile'][p]:
             n_dominant = 2
-            write_log(['stars', 'epic'])
+            write_log(['stars', 'epic'], plr['name'][p].get())
 
         # find label widgets
         tmp_frame = frame_player[p].winfo_children()
@@ -1253,6 +1252,9 @@ def update_stars():
                 lbl2.configure(image=images['star'])
             elif n_dominant == 3:
                 lbl2.configure(image=images['heroic_star'])
+
+    # log
+    write_log(['stars', 'n_dom'], nd_dict)
 
 
 def update_all():

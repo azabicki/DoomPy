@@ -30,6 +30,7 @@ from globals_ import neoteny_checkbutton, sleepy_spinbox
 
 # functions ##############################################################
 def simulate():
+    start_time = time.time()
     sim_running[0] = True
 
     loops = 1
@@ -308,6 +309,7 @@ def simulate():
             #             create_MOL_frame(p)
 
         print('___done simulating___')
+        print("--- %s seconds ---" % (time.time() - start_time))
 
 
 def btn_quit():

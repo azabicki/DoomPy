@@ -1110,7 +1110,8 @@ def update_scoring():
             plr['points'][p]['total'].set('\u2736')
 
         # log
-        write_log(['scoring', 'update'], plr['name'][p].get(), p_face, p_drop, p_worlds_end, p_MOL, total)
+        write_log(['scoring', 'update'], plr['name'][p].get(),
+                  p_face[p], p_drop[p], p_worlds_end[p], p_MOL[p], total[p])
 
 
 def update_genes():

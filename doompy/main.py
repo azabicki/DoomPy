@@ -503,12 +503,9 @@ def calc_MOLs(p):
     p_MOL = 0
     for m in range(MOLs['n'][p]):
         # calculate, if MOL is selected
-        if MOLs['played'][p][m] is not None and points_onoff == 'on':
+        if MOLs['played'][p][m] is not None:
             # calculate points
             p_MOL_m = rules_mol.calc_MOL_points(p, m)
-
-            # update points_icon
-            MOLs['icon'][p][m].configure(image=images[str(p_MOL_m)])
 
             # update sum of MOL points
             p_MOL += p_MOL_m
@@ -517,8 +514,11 @@ def calc_MOLs(p):
             write_log(['MOLs', 'MOL_points'],
                       plr['name'][p].get(), MOLs_df.loc[MOLs['played'][p][m]].MOL,
                       MOLs['played'][p][m], p_MOL_m)
+
+        # update points_icon of MOL
+        if MOLs['played'][p][m] is not None and points_onoff == 'on':
+            MOLs['icon'][p][m].configure(image=images[str(p_MOL_m)])
         else:
-            # update points_icon
             MOLs['icon'][p][m].configure(image=images['question_mark'])
 
     return p_MOL

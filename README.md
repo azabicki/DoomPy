@@ -60,7 +60,7 @@ Finally, run
 
 and have fun playing Doomlings!!
 
-#### further requirements
+### further requirements
 
 _Display Resolution_: This is a very important aspect, since the GUI takes a lot of space. Especially if you play with 4 catastrophes and many rounds. And depending on which traits are played, it may happen that the height of the trait pile is larger than the screen, making it impossible to select MOLs. With 4 players and 4 catastrophes and on a `1800 x 1200` display, we ocasionally run into problems.
 
@@ -72,13 +72,40 @@ Hence, if possible:
 
 ## Results
 
-This is what you will
-- screenshot
+Depending on your OS Dark-Mode, DoomPy looks like this:
+
+![GUI](misc/doompy.jpg)
+
+The GUI consist of mainly two parts:
+
+- the **control** box on the left, where you
+  - set some options for the next game
+  - deal traits from the deck to the players trait piles
+  - select catastrophes world's end events
+  - turn some options for the current on and off  
+- and **trait pile**s on the right, where you 
+  - see the players current point
+  - organize each player's trait pile (i.e. playing, attaching, swapping and discarding traits)
+  - select MOL(s)
+
+I hope, that everything should be self-explaining
+
+### How to use
+
+![GUI](./misc/how_to.jpg)
+
+### Controls
+
+|![GUI](./misc/controls.jpg)| - das al dla|
+
+### Scoreboard
+
+### Trait Pile
 
 ### How to
  
 
-### Settings
+### Options
 
 
 ### Keyboard shortcuts

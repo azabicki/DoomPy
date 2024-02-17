@@ -1,55 +1,94 @@
 # DoomPy
 
-> : a python gui to keep track of scoring _while_ playing [**Doomlings**](https://doomlings.com/)
+>:: a python gui to keep track of scores _while_ playing [**Doomlings**](https://doomlings.com/)
 
 
 ## Introduction
 
 ### _Doomlings_
-Ever since friends backed the original version on Kickstarter and the game finally arrived, we've been more than just addicted to Doomlings from the very first second. Unfortunately, we don't live too close to one another, so we only see each other every few weeks/months. But WHEN we do see each other, it's set in stone that at least (!) one Doomlings session has to be played!
+Ever since friends backed the original version on Kickstarter and the game finally arrived, we've been more than just addicted to [**Doomlings**](https://doomlings.com/) from the very first second. Unfortunately, we don't live too close to one another, so we only see each other every few weeks/months. But WHEN we do, it's set in stone that at least (!) one [**Doomlings**](https://doomlings.com/) session has to be played!
 
-And anyone who knows the game knows how much you can annoy each other by stealing yet another card from the deck. And sometimes you don't even want to, especially not to jeopardise the peace that has just been restored. But if it has to be done, we thought it would only be fair if the player in the lead got it. 
+I guess anyone who knows the game knows how much you can annoy each other by stealing or swapping yet another trait from the trait pile. And sometimes you don't even want to, especially not to jeopardise the peace that has just been restored. But if it has to be done, we thought it would only be fair if the player in the lead becomes the target. 
 
-So we always tried to get a quick overview of the others' points. But with all the scoring rules, it's quite difficult to work out who's in the lead. Especially as we extended it to 4 disasters at some point.
+So we always tried to get a quick overview of the others' points. But with all the scoring rules, it's quite difficult to work out who's in the lead. Especially as we extended it to 4 catastrophes at some point.
 
 ### _+ Python_
 
-After many years of MATLAB and several unsuccessful attempts to switch to Python, I finally started using Python at the end of 2023 and turned my back on MATLAB for good. And what's the best way to learn a programming language? With an interesting project! 
+After many years of MATLAB and several unsuccessful attempts to switch to Python, I finally started using Python at the end of 2023 and turned my back on MATLAB for good. And what's the best way to learn a programming language? Exactly: With an interesting project! 
 
 ### _= DoomPy_
 
-So it was only natural for my first python project to be a Doomlings points live counter. Consequently,
+So it was only natural for my first python project to be a [**Doomlings**](https://doomlings.com/) live points counter. Consequently,
 
-- **Doom**lings + **Py**thon = **DoomPy** 
+"**Doom**lings" + "**Py**thon" = "**DoomPy**" 
 
-was born. With **DoomPy** you can easily allocate the traits to the respective players, select catastrophes & MOLs, and thus see what the score looks like at any time.
+was born. With **DoomPy** you can easily allocate the traits to the respective players trait piles, select catastrophes & MOLs, and thus see what the score looks like at any time.
 
 ## Methods
 
-If you take a look at my code, please keep in mind that I'm new to Python and forgive the likely little Python-like chaos.
-In the past I've been coding mostly in academia, especially with MATLAB. Therefore my coding style is very procedural. I have never coded in an object-orientated way. So I'm sure that, especially in this case, there would be a much more efficient OOP alternative... but that might be a project for the future when I learn OOP.
+If you take a look at my code, please keep in mind that I'm new to Python and forgive the, very likely little _Pythonic_, chaos.
 
-### How to run
+In the past I've been coding mostly in academia, especially with MATLAB. Therefore my coding style is very procedural. I have never coded in an object-orientated way. So I'm sure that there would be a much more efficient OOP alternative, especially in this case where players/traits/MOLs/ages are predestined to be defined as a `class`... but that might be a project for the future when I learn OOP.
+
+### How to run it
 
 As this is also the first time that I am sharing a Python project with the world, this also poses new challenges for me. 
 I think (hope) it should be possible for anyone with the provided [requirements.txt](./requirements.txt) to set up a virtual environment in which DoomPy has to run.
 
-Just [download the repository](https://github.com/azabicki/DoomPy/archive/refs/heads/main.zip), unzip it, and install the virtual environment with the toll of your choice. Finally, run 
+#### 1. getting the reop
+
+[Download the repository][zip] and unzip it. Or if you prefer to use the terminal, run
+
+
+    wget https://github.com/azabicki/DoomPy/archive/refs/heads/main.zip  
+
+or 
+
+    curl -L -O https://github.com/azabicki/DoomPy/archive/refs/heads/main.zip
+
+(see [comment](https://askubuntu.com/questions/939830/how-to-download-a-github-repo-as-zip-using-command-line/1236771#comment2125069_1236771) on curl)
+
+#### 2. virtual environmant
+
+Install the virtual environment with the tool of your choice. You find a `requirements.txt` in the repo base folder
+
+#### 3. go play
+
+Finally, run 
 
     `python /path/to/DoomPy/main.py`
 
 and have fun playing Doomlings!!
 
+#### further requirements
+
+_Display Resolution_: This is a very important aspect, since the GUI takes a lot of space. Especially if you play with 4 catastrophes and many rounds. And depending on which traits are played, it may happen that the height of the trait pile is larger than the screen, making it impossible to select MOLs. With 4 players and 4 catastrophes and on a `1800 x 1200` display, we ocasionally run into problems.
+
+Hence, if possible:
+
+ - use a higher **vertical** resolution as 1200 px if played with more than 3 catastrophes 
+ - use a wider **horizontal** resolution as 1800 px if you play with more then 4 players. 
+
+
 ## Results
 
+This is what you will
 - screenshot
-- how to
-- explanations to button
-- shortcuts
+
+### How to
+ 
+
+### Settings
+
+
+### Keyboard shortcuts
+
 
 ## Discussion
 
 - bugs found? 
 - ideas for improvement?
   - issues are the way to go
-- 
+
+
+[zip]: https://github.com/azabicki/DoomPy/archive/refs/heads/main.zip

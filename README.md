@@ -74,7 +74,7 @@ Hence, if possible:
 
 Depending on your OS Dark-Mode, DoomPy looks like this:
 
-![GUI](misc/doompy.jpg)
+![GUI](misc/gui.jpg)
 
 The GUI consist of mainly two parts:
 
@@ -88,15 +88,18 @@ The GUI consist of mainly two parts:
   - organize each player's trait pile (i.e. playing, attaching, swapping and discarding traits)
   - select MOL(s)
 
-I hope, that everything should be self-explaining
+### How to
 
-### How to use
+I hope that the handling is self-explanatory. Especially if you've already played a round or two of Doomlings. But just in case, you can find more detailed explanations here.
 
-![GUI](./misc/how_to.jpg)
+![GUI_with_Controls](misc/how_to.jpg)
 
-### Controls
-
-|![GUI](./misc/controls.jpg)| - das al dla|
+- **Game options**:
+  - set the amount of players, size of gene pool, amount of catastrophes & MOLs
+  - name the players, but keep the correct order at the table, because some effects affects the players to your left or right
+  - the radiobutton to the right of the names defines the _first player_, it can be changed at any time during the game, and changes automatically after each catastrophe
+- **Deck**:
+  - search for the name of 
 
 ### Scoreboard
 

@@ -94,12 +94,29 @@ I hope that the handling is self-explanatory. Especially if you've already playe
 
 ![GUI_with_Controls](misc/how_to.jpg)
 
-- **Game options**:
-  - set the amount of players, size of gene pool, amount of catastrophes & MOLs
-  - name the players, but keep the correct order at the table, because some effects affects the players to your left or right
-  - the radiobutton to the right of the names defines the _first player_, it can be changed at any time during the game, and changes automatically after each catastrophe
-- **Deck**:
-  - search for the name of 
+- **Game options:**
+  - Set the amount of players, size of gene pool, amount of catastrophes & MOLs
+  - Name the players, but keep the correct order at the table, because some effects affects the players to your left or right
+  - The radiobutton to the right of the names defines the _first player_ (name is green), it can be changed at any time during the game, and changes automatically after each catastrophe
+  - Click on `start game` to clear the table and restart the game
+- **Deck:**
+  - Search for the name of a trait, as soon as there is only one possibility left, the cursor jumps automatically into the list
+    - Click on `clr` to clear the search field
+  - You may also just use the [down-arrow] key or the mouse to select a trait
+  - Click on the name of a `player` to deal the selected trait into his/her trait pile
+- **Catastrophes & World's End:**
+  - Every time a catastrophe is turned, select it from the dropdown box
+  - _First player_ is automatically changed
+  - Since `Prepper` is able to choose the world's end effect, you may need to change it manually
+  - As soon as every _trait's world's end effects_ are resolved, click on th `GO!` button to activate the actual _world's end effect_
+- **Settings:**
+  - As a joke, we thought it could be funny to make own sound-snippets and record all the "quotes" on top of every trait. But until now, we only added some generic mp3's. Turn it only and be surprised :)
+  - You can change what icons will be shown in the trait pile:
+    - ![icons_default](./doompy/images/icons_on.png | width=20) `Default`: basic infos about the trait + effects
+    - `none`: only effects
+    - `full`: all icons
+
+
 
 ### Scoreboard
 

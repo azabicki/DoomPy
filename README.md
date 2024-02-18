@@ -108,17 +108,18 @@ I hope that the handling is self-explanatory. Especially if you've already playe
   - The radiobutton to the right of the names defines the _first player_ (name is green), it can be changed at any time during the game, and changes automatically after each catastrophe
   - Click on `start game` to clear the table and restart the game
 - **Deck:**
-  - Search for the name of a trait, as soon as there is only one possibility left, the cursor jumps automatically into the list
-    - Click on `clr` to clear the search field
-  - You may also just use the [down-arrow] key or the mouse to select a trait
+  - `Search` for the name of a trait, as soon as there is only one possibility left, the cursor jumps automatically into the list
+    - Click on <kbd>clr</kbd> to clear the search field
+  - You may also just use the <kbd>down-arrow</kbd> key or the mouse to select a trait
   - Click on the name of a `player` to deal the selected trait into his/her trait pile
+  - Please note: If you play `Heroic`, a pop-up will be shown asking, if `Heroic` is played during the `Birth of a Hero` age, to bypass the 2-dominant restrictions
   - There are _ambiguous traits_ in the deck and additions to the names should resolve any uncertainties:
-    - `(2)`: numbers in parenthesis show the _face value_
-    - `(~)`: face value is _variable_
     - `{A}`: trait has an _action_
-    - `(b)`, `(g)`, `(p)`, `(r)` or `(c)`: color of trait is _blue_, _green_, _purple_, _red_ or _colorless_
+    - `(~)`: face value is _variable_
+    - `(2)`: numbers in parenthesis show the _face value_
     - `(WE)`: trait has a _world's end effect_
-- <kbd>**Catastrophes & World's End:**</kbd>
+    - `(b)`, `(g)`, `(p)`, `(r)` or `(c)`: color of trait is _blue_, _green_, _purple_, _red_ or _colorless_
+- **Catastrophes & World's End:**
   - Every time a catastrophe is turned, select it from the dropdown box
   - _First player_ is automatically changed
   - Since `Prepper` is able to choose the world's end effect, you may need to change it manually
@@ -206,17 +207,52 @@ Here is an example of a trait pile, showing all (at least i hope i did not forgo
 - this way it is possible to play with a common MOL and having it evaluated immediately
 - if a MOLs points cannot be calculated automatically, an entry field appears where the MOLs points can be set
 
-### Keyboard shortcuts
-> [!TIP] 
-> Use keyboard shortcuts!
+### World's End
 
-Just selestdasdd
+At the end of the game, certain steps need to be done in a order which is pretty much the same as the actual ones you perfom IRL.
+
+1. Once the last `Catastrophe` is played, you are able to select the traits world's end effect.
+   - .g. for `Viral` in the trait pile above.
+2. And once every traits world's end effect is selected, the <kbd>GO!</kbd> button becomes enabled and you can go and trigger the `World's End` effect of the selected `Catastrophe`.
+   -  Eventually you need to enter the world's end point manually.
+3. Then, you need to manually update `Drop` counts if certain traits are played.
+   - e.g. for `Serrated Teeth`in the example above
+4. Maybe some has `Neoteny` ? 
+5. Finally, select each players `MOL`s.
+
+_And that's it. Have fun using it!_
+
+---
+> [!TIP] 
+> Use **keyboard** shortcuts!
+
+I tried to design the handling of **DoomPy** as smooth as possible. For the major time of the game you do not need to use the mouse or trackpad, dealing trait into the different trait piles, changing focus to specific catastrophes, of bringing focus back to the seach field, you can use **keyboard shortcuts** for every one of these actions:
+
+- as soon as a trait is selected in the deck:
+  - key <kbd>1</kbd> to deal it to player #1
+  - key <kbd>2</kbd> to deal it to player #2
+  - key <kbd>3</kbd> to deal it to player #3
+  - ... and so on
+- switch to catastrophes:
+  - key <kbd>F1</kbd> to catastrophe #1
+  - key <kbd>F2</kbd> to catastrophe #2
+  - ... and so on
+- key <kbd>F7</kbd> to quickly jump into search entry
+
+> [!TIP] 
+> Customise the Deck!
+
+You can customize which traits are in the deck by editing the `./doompy/files/cards.xlsx` file. Just change the `in_game` column to `no` to remove the trait from the deck, or edit the `n_cards` columns to change the amount of traits in the deck
 
 ## Discussion
 
-- bugs found? 
-- ideas for improvement?
-  - issues are the way to go
+### Bugs Found?
+
+I have tested DoomPy quite intensively and we have also used it in several real games, which has also brought some bugs to light. Nevertheless, it is of course possible that some bugs have slipped through. If you find a bug, just open an issue! I will take care of it as soon as possible!
+
+### Ideas? 
+
+Do you have any suggestions for improvement? Have I forgotten to add a trait? Or any other ideas or criticism? Just create an issue and I'll get back to you :)
 
 
 [zip]: https://github.com/azabicki/DoomPy/archive/refs/heads/main.zip

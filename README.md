@@ -138,9 +138,9 @@ I hope that the handling is self-explanatory. Especially if you've already playe
 
 ### How to: Scoreboard
 
-The scoreboard shows for each player all the relevant information.
+<img src="./misc/scoreboard.jpg" align="right" width="400">
 
-<img src="./misc/scoreboard.jpg">
+The scoreboard shows for each player all the relevant information.
 
 - **Dominants:**
   - Stars - <img src="./doompy/images/dominant_star/star.png" width="18"> - indicate how many `Dominant Traits` are in the trait pile
@@ -154,21 +154,21 @@ The scoreboard shows for each player all the relevant information.
   - Depending on `Settings`, you will see either the _Total Score_, the players current _Rank_, or a _Wildcard_ hiding the current standing.
 - **Points by Category:**
   - <img src="./doompy/images/trait_properties/official_setA/blank.png" width="18"> = `Face Value`
-  - <img src="./doompy/images/trait_properties/official_setA/drops.png" width="18"> = `Drop Points`, as far as possible to calculate automatically
-  - <img src="./doompy/images/trait_properties/official_setA/worlds_end.png" width="18"> = `World's End Points`, as far as possible to calculate automatically
-  - <img src="./doompy/images/trait_properties/official_setA/MOL.png" width="18"> = `MOL Points`, as far as possible to calculate automatically
+  - <img src="./doompy/images/trait_properties/official_setA/drops_sb.png" width="18"> = `Drop Points`, as far as possible to calculate automatically
+  - <img src="./doompy/images/trait_properties/official_setA/worlds_end_sb.png" width="18"> = `World's End Points`, as far as possible to calculate automatically
+  - <img src="./doompy/images/trait_properties/official_setA/MOL_sb.png" width="18"> = `MOL Points`, as far as possible to calculate automatically
 
 
 ### How to: Trait Pile
 
-Here is an example of a trait pile, showing all (at least i hope i did not forgot any) possible situations that may happen:
+<img src="./misc/trait_pile.jpg" align="right" width="500">
 
-<img src="./misc/trait_pile.jpg">
+Here is an example of a trait pile, showing all (at least i hope i did not forgot any) possible situations that may happen:
 
 #### Buttons 
 
 - first, select any trait by the radiobutton on the left (with exception of dominant traits and attachments)
-- then, decide if you wnat to `move` this trait to another players trait pile, put it back `to the hand`, or `discard`it
+- then, decide if you wnat to `move` this trait to another players trait pile, put it back `to the hand`, or `discard` it
 
 #### The Actual Trait Pile
 - **Each Trait:**
@@ -200,13 +200,15 @@ Here is an example of a trait pile, showing all (at least i hope i did not forgo
 
 ### How to: MOLs
 
-<img src="./misc/MOLs.jpg">
+<img src="./misc/MOLs.jpg" align="right" width="380">
 
 - simply select the desired MOL at any time
-- this way you can play with a common MOL and evaluate it immediately
+- this way it is possible to play with a common MOL and having it evaluated immediately
+- if a MOLs points cannot be calculated automatically, an entry field appears where the MOLs points can be set
 
 ### Keyboard shortcuts
-> [!TIP] Use keyboard shortcuts!
+> [!TIP] 
+> Use keyboard shortcuts!
 
 Just selestdasdd
 

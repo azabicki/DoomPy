@@ -2,6 +2,7 @@
 
 >:: a python gui to keep track of scores _while_ playing [**Doomlings**](https://doomlings.com/)
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Introduction
 
@@ -110,13 +111,17 @@ I hope that the handling is self-explanatory. Especially if you've already playe
   - Since `Prepper` is able to choose the world's end effect, you may need to change it manually
   - As soon as every _trait's world's end effects_ are resolved, click on th `GO!` button to activate the actual _world's end effect_
 - **Settings:**
-  - As a joke, we thought it could be funny to make own sound-snippets and record all the "quotes" on top of every trait. But until now, we only added some generic mp3's. Turn it only and be surprised :)
-  - You can change what icons will be shown in the trait pile:
-    - ![icons_default](./doompy/images/icons_on.png | width=20) `Default`: basic infos about the trait + effects
-    - `none`: only effects
-    - `full`: all icons
-
-
+  - As a joke, we thought it could be funny to record our own little sound-snippets of all the "quotes" on top of every trait. But until now, we only added some generic mp3's. Turn it only and be surprised :smile: (or annoyed :roll_eyes:)
+    - <img src="./doompy/images/note_off.png" width="18" vertical-align="middle"> `Music Off`:  basic infos about the trait + effects
+    - <img src="./doompy/images/note_on.png" width="18" vertical-align="middle"> `Music On`:  basic infos about the trait + effects
+  - You can change what trait property icons will be shown in the trait pile:
+    - <img src="./doompy/images/icons_on.png" width="18" vertical-align="middle"> `Default`:  basic infos about the trait + effects
+    - <img src="./doompy/images/icons_off.png" width="18" vertical-align="middle"> `none`: only effects
+    - <img src="./doompy/images/icons_full.png" width="18" vertical-align="middle"> `full`: all icons
+  - Select scoring mode, i.e. how the current scores are shown:
+    - <img src="./doompy/images/points_123.png" width="18" vertical-align="middle"> `Points`:
+    - <img src="./doompy/images/rank.png" width="18" vertical-align="middle"> `Points`:
+    - <img src="./doompy/images/question_mark.png" width="18" vertical-align="middle"> `Points`:
 
 ### Scoreboard
 
@@ -129,7 +134,8 @@ I hope that the handling is self-explanatory. Especially if you've already playe
 
 
 ### Keyboard shortcuts
-
+> [!TIP]
+> Use keyboard shortcuts!
 
 ## Discussion
 

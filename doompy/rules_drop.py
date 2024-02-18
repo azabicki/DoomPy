@@ -42,7 +42,7 @@ def drop_traits(trait_idx, p, *args):
             else:
                 dp = 0
 
-        case 'Backbitter':
+        case 'Backbiter':
             # 3 self if_one_negative own
             dp = 3 * any([f < 0
                           for f in status_df.iloc[trait_pile].face.values.tolist()

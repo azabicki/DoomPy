@@ -239,7 +239,7 @@ I tried to design the handling of **DoomPy** as smooth as possible. For the majo
   - ... and so on
 - key <kbd>F7</kbd> to quickly jump into search entry
 
-> [!TIP] 
+> [!TIP]
 > Customise the Deck!
 
 You can customize which traits are in the deck by editing the `./doompy/files/cards.xlsx` file. Just change the `in_game` column to `no` to remove the trait from the deck, or edit the `n_cards` columns to change the amount of traits in the deck
@@ -248,11 +248,11 @@ You can customize which traits are in the deck by editing the `./doompy/files/ca
 
 ### Bugs Found?
 
-I have tested DoomPy quite intensively and we have also used it in several real games, which has also brought some bugs to light. Nevertheless, it is of course possible that some bugs have slipped through. If you find a bug, just open an issue! I will take care of it as soon as possible!
+I have tested DoomPy quite intensively and we have also used it in several real games, which has also brought some bugs to light. Nevertheless, it is of course possible that some bugs have slipped through. If you find a bug, just open an [issue](https://github.com/azabicki/DoomPy/issues)! I will take care of it as soon as possible!
 
 ### Ideas? 
 
-Do you have any suggestions for improvement? Have I forgotten to add a trait? Or any other ideas or criticism? Just create an issue and I'll get back to you :)
+Do you have any suggestions for improvement? Have I forgotten to add a trait? Or any other ideas or criticism? Just create an [issue](https://github.com/azabicki/DoomPy/issues) and I'll get back to you :)
 
 
 [zip]: https://github.com/azabicki/DoomPy/archive/refs/heads/main.zip

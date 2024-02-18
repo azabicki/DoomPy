@@ -40,12 +40,15 @@ I think (hope) it should be possible for anyone with the provided [requirements.
 
 [Download the repository][zip] and unzip it. Or if you prefer to use the terminal, run
 
-
-    wget https://github.com/azabicki/DoomPy/archive/refs/heads/main.zip  
+```terminal
+wget https://github.com/azabicki/DoomPy/archive/refs/heads/main.zip
+```
 
 or 
 
-    curl -L -O https://github.com/azabicki/DoomPy/archive/refs/heads/main.zip
+```terminal
+curl -L -O https://github.com/azabicki/DoomPy/archive/refs/heads/main.zip
+```
 
 (see [comment](https://askubuntu.com/questions/939830/how-to-download-a-github-repo-as-zip-using-command-line/1236771#comment2125069_1236771) on curl)
 
@@ -57,7 +60,9 @@ Install the virtual environment with the tool of your choice. You find a `requir
 
 Finally, run 
 
-    `python /path/to/DoomPy/main.py`
+```terminal
+python /path/to/DoomPy/main.py
+```
 
 and have fun playing Doomlings!!
 
@@ -89,11 +94,13 @@ The GUI consist of mainly two parts:
   - organize each player's trait pile (i.e. playing, attaching, swapping and discarding traits)
   - select MOL(s)
 
-### How to
+### Overview
 
 I hope that the handling is self-explanatory. Especially if you've already played a round or two of Doomlings. But just in case, you can find more detailed explanations here.
 
 ![GUI_with_Controls](misc/how_to.jpg)
+
+### How to: Controls
 
 - **Game options:**
   - Set the amount of players, size of gene pool, amount of catastrophes & MOLs
@@ -105,37 +112,103 @@ I hope that the handling is self-explanatory. Especially if you've already playe
     - Click on `clr` to clear the search field
   - You may also just use the [down-arrow] key or the mouse to select a trait
   - Click on the name of a `player` to deal the selected trait into his/her trait pile
-- **Catastrophes & World's End:**
+  - There are _ambiguous traits_ in the deck and additions to the names should resolve any uncertainties:
+    - `(2)`: numbers in parenthesis show the _face value_
+    - `(~)`: face value is _variable_
+    - `{A}`: trait has an _action_
+    - `(b)`, `(g)`, `(p)`, `(r)` or `(c)`: color of trait is _blue_, _green_, _purple_, _red_ or _colorless_
+    - `(WE)`: trait has a _world's end effect_
+- <kbd>**Catastrophes & World's End:**</kbd>
   - Every time a catastrophe is turned, select it from the dropdown box
   - _First player_ is automatically changed
   - Since `Prepper` is able to choose the world's end effect, you may need to change it manually
   - As soon as every _trait's world's end effects_ are resolved, click on th `GO!` button to activate the actual _world's end effect_
 - **Settings:**
   - As a joke, we thought it could be funny to record our own little sound-snippets of all the "quotes" on top of every trait. But until now, we only added some generic mp3's. Turn it only and be surprised :smile: (or annoyed :roll_eyes:)
-    - <img src="./doompy/images/note_off.png" width="18" vertical-align="middle"> `Music Off`:  basic infos about the trait + effects
-    - <img src="./doompy/images/note_on.png" width="18" vertical-align="middle"> `Music On`:  basic infos about the trait + effects
+    - <img src="./doompy/images/note_off.png" width="18"> `Music Off`:  basic infos about the trait + effects
+    - <img src="./doompy/images/note_on.png" width="18"> `Music On`:  basic infos about the trait + effects
   - You can change what trait property icons will be shown in the trait pile:
-    - <img src="./doompy/images/icons_on.png" width="18" vertical-align="middle"> `Default`:  basic infos about the trait + effects
-    - <img src="./doompy/images/icons_off.png" width="18" vertical-align="middle"> `none`: only effects
-    - <img src="./doompy/images/icons_full.png" width="18" vertical-align="middle"> `full`: all icons
+    - <img src="./doompy/images/icons_on.png" width="18"> `Default`:  basic infos about the trait + effects
+    - <img src="./doompy/images/icons_off.png" width="18"> `None`: only effects
+    - <img src="./doompy/images/icons_full.png" width="18"> `Full`: all icons
   - Select scoring mode, i.e. how the current scores are shown:
-    - <img src="./doompy/images/points_123.png" width="18" vertical-align="middle"> `Points`:
-    - <img src="./doompy/images/rank.png" width="18" vertical-align="middle"> `Points`:
-    - <img src="./doompy/images/question_mark.png" width="18" vertical-align="middle"> `Points`:
+    - <img src="./doompy/images/points_123.png" width="18"> `Points`: show all the points
+    - <img src="./doompy/images/rank.png" width="18"> `Rank`: show only the rank of the players
+    - <img src="./doompy/images/question_mark.png" width="18"> `Hidden`: do not show any points
 
-### Scoreboard
+### How to: Scoreboard
 
-### Trait Pile
+The scoreboard shows for each player all the relevant information.
 
-### How to
- 
+<img src="./misc/scoreboard.jpg">
 
-### Options
+- **Dominants:**
+  - Stars - <img src="./doompy/images/dominant_star/star.png" width="18"> - indicate how many `Dominant Traits` are in the trait pile
+- **Name:**
+  - Is green if player is the current _first player_
+- **Gene Pool:**
+  - Shows the players current size of his/her `Gene Pool`
+- **# of colors:**
+  - displays the current `Color Count`, as weel as the complete trait count in the trait pile
+- **Total Points:**
+  - Depending on `Settings`, you will see either the _Total Score_, the players current _Rank_, or a _Wildcard_ hiding the current standing.
+- **Points by Category:**
+  - <img src="./doompy/images/trait_properties/official_setA/blank.png" width="18"> = `Face Value`
+  - <img src="./doompy/images/trait_properties/official_setA/drops.png" width="18"> = `Drop Points`, as far as possible to calculate automatically
+  - <img src="./doompy/images/trait_properties/official_setA/worlds_end.png" width="18"> = `World's End Points`, as far as possible to calculate automatically
+  - <img src="./doompy/images/trait_properties/official_setA/MOL.png" width="18"> = `MOL Points`, as far as possible to calculate automatically
 
+
+### How to: Trait Pile
+
+Here is an example of a trait pile, showing all (at least i hope i did not forgot any) possible situations that may happen:
+
+<img src="./misc/trait_pile.jpg">
+
+#### Buttons 
+
+- first, select any trait by the radiobutton on the left (with exception of dominant traits and attachments)
+- then, decide if you wnat to `move` this trait to another players trait pile, put it back `to the hand`, or `discard`it
+
+#### The Actual Trait Pile
+- **Each Trait:**
+  - has an icon depicting its `Color` and `Face Value`
+    - see `Wild` for a multi-color example
+  - a vertical line separates these properties from any special effects
+- **Drop Effects:**
+  - if a trait has a drop effects, its indicated by a `Drop` and a `Value` icon
+    - see `Backbiter` for an example: its drop effect is worth 3 points, since `Zombified` is in the trait pile
+  - if drop effects are based on the `player's hand` or the `discard pile`, they cannot be calculated automatically and need to be set manually
+    - this is only possible once `World's End` has been played
+    - see `Serrated Teeth` as an example
+- **Attachments:**
+  - are indicated by an `Attachment` icon instead of the radiobutton on the left side (it cannot be discarded by its own)
+  - select the `Host` in the drop-down menu, which is then also marked by an `Attachment` icon
+    - example 1: `Lyonization` on `Dragon Heart` -> `Dragon Heart`s drop effect is now inactive, which is shown by the `Question Mark` and the `Èffects inactive` icons
+    - example 2: `Nano` on `Mycotoxins` -> `Nano` has a drop effect, which is now worth as much as the `Host`s face value
+- **Dominant Traits:**
+    - are indicated by a `Dominant` icon instead of the radiobutton on the left side (it cannot be discarded by its own), and a different font style
+- **World's End Effects:**
+  - if a trait has a world's end effect which needs to be decided by the player, a dropdown-box is shown
+  - this is only possible after the last catastrophe happens
+  - see `Viral` for an example
+
+#### Effects From Other Trait Piles
+
+- If you are affected by another player's traits, these effects are listed here
+  - see `Shiny` as an example 
+
+### How to: MOLs
+
+<img src="./misc/MOLs.jpg">
+
+- simply select the desired MOL at any time
+- this way you can play with a common MOL and evaluate it immediately
 
 ### Keyboard shortcuts
-> [!TIP]
-> Use keyboard shortcuts!
+> [!TIP] Use keyboard shortcuts!
+
+Just selestdasdd
 
 ## Discussion
 

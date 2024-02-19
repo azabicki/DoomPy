@@ -7,7 +7,7 @@
 [![License](https://img.shields.io/badge/License-MIT-blue)](https://github.com/azabicki/DoomPy/blob/main/LICENSE)
 [![stars - DoomPy](https://img.shields.io/github/stars/azabicki/DoomPy?style=social)](https://github.com/azabicki/DoomPy)
 [![forks - DoomPy](https://img.shields.io/github/forks/azabicki/DoomPy?style=social)](https://github.com/azabicki/DoomPy)
-[![issues - DoomPy](https://img.shields.io/github/issues/azabicki/DoomPy)](https://github.com/azabicki/DoomPy/issues)
+<!--- [![issues - DoomPy](https://img.shields.io/github/issues/azabicki/DoomPy)](https://github.com/azabicki/DoomPy/issues) --->
 
 ## Introduction
 

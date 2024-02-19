@@ -9,6 +9,8 @@
 [![forks - DoomPy](https://img.shields.io/github/forks/azabicki/DoomPy?style=social)](https://github.com/azabicki/DoomPy)
 [![issues - DoomPy](https://img.shields.io/github/issues/azabicki/DoomPy)](https://github.com/azabicki/DoomPy/issues) --->
 
+_Disclaimer: This is a private project and I took the liberty of borrowing the official icons from the Doomlings website. I hope that's ok with you guy's from Doomlings :)   -   and of course: go buy the game, it's super fun!_
+
 ## Introduction
 
 ### _Doomlings_
@@ -43,7 +45,7 @@ I think (hope) it should be possible for anyone with the provided [requirements.
 
 #### 1. getting the repo
 
-[Download the repository][zip] and unzip it. Or if you prefer to use the terminal, run
+[Download the repository][release] and unzip it. Or if you prefer to use the terminal, run
 
 ```terminal
 wget https://github.com/azabicki/DoomPy/archive/refs/heads/main.zip
@@ -269,3 +271,4 @@ Do you have any suggestions for improvement? Have I forgotten to add a trait? Or
 
 
 [zip]: https://github.com/azabicki/DoomPy/archive/refs/heads/main.zip
+[release]: https://github.com/azabicki/DoomPy/releases

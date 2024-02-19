@@ -5,9 +5,9 @@
 [![azabicki - DoomPy](https://img.shields.io/static/v1?label=azabicki&message=DoomPy&color=blue&logo=github)](https://github.com/azabicki/DoomPy "Go to GitHub repo")
 [![Made with Python](https://img.shields.io/badge/Python->=3.10-blue?logo=python&logoColor=white)](https://python.org "Go to Python homepage")
 [![License](https://img.shields.io/badge/License-GPLv3-blue)](#license)
-[![stars - DoomPy](https://img.shields.io/github/stars/azabicki/DoomPy?style=social)](https://github.com/azabicki/DoomPy)
+<!--- [![stars - DoomPy](https://img.shields.io/github/stars/azabicki/DoomPy?style=social)](https://github.com/azabicki/DoomPy)
 [![forks - DoomPy](https://img.shields.io/github/forks/azabicki/DoomPy?style=social)](https://github.com/azabicki/DoomPy)
-<!--- [![issues - DoomPy](https://img.shields.io/github/issues/azabicki/DoomPy)](https://github.com/azabicki/DoomPy/issues) --->
+[![issues - DoomPy](https://img.shields.io/github/issues/azabicki/DoomPy)](https://github.com/azabicki/DoomPy/issues) --->
 
 ## Introduction
 

@@ -5,7 +5,7 @@ import tkinter as tk
 
 # single_trait_functions ###########################################################################
 # --- AMATOXINS ------------------------------------------------------------------------------------
-def amatoxins(frame_trait_overview, irow, images, trait_idx, trait_name):
+def amatoxins(frame_trait_overview: tk.Frame, irow: int, images: dict, trait_idx: int, trait_name: str) -> int:
     # create separate frame
     irow += 1
     frame = tk.Frame(frame_trait_overview)
@@ -37,7 +37,7 @@ def amatoxins(frame_trait_overview, irow, images, trait_idx, trait_name):
 
 
 # --- PROWLER --------------------------------------------------------------------------------------
-def prowler(frame_trait_overview, p, irow, images, trait_idx, trait_name):
+def prowler(frame_trait_overview: tk.Frame, p: int, irow: int, images: dict, trait_idx: int, trait_name: str) -> int:
     # create separate frame
     irow += 1
     frame = tk.Frame(frame_trait_overview)
@@ -66,7 +66,7 @@ def prowler(frame_trait_overview, p, irow, images, trait_idx, trait_name):
 
 
 # --- SHINY ----------------------------------------------------------------------------------------
-def shiny(frame_trait_overview, p, irow, images, trait_idx):
+def shiny(frame_trait_overview: tk.Frame, p: int, irow: int, images, trait_idx: int) -> int:
     # create separate frame
     irow += 1
     frame = tk.Frame(frame_trait_overview)
@@ -92,7 +92,7 @@ def shiny(frame_trait_overview, p, irow, images, trait_idx):
 
 
 # --- SPORES ---------------------------------------------------------------------------------------
-def spores(frame_trait_overview, p, irow, images, spores_effect, trait_idx):
+def spores(frame_trait_overview: tk.Frame, p: int, irow: int, images: dict, spores_effect: str, trait_idx: str) -> int:
     # check if more players are affected
     if '_' in spores_effect:
         spores_effect = spores_effect.split('_')
@@ -122,7 +122,7 @@ def spores(frame_trait_overview, p, irow, images, spores_effect, trait_idx):
 
 
 # --- VIRAL ----------------------------------------------------------------------------------------
-def viral(frame_trait_overview, p, irow, images, trait_idx, trait_name):
+def viral(frame_trait_overview: tk.Frame, p: int, irow: int, images: dict, trait_idx: int, trait_name: str) -> int:
     # create separate frame
     irow += 1
     frame = tk.Frame(frame_trait_overview)
@@ -156,7 +156,7 @@ def viral(frame_trait_overview, p, irow, images, trait_idx, trait_name):
 
 # checking for specific traits #####################################################################
 # - if they are played, run the respective function
-def special_trait_effects(frame_trait_overview, p, irow, images):
+def special_trait_effects(frame_trait_overview: tk.Frame, p: int, irow: int, images: dict) -> int:
 
     # --- AMATOXINS --- add passively Amatoxins to this trait pile ---------------------------------
     amatoxins_idx = traits_df.index[traits_df.trait == 'Amatoxins'].tolist()

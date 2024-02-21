@@ -3,8 +3,8 @@ from log import write_log
 import tkinter as tk
 
 
-def is_heroic_born(trait_idx):
-    def response(response, trait_idx):
+def is_heroic_born(trait_idx: int) -> None:
+    def response(response: str, trait_idx: int) -> None:
         status_df.loc[trait_idx, 'effects'] = True if response == 'yes' else False
         top.destroy()
 
@@ -28,7 +28,7 @@ def is_heroic_born(trait_idx):
     top.wait_window()
 
 
-def check_requirement(trait_idx, p):
+def check_requirement(trait_idx: int, p: int) -> bool:
     # returns 'True' if playing trait should be aborted for any trait-specific reason
     # colors = ['blue', 'green', 'purple', 'red']
     trait = traits_df.loc[trait_idx].trait
@@ -145,7 +145,7 @@ def check_requirement(trait_idx, p):
                 return True
 
 
-def play_effect(trait_idx, p):
+def play_effect(trait_idx: int, p: int) -> None:
     # perform trait specific actions when played
     trait = traits_df.loc[trait_idx].trait
     tp = plr['trait_pile'][p]

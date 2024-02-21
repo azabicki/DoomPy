@@ -3,7 +3,7 @@ from globals_ import traits_df, status_df, plr
 
 
 # trait specific rules #############################################################################
-def drop_traits(trait_idx, p, *args):
+def drop_traits(trait_idx: int, p: int, *args) -> int:
     # default drop points
     dp = np.nan
 
@@ -567,7 +567,7 @@ def drop_traits(trait_idx, p, *args):
 
 
 # MAIN ROUTINE for calculating drop values #########################################################
-def drop_points(p):
+def drop_points(p: int) -> int:
     # init vars
     total = 0
     trait_pile = plr['trait_pile'][p]

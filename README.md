@@ -129,7 +129,7 @@ I hope that the handling is self-explanatory. Especially if you've already playe
   - Every time a catastrophe is turned, select it from the dropdown box.
     - _First player_ is automatically changed.
   - Since `Prepper` is able to choose the `World's End` effect, you may need to change it manually.
-  - As soon as every _trait's world's end effects_ are resolved, click on th `GO!` button to activate the actual `World's E` effect.
+  - As soon as every _trait's world's end effects_ are resolved, click on th `GO!` button to activate the actual `World's End` effect.
 - **Settings:**
   - As a joke, we thought it could be funny to record our own little `Sound-Bites` of all the "_quotes_" on top of every trait. But until now, we only added some generic mp3's. Turn it on and be surprised :smile: (or annoyed :roll_eyes:)
     - <img src="./doompy/images/note_off.png" width="18"> `Music Off`
@@ -137,7 +137,7 @@ I hope that the handling is self-explanatory. Especially if you've already playe
   - You can change which `Trait Property` icons will be shown in the trait pile:
     - <img src="./doompy/images/icons_on.png" width="18"> `Default`:  basic properties about the trait + effects
     - <img src="./doompy/images/icons_off.png" width="18"> `None`: only effects
-    - <img src="./doompy/images/icons_full.png" width="18"> `Full`: all properties (needs a wide screen!)
+    - <img src="./doompy/images/icons_full.png" width="18"> `Full`: all properties (requires a wider screen!)
   - Select 'Scoring Mode', i.e. how the current scores are shown:
     - <img src="./doompy/images/points_123.png" width="18"> `Points`: show all the points
     - <img src="./doompy/images/rank.png" width="18"> `Rank`: show only the rank of the players
@@ -231,7 +231,14 @@ _And that's it. Have fun using it!_
 > [!IMPORTANT] 
 > Discard **Dominants** and **Attachments**!
 
-Of course, there is a little back-door for you to remove dominant traits and attachment from your trait pile, in case you played them by mistake. Just click on the `vertical line`separating the traits basic properties from effects.
+Of course, there is a little back-door for you to remove dominant traits and attachment from your trait pile, in case you played them by mistake. Just click on the `vertical line` separating the traits basic properties from effects.
+
+> [!TIP] 
+> Individual standard game settings!
+
+You are always playing 4 catastrophes? With the same people? Two mols? **Don't worry!** You don't have to change the settings again and again. Just open the `doompy/config.json` file and edit the defaults according to your playing style.
+
+
 
 > [!TIP] 
 > Use **keyboard** shortcuts!

@@ -104,6 +104,8 @@ The GUI consist of mainly two parts:
 
 I hope that the handling is self-explanatory. Especially if you've already played a round or two of [**Doomlings**](https://doomlings.com/). But just in case, you can find more detailed explanations here.
 
+(see short [demo video](#demo) at the bottom)
+
 ![GUI_with_Controls](misc/how_to.jpg)
 
 ### How to: Controls
@@ -276,6 +278,9 @@ I have tested DoomPy quite intensively and we have also used it in several real 
 
 Do you have any suggestions for improvement? Have I forgotten to add a trait? Or any other ideas or criticism? Just create an [issue](https://github.com/azabicki/DoomPy/issues) and I'll get back to you :)
 
+## Demo
+
+https://github.com/azabicki/DoomPy/assets/33624433/6150a4ed-c103-44a8-9356-c429407ac2dc
 
 [zip]: https://github.com/azabicki/DoomPy/archive/refs/heads/main.zip
 [release]: https://github.com/azabicki/DoomPy/releases

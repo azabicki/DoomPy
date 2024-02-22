@@ -1,0 +1,72 @@
+>>> initialize <<< new game: 20240221-212520
+>>> initialize <<< reset variables
+   >>> name of player #1 = 'Lisa'
+   >>> name of player #2 = 'Julia'
+   >>> name of player #3 = 'Anton'
+   >>> name of player #4 = 'Adam'
+   >>> first player is 'Lisa'
+>>> initialize <<< create menu
+>>> initialize <<< create playground
+>>> select trait <<< in DECK -> selected trait = 'Spicy' (id:304)
+>>> play <<< 'Lisa' is playing 'Spicy' (id:304)
+>>> dominants <<< in trait piles: Lisa = 0 / Julia = 0 / Anton = 0 / Adam = 0
+>>> scoring <<< 'Lisa's current points: face=1 | drops=1 | WE=0 | MOL=0 | total=2
+>>> scoring <<< 'Julia's current points: face=0 | drops=0 | WE=0 | MOL=0 | total=0
+>>> scoring <<< 'Anton's current points: face=0 | drops=0 | WE=0 | MOL=0 | total=0
+>>> scoring <<< 'Adam's current points: face=0 | drops=0 | WE=0 | MOL=0 | total=0
+>>> select trait <<< in DECK -> selected trait = 'Fey' (id:113)
+>>> play <<< 'Lisa' is playing 'Fey' (id:113)
+>>> dominants <<< in trait piles: Lisa = 0 / Julia = 0 / Anton = 0 / Adam = 0
+>>> genes <<< 'Lisa's 'Fey' (id:113) has gene effect off '1' on 'all' -> current effect: [1, 1, 1, 1]
+   >>> total gene effect: [1, 1, 1, 1] -> current gene pools are [7, 7, 7, 7]
+>>> scoring <<< 'Lisa's current points: face=2 | drops=1 | WE=0 | MOL=0 | total=3
+>>> scoring <<< 'Julia's current points: face=0 | drops=0 | WE=0 | MOL=0 | total=0
+>>> scoring <<< 'Anton's current points: face=0 | drops=0 | WE=0 | MOL=0 | total=0
+>>> scoring <<< 'Adam's current points: face=0 | drops=0 | WE=0 | MOL=0 | total=0
+>>> select trait <<< in DECK -> selected trait = 'Fey' (id:114)
+>>> play <<< 'Lisa' is playing 'Fey' (id:114)
+>>> dominants <<< in trait piles: Lisa = 0 / Julia = 0 / Anton = 0 / Adam = 0
+>>> genes <<< 'Lisa's 'Fey' (id:113) has gene effect off '1' on 'all' -> current effect: [1, 1, 1, 1]
+>>> genes <<< 'Lisa's 'Fey' (id:114) has gene effect off '1' on 'all' -> current effect: [2, 2, 2, 2]
+   >>> total gene effect: [2, 2, 2, 2] -> current gene pools are [8, 8, 8, 8]
+>>> scoring <<< 'Lisa's current points: face=3 | drops=1 | WE=0 | MOL=0 | total=4
+>>> scoring <<< 'Julia's current points: face=0 | drops=0 | WE=0 | MOL=0 | total=0
+>>> scoring <<< 'Anton's current points: face=0 | drops=0 | WE=0 | MOL=0 | total=0
+>>> scoring <<< 'Adam's current points: face=0 | drops=0 | WE=0 | MOL=0 | total=0
+>>> select trait <<< in DECK -> selected trait = 'Acrobatic' (id:0)
+>>> select trait <<< in DECK -> selected trait = 'Adorable' (id:1)
+>>> select trait <<< in DECK -> selected trait = 'Adrenalized' (id:2)
+>>> select trait <<< in DECK -> selected trait = 'Agile' (id:3)
+>>> play <<< 'Lisa' is playing 'Agile' (id:3)
+>>> dominants <<< in trait piles: Lisa = 0 / Julia = 0 / Anton = 0 / Adam = 0
+>>> genes <<< 'Lisa's 'Fey' (id:113) has gene effect off '1' on 'all' -> current effect: [1, 1, 1, 1]
+>>> genes <<< 'Lisa's 'Fey' (id:114) has gene effect off '1' on 'all' -> current effect: [2, 2, 2, 2]
+   >>> total gene effect: [2, 2, 2, 2] -> current gene pools are [8, 8, 8, 8]
+>>> scoring <<< 'Lisa's current points: face=3 | drops=2 | WE=0 | MOL=0 | total=5
+>>> scoring <<< 'Julia's current points: face=0 | drops=0 | WE=0 | MOL=0 | total=0
+>>> scoring <<< 'Anton's current points: face=0 | drops=0 | WE=0 | MOL=0 | total=0
+>>> scoring <<< 'Adam's current points: face=0 | drops=0 | WE=0 | MOL=0 | total=0
+>>> select trait <<< in DECK -> selected trait = 'Acrobatic' (id:0)
+>>> select trait <<< in DECK -> selected trait = 'Amatoxins' (id:5)
+>>> select trait <<< in DECK -> selected trait = 'Ancient' (id:6)
+>>> select trait <<< in DECK -> selected trait = 'Ancient' (id:7)
+>>> play <<< 'Lisa' is playing 'Ancient' (id:7)
+>>> dominants <<< in trait piles: Lisa = 0 / Julia = 0 / Anton = 0 / Adam = 0
+>>> genes <<< 'Lisa's 'Fey' (id:113) has gene effect off '1' on 'all' -> current effect: [1, 1, 1, 1]
+>>> genes <<< 'Lisa's 'Fey' (id:114) has gene effect off '1' on 'all' -> current effect: [2, 2, 2, 2]
+   >>> total gene effect: [2, 2, 2, 2] -> current gene pools are [8, 8, 8, 8]
+>>> scoring <<< 'Lisa's current points: face=5 | drops=3 | WE=0 | MOL=0 | total=8
+>>> scoring <<< 'Julia's current points: face=0 | drops=0 | WE=0 | MOL=0 | total=0
+>>> scoring <<< 'Anton's current points: face=0 | drops=0 | WE=0 | MOL=0 | total=0
+>>> scoring <<< 'Adam's current points: face=0 | drops=0 | WE=0 | MOL=0 | total=0
+>>> select trait <<< in DECK -> selected trait = 'Acrobatic' (id:0)
+>>> select trait <<< in DECK -> selected trait = 'Antlers' (id:9)
+>>> play <<< 'Lisa' is playing 'Antlers' (id:9)
+>>> dominants <<< in trait piles: Lisa = 0 / Julia = 0 / Anton = 0 / Adam = 0
+>>> genes <<< 'Lisa's 'Fey' (id:113) has gene effect off '1' on 'all' -> current effect: [1, 1, 1, 1]
+>>> genes <<< 'Lisa's 'Fey' (id:114) has gene effect off '1' on 'all' -> current effect: [2, 2, 2, 2]
+   >>> total gene effect: [2, 2, 2, 2] -> current gene pools are [8, 8, 8, 8]
+>>> scoring <<< 'Lisa's current points: face=8 | drops=3 | WE=0 | MOL=0 | total=11
+>>> scoring <<< 'Julia's current points: face=0 | drops=0 | WE=0 | MOL=0 | total=0
+>>> scoring <<< 'Anton's current points: face=0 | drops=0 | WE=0 | MOL=0 | total=0
+>>> scoring <<< 'Adam's current points: face=0 | drops=0 | WE=0 | MOL=0 | total=0

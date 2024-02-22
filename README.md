@@ -5,9 +5,9 @@
 [![azabicki - DoomPy](https://img.shields.io/static/v1?label=azabicki&message=DoomPy&color=blue&logo=github)](https://github.com/azabicki/DoomPy "Go to GitHub repo")
 [![Made with Python](https://img.shields.io/badge/Python->=3.10-blue?logo=python&logoColor=white)](https://python.org "Go to Python homepage")
 [![License](https://img.shields.io/badge/License-GPLv3-blue)](#license)
-<!--- [![stars - DoomPy](https://img.shields.io/github/stars/azabicki/DoomPy?style=social)](https://github.com/azabicki/DoomPy)
+[![issues - DoomPy](https://img.shields.io/github/issues/azabicki/DoomPy)](https://github.com/azabicki/DoomPy/issues)
+[![stars - DoomPy](https://img.shields.io/github/stars/azabicki/DoomPy?style=social)](https://github.com/azabicki/DoomPy)
 [![forks - DoomPy](https://img.shields.io/github/forks/azabicki/DoomPy?style=social)](https://github.com/azabicki/DoomPy)
-[![issues - DoomPy](https://img.shields.io/github/issues/azabicki/DoomPy)](https://github.com/azabicki/DoomPy/issues) --->
 
 _Disclaimer: This is a private project and I took the liberty of borrowing the official icons from the Doomlings website. I hope that's ok with you guy's from Doomlings :)   -   and of course: go buy the game, it's super fun!_
 
@@ -45,7 +45,7 @@ I think (hope) it should be possible for anyone with the provided [requirements.
 
 #### 1. getting the repo
 
-[Download the repository][release] and unzip it. Or if you prefer to use the terminal, run
+Download the [latest release][release] (or the [current repository][zip]) and unzip it. Or if you prefer to use the terminal, run
 
 ```terminal
 wget https://github.com/azabicki/DoomPy/archive/refs/heads/main.zip
@@ -104,6 +104,8 @@ The GUI consist of mainly two parts:
 
 I hope that the handling is self-explanatory. Especially if you've already played a round or two of [**Doomlings**](https://doomlings.com/). But just in case, you can find more detailed explanations here.
 
+(see short [demo video](#demo) at the bottom)
+
 ![GUI_with_Controls](misc/how_to.jpg)
 
 ### How to: Controls
@@ -129,7 +131,7 @@ I hope that the handling is self-explanatory. Especially if you've already playe
   - Every time a catastrophe is turned, select it from the dropdown box.
     - _First player_ is automatically changed.
   - Since `Prepper` is able to choose the `World's End` effect, you may need to change it manually.
-  - As soon as every _trait's world's end effects_ are resolved, click on th `GO!` button to activate the actual `World's E` effect.
+  - As soon as every _trait's world's end effects_ are resolved, click on th `GO!` button to activate the actual `World's End` effect.
 - **Settings:**
   - As a joke, we thought it could be funny to record our own little `Sound-Bites` of all the "_quotes_" on top of every trait. But until now, we only added some generic mp3's. Turn it on and be surprised :smile: (or annoyed :roll_eyes:)
     - <img src="./doompy/images/note_off.png" width="18"> `Music Off`
@@ -137,7 +139,7 @@ I hope that the handling is self-explanatory. Especially if you've already playe
   - You can change which `Trait Property` icons will be shown in the trait pile:
     - <img src="./doompy/images/icons_on.png" width="18"> `Default`:  basic properties about the trait + effects
     - <img src="./doompy/images/icons_off.png" width="18"> `None`: only effects
-    - <img src="./doompy/images/icons_full.png" width="18"> `Full`: all properties (needs a wide screen!)
+    - <img src="./doompy/images/icons_full.png" width="18"> `Full`: all properties (requires a wider screen!)
   - Select 'Scoring Mode', i.e. how the current scores are shown:
     - <img src="./doompy/images/points_123.png" width="18"> `Points`: show all the points
     - <img src="./doompy/images/rank.png" width="18"> `Rank`: show only the rank of the players
@@ -231,7 +233,14 @@ _And that's it. Have fun using it!_
 > [!IMPORTANT] 
 > Discard **Dominants** and **Attachments**!
 
-Of course, there is a little back-door for you to remove dominant traits and attachment from your trait pile, in case you played them by mistake. Just click on the `vertical line`separating the traits basic properties from effects.
+Of course, there is a little back-door for you to remove dominant traits and attachment from your trait pile, in case you played them by mistake. Just click on the `vertical line` separating the traits basic properties from effects.
+
+> [!TIP] 
+> Individual standard game settings!
+
+You are always playing 4 catastrophes? With the same people? Two mols? **Don't worry!** You don't have to change the settings again and again. Just open the `doompy/config.json` file and edit the defaults according to your playing style.
+
+
 
 > [!TIP] 
 > Use **keyboard** shortcuts!
@@ -269,6 +278,9 @@ I have tested DoomPy quite intensively and we have also used it in several real 
 
 Do you have any suggestions for improvement? Have I forgotten to add a trait? Or any other ideas or criticism? Just create an [issue](https://github.com/azabicki/DoomPy/issues) and I'll get back to you :)
 
+## Demo
+
+https://github.com/azabicki/DoomPy/assets/33624433/6150a4ed-c103-44a8-9356-c429407ac2dc
 
 [zip]: https://github.com/azabicki/DoomPy/archive/refs/heads/main.zip
-[release]: https://github.com/azabicki/DoomPy/releases
+[release]: https://github.com/azabicki/DoomPy/releases/latest

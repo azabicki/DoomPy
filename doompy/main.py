@@ -912,12 +912,12 @@ def update_manual_we(cur_value: int, p: int, change: str) -> None:
     create_trait_pile(frame_trait_pile[p], p)
 
 
-def update_manual_drops(cur_value: str, trait: int, change: str) -> None:
+def update_manual_drops(cur_value: int, trait: int, change: str) -> None:
     # change value according to button
     if change == '+':
-        value = int(cur_value) + 1
+        value = cur_value + 1
     else:
-        value = int(cur_value) - 1
+        value = cur_value - 1
 
     # save value in status_df
     status_df.loc[trait, 'drops'] = value
@@ -1362,7 +1362,7 @@ def create_trait_pile(frame_trait_overview: tk.Frame, p: int) -> None:
         irow += 1
         ypad = (3, 0) if irow == 0 else 0
 
-        # ----- radiobutton / label if attachment --------------------------------------------------
+        # ----- radiobutton / label if attachment or dominant --------------------------------------
         if traits_df.loc[trait_idx].attachment == 1:
             lbl = tk.Label(frame_trait_overview,
                            text=" " + trait,
@@ -1370,7 +1370,7 @@ def create_trait_pile(frame_trait_overview: tk.Frame, p: int) -> None:
                            compound=tk.LEFT)
             lbl.grid(row=irow, column=0, padx=2, pady=ypad, sticky='nsw')
 
-            # it also could be a DOMINANT
+            # it attachment is also could be a DOMINANT
             if traits_df.loc[trait_idx].dominant == 1:
                 lbl.config(fg=cfg["font_color_dominant"], font="'' 14 bold")
         elif traits_df.loc[trait_idx].dominant == 1:
@@ -1382,10 +1382,15 @@ def create_trait_pile(frame_trait_overview: tk.Frame, p: int) -> None:
                      font="'' 14 bold"
                      ).grid(row=irow, column=0, padx=2, pady=ypad, sticky='nsw')
         else:
+            # check if trait has 'noRemove' status
+            rb_state = 'disabled' if status_df.loc[trait_idx].no_remove else 'normal'
+                
+            # create radiobutton
             tk.Radiobutton(frame_trait_overview,
                            text=" " + trait,
                            variable=plr['trait_selected'][p],
                            value=trait_idx,
+                           state=rb_state,
                            command=lambda t_idx=trait_idx: write_log(['select', 'trait_pile'],
                                                                      plr['name'][p].get(),
                                                                      traits_df.loc[t_idx].trait,
@@ -1686,8 +1691,8 @@ def create_trait_pile(frame_trait_overview: tk.Frame, p: int) -> None:
                 width=3,
                 wrap=False)
             drop_sbox.grid(row=irow, column=1, sticky='w')
-            drop_sbox.bind("<<Increment>>", lambda e, t=trait_idx: update_manual_drops(e.widget.get(), t, '+'))
-            drop_sbox.bind("<<Decrement>>", lambda e, t=trait_idx: update_manual_drops(e.widget.get(), t, '-'))
+            drop_sbox.bind("<<Increment>>", lambda e, t=trait_idx: update_manual_drops(int(e.widget.get()), t, '+'))
+            drop_sbox.bind("<<Decrement>>", lambda e, t=trait_idx: update_manual_drops(int(e.widget.get()), t, '-'))
 
             # fill spinbox, depending on drops_status
             if not np.isnan(status_df.loc[trait_idx].drops):
@@ -1992,12 +1997,8 @@ def create_name_entries(frame_menu_names: tk.Frame) -> None:
     ttk.Label(frame_menu_names, text="keep order", style="menu_h2.TLabel"
               ).grid(row=0, column=1, columnspan=2, pady=(0, 5), sticky='w')
 
-    # fix 1st player radiobutton if outside
-    if options['first_player'].get() > (options['n_player'].get()-1):
-        options['first_player'].set(options['n_player'].get()-1)
-
-    # name entries ---
-    for i in range(options['n_player'].get()):
+    # name entries --- at least as much as current players, or more for next game
+    for i in range(max([game['n_player'], options['n_player'].get()])):
         ttk.Label(frame_menu_names, text="player {}: ".format(i+1)
                   ).grid(row=i+1, column=0, sticky='e')
         ttk.Entry(frame_menu_names, textvariable=options['names'][i], width=5
@@ -2005,6 +2006,7 @@ def create_name_entries(frame_menu_names: tk.Frame) -> None:
         tk.Radiobutton(frame_menu_names,
                        variable=options['first_player'],
                        value=i,
+                       state='normal' if i+1 <= game['n_player'] else 'disabled',
                        command=lambda: update_first_player()
                        ).grid(row=i+1, column=2, sticky='e')
 
@@ -2283,6 +2285,10 @@ def reset_variables() -> None:
     game['n_catastrophes'] = options['n_catastrophes'].get()
     game['n_MOLs'] = options['n_MOLs'].get()
 
+    # update first player if not playing anymore
+    if options['first_player'].get()+1 > game['n_player']:
+        options['first_player'].set(game['n_player']-1)
+
     # reset _player_ variables
     plr['name'].clear()
     plr['genes'].clear()
@@ -2482,14 +2488,14 @@ gui_style.configure("disabled.TButton", foreground="grey", font="'', 11")
 
 # tk_inter_variables -------------------------------------------------------------------------------
 options = {}
-options['n_player'] = tk.IntVar(value=cfg["n_player"])                # OPTIONS: number of players
-options['n_genes'] = tk.IntVar(value=cfg["n_genes"])                  # OPTIONS: gene pool at beginning
+options['n_player'] = tk.IntVar(value=cfg["n_player"])              # OPTIONS: number of players
+options['n_genes'] = tk.IntVar(value=cfg["n_genes"])                # OPTIONS: gene pool at beginning
 options['n_catastrophes'] = tk.IntVar(value=cfg["n_catastrophes"])  # OPTIONS: number of catastrophes
-options['n_MOLs'] = tk.IntVar(value=cfg["n_MOLs"])                    # OPTIONS: number of MOLs
+options['n_MOLs'] = tk.IntVar(value=cfg["n_MOLs"])                  # OPTIONS: number of MOLs
 options['names'] = []
 for i in range(len(cfg["names"])):
-    options['names'].append(tk.StringVar(value=cfg["names"][i]))      # OPTIONS: name of players
-options['first_player'] = tk.IntVar(value=0)                        # OPTIONS: set current first player
+    options['names'].append(tk.StringVar(value=cfg["names"][i]))    # OPTIONS: name of players
+options['first_player'] = tk.IntVar(value=0)                        # OPTIONS: RADIOBUTTON - first player
 
 str_trait_search = tk.StringVar(value="")   # string searching for traits in DECK
 deck_filtered_str = tk.Variable(value="")   # _filtered_ deck of traits_strings in listbox after searching -> str

@@ -912,12 +912,12 @@ def update_manual_we(cur_value: int, p: int, change: str) -> None:
     create_trait_pile(frame_trait_pile[p], p)
 
 
-def update_manual_drops(cur_value: str, trait: int, change: str) -> None:
+def update_manual_drops(cur_value: int, trait: int, change: str) -> None:
     # change value according to button
     if change == '+':
-        value = int(cur_value) + 1
+        value = cur_value + 1
     else:
-        value = int(cur_value) - 1
+        value = cur_value - 1
 
     # save value in status_df
     status_df.loc[trait, 'drops'] = value
@@ -1686,8 +1686,8 @@ def create_trait_pile(frame_trait_overview: tk.Frame, p: int) -> None:
                 width=3,
                 wrap=False)
             drop_sbox.grid(row=irow, column=1, sticky='w')
-            drop_sbox.bind("<<Increment>>", lambda e, t=trait_idx: update_manual_drops(e.widget.get(), t, '+'))
-            drop_sbox.bind("<<Decrement>>", lambda e, t=trait_idx: update_manual_drops(e.widget.get(), t, '-'))
+            drop_sbox.bind("<<Increment>>", lambda e, t=trait_idx: update_manual_drops(int(e.widget.get()), t, '+'))
+            drop_sbox.bind("<<Decrement>>", lambda e, t=trait_idx: update_manual_drops(int(e.widget.get()), t, '-'))
 
             # fill spinbox, depending on drops_status
             if not np.isnan(status_df.loc[trait_idx].drops):

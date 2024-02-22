@@ -1997,12 +1997,8 @@ def create_name_entries(frame_menu_names: tk.Frame) -> None:
     ttk.Label(frame_menu_names, text="keep order", style="menu_h2.TLabel"
               ).grid(row=0, column=1, columnspan=2, pady=(0, 5), sticky='w')
 
-    # fix 1st player radiobutton if outside
-    if options['first_player'].get() > (options['n_player'].get()-1):
-        options['first_player'].set(options['n_player'].get()-1)
-
-    # name entries ---
-    for i in range(options['n_player'].get()):
+    # name entries --- at least as much as current players, or more for next game
+    for i in range(max([game['n_player'], options['n_player'].get()])):
         ttk.Label(frame_menu_names, text="player {}: ".format(i+1)
                   ).grid(row=i+1, column=0, sticky='e')
         ttk.Entry(frame_menu_names, textvariable=options['names'][i], width=5
@@ -2010,6 +2006,7 @@ def create_name_entries(frame_menu_names: tk.Frame) -> None:
         tk.Radiobutton(frame_menu_names,
                        variable=options['first_player'],
                        value=i,
+                       state='normal' if i+1 <= game['n_player'] else 'disabled',
                        command=lambda: update_first_player()
                        ).grid(row=i+1, column=2, sticky='e')
 
@@ -2288,6 +2285,10 @@ def reset_variables() -> None:
     game['n_catastrophes'] = options['n_catastrophes'].get()
     game['n_MOLs'] = options['n_MOLs'].get()
 
+    # update first player if not playing anymore
+    if options['first_player'].get()+1 > game['n_player']:
+        options['first_player'].set(game['n_player']-1)
+
     # reset _player_ variables
     plr['name'].clear()
     plr['genes'].clear()
@@ -2487,14 +2488,14 @@ gui_style.configure("disabled.TButton", foreground="grey", font="'', 11")
 
 # tk_inter_variables -------------------------------------------------------------------------------
 options = {}
-options['n_player'] = tk.IntVar(value=cfg["n_player"])                # OPTIONS: number of players
-options['n_genes'] = tk.IntVar(value=cfg["n_genes"])                  # OPTIONS: gene pool at beginning
+options['n_player'] = tk.IntVar(value=cfg["n_player"])              # OPTIONS: number of players
+options['n_genes'] = tk.IntVar(value=cfg["n_genes"])                # OPTIONS: gene pool at beginning
 options['n_catastrophes'] = tk.IntVar(value=cfg["n_catastrophes"])  # OPTIONS: number of catastrophes
-options['n_MOLs'] = tk.IntVar(value=cfg["n_MOLs"])                    # OPTIONS: number of MOLs
+options['n_MOLs'] = tk.IntVar(value=cfg["n_MOLs"])                  # OPTIONS: number of MOLs
 options['names'] = []
 for i in range(len(cfg["names"])):
-    options['names'].append(tk.StringVar(value=cfg["names"][i]))      # OPTIONS: name of players
-options['first_player'] = tk.IntVar(value=0)                        # OPTIONS: set current first player
+    options['names'].append(tk.StringVar(value=cfg["names"][i]))    # OPTIONS: name of players
+options['first_player'] = tk.IntVar(value=0)                        # OPTIONS: RADIOBUTTON - first player
 
 str_trait_search = tk.StringVar(value="")   # string searching for traits in DECK
 deck_filtered_str = tk.Variable(value="")   # _filtered_ deck of traits_strings in listbox after searching -> str

@@ -29,7 +29,7 @@ from globals_ import neoteny_checkbutton, sleepy_spinbox
 
 
 # functions ##############################################################
-def simulate():
+def simulate() -> None:
     start_time = time.time()
     sim_running[0] = True
 
@@ -312,12 +312,12 @@ def simulate():
         print("--- %s seconds ---" % (time.time() - start_time))
 
 
-def btn_quit():
+def btn_quit() -> None:
     write_log('*', 'bye')
     root.quit()
 
 
-def switch(inp):
+def switch(inp: str) -> None:
     global icons_onoff, music_onoff, points_onoff
 
     match inp:
@@ -429,14 +429,14 @@ def switch(inp):
                 update_scoring()
 
 
-def play_sound(trait):
+def play_sound(trait: str) -> None:
     if music_onoff == 'on':
         if trait.replace(' ', '_').lower() in sounds:
             sounds[trait.replace(' ', '_').lower()].play()
             write_log(['music', 'play'], trait)
 
 
-def calc_MOLs(p):
+def calc_MOLs(p: int) -> None:
     p_MOL = 0
     for m in range(MOLs['n'][p]):
         # calculate, if MOL is selected
@@ -461,7 +461,7 @@ def calc_MOLs(p):
     return p_MOL
 
 
-def btn_select_MOLS(cbox_idx, p, m):
+def btn_select_MOLS(cbox_idx: int, p: int, m: int) -> None:
     # get infos of played/selected MOLs
     played_idx = None
     played_previously = MOLs['played'][p][m]
@@ -476,7 +476,7 @@ def btn_select_MOLS(cbox_idx, p, m):
         return
 
     # return, if same MOL selected
-    if (cbox_idx) != 0 and (played_idx == played_previously):
+    if cbox_idx != 0 and (played_idx == played_previously):
         # log
         write_log(['MOLs', 'error_keep_MOL'], m+1, plr['name'][p].get(), played_str)
         return
@@ -500,7 +500,7 @@ def btn_select_MOLS(cbox_idx, p, m):
     update_all()
 
 
-def btn_clear_trait_search():
+def btn_clear_trait_search() -> None:
     str_trait_search.set("")
     deck_filtered_idx.clear()
     deck_filtered_idx.extend(deck)
@@ -510,7 +510,7 @@ def btn_clear_trait_search():
     lbox_deck[0].see(0)
 
 
-def btn_worlds_end_GO():
+def btn_worlds_end_GO() -> None:
     # check if WE was played before, if so: remove effects from status_df
     if worlds_end['played'] != 'none':
         # loop all traits in all trait piles
@@ -541,7 +541,7 @@ def btn_worlds_end_GO():
     update_all()
 
 
-def check_WE_status(todo):
+def check_WE_status(todo: str) -> None:
     match todo:
         case 'select_WE':
             # log
@@ -570,7 +570,7 @@ def check_WE_status(todo):
                 write_log(['worlds_end', 'button_ready'])
 
 
-def btn_play_catastrophe(event, c):
+def btn_play_catastrophe(event: tk.Event, c: int) -> None:
     # get played catastrophe
     cbox_idx = event.widget.current()   # selected item_idx in combobox
     played_str = event.widget.get()
@@ -656,7 +656,7 @@ def btn_play_catastrophe(event, c):
     update_all()
 
 
-def btn_traits_world_end(from_, trait_idx, effect):
+def btn_traits_world_end(from_: int, trait_idx: int, effect: str) -> None:
     # get index of WE_effect
     effect_idx = rules_tr.traits_WE_tasks(trait_idx).index(effect)
 
@@ -682,7 +682,7 @@ def btn_traits_world_end(from_, trait_idx, effect):
     check_WE_status('check_button')
 
 
-def btn_remove_trait(from_, where_to, *args):
+def btn_remove_trait(from_: int, where_to: str, *args) -> None:
     # get card & its attachment
     trait_idx = plr['trait_selected'][from_].get()
     if not np.isnan(trait_idx):
@@ -735,7 +735,7 @@ def btn_remove_trait(from_, where_to, *args):
     update_all()
 
 
-def btn_move_trait(from_, cbox_move_to):
+def btn_move_trait(from_: int, cbox_move_to: ttk.Combobox) -> None:
     # get card, its attachment & target
     trait_idx = plr['trait_selected'][from_].get()
     if not np.isnan(trait_idx):
@@ -782,7 +782,7 @@ def btn_move_trait(from_, cbox_move_to):
     update_all()
 
 
-def btn_attach_to(from_, attachment_idx, event, possible_hosts):
+def btn_attach_to(from_: int, attachment_idx: int, event: tk.Event, possible_hosts: list) -> None:
     # get host_data from event_data
     host = event.widget.get()
     host_idx = possible_hosts[event.widget.current()]
@@ -822,7 +822,7 @@ def btn_attach_to(from_, attachment_idx, event, possible_hosts):
     update_all()
 
 
-def btn_play_trait(to):
+def btn_play_trait(to: int) -> int:
     # return, if no trait selected
     if not lbox_deck[0].curselection():
         write_log(['play', 'error_no_trait'])
@@ -882,7 +882,7 @@ def btn_play_trait(to):
     return 1
 
 
-def update_manual_MOL(cur_value, p, m, change):
+def update_manual_MOL(cur_value: int, p: int, m: int, change: str) -> None:
     # change value according to button
     if change == '+':
         value = cur_value + 1
@@ -896,7 +896,7 @@ def update_manual_MOL(cur_value, p, m, change):
     update_all()
 
 
-def update_manual_we(cur_value, p, change):
+def update_manual_we(cur_value: int, p: int, change: str) -> None:
     # change value according to button
     if change == '+':
         value = cur_value + 1
@@ -912,7 +912,7 @@ def update_manual_we(cur_value, p, change):
     create_trait_pile(frame_trait_pile[p], p)
 
 
-def update_manual_drops(cur_value, trait, change):
+def update_manual_drops(cur_value: str, trait: int, change: str) -> None:
     # change value according to button
     if change == '+':
         value = int(cur_value) + 1
@@ -929,7 +929,7 @@ def update_manual_drops(cur_value, trait, change):
     update_all()
 
 
-def update_traits_current_status(todo, *args):
+def update_traits_current_status(todo: str, *args) -> None:
     # space for various effects which may affect traits in certain situations (like Neoteny...)
     match todo:
         # 'reset' routine to reset traits status_df_row to initial state
@@ -990,7 +990,7 @@ def update_traits_current_status(todo, *args):
             update_all()
 
 
-def update_first_player():
+def update_first_player() -> None:
     # update all player frames
     for p in range(game['n_player']):
         lbl = root.nametowidget('.content.playground.p{}.scoreboard.up.name'.format(p))
@@ -998,7 +998,7 @@ def update_first_player():
                       if options['first_player'].get() == p else "name.TLabel")
 
 
-def update_scoring():
+def update_scoring() -> None:
     # first, calculate all scores
     p_worlds_end = []
     p_face = []
@@ -1061,7 +1061,7 @@ def update_scoring():
                   p_face[p], p_drop[p], p_worlds_end[p], p_MOL[p], total[p])
 
 
-def update_genes():
+def update_genes() -> None:
     # init vars
     diff_genes = [0] * game['n_player']
 
@@ -1172,7 +1172,7 @@ def update_genes():
                   diff_genes, [plr['genes'][i].get() for i in range(game['n_player'])])
 
 
-def update_stars():
+def update_stars() -> None:
     # loop players
     nd_dict = {}
     for p in range(game['n_player']):
@@ -1205,7 +1205,7 @@ def update_stars():
     write_log(['stars', 'n_dom'], nd_dict)
 
 
-def update_all():
+def update_all() -> None:
     # first, update n_TP (count) & resolve all effects on traits
     for p in range(game['n_player']):
         tp = plr['trait_pile'][p]
@@ -1249,7 +1249,7 @@ def update_all():
     ent_trait_search[0].focus_set()
 
 
-def search_trait_in_list(inp):
+def search_trait_in_list(inp: tk.StringVar) -> None:
     value = inp.get()
     lbox_deck[0].selection_clear(0, tk.END)
 
@@ -1281,7 +1281,7 @@ def search_trait_in_list(inp):
                       deck_filtered_idx[0])
 
 
-def create_MOL_frame(p):
+def create_MOL_frame(p: int) -> None:
     # forget all previous widgets
     for w in frame_MOL[p].grid_slaves():
         w.grid_forget()
@@ -1344,7 +1344,7 @@ def create_MOL_frame(p):
             MOL_sbox.set(plr['points_MOL'][p][m].get())
 
 
-def create_trait_pile(frame_trait_overview, p):
+def create_trait_pile(frame_trait_overview: tk.Frame, p: int) -> None:
     # first, clean up frame
     for w in frame_trait_overview.grid_slaves():
         w.grid_forget()
@@ -1789,7 +1789,7 @@ def create_trait_pile(frame_trait_overview, p):
             lbl_we.grid(row=0, column=1, rowspan=2, sticky='ns')
 
 
-def create_scoreboard(frame, p):
+def create_scoreboard(frame: tk.Frame, p: int) -> None:
     frame.columnconfigure(0, weight=1)
 
     # upper part: stars / name / gene_pool ---------------------------------------------------------
@@ -1917,7 +1917,7 @@ def create_scoreboard(frame, p):
               ).grid(row=1, column=12, pady=(0, mgn), sticky="w")
 
 
-def create_player_frame(p):
+def create_player_frame(p: int) -> tk.Frame:
     # this is a one-time call -> all created frames needs to be stored for later usage
     border = cfg["width_frames"]
 
@@ -1981,7 +1981,7 @@ def create_player_frame(p):
     return frame
 
 
-def create_name_entries(frame_menu_names):
+def create_name_entries(frame_menu_names: tk.Frame) -> None:
     # forget all previous widgets
     for w in frame_menu_names.grid_slaves():
         w.grid_forget()
@@ -2009,7 +2009,7 @@ def create_name_entries(frame_menu_names):
                        ).grid(row=i+1, column=2, sticky='e')
 
 
-def create_menu_frame():
+def create_menu_frame() -> None:
     border = cfg["width_frames"]
 
     # ----- frame 4 options ------------------------------------------------------------------------
@@ -2276,7 +2276,7 @@ def create_menu_frame():
     lbl_exit.bind("<Button-1>", lambda e: btn_quit())
 
 
-def reset_variables():
+def reset_variables() -> None:
     # update current settings
     game['n_player'] = options['n_player'].get()
     game['n_genes'] = options['n_genes'].get()
@@ -2379,7 +2379,7 @@ def reset_variables():
     status_df['traits_WE'] = 'none'
 
 
-def start_game():
+def start_game() -> None:
     # new logfile ----------------------------------------------------------------------------------
     dt = time.strftime("%Y%m%d-%H%M%S")
     logfile['file'] = os.path.join(dir_log, "DoomPyLog_" + dt + ".txt")

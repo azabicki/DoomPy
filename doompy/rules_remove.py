@@ -2,7 +2,7 @@ from globals_ import status_df
 from log import write_log
 
 
-def check_trait(trait_idx, from_, where_to):
+def check_trait(trait_idx: int, from_: int, where_to: str) -> str | None:
     # get trait name
     trait = status_df.loc[trait_idx].trait
 

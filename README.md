@@ -45,7 +45,7 @@ I think (hope) it should be possible for anyone with the provided [requirements.
 
 #### 1. getting the repo
 
-[Download the repository][release] and unzip it. Or if you prefer to use the terminal, run
+Download the [latest release][release] (or the [current repository][zip]) and unzip it. Or if you prefer to use the terminal, run
 
 ```terminal
 wget https://github.com/azabicki/DoomPy/archive/refs/heads/main.zip
@@ -283,4 +283,4 @@ Do you have any suggestions for improvement? Have I forgotten to add a trait? Or
 https://github.com/azabicki/DoomPy/assets/33624433/6150a4ed-c103-44a8-9356-c429407ac2dc
 
 [zip]: https://github.com/azabicki/DoomPy/archive/refs/heads/main.zip
-[release]: https://github.com/azabicki/DoomPy/releases
+[release]: https://github.com/azabicki/DoomPy/releases/latest

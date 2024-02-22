@@ -7,7 +7,7 @@ import rules_worlds_end as rules_we
 
 
 # effects when selecting specific MOLs -------------------------------------------------------------
-def select_MOL(p, MOL_idx, prev_MOL):
+def select_MOL(p: int, MOL_idx: int | None, prev_MOL: int | None) -> None:
     MOL = None if MOL_idx is None else MOLs_df.loc[MOL_idx].MOL
 
     # if __The Blind Dragon__ is selected
@@ -41,7 +41,7 @@ def select_MOL(p, MOL_idx, prev_MOL):
 
 
 # handle worlds end effect of catastrophes ---------------------------------------------------------
-def calc_MOL_points(p, m):
+def calc_MOL_points(p: int, m: int) -> int:
     # if MOLSs not selected
     if MOLs['played'][p][m] is None:
         return 0

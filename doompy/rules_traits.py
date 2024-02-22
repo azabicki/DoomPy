@@ -1,11 +1,11 @@
+from typing import List
+
 from globals_ import status_df, traits_df
 from log import write_log
 import rules_attachment as rules_at
-import rules_traits as rules_tr
-
 
 # get task of this trait to be performed at worlds end
-def traits_WE_tasks(trait_idx):
+def traits_WE_tasks(trait_idx: int) -> List[str]:
     # get effect of trait
     task = traits_df.iloc[trait_idx].worlds_end_task
 
@@ -37,7 +37,7 @@ def traits_WE_tasks(trait_idx):
 
 
 # handle worlds end effects of trait
-def assign_traits_WE_effects(trait_idx, trait_pile):
+def assign_traits_WE_effects(trait_idx: int, trait_pile: List[str]) -> None:
     colors = ['blue', 'green', 'purple', 'red']
     task = traits_df.loc[trait_idx].worlds_end_task
     traits_WE = status_df.loc[trait_idx].traits_WE
@@ -151,7 +151,7 @@ def assign_traits_WE_effects(trait_idx, trait_pile):
                         if col in status_df.iloc[tp_trait].color.lower():
                             n_cols[icol] += 1
                     # reapply traits_WE_effects, if affected
-                    rules_tr.apply_traits_WE_effects(tp_trait)
+                    apply_traits_WE_effects(tp_trait)
 
                 # set color according to rule
                 if sum(i == max(n_cols) for i in n_cols) > 1:
@@ -174,7 +174,7 @@ def assign_traits_WE_effects(trait_idx, trait_pile):
 
 
 # apply effects to host
-def apply_traits_WE_effects(host):
+def apply_traits_WE_effects(host: str) -> None:
     # apply effect(s) only if there is one assigned
     if status_df.loc[host].effects_traits_WE != 'none':
         # get previously stored trait_WE effect(s)
@@ -236,7 +236,7 @@ def apply_traits_WE_effects(host):
 
 
 # handle worlds end effects of trait
-def permanent_effects(tp):
+def permanent_effects(tp: List[str]) -> None:
     for trait_idx in tp:
         trait = status_df.loc[trait_idx].trait
 

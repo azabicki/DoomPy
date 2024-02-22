@@ -3,7 +3,7 @@ from log import write_log
 
 
 # filter which traits from trait pile are available for the attachment to be attached to
-def filter_attachables(attachment, p):
+def filter_attachables(attachment: str, p: int) -> list:
     attachable = plr['trait_pile'][p]
 
     # get attachment-rule of attachment
@@ -51,7 +51,7 @@ def filter_attachables(attachment, p):
 
 
 # apply effects to host
-def apply_effects(host):
+def apply_effects(host: str) -> None:
     # get attachment
     attachment = status_df.loc[host].attachment
 

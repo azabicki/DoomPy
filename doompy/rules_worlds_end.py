@@ -3,7 +3,7 @@ from log import write_log
 
 
 # apply specific WE effects to status of traits
-def apply_WE_effects(host):
+def apply_WE_effects(host: str) -> None:
     log = False
 
     match worlds_end['played']:
@@ -33,7 +33,7 @@ def apply_WE_effects(host):
 
 
 # handle worlds end effect of catastrophes
-def calc_WE_points(p):
+def calc_WE_points(p: int) -> int:
     # init variable
     colors = ['blue', 'green', 'purple', 'red']
     trait_pile = plr['trait_pile'][p]

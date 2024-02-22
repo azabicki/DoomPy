@@ -1362,7 +1362,7 @@ def create_trait_pile(frame_trait_overview: tk.Frame, p: int) -> None:
         irow += 1
         ypad = (3, 0) if irow == 0 else 0
 
-        # ----- radiobutton / label if attachment --------------------------------------------------
+        # ----- radiobutton / label if attachment or dominant --------------------------------------
         if traits_df.loc[trait_idx].attachment == 1:
             lbl = tk.Label(frame_trait_overview,
                            text=" " + trait,
@@ -1370,7 +1370,7 @@ def create_trait_pile(frame_trait_overview: tk.Frame, p: int) -> None:
                            compound=tk.LEFT)
             lbl.grid(row=irow, column=0, padx=2, pady=ypad, sticky='nsw')
 
-            # it also could be a DOMINANT
+            # it attachment is also could be a DOMINANT
             if traits_df.loc[trait_idx].dominant == 1:
                 lbl.config(fg=cfg["font_color_dominant"], font="'' 14 bold")
         elif traits_df.loc[trait_idx].dominant == 1:
@@ -1382,10 +1382,15 @@ def create_trait_pile(frame_trait_overview: tk.Frame, p: int) -> None:
                      font="'' 14 bold"
                      ).grid(row=irow, column=0, padx=2, pady=ypad, sticky='nsw')
         else:
+            # check if trait has 'noRemove' status
+            rb_state = 'disabled' if status_df.loc[trait_idx].no_remove else 'normal'
+                
+            # create radiobutton
             tk.Radiobutton(frame_trait_overview,
                            text=" " + trait,
                            variable=plr['trait_selected'][p],
                            value=trait_idx,
+                           state=rb_state,
                            command=lambda t_idx=trait_idx: write_log(['select', 'trait_pile'],
                                                                      plr['name'][p].get(),
                                                                      traits_df.loc[t_idx].trait,

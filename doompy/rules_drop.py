@@ -420,7 +420,7 @@ def drop_traits(trait_idx: int, p: int, *args) -> int:
                         for i in status_df.loc[trait_idx].effects.split()
                     ]
 
-                # first, get # of colors of player holding PROWLER
+                # first, get # of traitf per color of player holding PROWLER
                 n_cols_ref = []
                 for col in colors:
                     n_cols_ref.append(
@@ -431,9 +431,8 @@ def drop_traits(trait_idx: int, p: int, *args) -> int:
                             ].color.tolist()
                         )
                     )
-                n_cols_ref = sum(n > 0 for n in n_cols_ref)
 
-                # second, get ' of colors of current player
+                # second, get # of traits per color of current player
                 n_cols = []
                 for col in colors:
                     n_cols.append(
@@ -444,10 +443,9 @@ def drop_traits(trait_idx: int, p: int, *args) -> int:
                             ].color.tolist()
                         )
                     )
-                n_cols = sum(n > 0 for n in n_cols)
 
                 # calculate drop points for current player
-                prowler_dp[p] = max([0, n_cols_ref - n_cols]) * -2
+                prowler_dp[p] = sum((np.array(n_cols_ref) - np.array(n_cols)) > 0) * -2
 
                 # save updated points to Prowler's 'effects'
                 status_df.loc[trait_idx, "effects"] = " ".join(

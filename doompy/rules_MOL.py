@@ -161,15 +161,15 @@ def calc_MOL_points(p: int, m: int) -> int:
 
         case "The Dancer (12/8)":
             n = []
-            for p in range(game["n_player"]):
+            for pl in range(game["n_player"]):
                 p_WE = (
-                    rules_we.calc_WE_points(p) if worlds_end["played"] != "none" else 0
+                    rules_we.calc_WE_points(pl) if worlds_end["played"] != "none" else 0
                 )
                 p_face = int(
                     sum(
                         [
                             status_df.loc[trait_idx].face
-                            for trait_idx in plr["trait_pile"][p]
+                            for trait_idx in plr["trait_pile"][pl]
                             if not isinstance(status_df.loc[trait_idx].face, str)
                         ]
                     )
@@ -178,7 +178,7 @@ def calc_MOL_points(p: int, m: int) -> int:
                 n.append(p_WE + p_face + p_drop)
 
             if n[p] == min(n):
-                if len(set(n)) == len(n):
+                if n.count(min(n)) == 1:
                     points = 12
                 else:
                     points = 8

@@ -4,81 +4,122 @@ import streamlit as st
 # -----------------------------------------------------------------------------
 def create():
     # Next Game ----------------------------------------
-    with st.sidebar.popover("Next Game", use_container_width=False):
-        st.markdown("##### Settings")
-        c_plr, c_gp = st.columns(2)
-        with c_plr:
-            st.session_state.options["n_player"] = st.number_input(
-                "players",
-                min_value=2,
-                max_value=6,
-                step=1,
-                value=st.session_state.cfg["n_player"],
-            )
-        with c_gp:
-            st.number_input(
-                "gene pool",
-                min_value=1,
-                max_value=10,
-                step=1,
-                value=st.session_state.cfg["n_genes"],
-            )
-        c_cat, c_mol = st.columns(2)
-        with c_cat:
-            st.number_input(
-                "catastrophes",
-                min_value=1,
-                max_value=6,
-                step=1,
-                value=st.session_state.cfg["n_catastrophes"],
-            )
-        with c_mol:
-            st.number_input(
-                "MOLs",
-                min_value=1,
-                max_value=4,
-                step=1,
-                value=st.session_state.cfg["n_MOLs"],
-            )
-
-        st.divider()
-        st.markdown("##### Names - keep order !")
-        for n in range(st.session_state.options["n_player"]):
-            st.session_state.cfg["names"][n] = st.text_input(
-                f"Player {n+1}", value=st.session_state.cfg["names"][n], max_chars=None
-            )
-        st.divider()
-        st.button("start game", use_container_width=True)
+    next_game()
 
     # 1st player ----------------------------------------
-    st.sidebar.divider()
-    st.sidebar.selectbox("**first player**",
-                         list(range(st.session_state.game["n_player"])),
-                         format_func=lambda x: st.session_state.plr["name"][x],
-                         key="1st_player"
-                         )
+    with st.sidebar.container(border=True):
+        st.selectbox(
+            "**first player**",
+            list(range(st.session_state.game["n_player"])),
+            format_func=lambda x: st.session_state.plr["name"][x],
+            key="1st_player",
+        )
 
     # Traits ----------------------------------------
-    st.sidebar.divider()
-    st.sidebar.markdown("**who plays which trait**")
-    st.sidebar.selectbox(
-        "**select trait**",
-        st.session_state.deck,
-        format_func=lambda x: st.session_state.deck_str[x],
-        index=None,
-        placeholder="search trait...",
-        label_visibility="collapsed",
-        key="trait2play",
-    )
+    with st.sidebar.container(border=True):
+        st.markdown("**who plays a trait**")
+        st.selectbox(
+            "**select trait**",
+            st.session_state.deck,
+            format_func=lambda x: st.session_state.deck_str[x],
+            index=None,
+            placeholder="search trait...",
+            label_visibility="collapsed",
+            key="trait2play",
+        )
 
     # Ages ----------------------------------------
-    st.sidebar.divider()
-    st.sidebar.markdown("**Catastrophes**")
-    st.sidebar.markdown("**World's End**")
+    with st.sidebar.container(border=True):
+        st.markdown("**Catastrophes**")
+        st.markdown("**World's End**")
 
     # Options ----------------------------------------
-    st.sidebar.divider()
-    st.sidebar.markdown("_some options..._")
+    with st.sidebar.container(border=True):
+        st.markdown("_some options..._")
+
+    with st.sidebar.container(border=True):
+        # config ----------------------------------------
+        st.markdown("current game:")
+        st.markdown(
+            "{np}p / {ng}g / {nc}c / {nm}m".format(
+                np=st.session_state.game["n_player"],
+                ng=st.session_state.game["n_genes"],
+                nc=st.session_state.game["n_catastrophes"],
+                nm=st.session_state.game["n_MOLs"],
+            )
+        )
+
+
+# -----------------------------------------------------------------------------
+def next_game():
+    with st.sidebar.popover("Next Game", use_container_width=False):
+        with st.form("form_next_game", border=False):
+            # settings
+            st.markdown("##### Start with:")
+            c_plr, c_gp, c_cat, c_mol = st.columns(4)
+            with c_plr:
+                st.session_state.next["n_player"] = st.number_input(
+                    "Players",
+                    min_value=2,
+                    max_value=6,
+                    step=1,
+                    value=st.session_state.next["n_player"],
+                )
+            with c_gp:
+                st.session_state.next["n_genes"] = st.number_input(
+                    "Gene Pool",
+                    min_value=1,
+                    max_value=10,
+                    step=1,
+                    value=st.session_state.next["n_genes"],
+                )
+            # c_cat, c_mol = st.columns(2)
+            with c_cat:
+                st.session_state.next["n_catastrophes"] = st.number_input(
+                    "Catastrophes",
+                    min_value=1,
+                    max_value=6,
+                    step=1,
+                    value=st.session_state.next["n_catastrophes"],
+                )
+            with c_mol:
+                st.session_state.next["n_MOLs"] = st.number_input(
+                    "MOLs",
+                    min_value=1,
+                    max_value=4,
+                    step=1,
+                    value=st.session_state.next["n_MOLs"],
+                )
+
+            # names
+            ut.h_spacer(2)
+            st.markdown("##### Play with:")
+            st.markdown("according to the seating order at the table !")
+            for n in range(0, st.session_state.cfg["max_player"], 3):
+                c1, c2, c3 = st.columns(3)
+                with c1:
+                    st.session_state.cfg["names"][n] = st.text_input(
+                        f"Player {n+1}",
+                        value=st.session_state.cfg["names"][n],
+                        max_chars=None,
+                    )
+                with c2:
+                    st.session_state.cfg["names"][n + 1] = st.text_input(
+                        f"Player {n+2}",
+                        value=st.session_state.cfg["names"][n + 1],
+                        max_chars=None,
+                    )
+                with c3:
+                    st.session_state.cfg["names"][n + 2] = st.text_input(
+                        f"Player {n+3}",
+                        value=st.session_state.cfg["names"][n + 2],
+                        max_chars=None,
+                    )
+
+            # button
+            ut.h_spacer(2)
+            if st.form_submit_button("start game", use_container_width=True):
+                vars.start_game(what="next_game")
 
 
 # -----------------------------------------------------------------------------

@@ -16,5 +16,6 @@ if st.session_state.booting:
 sidebar.create()
 sidebar.style()
 
+# content
 st.divider()
 st.session_state

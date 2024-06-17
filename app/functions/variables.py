@@ -20,10 +20,10 @@ def init_vars():
     # load excel --------------------------------------------------------------
     if "df" not in st.session_state:
         st.session_state.df = {
-            "traits": traits_df,
-            "status": status_df,
-            "catastrophes": catastrophes_df,
-            "MOLs": MOLs_df,
+            "traits_df": traits_df,
+            "status_df": status_df,
+            "catastrophes_df": catastrophes_df,
+            "MOLs_df": MOLs_df,
         }
 
     # game/player vars --------------------------------------------------------
@@ -33,6 +33,8 @@ def init_vars():
         st.session_state.plr = plr
     if "deck" not in st.session_state:
         st.session_state.deck = deck
+    if "deck_str" not in st.session_state:
+        st.session_state.deck_str = ""
     if "catastrophe" not in st.session_state:
         st.session_state.catastrophe = catastrophe
     if "worlds_end" not in st.session_state:
@@ -40,31 +42,28 @@ def init_vars():
     if "MOLs" not in st.session_state:
         st.session_state.MOLs = MOLs
 
-    # options -----------------------------------------------------------------
-    if "options" not in st.session_state:
-        options = {}
-        options["n_player"] = cfg["n_player"]  # OPTIONS: number of players
-        options["n_genes"] = cfg["n_genes"]  # OPTIONS: gene pool at beginning
-        options["n_catastrophes"] = cfg[
+    # next game ---------------------------------------------------------------
+    if "next" not in st.session_state:
+        next = {}
+        next["n_player"] = cfg["n_player"]  # next: number of players
+        next["n_genes"] = cfg["n_genes"]  # next: gene pool at beginning
+        next["n_catastrophes"] = cfg[
             "n_catastrophes"
         ]  # OPTIONS: number of catastrophes
-        options["n_MOLs"] = cfg["n_MOLs"]  # OPTIONS: number of MOLs
-        options["names"] = []
+        next["n_MOLs"] = cfg["n_MOLs"]  # next: number of MOLs
+        next["names"] = []
         for i in range(len(cfg["names"])):
-            options["names"].append(cfg["names"][i])  # OPTIONS: name of players
+            next["names"].append(cfg["names"][i])  # next: name of players
 
-        st.session_state.options = options
-
-    if "deck_str" not in st.session_state:
-        st.session_state.deck_str = ""
+        st.session_state.next = next
 
 
 def reset_variables():
     # update current settings
-    st.session_state.game["n_player"] = st.session_state.options["n_player"]
-    st.session_state.game["n_genes"] = st.session_state.options["n_genes"]
-    st.session_state.game["n_catastrophes"] = st.session_state.options["n_catastrophes"]
-    st.session_state.game["n_MOLs"] = st.session_state.options["n_MOLs"]
+    st.session_state.game["n_player"] = st.session_state.next["n_player"]
+    st.session_state.game["n_genes"] = st.session_state.next["n_genes"]
+    st.session_state.game["n_catastrophes"] = st.session_state.next["n_catastrophes"]
+    st.session_state.game["n_MOLs"] = st.session_state.next["n_MOLs"]
 
     # update first player if not playing anymore
     if st.session_state.game["first_player"] + 1 > st.session_state.game["n_player"]:
@@ -92,7 +91,7 @@ def reset_variables():
 
     # fill variables
     for p in range(st.session_state.game["n_player"]):
-        st.session_state.plr["name"].append(st.session_state.options["names"][p])
+        st.session_state.plr["name"].append(st.session_state.next["names"][p])
 
         st.session_state.plr["genes"].append(st.session_state.game["n_genes"])
         st.session_state.plr["points"].append(
@@ -123,7 +122,7 @@ def reset_variables():
         st.session_state.MOLs["played"].append([])
         st.session_state.MOLs["cbox"].append([])
         st.session_state.MOLs["icon"].append([])
-        st.session_state.MOLs["n"].append(st.session_state.options["n_MOLs"])
+        st.session_state.MOLs["n"].append(st.session_state.next["n_MOLs"])
 
         st.session_state.game["neoteny_checkbutton"].append(0)
         st.session_state.game["sleepy_spinbox"].append(0)
@@ -138,9 +137,12 @@ def reset_variables():
 
     # reset deck/lbox card-lists
     st.session_state.deck.clear()
-    st.session_state.deck.extend(st.session_state.df["traits"].index.tolist())
-    st.session_state.deck_str = st.session_state.df["traits"] \
-        .loc[st.session_state.deck].trait.values.tolist()
+    st.session_state.deck.extend(st.session_state.df["traits_df"].index.tolist())
+    st.session_state.deck_str = (
+        st.session_state.df["traits_df"]
+        .loc[st.session_state.deck]
+        .trait.values.tolist()
+    )
 
     # reset occurred catastrophes
     st.session_state.catastrophe["possible"].clear()
@@ -148,7 +150,7 @@ def reset_variables():
     st.session_state.catastrophe["cbox"].clear()
     for i in range(st.session_state.game["n_catastrophes"]):
         st.session_state.catastrophe["possible"].append(
-            st.session_state.df["catastrophes"].index.tolist()
+            st.session_state.df["catastrophes_df"].index.tolist()
         )
         st.session_state.catastrophe["played"].append(None)
         st.session_state.catastrophe["cbox"].append([])
@@ -160,24 +162,33 @@ def reset_variables():
     st.session_state.worlds_end["btn"] = [None]
 
     # reset current status
-    st.session_state.df["status"]["color"] = st.session_state.df["traits"].color
-    st.session_state.df["status"]["face"] = st.session_state.df["traits"].face
-    st.session_state.df["status"]["drops"] = np.nan
-    st.session_state.df["status"]["host"] = "none"
-    st.session_state.df["status"]["attachment"] = "none"
-    st.session_state.df["status"]["inactive"] = False
-    st.session_state.df["status"]["no_remove"] = False
-    st.session_state.df["status"]["no_discard"] = False
-    st.session_state.df["status"]["no_steal"] = False
-    st.session_state.df["status"]["no_swap"] = False
-    st.session_state.df["status"]["effects"] = "none"
-    st.session_state.df["status"]["effects_attachment"] = "none"
-    st.session_state.df["status"]["effects_traits_WE"] = "none"
-    st.session_state.df["status"]["effects_WE"] = "none"
-    st.session_state.df["status"]["traits_WE"] = "none"
+    st.session_state.df["status_df"]["color"] = st.session_state.df["traits_df"].color
+    st.session_state.df["status_df"]["face"] = st.session_state.df["traits_df"].face
+    st.session_state.df["status_df"]["drops"] = np.nan
+    st.session_state.df["status_df"]["host"] = "none"
+    st.session_state.df["status_df"]["attachment"] = "none"
+    st.session_state.df["status_df"]["inactive"] = False
+    st.session_state.df["status_df"]["no_remove"] = False
+    st.session_state.df["status_df"]["no_discard"] = False
+    st.session_state.df["status_df"]["no_steal"] = False
+    st.session_state.df["status_df"]["no_swap"] = False
+    st.session_state.df["status_df"]["effects"] = "none"
+    st.session_state.df["status_df"]["effects_attachment"] = "none"
+    st.session_state.df["status_df"]["effects_traits_WE"] = "none"
+    st.session_state.df["status_df"]["effects_WE"] = "none"
+    st.session_state.df["status_df"]["traits_WE"] = "none"
 
 
-def start_game():
+def start_game(what: str = "boot"):
+    print(f"starting game by '{what}'")
+
+    # if what == "next_game":
+    #     print("update _next_ variables")
+    #     st.session_state.next["n_player"] = argin[0]
+    #     st.session_state.next["n_genes"] = argin[1]
+    #     st.session_state.next["n_catastrophes"] = argin[2]
+    #     st.session_state.next["n_MOLs"] = argin[3]
+
     reset_variables()
 
 

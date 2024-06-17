@@ -1,0 +1,16 @@
+{
+    "names": [
+        "Lisa",
+        "Julia",
+        "Anton",
+        "Adam",
+        "Ben",
+        "Franzi"
+    ],
+    "n_player": 4,
+    "n_genes": 5,
+    "n_catastrophes": 3,
+    "n_MOLs": 1,
+    "img_colors_set": "circle",
+    "img_trait_properties_set": "official_setA"
+}

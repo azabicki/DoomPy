@@ -1,0 +1,24 @@
+[client]
+showSidebarNavigation = true
+
+[server]
+runOnSave = true
+
+[theme]
+# Primary accent for interactive elements
+primaryColor = '#2a8aff'
+
+# Background color for the main content area
+backgroundColor = '#ffffff'
+
+# Background color for sidebar and most interactive widgets
+secondaryBackgroundColor = '#f5bcea'
+
+# Color used for almost all text
+textColor = '#3d3d3d'
+
+# Font family for all text in the app, except code blocks
+# Accepted values (serif | sans serif | monospace) 
+# Default: "sans serif"
+font = "monospace"
+

@@ -1,0 +1,222 @@
+# global variable for all modules
+import os
+import glob
+import numpy as np
+import pandas as pd
+from PIL import Image
+
+
+# loading stuff ###############################################################
+curdir = os.path.dirname(__file__)
+dir_files = os.path.join(curdir, "..", "..", "DoomPy", "files")
+dir_images = os.path.join(curdir, "..", "..", "DoomPy", "images")
+
+# region load config file -----------------------------------------------------
+global cfg
+cfg = dict()
+cfg["names"] = [
+    "Lisa",
+    "Julia",
+    "Anton",
+    "Adam",
+    "Ben",
+    "Franzi"
+]
+cfg["n_player"] = 4
+cfg["n_genes"] = 5
+cfg["n_catastrophes"] = 3
+cfg["n_MOLs"] = 1
+cfg["img_colors_set"] = "circle"
+cfg["img_trait_properties_set"] = "official_setA"
+cfg["max_player"] = 6
+
+# set trait colors
+cfg["color_blue"] = "#1C86ee"
+cfg["color_green"] = "#0da953"
+cfg["color_purple"] = "#e066ff"
+cfg["color_red"] = "#e1484a"
+cfg["color_colorless"] = "#8e8e8e"
+
+# set specific colors
+cfg["font_color_dominant"] = "#EE7621"
+cfg["font_color_1st_player"] = "#0da953"
+cfg["font_color_total_score"] = "#e1484a"
+cfg["font_color_genes"] = "#bf3eff"
+
+# switches
+cfg["points_onoff"] = "on"  # 'off' / 'on' / 'rank'
+
+# region load cards.xlsx ------------------------------------------------------
+global traits_df, status_df, catastrophes_df, MOLs_df
+
+# traits
+xlsx_traits = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="traits")
+xlsx_traits = xlsx_traits[xlsx_traits["in_game"] == "yes"]
+traits_df = (
+    xlsx_traits.loc[xlsx_traits.index.repeat(xlsx_traits.n_cards)]
+    .sort_values(by="trait")
+    .reset_index(drop=True)
+)
+
+# create new status dataframe containing current status of each trait
+status_df = traits_df[["trait", "color", "face"]].copy()
+status_df["drops"] = np.nan
+status_df["host"] = "none"
+status_df["attachment"] = "none"
+status_df["inactive"] = False
+status_df["no_remove"] = False
+status_df["no_discard"] = False
+status_df["no_steal"] = False
+status_df["no_swap"] = False
+status_df["effects"] = "none"
+status_df["effects_attachment"] = "none"
+status_df["effects_traits_WE"] = "none"
+status_df["effects_WE"] = "none"
+status_df["traits_WE"] = "none"
+
+# catastrophes
+xlsx_ages = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="ages")
+xlsx_catastrophes = xlsx_ages.loc[xlsx_ages["type"] == "Catastrophe"]
+xlsx_catastrophes = xlsx_catastrophes.loc[xlsx_catastrophes["in_game"] == "yes"]
+catastrophes_df = (
+    xlsx_catastrophes.sort_values(by="name")
+    .reset_index(drop=True)
+    .drop(columns=["game", "type"])
+)
+
+# MOLs
+xlsx_MOLs = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="MOL")
+xlsx_MOLs = xlsx_MOLs[xlsx_MOLs["in_game"] == "yes"]
+MOLs_df = xlsx_MOLs.sort_values(by="MOL").reset_index(drop=True).drop(columns="game")
+
+# region load images ----------------------------------------------------------
+global images_dict
+images_dict = {}
+img_size_scoreboard = 24
+img_size_star = 30
+img_size_icons = 20
+img_size_WE = 40
+
+# basic
+for files in glob.glob(os.path.join(dir_images, "*.png")):
+    var_name = os.path.splitext(os.path.basename(files))[0]
+    images_dict[var_name] = Image.open(files).resize((img_size_icons, img_size_icons))
+
+# dominant-star
+for files in glob.glob(os.path.join(dir_images, "dominant_star", "*.png")):
+    var_name = os.path.splitext(os.path.basename(files))[0]
+    images_dict[var_name] = Image.open(files).resize((img_size_star, img_size_star))
+
+# color icons
+for files in glob.glob(
+    os.path.join(dir_images, "colors", cfg["img_colors_set"], "*.png")
+):
+    var_name = os.path.splitext(os.path.basename(files))[0]
+    images_dict[var_name] = Image.open(files).resize((img_size_icons, img_size_icons))
+
+# trait properties
+for files in glob.glob(
+    os.path.join(
+        dir_images, "trait_properties", cfg["img_trait_properties_set"], "*.png"
+    )
+):
+    var_name = os.path.splitext(os.path.basename(files))[0]
+    images_dict[var_name] = Image.open(files).resize((img_size_icons, img_size_icons))
+
+    if var_name == "catastrophe":
+        var_WE = var_name + "_WE"
+        images_dict[var_WE] = Image.open(files).resize((img_size_WE, img_size_WE))
+
+# scoreboard icons
+for files in glob.glob(
+    os.path.join(
+        dir_images, "trait_properties", cfg["img_trait_properties_set"], "*_sb.png"
+    )
+):
+    var_name = os.path.splitext(os.path.basename(files))[0]
+    images_dict[var_name] = Image.open(files).resize(
+        (img_size_scoreboard, img_size_scoreboard)
+    )
+
+# effects on traits
+for files in glob.glob(os.path.join(dir_images, "effects", "*.png")):
+    var_name = os.path.splitext(os.path.basename(files))[0]
+    images_dict[var_name] = Image.open(files)
+
+    # pay attention to w/h-ratio
+    w, h = images_dict[var_name].size
+    actual_img_w = int(w / h * img_size_icons)
+    images_dict[var_name] = images_dict[var_name].resize((actual_img_w, img_size_icons))
+
+# points
+for files in glob.glob(os.path.join(dir_images, "points", "*.png")):
+    var_name = os.path.splitext(os.path.basename(files))[0]
+    images_dict[var_name] = Image.open(files).resize((img_size_icons, img_size_icons))
+
+    # create red-crossed-point-icons
+    images_dict[var_name + "X"] = images_dict[var_name].copy()
+    images_dict[var_name + "X"].paste(
+        images_dict["red_cross"], (0, 0), images_dict["red_cross"]
+    )
+
+# fix w/h-ratio of certain images
+img_sizes = {"exit": img_size_star}
+for img in ["exit"]:
+    w, h = images_dict[img].size
+    actual_img_w = int(w / h * img_sizes[img])
+    images_dict[img] = images_dict[img].resize((actual_img_w, img_size_icons))
+
+# region tk_inter variables ---------------------------------------------------
+global lbl_points_switch, lbox_menu_deck
+lbl_points_switch = [None]  # label containing icon-switch-icon
+lbox_deck = [
+    None
+]  # listbox widget of deck cards -> needed to be able to edit selected traits
+
+global frame_player, frame_trait_pile, frame_MOL
+frame_player = []  # list of all players frames
+frame_trait_pile = (
+    []
+)  # frame containing players traits -> needed to be able to edit selected traits
+frame_MOL = []  # frame containing MOLs
+
+# region game variables -------------------------------------------------------
+# settings --------------------------------------------------------------------
+global game, plr, deck, catastrophe, worlds_end, MOLs
+game = {}
+game["n_player"] = []  # number of current players
+game["n_genes"] = []  # gene pool at start
+game["n_catastrophes"] = []  # number of catastrophes
+game["n_MOLs"] = []  # number of MOLs
+game["neoteny_checkbutton"] = []
+game["sleepy_spinbox"] = []
+game["first_player"] = 0
+
+plr = {}
+plr["name"] = []
+plr["genes"] = []
+plr["points"] = []
+plr["trait_pile"] = []
+plr["n_tp"] = []  # count of traits -> separated by colors / xtra_effects / scoreboard
+plr["trait_selected"] = []
+plr["points_WE_effect"] = []
+plr["points_MOL"] = []
+
+deck = []  # all traits in deck (or discard pile) left to be drawn / list of idx
+
+catastrophe = {}
+catastrophe["possible"] = []  # list of possibles catastrophes
+catastrophe["played"] = []  # occurred catastrophes / needed for worlds end
+catastrophe["cbox"] = []  # comboxes containing possible catastrophes
+
+worlds_end = {}
+worlds_end["selected"] = None  # selected world-ends
+worlds_end["played"] = "none"  # play this world-end-event
+worlds_end["cbox"] = [None]  # combobox 4 worlds end
+worlds_end["btn"] = [None]  # button running worlds end
+
+MOLs = {}
+MOLs["played"] = []  # played MOLs
+MOLs["cbox"] = []  # comboxes containing MOLs
+MOLs["icon"] = []  # labels for icon showing MOL points
+MOLs["n"] = []  # number of MOLs for each player -> may be different

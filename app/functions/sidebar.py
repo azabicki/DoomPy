@@ -1,4 +1,6 @@
 import streamlit as st
+import functions.variables as vars
+import functions.utils as ut
 
 
 # -----------------------------------------------------------------------------
@@ -127,8 +129,8 @@ def style():
     css = """
     <style>
         [data-testid="stSidebar"]{
-            min-width: 250px;
-            max-width: 250px;
+            min-width: 280px;
+            max-width: 280px;
         }
     </style>
     """

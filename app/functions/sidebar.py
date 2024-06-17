@@ -1,5 +1,5 @@
 import streamlit as st
-import functions.variables as vars
+import functions.actions as act
 import functions.utils as ut
 
 
@@ -9,31 +9,16 @@ def create():
     next_game()
 
     # 1st player ----------------------------------------
-    with st.sidebar.container(border=True):
-        st.selectbox(
-            "**first player**",
-            list(range(st.session_state.game["n_player"])),
-            format_func=lambda x: st.session_state.plr["name"][x],
-            key="1st_player",
-        )
+    first_player()
 
     # Traits ----------------------------------------
-    with st.sidebar.container(border=True):
-        st.markdown("**who plays a trait**")
-        st.selectbox(
-            "**select trait**",
-            st.session_state.deck,
-            format_func=lambda x: st.session_state.deck_str[x],
-            index=None,
-            placeholder="search trait...",
-            label_visibility="collapsed",
-            key="trait2play",
-        )
+    trait_deck()
 
     # Ages ----------------------------------------
-    with st.sidebar.container(border=True):
-        st.markdown("**Catastrophes**")
-        st.markdown("**World's End**")
+    catastrophes()
+
+    # Worlds End ----------------------------------------
+    worlds_end()
 
     # Options ----------------------------------------
     with st.sidebar.container(border=True):
@@ -75,7 +60,6 @@ def next_game():
                     step=1,
                     value=st.session_state.next["n_genes"],
                 )
-            # c_cat, c_mol = st.columns(2)
             with c_cat:
                 st.session_state.next["n_catastrophes"] = st.number_input(
                     "Catastrophes",
@@ -121,7 +105,95 @@ def next_game():
             # button
             ut.h_spacer(2)
             if st.form_submit_button("start game", use_container_width=True):
-                vars.start_game(what="next_game")
+                act.start_game(what="next_game")
+
+
+# -----------------------------------------------------------------------------
+def first_player():
+    with st.sidebar.container(border=True):
+        st.selectbox(
+            "**first player**",
+            list(range(st.session_state.game["n_player"])),
+            format_func=lambda x: st.session_state.plr["name"][x],
+            key="1st_player",
+        )
+
+
+# -----------------------------------------------------------------------------
+def trait_deck():
+    def create_btn(p):
+        st.button(
+            st.session_state.plr["name"][p],
+            use_container_width=True,
+            on_click=act.play_trait,
+            args=(p,)
+        )
+
+    with st.sidebar.container(border=True):
+        st.markdown("**who plays a trait**")
+
+        # trait select box
+        st.selectbox(
+            "select trait",
+            st.session_state.deck,
+            format_func=lambda x: st.session_state.deck_str[x],
+            index=None,
+            placeholder="search trait...",
+            label_visibility="collapsed",
+            key="trait2play",
+        )
+
+        # player buttons
+        c11, c12 = st.columns(2)
+        with c11:
+            create_btn(0)
+
+        with c12:
+            create_btn(1)
+
+        if st.session_state.game["n_player"] == 3:
+            create_btn(2)
+
+        if st.session_state.game["n_player"] >= 4:
+            c21, c22 = st.columns(2)
+            with c21:
+                create_btn(2)
+            with c22:
+                create_btn(3)
+
+        if st.session_state.game["n_player"] == 5:
+            create_btn(4)
+
+        if st.session_state.game["n_player"] >= 6:
+            c31, c32 = st.columns(2)
+            with c31:
+                create_btn(4)
+            with c32:
+                create_btn(5)
+
+
+# -----------------------------------------------------------------------------
+def catastrophes():
+    with st.sidebar.container(border=True):
+        st.markdown("**Catastrophes**")
+
+        # catastrophe select box
+        for c in range(3):
+            st.selectbox(
+                "catastrophe #" + str(c),
+                st.session_state.deck,
+                format_func=lambda x: st.session_state.deck_str[x],
+                index=None,
+                placeholder="catastrophe #" + str(c),
+                label_visibility="collapsed",
+                disabled=False if c == 0 else True,
+            )
+
+
+# -----------------------------------------------------------------------------
+def worlds_end():
+    with st.sidebar.container(border=True):
+        st.markdown("**World's End**")
 
 
 # -----------------------------------------------------------------------------

@@ -44,18 +44,12 @@ def init_vars():
 
     # next game ---------------------------------------------------------------
     if "next" not in st.session_state:
-        next = {}
-        next["n_player"] = cfg["n_player"]  # next: number of players
-        next["n_genes"] = cfg["n_genes"]  # next: gene pool at beginning
-        next["n_catastrophes"] = cfg[
-            "n_catastrophes"
-        ]  # OPTIONS: number of catastrophes
-        next["n_MOLs"] = cfg["n_MOLs"]  # next: number of MOLs
-        next["names"] = []
-        for i in range(len(cfg["names"])):
-            next["names"].append(cfg["names"][i])  # next: name of players
-
-        st.session_state.next = next
+        st.session_state.next = {
+            "n_player": cfg["n_player"],
+            "n_genes": cfg["n_genes"],
+            "n_catastrophes": cfg["n_catastrophes"],
+            "n_MOLs": cfg["n_MOLs"],
+        }
 
 
 def reset_variables():
@@ -65,7 +59,7 @@ def reset_variables():
     st.session_state.game["n_catastrophes"] = st.session_state.next["n_catastrophes"]
     st.session_state.game["n_MOLs"] = st.session_state.next["n_MOLs"]
 
-    # update first player if not playing anymore
+    # update first player if someone is not playing anymore
     if st.session_state.game["first_player"] + 1 > st.session_state.game["n_player"]:
         st.session_state.game["first_player"] = st.session_state.game["n_player"] - 1
 
@@ -91,7 +85,7 @@ def reset_variables():
 
     # fill variables
     for p in range(st.session_state.game["n_player"]):
-        st.session_state.plr["name"].append(st.session_state.next["names"][p])
+        st.session_state.plr["name"].append(st.session_state.cfg["names"][p])
 
         st.session_state.plr["genes"].append(st.session_state.game["n_genes"])
         st.session_state.plr["points"].append(
@@ -177,20 +171,3 @@ def reset_variables():
     st.session_state.df["status_df"]["effects_traits_WE"] = "none"
     st.session_state.df["status_df"]["effects_WE"] = "none"
     st.session_state.df["status_df"]["traits_WE"] = "none"
-
-
-def start_game(what: str = "boot"):
-    print(f"starting game by '{what}'")
-
-    # if what == "next_game":
-    #     print("update _next_ variables")
-    #     st.session_state.next["n_player"] = argin[0]
-    #     st.session_state.next["n_genes"] = argin[1]
-    #     st.session_state.next["n_catastrophes"] = argin[2]
-    #     st.session_state.next["n_MOLs"] = argin[3]
-
-    reset_variables()
-
-
-def switch_first_player():
-    pass

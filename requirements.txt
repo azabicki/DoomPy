@@ -1,11 +1,10 @@
 # This file may be used to create an environment using:
 # $ conda create --name <env> --file <this file>
 # platform: osx-arm64
-numpy=1.26.4
-openpyxl=3.1.2
-pandas=2.2.0
+numpy==1.26.4
+openpyxl==3.1.2
+pandas==2.2.0
 pillow>=10.2.0
-pygame=2.5.2
-python=3.11.7
-tk=8.6.13
-streamlit=1.35.0
+pygame==2.5.2
+tk==8.6.13
+streamlit==1.35.0

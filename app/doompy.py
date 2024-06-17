@@ -6,7 +6,11 @@ st.set_page_config(layout="wide")  # need to be first 'st' command !!!
 
 # init variables
 vars.init_vars()
-vars.start_game()
+
+# first time starting a game
+if st.session_state.booting:
+    st.session_state.booting = False
+    vars.start_game()
 
 # create sidebar
 sidebar.create()

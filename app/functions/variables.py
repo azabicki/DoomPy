@@ -7,6 +7,10 @@ def init_vars():
     from functions.globals_ import traits_df, status_df, catastrophes_df, MOLs_df
     from functions.globals_ import game, plr, deck, catastrophe, worlds_end, MOLs
 
+    # booting --------------------------------------------------
+    if "booting" not in st.session_state:
+        st.session_state.booting = True
+
     # cfg / general settings --------------------------------------------------
     if "cfg" not in st.session_state:
         st.session_state.cfg = cfg

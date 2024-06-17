@@ -8,8 +8,8 @@ from PIL import Image
 
 # loading stuff ###############################################################
 curdir = os.path.dirname(__file__)
-dir_files = os.path.join(curdir, "..", "..", "DoomPy", "files")
-dir_images = os.path.join(curdir, "..", "..", "DoomPy", "images")
+dir_files = os.path.join(curdir, "..", "..", "doompy", "files")
+dir_images = os.path.join(curdir, "..", "..", "doompy", "images")
 
 # region load config file -----------------------------------------------------
 global cfg

@@ -92,7 +92,7 @@ def reset_variables():
                 "c": "0",
                 "t": "0",
                 "xtra": 0,
-                "sb": "\u2211 0",
+                "sb": "\u22110",
             }
         )
         st.session_state.plr["trait_selected"].append(np.nan)

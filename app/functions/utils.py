@@ -12,7 +12,23 @@ def style():
 
         .parent-div{
             height: 50px;
-            border: 1px solid green
+            border: 0px solid green
+        }
+
+        .clr-cnt-div{
+            height: 30px;
+            width: 30px;
+            border: 0px solid green
+        }
+
+        p.clr-cnt{
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .ttl-scr-div{
+            height: 60px;
+            border: 0px solid green
         }
 
         .text-div{

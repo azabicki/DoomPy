@@ -23,15 +23,14 @@ sidebar.create()
 cols = st.columns(st.session_state.game["n_player"])
 for p, col in enumerate(cols):
     with col:
-        st.write(st.session_state.plr["name"][p])
         with st.container(border=True):
-            st.write("scoreboard")
+            pg.score_board(p)
+            st.divider()
 
-        with st.container(border=True):
-            st.write("traitpile")
+            pg.controls(p)
+            pg.trait_pile(p)
+            st.divider()
 
-        with st.container(border=True):
-            st.write("MOLs")
             pg.MOLs(p)
 
 st.divider()

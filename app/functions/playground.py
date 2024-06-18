@@ -25,18 +25,23 @@ def score_board(p):
     # ----- name -----
     with c_name:
         if st.session_state["1st_player"] == p:
-            name_col = st.session_state.cfg["font_color_1st_player"]
+            name_str = """<div class="parent-div"><div class="text-div"><p style="
+            color:{color};
+            font-size: 40px;
+            font-weight: bold;
+            text-align:center;
+            ">{name}</p></div></div>""".format(
+                color=st.session_state.cfg["font_color_1st_player"],
+                name=st.session_state.plr["name"][p]
+            )
         else:
-            name_col = "#000000"
-
-        name_str = """<div class="parent-div"><div class="text-div"><p style="
-        color:{color};
-        font-size: 40px;
-        font-weight: bold;
-        text-align:center;
-        ">{name}</p></div></div>""".format(
-            color=name_col, name=st.session_state.plr["name"][p]
-        )
+            name_str = """<div class="parent-div"><div class="text-div"><p style="
+            font-size: 40px;
+            font-weight: bold;
+            text-align:center;
+            ">{name}</p></div></div>""".format(
+                name=st.session_state.plr["name"][p]
+            )
         st.markdown(name_str, unsafe_allow_html=True)
 
     # ----- gene pool string -----

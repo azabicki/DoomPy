@@ -100,7 +100,6 @@ for files in glob.glob(os.path.join(dir_images, "*.png")):
 
 # dominant-star
 for files in glob.glob(os.path.join(dir_images, "dominant_star", "*.png")):
-    print(files)
     var_name = os.path.splitext(os.path.basename(files))[0]
     images[var_name] = files
 

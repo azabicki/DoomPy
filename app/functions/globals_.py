@@ -12,7 +12,6 @@ dir_files = os.path.join(curdir, "..")
 dir_images = os.path.join(curdir, "..", "..", "doompy", "images")
 
 # region load config file -----------------------------------------------------
-global cfg
 cfg = dict()
 cfg["names"] = [
     "Lisa",
@@ -47,8 +46,6 @@ cfg["font_color_genes"] = "#bf3eff"
 cfg["points_onoff"] = "on"  # 'off' / 'on' / 'rank'
 
 # region load cards.xlsx ------------------------------------------------------
-global traits_df, status_df, catastrophes_df, MOLs_df
-
 # traits
 xlsx_traits = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="traits")
 xlsx_traits = xlsx_traits[xlsx_traits["in_game"] == "yes"]
@@ -167,22 +164,9 @@ for img in ["exit"]:
     images_dict[img] = images_dict[img].resize((actual_img_w, img_size_icons))
 
 # region tk_inter variables ---------------------------------------------------
-global lbl_points_switch, lbox_menu_deck
 lbl_points_switch = [None]  # label containing icon-switch-icon
-lbox_deck = [
-    None
-]  # listbox widget of deck cards -> needed to be able to edit selected traits
-
-global frame_player, frame_trait_pile, frame_MOL
-frame_player = []  # list of all players frames
-frame_trait_pile = (
-    []
-)  # frame containing players traits -> needed to be able to edit selected traits
-frame_MOL = []  # frame containing MOLs
 
 # region game variables -------------------------------------------------------
-# settings --------------------------------------------------------------------
-global game, plr, deck, catastrophe, worlds_end, MOLs
 game = {}
 game["n_player"] = cfg["n_player"]  # number of current players
 game["n_genes"] = cfg["n_genes"]  # gene pool at start

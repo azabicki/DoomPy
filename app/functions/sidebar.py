@@ -112,7 +112,7 @@ def next_game():
 def first_player():
     with st.sidebar.container(border=True):
         st.selectbox(
-            "**first player**",
+            "**First Player**",
             list(range(st.session_state.game["n_player"])),
             format_func=lambda x: st.session_state.plr["name"][x],
             key="1st_player",
@@ -130,7 +130,7 @@ def trait_deck():
         )
 
     with st.sidebar.container(border=True):
-        st.markdown("**who plays a trait**")
+        st.markdown("**Who Plays a Trait**")
 
         # trait select box
         st.selectbox(
@@ -178,13 +178,13 @@ def catastrophes():
         st.markdown("**Catastrophes**")
 
         # catastrophe select box
-        for c in range(3):
+        for c in range(st.session_state.game["n_catastrophes"]):
             st.selectbox(
-                "catastrophe #" + str(c),
+                "catastrophe_" + str(c),
                 st.session_state.deck,
                 format_func=lambda x: st.session_state.deck_str[x],
                 index=None,
-                placeholder="catastrophe #" + str(c),
+                placeholder="... #" + str(c+1) + " ...",
                 label_visibility="collapsed",
                 disabled=False if c == 0 else True,
             )

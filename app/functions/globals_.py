@@ -184,10 +184,10 @@ frame_MOL = []  # frame containing MOLs
 # settings --------------------------------------------------------------------
 global game, plr, deck, catastrophe, worlds_end, MOLs
 game = {}
-game["n_player"] = []  # number of current players
-game["n_genes"] = []  # gene pool at start
-game["n_catastrophes"] = []  # number of catastrophes
-game["n_MOLs"] = []  # number of MOLs
+game["n_player"] = cfg["n_player"]  # number of current players
+game["n_genes"] = cfg["n_genes"]  # gene pool at start
+game["n_catastrophes"] = cfg["n_catastrophes"]  # number of catastrophes
+game["n_MOLs"] = cfg["n_MOLs"]  # number of MOLs
 game["neoteny_checkbutton"] = []
 game["sleepy_spinbox"] = []
 game["first_player"] = 0

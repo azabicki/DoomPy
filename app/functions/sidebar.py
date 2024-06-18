@@ -45,36 +45,36 @@ def next_game():
             st.markdown("##### Start with:")
             c_plr, c_gp, c_cat, c_mol = st.columns(4)
             with c_plr:
-                st.session_state.next["n_player"] = st.number_input(
+                st.session_state.game["n_player"] = st.number_input(
                     "Players",
                     min_value=2,
                     max_value=6,
                     step=1,
-                    value=st.session_state.next["n_player"],
+                    value=st.session_state.game["n_player"],
                 )
             with c_gp:
-                st.session_state.next["n_genes"] = st.number_input(
+                st.session_state.game["n_genes"] = st.number_input(
                     "Gene Pool",
                     min_value=1,
                     max_value=10,
                     step=1,
-                    value=st.session_state.next["n_genes"],
+                    value=st.session_state.game["n_genes"],
                 )
             with c_cat:
-                st.session_state.next["n_catastrophes"] = st.number_input(
+                st.session_state.game["n_catastrophes"] = st.number_input(
                     "Catastrophes",
                     min_value=1,
                     max_value=6,
                     step=1,
-                    value=st.session_state.next["n_catastrophes"],
+                    value=st.session_state.game["n_catastrophes"],
                 )
             with c_mol:
-                st.session_state.next["n_MOLs"] = st.number_input(
+                st.session_state.game["n_MOLs"] = st.number_input(
                     "MOLs",
                     min_value=1,
                     max_value=4,
                     step=1,
-                    value=st.session_state.next["n_MOLs"],
+                    value=st.session_state.game["n_MOLs"],
                 )
 
             # names

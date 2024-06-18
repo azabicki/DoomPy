@@ -42,23 +42,8 @@ def init_vars():
     if "MOLs" not in st.session_state:
         st.session_state.MOLs = MOLs
 
-    # next game ---------------------------------------------------------------
-    if "next" not in st.session_state:
-        st.session_state.next = {
-            "n_player": cfg["n_player"],
-            "n_genes": cfg["n_genes"],
-            "n_catastrophes": cfg["n_catastrophes"],
-            "n_MOLs": cfg["n_MOLs"],
-        }
-
 
 def reset_variables():
-    # update current settings
-    st.session_state.game["n_player"] = st.session_state.next["n_player"]
-    st.session_state.game["n_genes"] = st.session_state.next["n_genes"]
-    st.session_state.game["n_catastrophes"] = st.session_state.next["n_catastrophes"]
-    st.session_state.game["n_MOLs"] = st.session_state.next["n_MOLs"]
-
     # update first player if someone is not playing anymore
     if st.session_state.game["first_player"] + 1 > st.session_state.game["n_player"]:
         st.session_state.game["first_player"] = st.session_state.game["n_player"] - 1
@@ -116,7 +101,7 @@ def reset_variables():
         st.session_state.MOLs["played"].append([])
         st.session_state.MOLs["cbox"].append([])
         st.session_state.MOLs["icon"].append([])
-        st.session_state.MOLs["n"].append(st.session_state.next["n_MOLs"])
+        st.session_state.MOLs["n"].append(st.session_state.game["n_MOLs"])
 
         st.session_state.game["neoteny_checkbutton"].append(0)
         st.session_state.game["sleepy_spinbox"].append(0)

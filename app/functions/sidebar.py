@@ -194,16 +194,3 @@ def catastrophes():
 def worlds_end():
     with st.sidebar.container(border=True):
         st.markdown("**World's End**")
-
-
-# -----------------------------------------------------------------------------
-def style():
-    css = """
-    <style>
-        [data-testid="stSidebar"]{
-            min-width: 280px;
-            max-width: 280px;
-        }
-    </style>
-    """
-    st.markdown(css, unsafe_allow_html=True)

@@ -1,10 +1,12 @@
 import streamlit as st
+import functions.utils as ut
 import functions.sidebar as sidebar
 import functions.variables as vars
 import functions.actions as act
 import functions.playground as pg
 
 st.set_page_config(layout="wide")  # need to be first 'st' command !!!
+ut.style()
 
 # init variables
 vars.init_vars()
@@ -16,7 +18,6 @@ if st.session_state.booting:
 
 # create sidebar
 sidebar.create()
-sidebar.style()
 
 # content
 cols = st.columns(st.session_state.game["n_player"])

@@ -177,9 +177,6 @@ def score_board(p):
         st.markdown(pnt_m, unsafe_allow_html=True)
 
 
-print(st.session_state.plr["n_tp"][0]["sb"])
-
-
 # Control Buttons -------------------------------------------------------------
 def controls(p):
     c_move, c_hand, c_disc = st.columns(3)
@@ -194,7 +191,7 @@ def controls(p):
         st.button("to hand", key="hand_" + str(p), use_container_width=True)
 
     with c_disc:
-        st.button("discrad", key="discard_" + str(p), use_container_width=True)
+        st.button("discard", key="discard_" + str(p), use_container_width=True)
 
 
 # Trait Pile ------------------------------------------------------------------

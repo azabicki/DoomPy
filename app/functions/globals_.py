@@ -3,7 +3,7 @@ import os
 import glob
 import numpy as np
 import pandas as pd
-from PIL import Image
+# from PIL import Image
 
 
 # loading stuff ###############################################################
@@ -87,8 +87,7 @@ xlsx_MOLs = xlsx_MOLs[xlsx_MOLs["in_game"] == "yes"]
 MOLs_df = xlsx_MOLs.sort_values(by="MOL").reset_index(drop=True).drop(columns="game")
 
 # region load images ----------------------------------------------------------
-global images_dict
-images_dict = {}
+images = {}
 img_size_scoreboard = 24
 img_size_star = 30
 img_size_icons = 20
@@ -97,19 +96,20 @@ img_size_WE = 40
 # basic
 for files in glob.glob(os.path.join(dir_images, "*.png")):
     var_name = os.path.splitext(os.path.basename(files))[0]
-    images_dict[var_name] = Image.open(files).resize((img_size_icons, img_size_icons))
+    images[var_name] = files
 
 # dominant-star
 for files in glob.glob(os.path.join(dir_images, "dominant_star", "*.png")):
+    print(files)
     var_name = os.path.splitext(os.path.basename(files))[0]
-    images_dict[var_name] = Image.open(files).resize((img_size_star, img_size_star))
+    images[var_name] = files
 
 # color icons
 for files in glob.glob(
     os.path.join(dir_images, "colors", cfg["img_colors_set"], "*.png")
 ):
     var_name = os.path.splitext(os.path.basename(files))[0]
-    images_dict[var_name] = Image.open(files).resize((img_size_icons, img_size_icons))
+    images[var_name] = files
 
 # trait properties
 for files in glob.glob(
@@ -118,11 +118,11 @@ for files in glob.glob(
     )
 ):
     var_name = os.path.splitext(os.path.basename(files))[0]
-    images_dict[var_name] = Image.open(files).resize((img_size_icons, img_size_icons))
+    images[var_name] = files
 
     if var_name == "catastrophe":
         var_WE = var_name + "_WE"
-        images_dict[var_WE] = Image.open(files).resize((img_size_WE, img_size_WE))
+        images[var_WE] = files
 
 # scoreboard icons
 for files in glob.glob(
@@ -131,37 +131,35 @@ for files in glob.glob(
     )
 ):
     var_name = os.path.splitext(os.path.basename(files))[0]
-    images_dict[var_name] = Image.open(files).resize(
-        (img_size_scoreboard, img_size_scoreboard)
-    )
+    images[var_name] = files
 
 # effects on traits
 for files in glob.glob(os.path.join(dir_images, "effects", "*.png")):
     var_name = os.path.splitext(os.path.basename(files))[0]
-    images_dict[var_name] = Image.open(files)
+    images[var_name] = files
 
-    # pay attention to w/h-ratio
-    w, h = images_dict[var_name].size
-    actual_img_w = int(w / h * img_size_icons)
-    images_dict[var_name] = images_dict[var_name].resize((actual_img_w, img_size_icons))
+    # # pay attention to w/h-ratio
+    # w, h = images[var_name].size
+    # actual_img_w = int(w / h * img_size_icons)
+    # images[var_name] = images[var_name].resize((actual_img_w, img_size_icons))
 
 # points
 for files in glob.glob(os.path.join(dir_images, "points", "*.png")):
     var_name = os.path.splitext(os.path.basename(files))[0]
-    images_dict[var_name] = Image.open(files).resize((img_size_icons, img_size_icons))
+    images[var_name] = files
 
-    # create red-crossed-point-icons
-    images_dict[var_name + "X"] = images_dict[var_name].copy()
-    images_dict[var_name + "X"].paste(
-        images_dict["red_cross"], (0, 0), images_dict["red_cross"]
-    )
+    # # create red-crossed-point-icons
+    # images[var_name + "X"] = images[var_name].copy()
+    # images[var_name + "X"].paste(
+    #     images["red_cross"], (0, 0), images["red_cross"]
+    # )
 
-# fix w/h-ratio of certain images
-img_sizes = {"exit": img_size_star}
-for img in ["exit"]:
-    w, h = images_dict[img].size
-    actual_img_w = int(w / h * img_sizes[img])
-    images_dict[img] = images_dict[img].resize((actual_img_w, img_size_icons))
+# # fix w/h-ratio of certain images
+# img_sizes = {"exit": img_size_star}
+# for img in ["exit"]:
+#     w, h = images[img].size
+#     actual_img_w = int(w / h * img_sizes[img])
+#     images[img] = images[img].resize((actual_img_w, img_size_icons))
 
 # region tk_inter variables ---------------------------------------------------
 lbl_points_switch = [None]  # label containing icon-switch-icon

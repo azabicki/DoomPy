@@ -3,7 +3,7 @@ import numpy as np
 
 
 def init_vars():
-    from functions.globals_ import cfg, images_dict
+    from functions.globals_ import cfg, images
     from functions.globals_ import traits_df, status_df, catastrophes_df, MOLs_df
     from functions.globals_ import game, plr, deck, catastrophe, worlds_end, MOLs
 
@@ -15,7 +15,7 @@ def init_vars():
     if "cfg" not in st.session_state:
         st.session_state.cfg = cfg
     if "images_dict" not in st.session_state:
-        st.session_state.images_dict = images_dict
+        st.session_state.images = images
 
     # load excel --------------------------------------------------------------
     if "df" not in st.session_state:

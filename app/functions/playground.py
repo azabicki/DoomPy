@@ -1,5 +1,6 @@
 import streamlit as st
 import functions.utils as ut
+import functions.rules_traits as rules_tr
 
 
 # ScoreBoard ------------------------------------------------------------------
@@ -32,7 +33,7 @@ def score_board(p):
             text-align:center;
             ">{name}</p></div></div>""".format(
                 color=st.session_state.cfg["font_color_1st_player"],
-                name=st.session_state.plr["name"][p]
+                name=st.session_state.plr["name"][p],
             )
         else:
             name_str = """<div class="parent-div"><div class="text-div"><p style="
@@ -143,7 +144,9 @@ def score_board(p):
         st.image(image=st.session_state.images["drops_sb"], use_column_width="always")
 
     with c_sub3:
-        st.image(image=st.session_state.images["worlds_end_sb"], use_column_width="always")
+        st.image(
+            image=st.session_state.images["worlds_end_sb"], use_column_width="always"
+        )
         st.image(image=st.session_state.images["MOL_sb"], use_column_width="always")
 
     with c_sub2:
@@ -196,7 +199,83 @@ def controls(p):
 
 # Trait Pile ------------------------------------------------------------------
 def trait_pile(p):
-    st.write("trait pile")
+    # shorten df's
+    status_df = st.session_state.df["status_df"]
+    traits_df = st.session_state.df["traits_df"]
+
+    # first, scan trait pile for any effects by any traits, like protecting
+    # other traits...
+    rules_tr.permanent_effects(st.session_state.plr["trait_pile"][p])
+
+    # --- loop traits in trait pile -------------------------------------------
+    for trait_idx in st.session_state.plr["trait_pile"][p]:
+        # columns
+        c_trait = st.columns([1, 6, 1, 1])
+
+        # get trait name
+        trait = traits_df.loc[trait_idx].trait
+
+        # trait checkbox
+        with c_trait[0]:
+            st.checkbox(
+                trait,
+                value=False,
+                key=f"tp_{p}_{trait_idx}",
+                on_change=update_selected_trait,
+                args=(p, trait_idx),
+                label_visibility="collapsed",
+            )
+
+        # traits name
+        with c_trait[1]:
+            if traits_df.loc[trait_idx].dominant == 1:
+                name_str = """<p style="
+                color:{color};
+                font-weight: bold;
+                text-align:left;
+                ">{trait}</p>""".format(
+                    color=st.session_state.cfg["font_color_dominant"],
+                    trait=trait,
+                )
+            else:
+                name_str = "{trait}".format(trait=trait)
+            st.markdown(name_str, unsafe_allow_html=True)
+
+        # color
+        with c_trait[2]:
+            # get color
+            color = traits_df.loc[trait_idx].color
+            cc = "c" if "colorless" in color.lower() else ""
+            cb = "b" if "blue" in color.lower() else ""
+            cg = "g" if "green" in color.lower() else ""
+            cp = "p" if "purple" in color.lower() else ""
+            cr = "r" if "red" in color.lower() else ""
+
+            # check if color changed
+            X = (
+                "X"
+                if status_df.loc[trait_idx].color.lower()
+                != traits_df.loc[trait_idx].color.lower()
+                else ""
+            )
+            st.image(
+                image=st.session_state.images[cc + cb + cg + cp + cr + X],
+                use_column_width="always",
+            )
+
+        # face value
+        with c_trait[3]:
+            trait_face = traits_df.loc[trait_idx].face
+            status_face = status_df.loc[trait_idx].face
+
+            X = "X" if trait_face != status_face else ""
+            face_string = (
+                trait_face if isinstance(trait_face, str) else str(int(trait_face))
+            )
+            st.image(
+                image=st.session_state.images[face_string + X],
+                use_column_width="always",
+            )
 
 
 # MOLs ------------------------------------------------------------------------
@@ -212,3 +291,13 @@ def MOLs(p):
             label_visibility="collapsed",
             disabled=False if m == 0 else True,
         )
+
+
+# -----
+def update_selected_trait(p, t):
+    for trait_idx in st.session_state.plr["trait_pile"][p]:
+        if t == trait_idx:
+            st.session_state[f"tp_{p}_{trait_idx}"] = True
+            st.session_state.plr["trait_selected"][p]
+        else:
+            st.session_state[f"tp_{p}_{trait_idx}"] = False

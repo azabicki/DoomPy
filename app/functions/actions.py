@@ -98,11 +98,10 @@ def attach_to(
     # shorten df's
     traits_df = st.session_state.df["traits_df"]
     status_df = st.session_state.df["status_df"]
-    plr = st.session_state.plr
 
     # get host_data from event_data
-    host = event.widget.get()
-    host_idx = possible_hosts[event.widget.current()]
+    host = st.session_state[f"attchmnt_{attachment_idx}"]
+    host_idx = possible_hosts[host]
     attachment = traits_df.loc[attachment_idx].trait
 
     # return, if clicked on current host
@@ -122,7 +121,7 @@ def attach_to(
     else:
         print(
             ["attach_to", "attached"],
-            plr["name"][from_].get(),
+            st.session_state.plr["name"][from_],
             attachment,
             attachment_idx,
             host,
@@ -139,7 +138,7 @@ def attach_to(
         update.traits_current_status("reset", old_host_idx[0], [])
 
     # check if attachment is set back to "..." (idx=0)
-    if event.widget.current() == 0:
+    if host_idx is None:
         # reset host='none' to status_row of attachment
         status_df.loc[attachment_idx, "host"] = "none"
     else:

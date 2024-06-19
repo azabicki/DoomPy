@@ -472,44 +472,26 @@ def trait_pile(p):
 
                 # check if already attached to host
                 if status_df.loc[trait_idx].host == "none":
-                    attachment_index = 0
+                    sbox_index = 0
                 else:
                     cur_host = status_df.loc[trait_idx].host
-                    attachment_index = traits_filtered_idx.index(cur_host)
-                print(f" --- attached to: {attachment_index}")
+                    sbox_index = traits_filtered_idx.index(cur_host)
 
                 # create combobox
                 st.selectbox(
                     f"attach_{p}_{trait_idx}",
                     traits_filtered_str,
-                    index=attachment_index,
+                    index=sbox_index,
                     label_visibility="collapsed",
+                    key=f"attchmnt_{trait_idx}",
                     on_change=act.attach_to,
-                    args=(p, trait_idx, "event", traits_filtered_idx)
+                    args=(
+                        p,
+                        trait_idx,
+                        "event",
+                        dict(zip(traits_filtered_str, traits_filtered_idx)),
+                    ),
                 )
-
-                # cbox_attach_to = ttk.Combobox(
-                #     frame_trait_overview,
-                #     height=len(traits_filtered_str),
-                #     values=traits_filtered_str,
-                #     exportselection=0,
-                #     state="readonly",
-                #     width=9,
-                # )
-                # cbox_attach_to.grid(row=irow, column=1, sticky="w")
-                # cbox_attach_to.bind(
-                #     "<<ComboboxSelected>>",
-                #     lambda e, t=trait_idx, idx=traits_filtered_idx: btn_attach_to(
-                #         p, t, e, idx
-                #     ),
-                # )
-
-                # # check if already attached to host
-                # if status_df.loc[trait_idx].host == "none":
-                #     cbox_attach_to.current(0)
-                # else:
-                #     cur_host = status_df.loc[trait_idx].host
-                #     cbox_attach_to.current(traits_filtered_idx.index(cur_host))
 
 
 # MOLs ------------------------------------------------------------------------

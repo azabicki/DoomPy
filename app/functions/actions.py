@@ -79,7 +79,7 @@ def play_trait(to: int) -> int:
     deck.remove(trait_idx)
     btn_clear_trait_search()
 
-    # shorten df's
+    # save df's
     st.session_state.df["traits_df"] = traits_df
     st.session_state.df["status_df"] = status_df
     st.session_state.plr = plr
@@ -161,5 +161,3 @@ def attach_to(
 # -----------------------------------------------------------------------------
 def btn_clear_trait_search():
     st.session_state.trait2play = None
-
-

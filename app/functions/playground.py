@@ -231,7 +231,7 @@ def trait_pile(p):
                 label_visibility="collapsed",
             )
 
-        # traits name
+        # ----- traits name -------------
         with c_trait[1]:
             if traits_df.loc[trait_idx].dominant == 1:
                 name_str = """<p style="
@@ -246,7 +246,7 @@ def trait_pile(p):
                 name_str = "{trait}".format(trait=trait)
             st.markdown(name_str, unsafe_allow_html=True)
 
-        # color
+        # ----- color -------------
         with c_trait[2]:
             # get color
             color = traits_df.loc[trait_idx].color
@@ -268,7 +268,7 @@ def trait_pile(p):
                 use_column_width="always",
             )
 
-        # face value
+        # ----- face value -------------
         with c_trait[3]:
             trait_face = traits_df.loc[trait_idx].face
             status_face = status_df.loc[trait_idx].face

@@ -86,7 +86,7 @@ def play_trait(to: int) -> int:
     st.session_state.deck = deck
 
     # update
-#    update_all()
+    update.all()
 
     return 1
 
@@ -150,12 +150,9 @@ def attach_to(
     # save df's
     st.session_state.df["traits_df"] = traits_df
     st.session_state.df["status_df"] = status_df
-    st.session_state.plr = plr
 
     # update
-
-
-#    update_all()
+    update.all()
 
 
 # -----------------------------------------------------------------------------

@@ -1,12 +1,63 @@
 import streamlit as st
 import numpy as np
+import functions.rules_attachment as rules_at
+import functions.rules_traits as rules_tr
+import functions.rules_worlds_end as rules_we
+
+
+# -----------------------------------------------------------------------------
+def all() -> None:
+    # shorten df's
+    status_df = st.session_state.df["status_df"]
+    plr = st.session_state.plr
+
+    # first: resolve all effects on traits, then: update n_TP (count) &
+    for p in range(st.session_state.game["n_player"]):
+        # get  player's trait pile
+        tp = plr["trait_pile"][p]
+
+        # resolve all effects on traits --------------------
+        for trait_idx in tp:
+            # 1: attachment effect
+            rules_at.apply_effects(trait_idx)
+
+            # 2: traits WE effect(s)
+            rules_tr.apply_traits_WE_effects(trait_idx)
+
+            # 3: worlds end effect
+            rules_we.apply_WE_effects(trait_idx)
+
+        # update n_tp --------------------
+        # colors
+        for col in ["blue", "green", "purple", "red", "colorless"]:
+            plr["n_tp"][p][col[0]] = sum(
+                col in color.lower() for color in status_df.iloc[tp].color.tolist()
+            )
+
+        # total
+        plr["n_tp"][p]["t"] = len(tp) + plr["n_tp"][p]["xtra"]
+
+        # scoreboard
+        if plr["n_tp"][p]["xtra"] == 0:
+            txt = "\u2211" + str(len(tp))
+        else:
+            txt = str(len(tp)) + "+" + str(plr["n_tp"][p]["xtra"])
+        plr["n_tp"][p]["sb"] = txt
+
+    # # update stuff
+    # stars()
+    # genes()
+    # scoring()
+
+    # save df's
+    st.session_state.df["status_df"] = status_df
+    st.session_state.plr = plr
 
 
 # -----------------------------------------------------------------------------
 def sleepy(p):
     st.session_state.game["sleepy_spinbox"][p] = st.session_state.sleepy_input
-
-    # update_all
+    all()
 
 
 # -----------------------------------------------------------------------------
@@ -94,4 +145,4 @@ def traits_current_status(todo: str, *args) -> None:
             st.session_state.plr = plr
 
             # update
-#            update_all()
+            all()

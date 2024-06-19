@@ -1,6 +1,10 @@
 import streamlit as st
+import numpy as np
 import functions.utils as ut
+import functions.actions as act
+import functions.updates as update
 import functions.rules_traits as rules_tr
+import functions.rules_attachment as rules_at
 
 
 # ScoreBoard ------------------------------------------------------------------
@@ -209,19 +213,20 @@ def trait_pile(p):
 
     # --- loop traits in trait pile -------------------------------------------
     for trait_idx in st.session_state.plr["trait_pile"][p]:
-        # columns
-        c_trait = st.columns([1, 6, 1, 1])
-
         # get trait name
         trait = traits_df.loc[trait_idx].trait
 
-        # trait checkbox
+        # columns
+        c_trait = st.columns([1, 4, 1, 1, 1, 1, 1, 1])
+        # c_trait = st.columns(7)
+
+        # ----- trait checkbox -------------
         with c_trait[0]:
             st.checkbox(
                 trait,
                 value=False,
                 key=f"tp_{p}_{trait_idx}",
-                on_change=update_selected_trait,
+                on_change=update.selected_trait,
                 args=(p, trait_idx),
                 label_visibility="collapsed",
             )
@@ -277,6 +282,235 @@ def trait_pile(p):
                 use_column_width="always",
             )
 
+        # ---------- STATE_icons -> current drop/attachment effects  ----------
+        # ----- seperator -------------
+        with c_trait[4]:
+            st.markdown("**|**")
+
+        # (running) index for next columns
+        next_col = 4
+
+        # ----- *new* color -------------
+        cur_color = status_df.loc[trait_idx].color.lower()
+        if cur_color != traits_df.loc[trait_idx].color.lower():
+            next_col += 1
+            with c_trait[next_col]:
+                # find current color
+                cc = "c" if "colorless" in cur_color.lower() else ""
+                cb = "b" if "blue" in cur_color.lower() else ""
+                cg = "g" if "green" in cur_color.lower() else ""
+                cp = "p" if "purple" in cur_color.lower() else ""
+                cr = "r" if "red" in cur_color.lower() else ""
+
+                # change to 'causing' color-icon
+                if any(
+                    col in status_df.loc[trait_idx].effects_traits_WE
+                    for col in cur_color.split("_")
+                ):
+                    X = "WE"
+                elif status_df.loc[trait_idx].attachment != "none":
+                    next_col += 1  # is this NEEDED ????
+                    X = "AT"
+                else:
+                    X = ""
+
+                # add new color icon
+                st.image(
+                    image=st.session_state.images[cc + cb + cg + cp + cr + X],
+                    use_column_width="always",
+                )
+
+        # ----- drop value -------------
+        cur_drops = status_df.loc[trait_idx].drops
+        if traits_df.loc[trait_idx].drops == 1:
+            # drop icon
+            next_col += 1
+            with c_trait[next_col]:
+                st.image(
+                    image=st.session_state.images["drops"],
+                    use_column_width="always",
+                )
+
+            # value icon
+            next_col += 1
+            with c_trait[next_col]:
+                if np.isnan(cur_drops):
+                    # add question mark as long as no drop value is calculated
+                    drop_string = "question_mark"
+                else:
+                    # check if values are higher/lower than drop icons exist
+                    if int(cur_drops) > 20:
+                        drop_string = "20+"
+                    elif int(cur_drops) < -20:
+                        drop_string = "-20-"
+                    else:
+                        drop_string = str(int(cur_drops))
+
+                st.image(
+                    image=st.session_state.images[drop_string],
+                    use_column_width="always",
+                )
+
+        # maybe add the following icons if i find a good way to do that
+        if 1 == 2:
+            # ----- has attachment -------------
+            if status_df.loc[trait_idx].attachment != "none":
+                next_col += 1
+                with c_trait[next_col]:
+                    st.image(
+                        image=st.session_state.images["attachment"],
+                        use_column_width="always",
+                    )
+
+            # ----- noFX -------------
+            if (
+                status_df.loc[trait_idx].inactive
+                and "inactive" not in status_df.loc[trait_idx].effects_WE.lower()
+            ):
+                next_col += 1
+                with c_trait[next_col]:
+                    st.image(
+                        image=st.session_state.images["noFX"],
+                        use_column_width="always",
+                    )
+
+            # ----- noRemove -------------
+            if status_df.loc[trait_idx].no_remove:
+                next_col += 1
+                with c_trait[next_col]:
+                    st.image(
+                        image=st.session_state.images["noRemove"],
+                        use_column_width="always",
+                    )
+
+            # ----- noDiscard -------------
+            if status_df.loc[trait_idx].no_discard:
+                next_col += 1
+                with c_trait[next_col]:
+                    st.image(
+                        image=st.session_state.images["noDiscard"],
+                        use_column_width="always",
+                    )
+
+            # ----- noSteal -------------
+            if status_df.loc[trait_idx].no_steal:
+                next_col += 1
+                with c_trait[next_col]:
+                    st.image(
+                        image=st.session_state.images["noSteal"],
+                        use_column_width="always",
+                    )
+
+            # ----- noSwap -------------
+            if status_df.loc[trait_idx].no_swap:
+                next_col += 1
+                with c_trait[next_col]:
+                    st.image(
+                        image=st.session_state.images["noSwap"],
+                        use_column_width="always",
+                    )
+
+            # ----- if WORLDS END effects this trait -------------
+            if status_df.loc[trait_idx].effects_WE != "none":
+                next_col += 1
+                with c_trait[next_col]:
+                    st.image(
+                        image=st.session_state.images["worlds_end"],
+                        use_column_width="always",
+                    )
+
+                if "face" in status_df.loc[trait_idx].effects_WE.lower():
+                    we_face_string = str(int(status_df.loc[trait_idx].face))
+                    next_col += 1
+                    with c_trait[next_col]:
+                        st.image(
+                            image=st.session_state.images[we_face_string],
+                            use_column_width="always",
+                        )
+
+                if "inactive" in status_df.loc[trait_idx].effects_WE.lower():
+                    next_col += 1
+                    with c_trait[next_col]:
+                        st.image(
+                            image=st.session_state.images["noFX"],
+                            use_column_width="always",
+                        )
+
+        # ---------- TRAIT specific aditional rows ----------------------------
+        # ----- SLEEPY may affect gene pool ?!?!  -------------
+        if traits_df.loc[trait_idx].trait == "Sleepy":
+            c_slp = st.columns([.4, .8, .99])
+            with c_slp[1]:
+                st.write("gene effect:")
+            with c_slp[2]:
+                # create spinbox
+                st.number_input(
+                    "Sleepy",
+                    min_value=-5,
+                    max_value=5,
+                    step=1,
+                    value=st.session_state.game["sleepy_spinbox"][p],
+                    on_change=update.sleepy,
+                    args=(p, ),
+                    key="sleepy_input",
+                    label_visibility="collapsed",
+                )
+
+        # ----- ATTACHMENT combobox if trait is attachment --------------------
+        if traits_df.loc[trait_idx].attachment == 1:
+            c_slp = st.columns([.4, .8, .99])
+            with c_slp[1]:
+                st.write("attach to:")
+            with c_slp[2]:
+                # filter only non-attachment-traits and check if this is already attached to a trait
+                traits_filtered_idx = [None] + rules_at.filter_attachables(trait_idx, p)
+                traits_filtered_str = [" ... "] + [
+                    traits_df.loc[idx].trait
+                    for idx in traits_filtered_idx
+                    if idx is not None
+                ]
+
+                # check if already attached to host
+                if status_df.loc[trait_idx].host == "none":
+                    attachment_index = 0
+                else:
+                    cur_host = status_df.loc[trait_idx].host
+                    attachment_index = traits_filtered_idx.index(cur_host)
+                print(f" --- attached to: {attachment_index}")
+
+                # create combobox
+                st.selectbox(
+                    f"attach_{p}_{trait_idx}",
+                    traits_filtered_str,
+                    index=attachment_index,
+                    label_visibility="collapsed",
+                    on_change=act.attach_to,
+                    args=(p, trait_idx, "event", traits_filtered_idx)
+                )
+
+                # cbox_attach_to = ttk.Combobox(
+                #     frame_trait_overview,
+                #     height=len(traits_filtered_str),
+                #     values=traits_filtered_str,
+                #     exportselection=0,
+                #     state="readonly",
+                #     width=9,
+                # )
+                # cbox_attach_to.grid(row=irow, column=1, sticky="w")
+                # cbox_attach_to.bind(
+                #     "<<ComboboxSelected>>",
+                #     lambda e, t=trait_idx, idx=traits_filtered_idx: btn_attach_to(
+                #         p, t, e, idx
+                #     ),
+                # )
+
+                # # check if already attached to host
+                # if status_df.loc[trait_idx].host == "none":
+                #     cbox_attach_to.current(0)
+                # else:
+                #     cur_host = status_df.loc[trait_idx].host
+                #     cbox_attach_to.current(traits_filtered_idx.index(cur_host))
+
 
 # MOLs ------------------------------------------------------------------------
 def MOLs(p):
@@ -291,13 +525,3 @@ def MOLs(p):
             label_visibility="collapsed",
             disabled=False if m == 0 else True,
         )
-
-
-# -----
-def update_selected_trait(p, t):
-    for trait_idx in st.session_state.plr["trait_pile"][p]:
-        if t == trait_idx:
-            st.session_state[f"tp_{p}_{trait_idx}"] = True
-            st.session_state.plr["trait_selected"][p]
-        else:
-            st.session_state[f"tp_{p}_{trait_idx}"] = False

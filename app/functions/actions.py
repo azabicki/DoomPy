@@ -1,5 +1,6 @@
 import bisect
 import streamlit as st
+import functions.updates as update
 import functions.variables as vars
 import functions.rules_play as rules_pl
 import functions.rules_attachment as rules_at
@@ -90,6 +91,75 @@ def play_trait(to: int) -> int:
     return 1
 
 
-# -------
+# -----------------------------------------------------------------------------
+def attach_to(
+    from_: int, attachment_idx: int, event: int, possible_hosts: list
+) -> None:
+    # shorten df's
+    traits_df = st.session_state.df["traits_df"]
+    status_df = st.session_state.df["status_df"]
+    plr = st.session_state.plr
+
+    # get host_data from event_data
+    host = event.widget.get()
+    host_idx = possible_hosts[event.widget.current()]
+    attachment = traits_df.loc[attachment_idx].trait
+
+    # return, if clicked on current host
+    old_host_idx = status_df[
+        status_df["attachment"] == attachment_idx
+    ].index.values.tolist()
+    if host_idx in old_host_idx:
+        print(["attach_to", "error_current_host"])
+        return
+
+    # log
+    if host == " ... ":
+        if len(old_host_idx) == 0:
+            print(["attach_to", "still_detached"], attachment, attachment_idx)
+        else:
+            print(["attach_to", "detached"], attachment, attachment_idx)
+    else:
+        print(
+            ["attach_to", "attached"],
+            plr["name"][from_].get(),
+            attachment,
+            attachment_idx,
+            host,
+            host_idx,
+        )
+
+    # update old_host, where attachment was removed from
+    if old_host_idx:
+        print(
+            ["attach_to", "change_host"],
+            traits_df.loc[old_host_idx[0]].trait,
+            old_host_idx[0],
+        )
+        update.traits_current_status("reset", old_host_idx[0], [])
+
+    # check if attachment is set back to "..." (idx=0)
+    if event.widget.current() == 0:
+        # reset host='none' to status_row of attachment
+        status_df.loc[attachment_idx, "host"] = "none"
+    else:
+        # update status of attachment/host - saving idx's of each other
+        status_df.loc[attachment_idx, "host"] = host_idx
+        status_df.loc[host_idx, "attachment"] = attachment_idx
+
+    # save df's
+    st.session_state.df["traits_df"] = traits_df
+    st.session_state.df["status_df"] = status_df
+    st.session_state.plr = plr
+
+    # update
+
+
+#    update_all()
+
+
+# -----------------------------------------------------------------------------
 def btn_clear_trait_search():
     st.session_state.trait2play = None
+
+

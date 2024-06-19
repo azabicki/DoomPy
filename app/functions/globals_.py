@@ -42,9 +42,6 @@ cfg["font_color_1st_player"] = "#0da953"
 cfg["font_color_total_score"] = "#e1484a"
 cfg["font_color_genes"] = "#bf3eff"
 
-# switches
-cfg["points_onoff"] = "on"  # 'off' / 'on' / 'rank'
-
 # region load cards.xlsx ------------------------------------------------------
 # traits
 xlsx_traits = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="traits")
@@ -172,6 +169,8 @@ game["n_MOLs"] = cfg["n_MOLs"]  # number of MOLs
 game["neoteny_checkbutton"] = []
 game["sleepy_spinbox"] = []
 game["first_player"] = 0
+game["points_onoff"] = "on"  # 'off' / 'on' / 'rank'
+
 
 plr = {}
 plr["name"] = []

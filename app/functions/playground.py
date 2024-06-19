@@ -186,7 +186,7 @@ def score_board(p):
 
 # Control Buttons -------------------------------------------------------------
 def controls(p):
-    c_move, c_hand, c_disc = st.columns(3)
+    c_move, c_hand, c_disc = st.columns([.4, .3, .3])
     with c_move:
         st.selectbox(
             "move_from_" + str(p),
@@ -439,7 +439,7 @@ def trait_pile(p):
         # ---------- TRAIT specific aditional rows ----------------------------
         # ----- SLEEPY may affect gene pool ?!?!  -------------
         if traits_df.loc[trait_idx].trait == "Sleepy":
-            c_slp = st.columns([.4, .8, .99])
+            c_slp = st.columns([0.4, 0.8, 0.99])
             with c_slp[1]:
                 st.write("gene effect:")
             with c_slp[2]:
@@ -451,14 +451,14 @@ def trait_pile(p):
                     step=1,
                     value=st.session_state.game["sleepy_spinbox"][p],
                     on_change=update.sleepy,
-                    args=(p, ),
+                    args=(p,),
                     key="sleepy_input",
                     label_visibility="collapsed",
                 )
 
         # ----- ATTACHMENT combobox if trait is attachment --------------------
         if traits_df.loc[trait_idx].attachment == 1:
-            c_slp = st.columns([.4, .8, .99])
+            c_slp = st.columns([0.4, 0.8, 0.99])
             with c_slp[1]:
                 st.write("attach to:")
             with c_slp[2]:

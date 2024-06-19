@@ -65,7 +65,7 @@ def selected_trait(p, t):
     for trait_idx in st.session_state.plr["trait_pile"][p]:
         if t == trait_idx:
             st.session_state[f"tp_{p}_{trait_idx}"] = True
-            st.session_state.plr["trait_selected"][p]
+            st.session_state.plr["trait_selected"][p] = t
         else:
             st.session_state[f"tp_{p}_{trait_idx}"] = False
 
@@ -132,12 +132,12 @@ def traits_current_status(todo: str, *args) -> None:
                     st.session_state.game["neoteny_checkbutton"][i] = 0
 
             # update 'cur_effect'
-            if not any([i.get() for i in st.session_state.game["neoteny_checkbutton"]]):
+            if not any([i for i in st.session_state.game["neoteny_checkbutton"]]):
                 status_df.loc[neoteny_idx, "effects"] = "none"
                 print(["update_trait_status", "neoteny_no_one"])
             else:
                 status_df.loc[neoteny_idx, "effects"] = str(p)
-                print(["update_trait_status", "neoteny_that_one"], plr["name"][p].get())
+                print(["update_trait_status", "neoteny_that_one"], plr["name"][p])
 
             # save df's
             st.session_state.df["traits_df"] = traits_df

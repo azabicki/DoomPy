@@ -1478,7 +1478,20 @@ def update_stars() -> None:
 def update_all() -> None:
     # first, update n_TP (count) & resolve all effects on traits
     for p in range(game["n_player"]):
+        # get player's trait pile
         tp = plr["trait_pile"][p]
+
+        # resolve all effects on traits ---------------------------------------
+        for trait_idx in tp:
+            # 1: attachment effect
+            rules_at.apply_effects(trait_idx)
+
+            # 2: traits WE effect(s)
+            rules_tr.apply_traits_WE_effects(trait_idx)
+
+            # 3: worlds end effect
+            rules_we.apply_WE_effects(trait_idx)
+
         # update n_tp ---------------------------------------------------------
         # colors ------------------------
         for col in ["blue", "green", "purple", "red", "colorless"]:
@@ -1495,17 +1508,6 @@ def update_all() -> None:
         else:
             txt = str(len(tp)) + "+" + str(plr["n_tp"][p]["xtra"])
         plr["n_tp"][p]["sb"].set(txt)
-
-        # resolve all effects on traits ---------------------------------------
-        for trait_idx in tp:
-            # 1: attachment effect
-            rules_at.apply_effects(trait_idx)
-
-            # 2: traits WE effect(s)
-            rules_tr.apply_traits_WE_effects(trait_idx)
-
-            # 3: worlds end effect
-            rules_we.apply_WE_effects(trait_idx)
 
     # update stuff ------------------------------------------------------------
     update_stars()

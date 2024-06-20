@@ -5,6 +5,7 @@ import functions.actions as act
 import functions.updates as update
 import functions.rules_traits as rules_tr
 import functions.rules_attachment as rules_at
+import functions.rules_trait_pile as rules_tp
 
 
 # ScoreBoard ------------------------------------------------------------------
@@ -585,6 +586,14 @@ def trait_pile(p):
                     label_visibility="collapsed",
                     disabled=state,
                 )
+
+    st.divider()
+    # *********** special, individual cases *** !!! ***************************
+    # Some Drop-of-Life-Effects are affecting other players! hence, effects of
+    # these traits need to be shown on each other players trait pile, allowing
+    # to enter individual drop values
+    # call function to insert special-effects from various traits
+    rules_tp.special_trait_effects(p)
 
 
 # MOLs ------------------------------------------------------------------------

@@ -548,6 +548,44 @@ def trait_pile(p):
                     disabled=state,
                 )
 
+        # ----- manual DROP points spinbox ------------------------------------
+        cur_drop_eff = traits_df.loc[trait_idx].drop_effect
+        if (
+            isinstance(cur_drop_eff, str)
+            and not isinstance(traits_df.loc[trait_idx].worlds_end_task, str)
+            and (
+                "own_hand" in traits_df.loc[trait_idx].drop_effect
+                or "discarded" in traits_df.loc[trait_idx].drop_effect
+            )
+        ):
+            c_we = st.columns([0.2, 0.6, 0.99])
+            with c_we[1]:
+                st.write("Drop of Life:")
+            with c_we[2]:
+                # set state depending on 'played' worlds end
+                state = (
+                    False if st.session_state.worlds_end["played"] != "none" else True
+                )
+
+                # fill spinbox, depending on drops_status
+                if not np.isnan(status_df.loc[trait_idx].drops):
+                    dp = int(status_df.loc[trait_idx].drops)
+                else:
+                    dp = 0
+
+                st.number_input(
+                    f"drops_{trait_idx}",
+                    min_value=-20,
+                    max_value=20,
+                    step=1,
+                    value=dp,
+                    key=f"drop_{trait_idx}",
+                    on_change=act.manual_drops,
+                    args=(trait_idx,),
+                    label_visibility="collapsed",
+                    disabled=state,
+                )
+
 
 # MOLs ------------------------------------------------------------------------
 def MOLs(p):

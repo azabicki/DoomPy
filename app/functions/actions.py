@@ -326,5 +326,24 @@ def traits_world_end(from_: int, trait_idx: int) -> None:
 
 
 # -----------------------------------------------------------------------------
+def manual_drops(trait: int) -> None:
+    # shorten df's
+    traits_df = st.session_state.df["traits_df"]
+    status_df = st.session_state.df["status_df"]
+
+    # change value according to button
+    value = st.session_state[f"drop_{trait}"]
+
+    # save value in status_df
+    status_df.loc[trait, "drops"] = value
+
+    # log
+    print(["scoring", "manual_drops"], traits_df.iloc[trait].trait, trait, value)
+
+    # update all
+    update.all()
+
+
+# -----------------------------------------------------------------------------
 def btn_clear_trait_search():
     st.session_state.trait2play = None

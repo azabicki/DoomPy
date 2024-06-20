@@ -188,9 +188,17 @@ def score_board(p):
 def controls(p):
     c_move, c_hand, c_disc = st.columns([.4, .3, .3])
     with c_move:
+        mv_options = ["move to"] + [
+            j for i, j in enumerate(st.session_state.plr["name"]) if i != p
+        ]
+
         st.selectbox(
             "move_from_" + str(p),
-            ("move to ...", "b", "b", "b"),
+            mv_options,
+            index=mv_options.index(st.session_state[f"move_to_{p}"]),
+            key=f"move_to_{p}",
+            on_change=act.move_trait,
+            args=(p,),
             label_visibility="collapsed",
         )
 

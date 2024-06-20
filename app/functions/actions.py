@@ -1,9 +1,11 @@
 import bisect
 import streamlit as st
+import numpy as np
 import functions.updates as update
 import functions.variables as vars
 import functions.rules_play as rules_pl
 import functions.rules_attachment as rules_at
+import functions.rules_remove as rules_re
 
 
 # -----------------------------------------------------------------------------
@@ -89,6 +91,88 @@ def play_trait(to: int) -> int:
     update.all()
 
     return 1
+
+
+# -----------------------------------------------------------------------------
+def move_trait(from_: int) -> None:
+    # shorten df's
+    traits_df = st.session_state.df["traits_df"]
+    status_df = st.session_state.df["status_df"]
+    plr = st.session_state.plr
+
+    # get card, its attachment & target
+    trait_idx = plr["trait_selected"][from_]
+
+    if not np.isnan(trait_idx):
+        if traits_df.loc[trait_idx].attachment == 1:
+            attachment = trait_idx
+            trait_idx = status_df.loc[attachment, "host"]
+            trait_idx = np.nan if trait_idx == 'none' else trait_idx
+        else:
+            attachment = status_df.loc[trait_idx].attachment
+
+    sbox_str = st.session_state[f"move_to_{from_}"]
+    if sbox_str != "move to":
+        to = [i for i in plr["name"]].index(sbox_str)
+
+    # clear selectbox
+    st.session_state[f"move_to_{from_}"] = "move to"
+
+    if sbox_str == "move to":
+        print("___ move: ", from_, " -> ...")
+    else:
+        print("___ move: ", from_, " -> ", to)
+
+    print("___ move idx: ", trait_idx)
+    if not np.isnan(trait_idx):
+        print("___ attachment: ", attachment)
+
+    # return, if no target selected
+    if sbox_str == "move to":
+        print(["move", "error_move_to"])
+        return
+
+    # return, if no trait selected
+    if np.isnan(trait_idx):
+        # cbox_move_to.current(0)
+        print(["move", "error_no_trait"])
+        return
+
+    # log
+    add_txt = (
+        "(and its attachment '{}' (id:{}))".format(
+            traits_df.loc[attachment].trait, attachment
+        )
+        if attachment != "none"
+        else ""
+    )
+    print(
+        ["move", "move_to"],
+        traits_df.loc[trait_idx].trait,
+        trait_idx,
+        add_txt,
+        plr["name"][from_],
+        plr["name"][to],
+    )
+
+    # remove traits(s) from 'giving' player - update trait_pile - check
+    # remove_rules - clear trait selection
+    plr["trait_pile"][from_].remove(trait_idx)
+    if attachment != "none":
+        plr["trait_pile"][from_].remove(attachment)
+
+    rules_re.check_trait(trait_idx, from_, "different_trait_pile")
+
+    plr["trait_selected"][from_] = np.nan
+    st.session_state[f"tp_{from_}_{trait_idx}"] = False
+
+    # add to 'receiving' players traits
+    bisect.insort_left(plr["trait_pile"][to], trait_idx)
+    if attachment != "none":
+        bisect.insort_left(plr["trait_pile"][to], attachment)
+
+    # update
+    update.all()
 
 
 # -----------------------------------------------------------------------------

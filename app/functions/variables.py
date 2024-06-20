@@ -114,6 +114,8 @@ def reset_variables():
             st.session_state.MOLs["cbox"][p].append([])
             st.session_state.MOLs["icon"][p].append([])
 
+        st.session_state[f"move_to_{p}"] = "move to"
+
     # reset deck/lbox card-lists
     st.session_state.deck.clear()
     st.session_state.deck.extend(st.session_state.df["traits_df"].index.tolist())

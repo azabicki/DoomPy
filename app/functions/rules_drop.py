@@ -736,9 +736,6 @@ def drop_traits(trait_idx: int, p: int, *args) -> int:
                 >= 4
             )
 
-    # save df's
-    st.session_state.df["status_df"] = status_df
-
     # return drop value
     return dp
 
@@ -845,9 +842,6 @@ def drop_points(p: int) -> int:
                     # -1 self n_selected_colorless own
                     if status_df.loc[oppo_idx[0]].traits_WE != "none":
                         total += drop_traits(copy_idx, p, oppo_idx[0])
-
-    # save df's
-    st.session_state.df["status_df"] = status_df
 
     # return final drop score #################################################
     return total

@@ -25,9 +25,6 @@ def check_trait(trait_idx: int, from_: int, where_to: str) -> str | None:
                     ),
                 )
 
-            # save df's
-            st.session_state.df["status_df"] = status_df
-
             return None
 
         case "Meek":
@@ -45,9 +42,6 @@ def check_trait(trait_idx: int, from_: int, where_to: str) -> str | None:
                     ),
                 )
 
-            # save df's
-            st.session_state.df["status_df"] = status_df
-
             return None
 
         case "Spores":
@@ -63,9 +57,6 @@ def check_trait(trait_idx: int, from_: int, where_to: str) -> str | None:
 
                 # update cur_effect
                 status_df.loc[trait_idx, "effects"] = new_effects
-
-            # save df's
-            st.session_state.df["status_df"] = status_df
 
             return "keep_trait_effect"
 

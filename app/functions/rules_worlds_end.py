@@ -41,9 +41,6 @@ def apply_WE_effects(host: str) -> None:
             st.session_state.worlds_end["played"],
         )
 
-    # save df's
-    st.session_state.df["status_df"] = status_df
-
 
 # handle worlds end effect of catastrophes
 def calc_WE_points(p: int) -> int:

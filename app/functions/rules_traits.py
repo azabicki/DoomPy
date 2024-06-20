@@ -209,9 +209,6 @@ def assign_traits_WE_effects(trait_idx: int, trait_pile: List[str]) -> None:
             else:
                 status_df.loc[trait_idx, "effects_traits_WE"] = traits_WE
 
-    # save df's
-    st.session_state.df["status_df"] = status_df
-
 
 # apply effects to host
 def apply_traits_WE_effects(host: str) -> None:
@@ -281,9 +278,6 @@ def apply_traits_WE_effects(host: str) -> None:
                 traits_df.loc[int(effect.split(":")[0])].trait,
                 effect.split(":")[0],
             )
-
-    # save df's
-    st.session_state.df["status_df"] = status_df
 
 
 # handle worlds end effects of trait
@@ -408,5 +402,3 @@ def permanent_effects(tp: List[str]) -> None:
                     # reset Meek's effect if no red trait is protected (anymore)
                     status_df.loc[trait_idx, "effects"] = "none"
 
-    # save df's
-    st.session_state.df["status_df"] = status_df

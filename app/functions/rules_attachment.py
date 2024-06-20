@@ -138,6 +138,3 @@ def apply_effects(host: str) -> None:
             traits_df.loc[attachment].trait,
             attachment,
         )
-
-    # save df's
-    st.session_state.df["status_df"] = status_df

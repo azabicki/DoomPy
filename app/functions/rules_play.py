@@ -237,7 +237,3 @@ def play_effect(trait_idx: int, p: int) -> None:
                     traits_df.loc[first_D].trait.values[0].upper()
                 ),
             )
-
-    # save df's
-    st.session_state.df["status_df"] = status_df
-    st.session_state.df["traits_df"] = traits_df

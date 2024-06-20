@@ -81,12 +81,6 @@ def play_trait(to: int) -> int:
     deck.remove(trait_idx)
     btn_clear_trait_search()
 
-    # save df's
-    st.session_state.df["traits_df"] = traits_df
-    st.session_state.df["status_df"] = status_df
-    st.session_state.plr = plr
-    st.session_state.deck = deck
-
     # update
     update.all()
 
@@ -291,10 +285,6 @@ def attach_to(
         # update status of attachment/host - saving idx's of each other
         status_df.loc[attachment_idx, "host"] = host_idx
         status_df.loc[host_idx, "attachment"] = attachment_idx
-
-    # save df's
-    st.session_state.df["traits_df"] = traits_df
-    st.session_state.df["status_df"] = status_df
 
     # update
     update.all()

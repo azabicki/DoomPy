@@ -43,10 +43,6 @@ def select_MOL(p: int, MOL_idx: int | None, prev_MOL: int | None) -> None:
         # -> remove 2 from xtra trait pile count
         plr["n_tp"][p]["xtra"] -= 2
 
-    # save df's
-    st.session_state.MOLs = MOLs
-    st.session_state.plr = plr
-
 
 # handle worlds end effect of catastrophes ------------------------------------
 def calc_MOL_points(p: int, m: int) -> int:

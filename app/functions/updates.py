@@ -272,7 +272,6 @@ def scoring() -> None:
     # show current scoring according to setting
     for p in range(st.session_state.game["n_player"]):
         # update points
-        print("___", st.session_state.game["points_onoff"])
         if st.session_state.game["points_onoff"] == "on":
             plr["points"][p]["face"] = p_face[p]
             plr["points"][p]["drops"] = p_drop[p]

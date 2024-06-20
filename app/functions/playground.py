@@ -9,7 +9,6 @@ import functions.rules_attachment as rules_at
 
 # ScoreBoard ------------------------------------------------------------------
 def score_board(p):
-
     # upper row --------------------------------
     c_dom1, c_dom2, c_name, c_gp_txt, c_gp = st.columns([1, 1, 3, 1, 1], gap="small")
     # ----- dominant star 1 -----
@@ -186,7 +185,7 @@ def score_board(p):
 
 # Control Buttons -------------------------------------------------------------
 def controls(p):
-    c_move, c_hand, c_disc = st.columns([.4, .3, .3])
+    c_move, c_hand, c_disc = st.columns([0.4, 0.3, 0.3])
     with c_move:
         mv_options = ["move to"] + [
             j for i, j in enumerate(st.session_state.plr["name"]) if i != p

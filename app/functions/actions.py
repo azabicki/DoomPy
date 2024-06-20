@@ -107,7 +107,7 @@ def move_trait(from_: int) -> None:
         if traits_df.loc[trait_idx].attachment == 1:
             attachment = trait_idx
             trait_idx = status_df.loc[attachment, "host"]
-            trait_idx = np.nan if trait_idx == 'none' else trait_idx
+            trait_idx = np.nan if trait_idx == "none" else trait_idx
         else:
             attachment = status_df.loc[trait_idx].attachment
 
@@ -117,15 +117,6 @@ def move_trait(from_: int) -> None:
 
     # clear selectbox
     st.session_state[f"move_to_{from_}"] = "move to"
-
-    if sbox_str == "move to":
-        print("___ move: ", from_, " -> ...")
-    else:
-        print("___ move: ", from_, " -> ", to)
-
-    print("___ move idx: ", trait_idx)
-    if not np.isnan(trait_idx):
-        print("___ attachment: ", attachment)
 
     # return, if no target selected
     if sbox_str == "move to":

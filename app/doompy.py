@@ -1,9 +1,9 @@
 import streamlit as st
 import functions.utils as ut
-import functions.sidebar as sidebar
-import functions.variables as vars
 import functions.actions as act
 import functions.playground as pg
+import functions.variables as vars
+import functions.sidebar as sidebar
 
 st.set_page_config(layout="wide")  # need to be first 'st' command !!!
 ut.style()
@@ -34,4 +34,6 @@ for p, col in enumerate(cols):
             pg.MOLs(p)
 
 st.divider()
-st.session_state
+# st.session_state.df["traits_df"]
+# st.session_state
+# st.session_state

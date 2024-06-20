@@ -477,10 +477,10 @@ def trait_pile(p):
 
         # ----- ATTACHMENT combobox if trait is attachment --------------------
         if traits_df.loc[trait_idx].attachment == 1:
-            c_slp = st.columns([0.4, 0.8, 0.99])
-            with c_slp[1]:
+            c_atch = st.columns([0.2, 0.6, 0.99])
+            with c_atch[1]:
                 st.write("attach to:")
-            with c_slp[2]:
+            with c_atch[2]:
                 # filter only non-attachment-traits and check if this is already attached to a trait
                 traits_filtered_idx = [None] + rules_at.filter_attachables(trait_idx, p)
                 traits_filtered_str = [" ... "] + [
@@ -496,7 +496,7 @@ def trait_pile(p):
                     cur_host = status_df.loc[trait_idx].host
                     sbox_index = traits_filtered_idx.index(cur_host)
 
-                # create combobox
+                # create selectbox
                 st.selectbox(
                     f"attach_{p}_{trait_idx}",
                     traits_filtered_str,
@@ -538,7 +538,7 @@ def trait_pile(p):
 
                 # create selectbox
                 st.selectbox(
-                    f"traits_WE_{p}_{trait_idx}",
+                    f"traits_WE_{trait_idx}",
                     twe_effect,
                     index=sbox_index,
                     label_visibility="collapsed",

@@ -202,10 +202,22 @@ def controls(p):
         )
 
     with c_hand:
-        st.button("to hand", key="hand_" + str(p), use_container_width=True)
+        st.button(
+            "to hand",
+            key="hand_" + str(p),
+            on_click=act.remove_trait,
+            args=(p, "hand"),
+            use_container_width=True,
+        )
 
     with c_disc:
-        st.button("discard", key="discard_" + str(p), use_container_width=True)
+        st.button(
+            "discard",
+            key="discard_" + str(p),
+            on_click=act.remove_trait,
+            args=(p, "discard"),
+            use_container_width=True,
+        )
 
 
 # Trait Pile ------------------------------------------------------------------

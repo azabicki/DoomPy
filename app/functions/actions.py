@@ -167,6 +167,77 @@ def move_trait(from_: int) -> None:
 
 
 # -----------------------------------------------------------------------------
+# def remove_trait(from_: int, where_to: str, *args) -> None:
+def remove_trait(from_: int, where_to: str, *args) -> None:
+    # shorten df's
+    traits_df = st.session_state.df["traits_df"]
+    status_df = st.session_state.df["status_df"]
+    plr = st.session_state.plr
+    deck = st.session_state.deck
+
+    # get card & its attachment
+    trait_idx = plr["trait_selected"][from_]
+
+    if not np.isnan(trait_idx):
+        if traits_df.loc[trait_idx].attachment == 1:
+            attachment = trait_idx
+            trait_idx = status_df.loc[attachment, "host"]
+            trait_idx = np.nan if trait_idx == "none" else trait_idx
+        else:
+            attachment = status_df.loc[trait_idx].attachment
+
+    # return, if no trait selected
+    if np.isnan(trait_idx):
+        print(["remove", "error_no_trait"])
+        return
+
+    # log
+    if where_to == "hand":
+        print(
+            ["remove", "hand"],
+            plr["name"][from_],
+            traits_df.loc[trait_idx].trait,
+            trait_idx,
+        )
+    else:
+        print(
+            ["remove", "discard"],
+            plr["name"][from_],
+            traits_df.loc[trait_idx].trait,
+            trait_idx,
+        )
+    if attachment != "none":
+        print(
+            ["remove", "discard_attachment"],
+            traits_df.loc[attachment].trait,
+            attachment,
+        )
+
+    # remove card(s) from player & clear player trait selection
+    plr["trait_pile"][from_].remove(trait_idx)
+    if attachment != "none":
+        plr["trait_pile"][from_].remove(attachment)
+    plr["trait_selected"][from_] = np.nan
+
+    # add to deck traits & update deck_listbox
+    bisect.insort_left(deck, trait_idx)
+    if attachment != "none":
+        bisect.insort_left(deck, attachment)
+
+    # check, if this trait has a special "remove-rule",
+    # which may be needed for "status_updating"
+    remove_rule = rules_re.check_trait(trait_idx, from_, where_to)
+
+    # reset current status of card(s)
+    update.traits_current_status("reset", trait_idx, remove_rule)
+    if attachment != "none":
+        update.traits_current_status("reset", attachment, [])
+
+    # update
+    update.all()
+
+
+# -----------------------------------------------------------------------------
 def attach_to(
     from_: int, attachment_idx: int, event: int, possible_hosts: list
 ) -> None:

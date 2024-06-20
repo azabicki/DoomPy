@@ -115,6 +115,7 @@ def reset_variables():
             st.session_state.MOLs["icon"][p].append([])
 
         st.session_state[f"move_to_{p}"] = "move to"
+        st.session_state[f"neoteny_{p}"] = False
 
     # reset deck/lbox card-lists
     st.session_state.deck.clear()

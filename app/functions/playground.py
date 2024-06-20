@@ -226,6 +226,7 @@ def trait_pile(p):
     # shorten df's
     status_df = st.session_state.df["status_df"]
     traits_df = st.session_state.df["traits_df"]
+    plr = st.session_state.plr
 
     # first, scan trait pile for any effects by any traits, like protecting
     # other traits...
@@ -594,6 +595,59 @@ def trait_pile(p):
     # to enter individual drop values
     # call function to insert special-effects from various traits
     rules_tp.special_trait_effects(p)
+
+    # --- NEOTENY needs to stay here ------------------------------------------
+    # --- because 'create_trait_pile' needs to be run once checkbox is clicked
+    neoteny_idx = traits_df.index[traits_df.trait == "Neoteny"].tolist()
+    if neoteny_idx != []:
+        neoteny_effect = status_df.loc[neoteny_idx[0]].effects
+        if (worlds_end["played"] != "none") and (
+            all(neoteny_idx[0] not in tp for tp in plr["trait_pile"])
+        ):
+            # only if no one has it or this player has it
+            if neoteny_effect == "none" or neoteny_effect == str(p):
+                # columns
+                c_trait = st.columns(4)
+
+                # add trait
+                with c_trait[0]:
+                    name_str = """<p style="
+                        color:{color};
+                        font-weight: bold;
+                        text-align:left;
+                        ">NEOTENY</p>""".format(
+                        color=st.session_state.cfg["color_blue"],
+                    )
+                    st.markdown(name_str, unsafe_allow_html=True)
+
+                # if is this hand
+                if st.session_state.game["neoteny_checkbutton"][p] == 1:
+                    with c_trait[1]:
+                        st.checkbox(
+                            "got it ->",
+                            value=True,
+                            key=f"neoteny_{p}",
+                            on_change=update.traits_current_status,
+                            args=("neoteny", p),
+                            label_visibility="visible",
+                        )
+
+                    with c_trait[2]:
+                        st.image(image=st.session_state.images["drops"], use_column_width="always")
+
+                    with c_trait[3]:
+                        st.image(image=st.session_state.images["4"], use_column_width="always")
+                # not in this hand
+                else:
+                    with c_trait[1]:
+                        st.checkbox(
+                            "in my hand???",
+                            value=False,
+                            key=f"neoteny_{p}",
+                            on_change=update.traits_current_status,
+                            args=("neoteny", p),
+                            label_visibility="visible",
+                        )
 
 
 # MOLs ------------------------------------------------------------------------

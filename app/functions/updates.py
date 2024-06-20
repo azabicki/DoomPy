@@ -407,6 +407,11 @@ def traits_current_status(todo: str, *args) -> None:
             neoteny_idx = traits_df.index[traits_df.trait == "Neoteny"].tolist()[0]
             p = args[0]
 
+            # update current player
+            st.session_state.game["neoteny_checkbutton"][p] = (
+                1 if st.session_state[f"neoteny_{p}"] else 0
+            )
+
             # set other player to 0
             for i in range(st.session_state.game["n_player"]):
                 if i != p:
@@ -419,11 +424,6 @@ def traits_current_status(todo: str, *args) -> None:
             else:
                 status_df.loc[neoteny_idx, "effects"] = str(p)
                 print(["update_trait_status", "neoteny_that_one"], plr["name"][p])
-
-            # save df's
-            st.session_state.df["traits_df"] = traits_df
-            st.session_state.df["status_df"] = status_df
-            st.session_state.plr = plr
 
             # update
             all()

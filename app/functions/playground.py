@@ -512,6 +512,42 @@ def trait_pile(p):
                     ),
                 )
 
+        # ----- WORLDS_END combobox if trait has worlds end effect ------------
+        if isinstance(traits_df.loc[trait_idx].worlds_end_task, str):
+            c_we = st.columns([0.2, 0.6, 0.99])
+            with c_we[1]:
+                st.write("Worlds End:")
+            with c_we[2]:
+                # get task what to do at worlds end
+                twe_effect = rules_tr.traits_WE_tasks(trait_idx)
+
+                # set state depending on 'played' catastrophes
+                state = (
+                    False
+                    if sum(i is None for i in st.session_state.catastrophe["played"])
+                    == 0
+                    else True
+                )
+
+                # check if effect already selected
+                if status_df.loc[trait_idx].traits_WE == "none":
+                    sbox_index = 0
+                else:
+                    cur_effect = status_df.loc[trait_idx].traits_WE
+                    sbox_index = twe_effect.index(cur_effect)
+
+                # create selectbox
+                st.selectbox(
+                    f"traits_WE_{p}_{trait_idx}",
+                    twe_effect,
+                    index=sbox_index,
+                    label_visibility="collapsed",
+                    key=f"twe_{trait_idx}",
+                    on_change=act.traits_world_end,
+                    args=(p, trait_idx),
+                    disabled=state,
+                )
+
 
 # MOLs ------------------------------------------------------------------------
 def MOLs(p):

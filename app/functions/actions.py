@@ -1,11 +1,12 @@
-import bisect
 import streamlit as st
+import bisect
 import numpy as np
 import functions.updates as update
 import functions.variables as vars
 import functions.rules_play as rules_pl
-import functions.rules_attachment as rules_at
 import functions.rules_remove as rules_re
+import functions.rules_traits as rules_tr
+import functions.rules_attachment as rules_at
 
 
 # -----------------------------------------------------------------------------
@@ -288,6 +289,40 @@ def attach_to(
 
     # update
     update.all()
+
+
+# -----------------------------------------------------------------------------
+def traits_world_end(from_: int, trait_idx: int) -> None:
+    # shorten df's
+    traits_df = st.session_state.df["traits_df"]
+    status_df = st.session_state.df["status_df"]
+
+    # get index of WE_effect
+    effect = st.session_state[f"twe_{trait_idx}"]
+    effect_idx = rules_tr.traits_WE_tasks(trait_idx).index(effect)
+
+    # log
+    if effect_idx == 0:
+        print(["traits_WE", "reset"], traits_df.loc[trait_idx].trait, trait_idx)
+    else:
+        print(
+            ["traits_WE", "set"], traits_df.loc[trait_idx].trait, trait_idx, effect
+        )
+
+    # set traits_WE-effect to status_df of trait
+    if effect_idx == 0:
+        status_df.loc[trait_idx, "traits_WE"] = "none"
+    else:
+        status_df.loc[trait_idx, "traits_WE"] = effect
+
+    # apply traits_WE-effects and update status of traits in this trait pile
+    rules_tr.assign_traits_WE_effects(trait_idx, st.session_state.plr["trait_pile"][from_])
+
+    # update
+    update.all()
+
+    # # check if WE_button should be enabled
+    # check_WE_status("check_button")
 
 
 # -----------------------------------------------------------------------------

@@ -52,7 +52,7 @@ def calc_WE_points(p: int) -> int:
     # init variable
     colors = ["blue", "green", "purple", "red"]
     trait_pile = plr["trait_pile"][p]
-    genes = plr["genes"][p].get()
+    genes = plr["genes"][p]
     points = 0
 
     match st.session_state.worlds_end["played"]:
@@ -97,11 +97,11 @@ def calc_WE_points(p: int) -> int:
 
         case "Deus Ex Machina":
             # draw_card_add_face_value
-            points = int(plr["points_WE_effect"][p].get())
+            points = int(plr["points_WE_effect"][p])
 
         case "Deus Ex Machina (max.5)":
             # draw_card_add_face_value_max.5
-            points = int(plr["points_WE_effect"][p].get())
+            points = int(plr["points_WE_effect"][p])
 
         case "Ecological Collapse":
             # +2 each_negative_face
@@ -116,7 +116,7 @@ def calc_WE_points(p: int) -> int:
 
         case "Endless Monsoon":
             # -1 hand
-            points = int(plr["points_WE_effect"][p].get())
+            points = int(plr["points_WE_effect"][p])
 
         case "Great Deluge":
             # -4 if_<=2_blue_traits
@@ -151,7 +151,7 @@ def calc_WE_points(p: int) -> int:
 
         case "Invasive Species":
             # add_max7_face_from_hand
-            points = int(plr["points_WE_effect"][p].get())
+            points = int(plr["points_WE_effect"][p])
 
         case "Jungle Rot":
             # -4 if_<=2_green_traits

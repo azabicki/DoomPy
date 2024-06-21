@@ -345,6 +345,21 @@ def manual_drops(trait: int) -> None:
 
 
 # -----------------------------------------------------------------------------
+def manual_we(p: int) -> None:
+    # shorten df's
+    plr = st.session_state.plr
+
+    # change value according to button
+    value = st.session_state[f"we_points_{p}"]
+
+    # save value in status_df
+    plr["points_WE_effect"][p] = value
+
+    # update scoring
+    update.scoring()
+
+
+# -----------------------------------------------------------------------------
 def catastrophe(c: int, pos_cat) -> None:
     # shorten df's
     traits_df = st.session_state.df["traits_df"]
@@ -424,6 +439,46 @@ def catastrophe(c: int, pos_cat) -> None:
         plr["name"][st.session_state["1st_player"]],
         n_cat,
     )
+
+    # update
+    update.all()
+
+
+# -----------------------------------------------------------------------------
+def worlds_end_GO(played_catastrophes) -> None:
+    # shorten df's
+    traits_df = st.session_state.df["traits_df"]
+    status_df = st.session_state.df["status_df"]
+    worlds_end = st.session_state["worlds_end"]
+    plr = st.session_state.plr
+
+    # check if WE was played before, if so: remove effects from status_df
+    if worlds_end["played"] != "none":
+        # loop all traits in all trait piles
+        for p in range(st.session_state.game["n_player"]):
+            for trait_idx in plr["trait_pile"][p]:
+                pre_WE_effects = status_df.loc[trait_idx].effects_WE
+
+                for effect in pre_WE_effects.split():
+                    match effect.lower():
+                        case "face":
+                            status_df.loc[trait_idx, "face"] = traits_df.loc[
+                                trait_idx
+                            ].face
+
+                        case "inactive":
+                            status_df.loc[trait_idx, "inactive"] = False
+
+                status_df.loc[trait_idx, "effects_WE"] = "none"
+
+        # log
+        print(["worlds_end", "button_ready"], worlds_end["played"])
+
+    # save played WE
+    worlds_end["played"] = played_catastrophes[st.session_state["selected_worlds_end"]]
+
+    # log
+    print(["worlds_end", "play_WE"], worlds_end["played"])
 
     # update
     update.all()

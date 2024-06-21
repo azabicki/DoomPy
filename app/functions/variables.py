@@ -143,6 +143,7 @@ def reset_variables():
     st.session_state.worlds_end["played"] = "none"
     st.session_state.worlds_end["cbox"] = [None]
     st.session_state.worlds_end["btn"] = [None]
+    st.session_state["selected_worlds_end"] = None
 
     # reset current status
     st.session_state.df["status_df"]["color"] = st.session_state.df["traits_df"].color

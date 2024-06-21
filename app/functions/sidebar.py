@@ -208,5 +208,67 @@ def catastrophes():
 
 # -----------------------------------------------------------------------------
 def worlds_end():
+    catastrophes_df = st.session_state.df["catastrophes_df"]
+    status_df = st.session_state.df["status_df"]
+    traits_df = st.session_state.df["traits_df"]
+    catastrophe = st.session_state.catastrophe
+    plr = st.session_state.plr
+
     with st.sidebar.container(border=True):
         st.markdown("**World's End**")
+
+        # world's end select box ---------------------------
+        played_catastrophes = [
+            catastrophes_df.loc[catastrophe["played"][i], "name"]
+            for i in range(st.session_state.game["n_catastrophes"])
+            if catastrophe["played"][i] is not None
+        ]
+
+        print(">>> ", played_catastrophes)
+        print(">>> ", st.session_state["selected_worlds_end"])
+
+        # enable worlds_end-combobox and select last entry
+        if len(played_catastrophes) == st.session_state.game["n_catastrophes"]:
+            state_we = False
+            if st.session_state["selected_worlds_end"] is None:
+                st.session_state["selected_worlds_end"] = (
+                    st.session_state.game["n_catastrophes"] - 1
+                )
+        else:
+            state_we = True
+
+        st.selectbox(
+            "worlds_end",
+            list(range(len(played_catastrophes))),
+            format_func=lambda x: played_catastrophes[x],
+            index=st.session_state["selected_worlds_end"],
+            placeholder="...",
+            key="selected_worlds_end",
+            label_visibility="collapsed",
+            disabled=state_we,
+        )
+
+        # world's end button ---------------------------
+        if (state_we is True) or any(
+            [
+                status_df.loc[trait_idx].traits_WE == "none"
+                for tp in plr["trait_pile"]
+                for trait_idx in tp
+                if isinstance(traits_df.loc[trait_idx].worlds_end_task, str)
+            ]
+        ):
+            # disable WE_button
+            state = True
+        else:
+            # enable WE_button
+            state = False
+            # log
+            print(["worlds_end", "button_ready"])
+
+        st.button(
+            "do WORLD'S END !!!",
+            disabled=state,
+            on_click=act.worlds_end_GO,
+            args=(played_catastrophes,),
+            use_container_width=True,
+        )

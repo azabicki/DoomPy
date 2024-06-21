@@ -6,6 +6,7 @@ import functions.updates as update
 import functions.rules_traits as rules_tr
 import functions.rules_attachment as rules_at
 import functions.rules_trait_pile as rules_tp
+import functions.rules_worlds_end as rules_we
 
 
 # ScoreBoard ------------------------------------------------------------------
@@ -650,6 +651,58 @@ def trait_pile(p):
                             args=("neoteny", p),
                             label_visibility="visible",
                         )
+
+    # *************************************************************************
+    # ------ worlds end -> manual entries -------------------------------------
+    # if worlds_end["played"] != "none":
+    if worlds_end["played"] != "none":
+        st.divider()
+
+        # get world's end name & index
+        we = worlds_end["played"]
+        we_idx = catastrophes_df[catastrophes_df["name"] == we].index.values[0]
+        we_type = catastrophes_df.loc[we_idx].worlds_end_type
+
+        # columns
+        c_we = st.columns([.1, .2, .1])
+
+        # WE_icons
+        for c in [0, 2]:
+            with c_we[c]:
+                st.image(image=st.session_state.images["catastrophe_WE"], use_column_width="always")
+
+        # WE name & effect
+        with c_we[1]:
+            we_str = """<p style="
+                color:{color};
+                font-weight: bold;
+                text-align: center
+                ">{we}</p>""".format(
+                    color=st.session_state.cfg["font_color_total_score"],
+                    we=we,
+                )
+            st.markdown(we_str, unsafe_allow_html=True)
+
+            # WE_EFFECTS
+            if we_type == "hand" or we_type == "draw":
+                # create spinbox
+                st.number_input(
+                    "we_points",
+                    min_value=-30,
+                    max_value=30,
+                    step=1,
+                    value=plr["points_WE_effect"][p],
+                    on_change=act.manual_we,
+                    args=(p,),
+                    key=f"we_points_{p}",
+                    label_visibility="collapsed",
+                )
+
+            elif we_type == "calculate":
+                we_points = (
+                    rules_we.calc_WE_points(p) if worlds_end["played"] != "none" else 0
+                )
+                st.image(image=st.session_state.images[str(we_points)], use_column_width="always")
 
 
 # MOLs ------------------------------------------------------------------------

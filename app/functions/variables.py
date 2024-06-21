@@ -41,12 +41,14 @@ def init_vars():
         st.session_state.worlds_end = worlds_end
     if "MOLs" not in st.session_state:
         st.session_state.MOLs = MOLs
+    if "1st_player" not in st.session_state:
+        st.session_state["1st_player"] = 0
 
 
 def reset_variables():
     # update first player if someone is not playing anymore
-    if st.session_state.game["first_player"] + 1 > st.session_state.game["n_player"]:
-        st.session_state.game["first_player"] = st.session_state.game["n_player"] - 1
+    if st.session_state["1st_player"] + 1 > st.session_state.game["n_player"]:
+        st.session_state["1st_player"] = st.session_state.game["n_player"] - 1
 
     # reset _player_ variables
     st.session_state.plr["name"].clear()

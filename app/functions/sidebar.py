@@ -111,11 +111,13 @@ def next_game():
 # -----------------------------------------------------------------------------
 def first_player():
     with st.sidebar.container(border=True):
+        st.markdown("**First Player**")
         st.selectbox(
-            "**First Player**",
+            "first player",
             list(range(st.session_state.game["n_player"])),
             format_func=lambda x: st.session_state.plr["name"][x],
             key="1st_player",
+            label_visibility="collapsed",
         )
 
 

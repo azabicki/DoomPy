@@ -168,7 +168,6 @@ game["n_catastrophes"] = cfg["n_catastrophes"]  # number of catastrophes
 game["n_MOLs"] = cfg["n_MOLs"]  # number of MOLs
 game["neoteny_checkbutton"] = []
 game["sleepy_spinbox"] = []
-game["first_player"] = 0
 game["points_onoff"] = "on"  # 'off' / 'on' / 'rank'
 
 

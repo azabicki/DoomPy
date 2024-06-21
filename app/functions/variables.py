@@ -129,13 +129,12 @@ def reset_variables():
     # reset occurred catastrophes
     st.session_state.catastrophe["possible"].clear()
     st.session_state.catastrophe["played"].clear()
-    st.session_state.catastrophe["cbox"].clear()
-    for i in range(st.session_state.game["n_catastrophes"]):
+    for c in range(st.session_state.game["n_catastrophes"]):
         st.session_state.catastrophe["possible"].append(
             st.session_state.df["catastrophes_df"].index.tolist()
         )
         st.session_state.catastrophe["played"].append(None)
-        st.session_state.catastrophe["cbox"].append([])
+        st.session_state[f"catastrophe_{c}"] = 0
 
     # reset worlds end
     st.session_state.worlds_end["selected"] = ""

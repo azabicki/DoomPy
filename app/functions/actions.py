@@ -345,5 +345,90 @@ def manual_drops(trait: int) -> None:
 
 
 # -----------------------------------------------------------------------------
+def catastrophe(c: int, pos_cat) -> None:
+    # shorten df's
+    traits_df = st.session_state.df["traits_df"]
+    status_df = st.session_state.df["status_df"]
+    catastrophes_df = st.session_state.df["catastrophes_df"]
+    catastrophe = st.session_state.catastrophe
+    plr = st.session_state.plr
+
+    # get played catastrophe
+    cbox_idx = st.session_state[f"catastrophe_{c}"]
+    played_str = pos_cat[cbox_idx]
+    played_previously = catastrophe["played"][c]
+    if cbox_idx > 0:
+        played_idx = catastrophe["possible"][c][cbox_idx - 1]
+
+    print(">>> CATASTROPHE: ", c)
+    print(">>> cbox_idx: ", cbox_idx)
+    if cbox_idx > 0:
+        print(">>> played_idx: ", played_idx)
+    print(">>> played_str: ", played_str)
+    print(">>> played_previously: ", played_previously)
+
+    # return, if no catastrophe was selected
+    if cbox_idx == 0:
+        # if no catastrophe was selected before
+        if played_previously is None:
+            print(["catastrophe", "error_no_catastrophe"], c + 1)
+        # else -> forced to keep previous selection
+        else:
+            old_cbox_idx = catastrophe["possible"][c].index(played_previously) + 1
+            st.session_state[f"catastrophe_{c}"] = old_cbox_idx
+            print(["catastrophe", "error_keep_catastrophe"], c + 1)
+        return
+
+    # return, if same catastrophe selected
+    if played_previously == played_idx:
+        print(["catastrophe", "error_same_catastrophe"], c + 1, played_str)
+        return
+
+    # log
+    print(["catastrophe", "catastrophe"], c + 1, played_str, played_idx)
+
+    # set played catastrophe
+    catastrophe["played"][c] = played_idx
+
+    # update possible catastrophes for other catastrophes
+    for i in [i for i in range(st.session_state.game["n_catastrophes"]) if i != c]:
+        # begin with ALL possible catastrophes - necessary bc this catastrophe may have changed
+        catastrophe["possible"][i] = catastrophes_df.index.tolist()
+
+        # remove other catastrophes from possible ones
+        for j in [j for j in range(st.session_state.game["n_catastrophes"]) if j != i]:
+            # only, if j'th catastrophe was played already
+            if catastrophe["played"][j] is not None:
+                # remove from list of possibles
+                catastrophe["possible"][i].remove(catastrophe["played"][j])
+
+    # --- if DENIAL is out there, save first catastrophe he sees ---
+    denial_idx = traits_df.index[traits_df.trait == "Denial"].tolist()
+    if (
+        denial_idx != []
+        and any(denial_idx[0] in tp for tp in plr["trait_pile"])
+        and status_df.loc[denial_idx[0]].effects == "none"
+    ):
+        status_df.loc[denial_idx[0], "effects"] = played_str
+
+    # update first player
+    n_cat = sum(i is not None for i in catastrophe["played"])
+    cur_fp = st.session_state["1st_player"]
+    cur_fp = cur_fp + 1
+    if cur_fp > st.session_state.game["n_player"] - 1:
+        cur_fp = cur_fp - st.session_state.game["n_player"]
+    st.session_state["1st_player"] = cur_fp
+
+    print(
+        ["catastrophe", "first_player"],
+        plr["name"][st.session_state["1st_player"]],
+        n_cat,
+    )
+
+    # update
+    update.all()
+
+
+# -----------------------------------------------------------------------------
 def btn_clear_trait_search():
     st.session_state.trait2play = None

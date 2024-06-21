@@ -147,12 +147,6 @@ def score_board(p):
         st.image(image=st.session_state.images["blank_sb"], use_column_width="always")
         st.image(image=st.session_state.images["drops_sb"], use_column_width="always")
 
-    with c_sub3:
-        st.image(
-            image=st.session_state.images["worlds_end_sb"], use_column_width="always"
-        )
-        st.image(image=st.session_state.images["MOL_sb"], use_column_width="always")
-
     with c_sub2:
         pnt_f = """<div class="clr-cnt-div"><div class="text-div">
             <p class="clr-cnt" style="text-align:left">
@@ -167,6 +161,12 @@ def score_board(p):
             pnt=st.session_state.plr["points"][p]["drops"],
         )
         st.markdown(pnt_d, unsafe_allow_html=True)
+
+    with c_sub3:
+        st.image(
+            image=st.session_state.images["worlds_end_sb"], use_column_width="always"
+        )
+        st.image(image=st.session_state.images["MOL_sb"], use_column_width="always")
 
     with c_sub4:
         pnt_we = """<div class="clr-cnt-div"><div class="text-div">
@@ -226,14 +226,16 @@ def trait_pile(p):
     # shorten df's
     status_df = st.session_state.df["status_df"]
     traits_df = st.session_state.df["traits_df"]
+    catastrophes_df = st.session_state.df["catastrophes_df"]
     plr = st.session_state.plr
+    worlds_end = st.session_state.worlds_end
 
     # first, scan trait pile for any effects by any traits, like protecting
     # other traits...
-    rules_tr.permanent_effects(st.session_state.plr["trait_pile"][p])
+    rules_tr.permanent_effects(plr["trait_pile"][p])
 
     # --- loop traits in trait pile -------------------------------------------
-    for trait_idx in st.session_state.plr["trait_pile"][p]:
+    for trait_idx in plr["trait_pile"][p]:
         # get trait name
         trait = traits_df.loc[trait_idx].trait
 
@@ -566,7 +568,7 @@ def trait_pile(p):
             with c_we[2]:
                 # set state depending on 'played' worlds end
                 state = (
-                    False if st.session_state.worlds_end["played"] != "none" else True
+                    False if worlds_end["played"] != "none" else True
                 )
 
                 # fill spinbox, depending on drops_status

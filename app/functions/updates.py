@@ -151,9 +151,7 @@ def genes() -> None:
         diff_genes = [diff_genes[x] + slp_eff[x] for x in range(len(diff_genes))]
         if any(slp_eff):
             p = [i for i, e in enumerate(slp_eff) if e != 0]
-            print(
-                ["genes", "sleepy"], plr["name"][p[0]], slp_eff[p[0]], diff_genes
-            )
+            print(["genes", "sleepy"], plr["name"][p[0]], slp_eff[p[0]], diff_genes)
 
     # ----- Spores ---------------
     sprs_idx = traits_df.index[traits_df.trait == "Spores"].tolist()
@@ -170,9 +168,7 @@ def genes() -> None:
                 diff_genes[p] += 1
 
                 # log
-                print(
-                    ["genes", "spores"], sprs_idx[0], plr["name"][p], diff_genes
-                )
+                print(["genes", "spores"], sprs_idx[0], plr["name"][p], diff_genes)
 
     # check what catastrophes were played already -----------------------------
     for c in range(st.session_state.game["n_catastrophes"]):
@@ -229,7 +225,9 @@ def scoring() -> None:
 
         # calculate world's end points
         p_worlds_end.append(
-            rules_we.calc_WE_points(p) if st.session_state.worlds_end["played"] != "none" else 0
+            rules_we.calc_WE_points(p)
+            if st.session_state.worlds_end["played"] != "none"
+            else 0
         )
 
         # calculate face value

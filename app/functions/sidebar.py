@@ -128,11 +128,11 @@ def trait_deck():
             st.session_state.plr["name"][p],
             use_container_width=True,
             on_click=act.play_trait,
-            args=(p,)
+            args=(p,),
         )
 
     with st.sidebar.container(border=True):
-        st.markdown("**Who Plays a Trait**")
+        st.markdown("**Who Plays Which Trait**")
 
         # trait select box
         st.selectbox(

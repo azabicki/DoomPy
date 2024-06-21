@@ -6,8 +6,8 @@ def style():
     css = """
     <style>
         [data-testid="stSidebar"]{
-            min-width: 250px;
-            max-width: 250px;
+            min-width: 260px;
+            max-width: 260px;
         }
 
         .parent-div{

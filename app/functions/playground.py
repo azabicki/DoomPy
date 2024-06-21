@@ -591,11 +591,11 @@ def trait_pile(p):
                     disabled=state,
                 )
 
-    st.divider()
     # *********** special, individual cases *** !!! ***************************
     # Some Drop-of-Life-Effects are affecting other players! hence, effects of
     # these traits need to be shown on each other players trait pile, allowing
     # to enter individual drop values
+    st.divider()
     # call function to insert special-effects from various traits
     rules_tp.special_trait_effects(p)
 

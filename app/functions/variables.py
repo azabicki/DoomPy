@@ -139,7 +139,6 @@ def reset_variables():
         st.session_state[f"catastrophe_{c}"] = 0
 
     # reset worlds end
-    st.session_state.worlds_end["selected"] = ""
     st.session_state.worlds_end["played"] = "none"
     st.session_state.worlds_end["cbox"] = [None]
     st.session_state.worlds_end["btn"] = [None]

@@ -186,10 +186,8 @@ deck = []  # all traits in deck (or discard pile) left to be drawn / list of idx
 catastrophe = {}
 catastrophe["possible"] = []  # list of possibles catastrophes
 catastrophe["played"] = []  # occurred catastrophes / needed for worlds end
-catastrophe["cbox"] = []  # comboxes containing possible catastrophes
 
 worlds_end = {}
-worlds_end["selected"] = None  # selected world-ends
 worlds_end["played"] = "none"  # play this world-end-event
 worlds_end["cbox"] = [None]  # combobox 4 worlds end
 worlds_end["btn"] = [None]  # button running worlds end

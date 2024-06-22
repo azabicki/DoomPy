@@ -19,10 +19,8 @@ def select_MOL(p: int, MOL_idx: int | None, prev_MOL: int | None) -> None:
         MOLs["n"][p] += 2
         for _ in range(2):
             # for now, manually editing MOL points in entries
-            plr["points_MOL"][p].append("0")
+            plr["points_MOL"][p].append(0)
             MOLs["played"][p].append(None)
-            MOLs["cbox"][p].append([])
-            MOLs["icon"][p].append([])
 
     # if __The Blind Dragon__ is de-selected
     if prev_MOL is not None and MOLs_df.loc[prev_MOL].MOL == "The Blind Dragon":
@@ -30,8 +28,6 @@ def select_MOL(p: int, MOL_idx: int | None, prev_MOL: int | None) -> None:
         MOLs["n"][p] -= 2
         plr["points_MOL"][p][MOLs["n"][p]:] = []
         MOLs["played"][p][MOLs["n"][p]:] = []
-        MOLs["cbox"][p][MOLs["n"][p]:] = []
-        MOLs["icon"][p][MOLs["n"][p]:] = []
 
     # if __The River Mist__ is selected
     if MOL == "The River Mist":
@@ -61,13 +57,12 @@ def calc_MOL_points(p: int, m: int) -> int:
     colors = ["blue", "green", "purple", "red"]
     trait_pile = plr["trait_pile"][p]
     genes = plr["genes"][p]
-    thisMOL = MOLs_df.loc[MOLs["played"][p][m]].MOL
     points = 0
 
     # calculate MOL points
-    match thisMOL:
+    match MOLs_df.loc[MOLs["played"][p][m]].MOL:
         case "The Armored Melon":
-            points = int(plr["points_MOL"][p][m])
+            points = plr["points_MOL"][p][m]
 
         case "The Bilbies (4/10)":
             n = sum(traits_df.loc[t].dominant == 1 for t in trait_pile)
@@ -527,7 +522,7 @@ def calc_MOL_points(p: int, m: int) -> int:
             points = 6 if sum(check) == 4 else sum(check)
 
         case "The Silent Elder":
-            points = int(plr["points_MOL"][p][m])
+            points = plr["points_MOL"][p][m]
 
         case "The Soothsayer":
             n = sum(

@@ -3,6 +3,7 @@ import bisect
 import numpy as np
 import functions.updates as update
 import functions.variables as vars
+import functions.rules_MOL as rules_mol
 import functions.rules_play as rules_pl
 import functions.rules_remove as rules_re
 import functions.rules_traits as rules_tr
@@ -345,6 +346,21 @@ def manual_drops(trait: int) -> None:
 
 
 # -----------------------------------------------------------------------------
+def manual_MOL(p: int, m: int) -> None:
+    # shorten df's
+    plr = st.session_state.plr
+
+    # change value according to button
+    value = st.session_state[f"mol_points_{p}_{m}"]
+
+    # save current value
+    plr["points_MOL"][p][m] = value
+
+    # update all
+    update.all()
+
+
+# -----------------------------------------------------------------------------
 def manual_we(p: int) -> None:
     # shorten df's
     plr = st.session_state.plr
@@ -357,6 +373,67 @@ def manual_we(p: int) -> None:
 
     # update scoring
     update.scoring()
+
+
+# -----------------------------------------------------------------------------
+def select_MOL(p: int, m: int) -> None:
+    # shorten df's
+    plr = st.session_state.plr
+    MOLs = st.session_state.MOLs
+    MOLs_df = st.session_state.df["MOLs_df"]
+
+    # get infos of played/selected MOLs
+    cbox_idx = st.session_state[f"MOL_{p}_{m}"]
+    if cbox_idx == 0:
+        played_idx = None
+    else:
+        played_idx = cbox_idx - 1
+        played_str = MOLs_df.loc[played_idx].MOL
+    played_previously = MOLs["played"][p][m]
+
+    print("info: ", p, " ", m)
+    print(">>> cbox: ", cbox_idx)
+    print(">>> played_idx: ", played_idx)
+    if cbox_idx != 0:
+        print(">>> played_str: ", played_str)
+    print(">>> played_previously: ", played_previously)
+    
+    # return, if no MOL selected now and previously
+    if cbox_idx == 0 and played_previously is None:
+        # log
+        print(["MOLs", "error_no_MOL"], m + 1, plr["name"][p])
+        return
+
+    # return, if same MOL selected
+    if cbox_idx != 0 and (played_idx == played_previously):
+        # log
+        print(["MOLs", "error_keep_MOL"], m + 1, plr["name"][p], played_str)
+        return
+
+    # if MOL is de-selected
+    if cbox_idx == 0:
+        # log
+        print(
+            ["MOLs", "deselected_MOL"],
+            plr["name"][p],
+            m + 1,
+            MOLs_df.loc[played_previously].MOL,
+        )
+    else:
+        # log
+        print(["MOLs", "MOL"], m + 1, plr["name"][p], played_str, played_idx)
+
+    # set played MOL
+    print("info: ", p, " ", m)
+    print(MOLs["played"][p][m])
+    MOLs["played"][p][m] = played_idx
+    print(MOLs["played"][p][m])
+
+    # check for MOL_specific select_effects
+    rules_mol.select_MOL(p, played_idx, played_previously)
+
+    # update
+    update.all()
 
 
 # -----------------------------------------------------------------------------

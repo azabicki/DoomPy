@@ -707,14 +707,64 @@ def trait_pile(p):
 
 # MOLs ------------------------------------------------------------------------
 def MOLs(p):
-    st.markdown("Meaning(s) of Life")
-    for m in range(st.session_state.game["n_MOLs"]):
+    def create_MOL(m):
+        print("create MOL: ", m)
+        pos_MOLs = ["... MOL #{}".format(m + 1)] + MOLs_df.MOL.values.tolist()
+
         st.selectbox(
-            "MOL_" + str(p) + "_" + str(m),
-            st.session_state.deck,
-            format_func=lambda x: st.session_state.deck_str[x],
-            index=None,
-            placeholder="MOL #" + str(m + 1),
+            f"MOL_{p}_{m}",
+            list(range(len(pos_MOLs))),
+            format_func=lambda x: pos_MOLs[x],
+            index=st.session_state[f"MOL_{p}_{m}"],
+            key=f"MOL_{p}_{m}",
             label_visibility="collapsed",
-            disabled=False if m == 0 else True,
+            on_change=act.select_MOL,
+            args=(p, m),
         )
+
+    # shorten df's
+    MOLs_df = st.session_state.df["MOLs_df"]
+    MOLs = st.session_state.MOLs
+    plr = st.session_state.plr
+
+    # create MOL select_boxes
+    for m in range(MOLs["n"][p]):
+        m_idx = MOLs["played"][p][m]
+
+        # check if spinbox need to be drawn
+        if MOLs["played"][p][m] is not None and (
+            "hand" in MOLs_df.loc[m_idx].MOL_type.lower()
+            or "draw" in MOLs_df.loc[m_idx].MOL_type.lower()
+        ):
+            spin = True
+            c_l, c_r = st.columns([3, 2])
+        else:
+            spin = False
+            c_l, c_r = st.columns([7, 1])
+
+        with c_l:
+            create_MOL(m)
+        with c_r:
+            if m_idx is None:
+                st.image(
+                    image=st.session_state.images["question_mark"],
+                    use_column_width="always",
+                )
+            elif spin:
+                # create spinbox
+                st.number_input(
+                    f"mol_points_{p}_{m}",
+                    min_value=-30,
+                    max_value=30,
+                    step=1,
+                    value=0,
+                    on_change=act.manual_MOL,
+                    args=(p, m),
+                    key=f"mol_points_{p}_{m}",
+                    label_visibility="collapsed",
+                )
+            else:
+                st.image(
+                    image=st.session_state.images[str(plr["points_MOL"][p][m])],
+                    use_column_width="always",
+                )

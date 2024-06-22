@@ -330,6 +330,12 @@ def calc_MOLs(p: int) -> None:
                 p_MOL_m,
             )
 
+        # update points_icon of MOL
+        if MOLs["played"][p][m] is not None and st.session_state.game["points_onoff"] == "on":
+            plr["points_MOL"][p][m] = p_MOL_m
+        else:
+            plr["points_MOL"][p][m] = 0
+
     return p_MOL
 
 

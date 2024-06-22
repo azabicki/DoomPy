@@ -25,8 +25,6 @@ cfg["n_player"] = 4
 cfg["n_genes"] = 5
 cfg["n_catastrophes"] = 3
 cfg["n_MOLs"] = 1
-cfg["img_colors_set"] = "circle"
-cfg["img_trait_properties_set"] = "official_setA"
 cfg["max_player"] = 6
 
 # set trait colors
@@ -102,7 +100,7 @@ for files in glob.glob(os.path.join(dir_images, "dominant_star", "*.png")):
 
 # color icons
 for files in glob.glob(
-    os.path.join(dir_images, "colors", cfg["img_colors_set"], "*.png")
+    os.path.join(dir_images, "colors", "circle", "*.png")
 ):
     var_name = os.path.splitext(os.path.basename(files))[0]
     images[var_name] = files
@@ -110,7 +108,7 @@ for files in glob.glob(
 # trait properties
 for files in glob.glob(
     os.path.join(
-        dir_images, "trait_properties", cfg["img_trait_properties_set"], "*.png"
+        dir_images, "trait_properties", "official_setA", "*.png"
     )
 ):
     var_name = os.path.splitext(os.path.basename(files))[0]
@@ -123,7 +121,7 @@ for files in glob.glob(
 # scoreboard icons
 for files in glob.glob(
     os.path.join(
-        dir_images, "trait_properties", cfg["img_trait_properties_set"], "*_sb.png"
+        dir_images, "trait_properties", "official_setA", "*_sb.png"
     )
 ):
     var_name = os.path.splitext(os.path.basename(files))[0]
@@ -166,10 +164,11 @@ game["n_player"] = cfg["n_player"]  # number of current players
 game["n_genes"] = cfg["n_genes"]  # gene pool at start
 game["n_catastrophes"] = cfg["n_catastrophes"]  # number of catastrophes
 game["n_MOLs"] = cfg["n_MOLs"]  # number of MOLs
+game["points_onoff"] = "on"  # 'off' / 'on' / 'rank'
 game["neoteny_checkbutton"] = []
 game["sleepy_spinbox"] = []
-game["points_onoff"] = "on"  # 'off' / 'on' / 'rank'
 
+deck = []  # all traits in deck (or discard pile) left to be drawn / list of idx
 
 plr = {}
 plr["name"] = []
@@ -181,7 +180,10 @@ plr["trait_selected"] = []
 plr["points_WE_effect"] = []
 plr["points_MOL"] = []
 
-deck = []  # all traits in deck (or discard pile) left to be drawn / list of idx
+MOLs = {}
+MOLs["played"] = []  # played MOLs
+MOLs["n"] = []  # number of MOLs for each player -> may be different
+
 
 catastrophe = {}
 catastrophe["possible"] = []  # list of possibles catastrophes
@@ -189,11 +191,4 @@ catastrophe["played"] = []  # occurred catastrophes / needed for worlds end
 
 worlds_end = {}
 worlds_end["played"] = "none"  # play this world-end-event
-worlds_end["cbox"] = [None]  # combobox 4 worlds end
 worlds_end["btn"] = [None]  # button running worlds end
-
-MOLs = {}
-MOLs["played"] = []  # played MOLs
-MOLs["cbox"] = []  # comboxes containing MOLs
-MOLs["icon"] = []  # labels for icon showing MOL points
-MOLs["n"] = []  # number of MOLs for each player -> may be different

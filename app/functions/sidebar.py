@@ -201,7 +201,7 @@ def catastrophes():
                 key=f"catastrophe_{c}",
                 label_visibility="collapsed",
                 disabled=state,
-                on_change=act.catastrophe,
+                on_change=act.select_catastrophe,
                 args=(c, pos_cat_values),
             )
 
@@ -223,9 +223,6 @@ def worlds_end():
             for i in range(st.session_state.game["n_catastrophes"])
             if catastrophe["played"][i] is not None
         ]
-
-        print(">>> ", played_catastrophes)
-        print(">>> ", st.session_state["selected_worlds_end"])
 
         # enable worlds_end-combobox and select last entry
         if len(played_catastrophes) == st.session_state.game["n_catastrophes"]:

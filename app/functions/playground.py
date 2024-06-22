@@ -568,9 +568,7 @@ def trait_pile(p):
                 st.write("Drop of Life:")
             with c_we[2]:
                 # set state depending on 'played' worlds end
-                state = (
-                    False if worlds_end["played"] != "none" else True
-                )
+                state = False if worlds_end["played"] != "none" else True
 
                 # fill spinbox, depending on drops_status
                 if not np.isnan(status_df.loc[trait_idx].drops):
@@ -636,10 +634,16 @@ def trait_pile(p):
                         )
 
                     with c_trait[2]:
-                        st.image(image=st.session_state.images["drops"], use_column_width="always")
+                        st.image(
+                            image=st.session_state.images["drops"],
+                            use_column_width="always",
+                        )
 
                     with c_trait[3]:
-                        st.image(image=st.session_state.images["4"], use_column_width="always")
+                        st.image(
+                            image=st.session_state.images["4"],
+                            use_column_width="always",
+                        )
                 # not in this hand
                 else:
                     with c_trait[1]:
@@ -664,12 +668,15 @@ def trait_pile(p):
         we_type = catastrophes_df.loc[we_idx].worlds_end_type
 
         # columns
-        c_we = st.columns([.1, .2, .1])
+        c_we = st.columns([0.1, 0.2, 0.1])
 
         # WE_icons
         for c in [0, 2]:
             with c_we[c]:
-                st.image(image=st.session_state.images["catastrophe_WE"], use_column_width="always")
+                st.image(
+                    image=st.session_state.images["catastrophe_WE"],
+                    use_column_width="always",
+                )
 
         # WE name & effect
         with c_we[1]:
@@ -678,9 +685,9 @@ def trait_pile(p):
                 font-weight: bold;
                 text-align: center
                 ">{we}</p>""".format(
-                    color=st.session_state.cfg["font_color_total_score"],
-                    we=we,
-                )
+                color=st.session_state.cfg["font_color_total_score"],
+                we=we,
+            )
             st.markdown(we_str, unsafe_allow_html=True)
 
             # WE_EFFECTS
@@ -702,7 +709,10 @@ def trait_pile(p):
                 we_points = (
                     rules_we.calc_WE_points(p) if worlds_end["played"] != "none" else 0
                 )
-                st.image(image=st.session_state.images[str(we_points)], use_column_width="always")
+                st.image(
+                    image=st.session_state.images[str(we_points)],
+                    use_column_width="always",
+                )
 
 
 # MOLs ------------------------------------------------------------------------

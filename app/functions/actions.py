@@ -322,9 +322,6 @@ def traits_world_end(from_: int, trait_idx: int) -> None:
     # update
     update.all()
 
-    # # check if WE_button should be enabled
-    # check_WE_status("check_button")
-
 
 # -----------------------------------------------------------------------------
 def manual_drops(trait: int) -> None:
@@ -391,13 +388,6 @@ def select_MOL(p: int, m: int) -> None:
         played_str = MOLs_df.loc[played_idx].MOL
     played_previously = MOLs["played"][p][m]
 
-    print("info: ", p, " ", m)
-    print(">>> cbox: ", cbox_idx)
-    print(">>> played_idx: ", played_idx)
-    if cbox_idx != 0:
-        print(">>> played_str: ", played_str)
-    print(">>> played_previously: ", played_previously)
-    
     # return, if no MOL selected now and previously
     if cbox_idx == 0 and played_previously is None:
         # log
@@ -424,10 +414,7 @@ def select_MOL(p: int, m: int) -> None:
         print(["MOLs", "MOL"], m + 1, plr["name"][p], played_str, played_idx)
 
     # set played MOL
-    print("info: ", p, " ", m)
-    print(MOLs["played"][p][m])
     MOLs["played"][p][m] = played_idx
-    print(MOLs["played"][p][m])
 
     # check for MOL_specific select_effects
     rules_mol.select_MOL(p, played_idx, played_previously)
@@ -437,7 +424,7 @@ def select_MOL(p: int, m: int) -> None:
 
 
 # -----------------------------------------------------------------------------
-def catastrophe(c: int, pos_cat) -> None:
+def select_catastrophe(c: int, pos_cat) -> None:
     # shorten df's
     traits_df = st.session_state.df["traits_df"]
     status_df = st.session_state.df["status_df"]

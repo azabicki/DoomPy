@@ -25,12 +25,13 @@ for p, col in enumerate(cols):
     with col:
         with st.container(border=True):
             pg.score_board(p)
-            st.divider()
 
+            st.divider()
             pg.controls(p)
             pg.trait_pile(p)
-            st.divider()
 
+            st.divider()
+            st.markdown("Meaning(s) of Life")
             pg.MOLs(p)
 
 st.divider()

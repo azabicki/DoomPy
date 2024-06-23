@@ -15,18 +15,24 @@ def score_board(p):
     c_dom1, c_dom2, c_name, c_gp_txt, c_gp = st.columns([1, 1, 3, 1, 1], gap="small")
     # ----- dominant star 1 -----
     with c_dom1:
-        # str_1 = """<div class="parent-div"><div class="text-div"><img
-        # src="{image}"
-        # alt="star"
-        # class="img_center"/></div></div>""".format(
-        #     image=st.session_state.images["no_star"]
-        # )
-        # st.markdown(str_1, unsafe_allow_html=True)
-        st.image(image=st.session_state.images["no_star"], use_column_width="always")
+        n_dom = update.count_dominants(p)
+        if n_dom == 0:
+            print("0_dom")
+            st.image(image=st.session_state.images["no_star"], use_column_width="always")
+        else:
+            print(">0_dom")
+            st.image(image=st.session_state.images["star"], use_column_width="always")
 
     # ----- dominant star 2 -----
     with c_dom2:
-        st.image(image=st.session_state.images["no_star"], use_column_width="always")
+        if n_dom <= 1:
+            print("<=1_dom")
+            st.image(image=st.session_state.images["no_star"], use_column_width="always")
+        elif n_dom == 2:
+            print("2_dom")
+            st.image(image=st.session_state.images["star"], use_column_width="always")
+        else:
+            st.image(image=st.session_state.images["heroic_star"], use_column_width="always")
 
     # ----- name -----
     with c_name:

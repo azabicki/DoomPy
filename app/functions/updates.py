@@ -431,3 +431,23 @@ def traits_current_status(todo: str, *args) -> None:
 
             # update
             all()
+
+
+# -----------------------------------------------------------------------------
+def count_dominants(p):
+    # shorten df's
+    traits_df = st.session_state.df["traits_df"]
+    plr = st.session_state.plr
+
+    # number of dominant traits
+    n_dominant = np.nansum(
+        [traits_df.loc[trait_idx].dominant for trait_idx in plr["trait_pile"][p]]
+    )
+
+    # check special cases
+    Epic_idx = traits_df.index[traits_df.trait == "Epic"].tolist()
+    if Epic_idx != [] and Epic_idx[0] in plr["trait_pile"][p]:
+        n_dominant = 2
+        print(["stars", "epic"], plr["name"][p])
+
+    return n_dominant

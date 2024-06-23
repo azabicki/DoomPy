@@ -17,19 +17,15 @@ def score_board(p):
     with c_dom1:
         n_dom = update.count_dominants(p)
         if n_dom == 0:
-            print("0_dom")
             st.image(image=st.session_state.images["no_star"], use_column_width="always")
         else:
-            print(">0_dom")
             st.image(image=st.session_state.images["star"], use_column_width="always")
 
     # ----- dominant star 2 -----
     with c_dom2:
         if n_dom <= 1:
-            print("<=1_dom")
             st.image(image=st.session_state.images["no_star"], use_column_width="always")
         elif n_dom == 2:
-            print("2_dom")
             st.image(image=st.session_state.images["star"], use_column_width="always")
         else:
             st.image(image=st.session_state.images["heroic_star"], use_column_width="always")

@@ -270,13 +270,13 @@ def scoring() -> None:
     # show current scoring according to setting
     for p in range(st.session_state.game["n_player"]):
         # update points
-        if st.session_state.game["points_onoff"] == "on":
+        if st.session_state["points_onoff"] == 0:
             plr["points"][p]["face"] = p_face[p]
             plr["points"][p]["drops"] = p_drop[p]
             plr["points"][p]["worlds_end"] = p_worlds_end[p]
             plr["points"][p]["MOL"] = p_MOL[p]
             plr["points"][p]["total"] = total[p]
-        elif st.session_state.game["points_onoff"] == "rank":
+        elif st.session_state["points_onoff"] == 1:
             plr["points"][p]["face"] = str(r_face[p]) + add[r_face[p]]
             plr["points"][p]["drops"] = str(r_drop[p]) + add[r_drop[p]]
             plr["points"][p]["worlds_end"] = str(r_WE[p]) + add[r_WE[p]]

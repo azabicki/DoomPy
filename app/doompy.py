@@ -34,7 +34,12 @@ for p, col in enumerate(cols):
             st.markdown("Meaning(s) of Life")
             pg.MOLs(p)
 
-st.divider()
-# st.session_state.df["traits_df"]
-# st.session_state
+print("------------------")
+
+# st.divider()
+# st.session_state["catastrophe_0"]
+# st.session_state["catastrophe_1"]
+# st.session_state["catastrophe_2"]
+# st.session_state.MOLs["played"][0]
+# st.session_state.df["MOLs_df"]
 # st.session_state

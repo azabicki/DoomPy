@@ -767,7 +767,7 @@ def MOLs(p):
                     min_value=-30,
                     max_value=30,
                     step=1,
-                    value=0,
+                    value=st.session_state[f"mol_points_{p}_{m}"],
                     on_change=act.manual_MOL,
                     args=(p, m),
                     key=f"mol_points_{p}_{m}",

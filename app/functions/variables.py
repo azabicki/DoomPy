@@ -166,6 +166,7 @@ def reset_variables():
 
         for m in range(st.session_state.game["n_MOLs"] + 2):
             st.session_state[f"MOL_{p}_{m}"] = 0
+            st.session_state[f"mol_points_{p}_{m}"] = 0
 
     for c in range(st.session_state.game["n_catastrophes"]):
         st.session_state[f"catastrophe_{c}"] = 0

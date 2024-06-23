@@ -18,7 +18,7 @@ def start_game(what: str = "boot"):
     vars.reset_variables()
 
     # clear traits listbox ----------------------------------------------------
-    btn_clear_trait_search()
+    clear_trait_search()
 
 
 # -----------------------------------------------------------------------------
@@ -81,7 +81,7 @@ def play_trait(to: int) -> int:
 
     # remove from deck & update deck_listbox
     deck.remove(trait_idx)
-    btn_clear_trait_search()
+    clear_trait_search()
 
     # update
     update.all()
@@ -549,5 +549,5 @@ def worlds_end_GO(played_catastrophes) -> None:
 
 
 # -----------------------------------------------------------------------------
-def btn_clear_trait_search():
+def clear_trait_search():
     st.session_state.trait2play = None

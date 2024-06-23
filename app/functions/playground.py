@@ -724,7 +724,6 @@ def trait_pile(p):
 # MOLs ------------------------------------------------------------------------
 def MOLs(p):
     def create_MOL(m):
-        print("create MOL: ", m)
         pos_MOLs = ["... MOL #{}".format(m + 1)] + MOLs_df.MOL.values.tolist()
 
         st.selectbox(

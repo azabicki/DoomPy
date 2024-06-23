@@ -56,8 +56,6 @@ def all() -> None:
     st.session_state.plr = plr
 
 
-
-
 # -----------------------------------------------------------------------------
 def genes() -> None:
     # shorten df's
@@ -299,9 +297,6 @@ def scoring() -> None:
             p_MOL[p],
             total[p],
         )
-
-    # save df's
-    st.session_state.plr = plr
 
 
 # -----------------------------------------------------------------------------

@@ -3,7 +3,6 @@ import os
 import glob
 import numpy as np
 import pandas as pd
-# from PIL import Image
 
 
 # loading stuff ###############################################################
@@ -83,10 +82,6 @@ MOLs_df = xlsx_MOLs.sort_values(by="MOL").reset_index(drop=True).drop(columns="g
 
 # region load images ----------------------------------------------------------
 images = {}
-img_size_scoreboard = 24
-img_size_star = 30
-img_size_icons = 20
-img_size_WE = 40
 
 # basic
 for files in glob.glob(os.path.join(dir_images, "*.png")):
@@ -132,28 +127,11 @@ for files in glob.glob(os.path.join(dir_images, "effects", "*.png")):
     var_name = os.path.splitext(os.path.basename(files))[0]
     images[var_name] = files
 
-    # # pay attention to w/h-ratio
-    # w, h = images[var_name].size
-    # actual_img_w = int(w / h * img_size_icons)
-    # images[var_name] = images[var_name].resize((actual_img_w, img_size_icons))
-
 # points
 for files in glob.glob(os.path.join(dir_images, "points", "*.png")):
     var_name = os.path.splitext(os.path.basename(files))[0]
     images[var_name] = files
 
-    # # create red-crossed-point-icons
-    # images[var_name + "X"] = images[var_name].copy()
-    # images[var_name + "X"].paste(
-    #     images["red_cross"], (0, 0), images["red_cross"]
-    # )
-
-# # fix w/h-ratio of certain images
-# img_sizes = {"exit": img_size_star}
-# for img in ["exit"]:
-#     w, h = images[img].size
-#     actual_img_w = int(w / h * img_sizes[img])
-#     images[img] = images[img].resize((actual_img_w, img_size_icons))
 
 # region tk_inter variables ---------------------------------------------------
 lbl_points_switch = [None]  # label containing icon-switch-icon
@@ -164,7 +142,6 @@ game["n_player"] = cfg["n_player"]  # number of current players
 game["n_genes"] = cfg["n_genes"]  # gene pool at start
 game["n_catastrophes"] = cfg["n_catastrophes"]  # number of catastrophes
 game["n_MOLs"] = cfg["n_MOLs"]  # number of MOLs
-game["points_onoff"] = 0  # 0: "visible" / 1: "rank only" / 2: "hidden"
 game["neoteny_checkbutton"] = []
 game["sleepy_spinbox"] = []
 

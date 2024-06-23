@@ -164,7 +164,7 @@ game["n_player"] = cfg["n_player"]  # number of current players
 game["n_genes"] = cfg["n_genes"]  # gene pool at start
 game["n_catastrophes"] = cfg["n_catastrophes"]  # number of catastrophes
 game["n_MOLs"] = cfg["n_MOLs"]  # number of MOLs
-game["points_onoff"] = "on"  # 'off' / 'on' / 'rank'
+game["points_onoff"] = 0  # 0: "visible" / 1: "rank only" / 2: "hidden"
 game["neoteny_checkbutton"] = []
 game["sleepy_spinbox"] = []
 

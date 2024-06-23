@@ -43,6 +43,10 @@ def init_vars():
         st.session_state.MOLs = MOLs
     if "1st_player" not in st.session_state:
         st.session_state["1st_player"] = 0
+    if "points_onoff" not in st.session_state:
+        st.session_state["points_onoff"] = (
+            0  # 0: "visible" / 1: "rank only" / 2: "hidden"
+        )
 
 
 def reset_variables():

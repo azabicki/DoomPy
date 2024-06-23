@@ -1,6 +1,7 @@
 import streamlit as st
 import functions.actions as act
 import functions.utils as ut
+import functions.updates as update
 
 
 # -----------------------------------------------------------------------------
@@ -21,20 +22,7 @@ def create():
     worlds_end()
 
     # Options ----------------------------------------
-    with st.sidebar.container(border=True):
-        st.markdown("_some options..._")
-
-    with st.sidebar.container(border=True):
-        # config ----------------------------------------
-        st.markdown("current game:")
-        st.markdown(
-            "{np}p / {ng}g / {nc}c / {nm}m".format(
-                np=st.session_state.game["n_player"],
-                ng=st.session_state.game["n_genes"],
-                nc=st.session_state.game["n_catastrophes"],
-                nm=st.session_state.game["n_MOLs"],
-            )
-        )
+    options()
 
 
 # -----------------------------------------------------------------------------
@@ -268,4 +256,19 @@ def worlds_end():
             on_click=act.worlds_end_GO,
             args=(played_catastrophes,),
             use_container_width=True,
+        )
+
+
+# -----------------------------------------------------------------------------
+def options():
+    with st.sidebar.container(border=True):
+        st.markdown("**Options**")
+        pnt_opt = ["visible", "only rank", "hidden"]
+        st.radio(
+            "How to display Points?",
+            list(range(len(pnt_opt))),
+            format_func=lambda x: pnt_opt[x],
+            index=st.session_state["points_onoff"],
+            key="points_onoff",
+            on_change=update.all
         )

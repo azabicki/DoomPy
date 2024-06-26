@@ -9,10 +9,10 @@ runOnSave = true
 primaryColor = '#1b82ff'
 
 # Background color for the main content area
-backgroundColor = '#3d3d3d'
+backgroundColor = '#2E2F2F'
 
 # Background color for sidebar and most interactive widgets
-secondaryBackgroundColor = '#555555'  # f5bcea
+secondaryBackgroundColor = '#424C55'  # f5bcea
 
 # Color used for almost all text
 textColor = '#fafafa'

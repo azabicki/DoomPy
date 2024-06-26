@@ -424,7 +424,7 @@ def select_MOL(p: int, m: int) -> None:
 
 
 # -----------------------------------------------------------------------------
-def select_catastrophe(c: int, pos_cat) -> None:
+def select_catastrophe(c: int, pos_cat_str) -> None:
     # shorten df's
     traits_df = st.session_state.df["traits_df"]
     status_df = st.session_state.df["status_df"]
@@ -434,17 +434,10 @@ def select_catastrophe(c: int, pos_cat) -> None:
 
     # get played catastrophe
     cbox_idx = st.session_state[f"catastrophe_{c}"]
-    played_str = pos_cat[cbox_idx]
-    played_previously = catastrophe["played"][c]
     if cbox_idx > 0:
         played_idx = catastrophe["possible"][c][cbox_idx - 1]
-
-    print(">>> CATASTROPHE: ", c)
-    print(">>> cbox_idx: ", cbox_idx)
-    if cbox_idx > 0:
-        print(">>> played_idx: ", played_idx)
-    print(">>> played_str: ", played_str)
-    print(">>> played_previously: ", played_previously)
+    played_str = pos_cat_str[cbox_idx]
+    played_previously = catastrophe["played"][c]
 
     # return, if no catastrophe was selected
     if cbox_idx == 0:

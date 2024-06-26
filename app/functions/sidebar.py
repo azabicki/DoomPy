@@ -172,25 +172,32 @@ def catastrophes():
 
         # catastrophe select box ---------------------------
         for c in range(st.session_state.game["n_catastrophes"]):
-            pos_cat_values = [" catastrophe {}...".format(c + 1)] + catastrophes_df.loc[
-                catastrophe["possible"][c]
-            ].name.values.tolist()
+            pos_cat_strings = [
+                " catastrophe {}...".format(c + 1)
+            ] + catastrophes_df.loc[catastrophe["possible"][c]].name.values.tolist()
 
             if c == 0 or catastrophe["played"][c - 1] is not None:
                 state = False
             else:
                 state = True
 
+            if catastrophe["played"][c] is None:
+                actual_index = 0
+            else:
+                actual_index = (
+                    catastrophe["possible"][c].index(catastrophe["played"][c]) + 1
+                )
+
             st.selectbox(
                 f"catastrophe_{c}",
-                list(range(len(pos_cat_values))),
-                format_func=lambda x: pos_cat_values[x],
-                index=st.session_state[f"catastrophe_{c}"],
+                list(range(len(pos_cat_strings))),
+                format_func=lambda x: pos_cat_strings[x],
+                index=actual_index,
                 key=f"catastrophe_{c}",
                 label_visibility="collapsed",
                 disabled=state,
                 on_change=act.select_catastrophe,
-                args=(c, pos_cat_values),
+                args=(c, pos_cat_strings),
             )
 
 

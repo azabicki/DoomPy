@@ -277,5 +277,5 @@ def options():
             format_func=lambda x: pnt_opt[x],
             index=st.session_state["points_onoff"],
             key="points_onoff",
-            on_change=update.all
+            on_change=update.all,
         )

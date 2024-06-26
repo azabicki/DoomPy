@@ -306,9 +306,7 @@ def traits_world_end(from_: int, trait_idx: int) -> None:
     if effect_idx == 0:
         print(["traits_WE", "reset"], traits_df.loc[trait_idx].trait, trait_idx)
     else:
-        print(
-            ["traits_WE", "set"], traits_df.loc[trait_idx].trait, trait_idx, effect
-        )
+        print(["traits_WE", "set"], traits_df.loc[trait_idx].trait, trait_idx, effect)
 
     # set traits_WE-effect to status_df of trait
     if effect_idx == 0:
@@ -317,7 +315,9 @@ def traits_world_end(from_: int, trait_idx: int) -> None:
         status_df.loc[trait_idx, "traits_WE"] = effect
 
     # apply traits_WE-effects and update status of traits in this trait pile
-    rules_tr.assign_traits_WE_effects(trait_idx, st.session_state.plr["trait_pile"][from_])
+    rules_tr.assign_traits_WE_effects(
+        trait_idx, st.session_state.plr["trait_pile"][from_]
+    )
 
     # update
     update.all()

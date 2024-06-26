@@ -12,14 +12,7 @@ dir_images = os.path.join(curdir, "..", "..", "doompy", "images")
 
 # region load config file -----------------------------------------------------
 cfg = dict()
-cfg["names"] = [
-    "Lisa",
-    "Julia",
-    "Anton",
-    "Adam",
-    "Ben",
-    "Franzi"
-]
+cfg["names"] = ["Lisa", "Julia", "Anton", "Adam", "Ben", "Franzi"]
 cfg["n_player"] = 4
 cfg["n_genes"] = 5
 cfg["n_catastrophes"] = 3
@@ -94,17 +87,13 @@ for files in glob.glob(os.path.join(dir_images, "dominant_star", "*.png")):
     images[var_name] = files
 
 # color icons
-for files in glob.glob(
-    os.path.join(dir_images, "colors", "circle", "*.png")
-):
+for files in glob.glob(os.path.join(dir_images, "colors", "circle", "*.png")):
     var_name = os.path.splitext(os.path.basename(files))[0]
     images[var_name] = files
 
 # trait properties
 for files in glob.glob(
-    os.path.join(
-        dir_images, "trait_properties", "official_setA", "*.png"
-    )
+    os.path.join(dir_images, "trait_properties", "official_setA", "*.png")
 ):
     var_name = os.path.splitext(os.path.basename(files))[0]
     images[var_name] = files
@@ -115,9 +104,7 @@ for files in glob.glob(
 
 # scoreboard icons
 for files in glob.glob(
-    os.path.join(
-        dir_images, "trait_properties", "official_setA", "*_sb.png"
-    )
+    os.path.join(dir_images, "trait_properties", "official_setA", "*_sb.png")
 ):
     var_name = os.path.splitext(os.path.basename(files))[0]
     images[var_name] = files

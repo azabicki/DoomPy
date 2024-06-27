@@ -31,7 +31,7 @@ def create():
 
 # -----------------------------------------------------------------------------
 def next_game():
-    with st.sidebar.popover("Next Game", use_container_width=False):
+    with st.sidebar.popover("New Game", use_container_width=True):
         with st.form("form_next_game", border=False):
             # settings
             st.markdown("##### Start with:")
@@ -72,7 +72,6 @@ def next_game():
             # names
             ut.h_spacer(2)
             st.markdown("##### Play with:")
-            st.markdown("according to the seating order at the table !")
             for n in range(0, st.session_state.cfg["max_player"], 3):
                 c1, c2, c3 = st.columns(3)
                 with c1:
@@ -93,10 +92,12 @@ def next_game():
                         value=st.session_state.cfg["names"][n + 2],
                         max_chars=None,
                     )
+            ut.h_spacer(1)
+            st.markdown("**IMPORTANT:** according to the seating order at the table !")
 
             # button
-            ut.h_spacer(2)
-            if st.form_submit_button("start game", use_container_width=True):
+            ut.h_spacer(1)
+            if st.form_submit_button("Start New Game", use_container_width=True):
                 act.start_game(what="next_game")
 
 

@@ -482,7 +482,6 @@ def trait_pile(p):
                 ):
                     X = "WE"
                 elif status_df.loc[trait_idx].attachment != "none":
-                    next_col += 1  # is this NEEDED ????
                     X = "AT"
                 else:
                     X = ""

@@ -415,6 +415,7 @@ def select_MOL(p: int, m: int) -> None:
 
     # set played MOL
     MOLs["played"][p][m] = played_idx
+    st.session_state[f"MOL_{p}_{m}"] = cbox_idx
 
     # check for MOL_specific select_effects
     rules_mol.select_MOL(p, played_idx, played_previously)

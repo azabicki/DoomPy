@@ -934,20 +934,6 @@ def trait_pile(p):
 
 # MOLs ------------------------------------------------------------------------
 def MOLs(p):
-    def create_MOL(m):
-        pos_MOLs = ["... MOL #{}".format(m + 1)] + MOLs_df.MOL.values.tolist()
-
-        st.selectbox(
-            f"MOL_{p}_{m}",
-            list(range(len(pos_MOLs))),
-            format_func=lambda x: pos_MOLs[x],
-            index=st.session_state[f"MOL_{p}_{m}"],
-            key=f"MOL_{p}_{m}",
-            label_visibility="collapsed",
-            on_change=act.select_MOL,
-            args=(p, m),
-        )
-
     # shorten df's
     MOLs_df = st.session_state.df["MOLs_df"]
     MOLs = st.session_state.MOLs
@@ -968,8 +954,22 @@ def MOLs(p):
             spin = False
             c_l, c_r = st.columns([7, 1])
 
+        # MOL selectbox
         with c_l:
-            create_MOL(m)
+            pos_MOLs = ["... MOL #{}".format(m + 1)] + MOLs_df.MOL.values.tolist()
+
+            st.selectbox(
+                f"MOL_{p}_{m}",
+                list(range(len(pos_MOLs))),
+                format_func=lambda x: pos_MOLs[x],
+                index=st.session_state[f"MOL_{p}_{m}"],
+                key=f"MOL_{p}_{m}",
+                label_visibility="collapsed",
+                on_change=act.select_MOL,
+                args=(p, m),
+            )
+
+        # points/icons
         with c_r:
             if m_idx is None:
                 st.markdown(

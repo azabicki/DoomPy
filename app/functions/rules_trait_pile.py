@@ -1,4 +1,5 @@
 import streamlit as st
+import functions.utils as ut
 
 
 # single_trait_functions ######################################################
@@ -11,7 +12,7 @@ def amatoxins(
     status_df = st.session_state.df["status_df"]
 
     # columns
-    c_trait = st.columns(5)
+    c_trait = st.columns(3)
 
     # add trait
     with c_trait[0]:
@@ -27,31 +28,43 @@ def amatoxins(
 
     # add effect
     with c_trait[1]:
-        st.markdown("discarded")
+        effect_str = """<p style="
+            text-align:right;
+            ">discarded</p>"""
+        st.markdown(effect_str, unsafe_allow_html=True)
 
-    with c_trait[2]:
-        st.image(image=st.session_state.images["bgpr"], use_column_width="always")
-
-    # add ?/drop icon
+    # add effect/?/drop icons
     # check if worlds end effect was chosen
     traits_WE = status_df.loc[trait_idx].traits_WE
-    if traits_WE != "none":
+    if traits_WE == "none":
+        with c_trait[2]:
+            st.markdown(
+                ut.img2html_doubles(
+                    [
+                        st.session_state.images["bgpr"],
+                        st.session_state.images["question_mark"],
+                    ],
+                    cls="Xtra_icons",
+                ),
+                unsafe_allow_html=True,
+            )
+    else:
         WE_drops = str(int(traits_WE) * -2)
-        with c_trait[3]:
+        with c_trait[2]:
             # change ?/drop icon
-            st.image(image=st.session_state.images["drops"], use_column_width="always")
-
-        with c_trait[4]:
-            # add points icon
-            st.image(image=st.session_state.images[WE_drops], use_column_width="always")
+            st.markdown(
+                ut.img2html_triples(
+                    [
+                        st.session_state.images["bgpr"],
+                        st.session_state.images["drops"],
+                        st.session_state.images[WE_drops],
+                    ],
+                    cls="Xtra_icons",
+                ),
+                unsafe_allow_html=True,
+            )
 
         print(["trait_effects", "amatoxins"], trait_idx, int(traits_WE), WE_drops)
-    else:
-        with c_trait[3]:
-            st.image(
-                image=st.session_state.images["question_mark"],
-                use_column_width="always",
-            )
 
 
 # --- PROWLER -----------------------------------------------------------------
@@ -65,7 +78,7 @@ def prowler(
     plr = st.session_state.plr
 
     # columns
-    c_trait = st.columns(5)
+    c_trait = st.columns(3)
 
     # add trait
     with c_trait[0]:
@@ -81,19 +94,24 @@ def prowler(
 
     # add effect
     with c_trait[1]:
-        st.markdown("less")
+        effect_str = """<p style="
+            text-align:right;
+            ">less</p>"""
+        st.markdown(effect_str, unsafe_allow_html=True)
 
     with c_trait[2]:
-        st.image(image=st.session_state.images["bgpr"], use_column_width="always")
-
-    # add drop
-    with c_trait[3]:
-        st.image(image=st.session_state.images["drops"], use_column_width="always")
-
-    # add points icon
-    with c_trait[4]:
         WE_drops = status_df.loc[trait_idx].effects.split()
-        st.image(image=st.session_state.images[WE_drops[p]], use_column_width="always")
+        st.markdown(
+            ut.img2html_triples(
+                [
+                    st.session_state.images["bgpr"],
+                    st.session_state.images["drops"],
+                    st.session_state.images[WE_drops[p]],
+                ],
+                cls="Xtra_icons",
+            ),
+            unsafe_allow_html=True,
+        )
 
     print(["trait_effects", "prowler"], trait_idx, plr["name"][p], WE_drops[p])
 
@@ -105,7 +123,7 @@ def shiny(p: int, trait_idx: int) -> int:
     plr = st.session_state.plr
 
     # columns
-    c_trait = st.columns(5)
+    c_trait = st.columns(3)
 
     # add trait
     with c_trait[0]:
@@ -120,19 +138,24 @@ def shiny(p: int, trait_idx: int) -> int:
 
     # add effect
     with c_trait[1]:
-        st.markdown("punishes")
+        effect_str = """<p style="
+            text-align:right;
+            ">punishes</p>"""
+        st.markdown(effect_str, unsafe_allow_html=True)
 
     with c_trait[2]:
-        st.image(image=st.session_state.images["c"], use_column_width="always")
-
-    # add drop icon
-    with c_trait[3]:
-        st.image(image=st.session_state.images["drops"], use_column_width="always")
-
-    # add points icon
-    with c_trait[4]:
         shiny_dp = status_df.loc[trait_idx].effects.split()
-        st.image(image=st.session_state.images[shiny_dp[p]], use_column_width="always")
+        st.markdown(
+            ut.img2html_triples(
+                [
+                    st.session_state.images["c"],
+                    st.session_state.images["drops"],
+                    st.session_state.images[shiny_dp[p]],
+                ],
+                cls="Xtra_icons",
+            ),
+            unsafe_allow_html=True,
+        )
 
     print(["trait_effects", "shiny"], trait_idx, plr["name"][p], shiny_dp[p])
 
@@ -154,7 +177,7 @@ def spores(
     n_genes = sum(str(p) == i for i in spores_effect)
     if n_genes > 0:
         # columns
-        c_trait = st.columns(5)
+        c_trait = st.columns(3)
 
         # add trait
         with c_trait[0]:
@@ -169,13 +192,23 @@ def spores(
 
         # add effect
         with c_trait[1]:
-            st.markdown("adds")
+            effect_str = """<p style="
+                text-align:right;
+                ">adds</p>"""
+            st.markdown(effect_str, unsafe_allow_html=True)
 
         # add gene_pool icon
         with c_trait[2]:
-            st.image(image=st.session_state.images["gene_pool"], use_column_width="always")
-        with c_trait[3]:
-            st.image(image=st.session_state.images[str(n_genes)], use_column_width="always")
+            st.markdown(
+                ut.img2html_doubles(
+                    [
+                        st.session_state.images["gene_pool"],
+                        st.session_state.images[str(n_genes)],
+                    ],
+                    cls="Xtra_icons",
+                ),
+                unsafe_allow_html=True,
+            )
 
         print(["trait_effects", "spores"], trait_idx, n_genes, plr["name"][p])
 
@@ -191,7 +224,7 @@ def viral(
     plr = st.session_state.plr
 
     # columns
-    c_trait = st.columns(5)
+    c_trait = st.columns(3)
 
     # add trait
     with c_trait[0]:
@@ -207,27 +240,39 @@ def viral(
 
     # add effect
     with c_trait[1]:
-        st.markdown("punishes")
+        effect_str = """<p style="
+            text-align:right;
+            ">punishes</p>"""
+        st.markdown(effect_str, unsafe_allow_html=True)
 
     # check if worlds end effect was chosen
     trait_WE = status_df.loc[trait_idx].traits_WE
     if trait_WE == "none":
         with c_trait[2]:
-            st.image(image=st.session_state.images["question_mark"], use_column_width="always")
+            st.markdown(
+                ut.img2html(
+                    st.session_state.images["question_mark"],
+                    div="div_icons",
+                    cls="icons",
+                ),
+                unsafe_allow_html=True,
+            )
     else:
         WE_drops = status_df.loc[trait_idx].effects.split()
 
-        # change color icon
+        # change effect/?/drop icon
         with c_trait[2]:
-            st.image(image=st.session_state.images[trait_WE[0]], use_column_width="always")
-
-        # add drop icon
-        with c_trait[3]:
-            st.image(image=st.session_state.images["drops"], use_column_width="always")
-
-        # add points icon
-        with c_trait[4]:
-            st.image(image=st.session_state.images[WE_drops[p]], use_column_width="always")
+            st.markdown(
+                ut.img2html_triples(
+                    [
+                        st.session_state.images[trait_WE[0]],
+                        st.session_state.images["drops"],
+                        st.session_state.images[WE_drops[p]],
+                    ],
+                    cls="Xtra_icons",
+                ),
+                unsafe_allow_html=True,
+            )
 
         print(
             ["trait_effects", "viral"],

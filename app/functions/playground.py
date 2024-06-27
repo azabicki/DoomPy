@@ -12,71 +12,119 @@ import functions.rules_worlds_end as rules_we
 # ScoreBoard ------------------------------------------------------------------
 def score_board(p):
     # upper row --------------------------------
-    c_dom1, c_dom2, c_name, c_gp_txt, c_gp = st.columns([1, 1, 3, 1, 1], gap="small")
+    c_dom1, c_dom2, c_name, c_gp_txt, c_gp = st.columns(
+        [1, 1, 3.5, 1, 0.6], gap="small"
+    )
     # ----- dominant star 1 -----
     with c_dom1:
         n_dom = update.count_dominants(p)
         if n_dom == 0:
-            st.image(
-                image=st.session_state.images["no_star"], use_column_width="always"
+            st.markdown(
+                ut.img2html(
+                    st.session_state.images["no_star"],
+                    div="div_score_upper",
+                    cls="star",
+                ),
+                unsafe_allow_html=True,
             )
         else:
-            st.image(image=st.session_state.images["star"], use_column_width="always")
+            st.markdown(
+                ut.img2html(
+                    st.session_state.images["star"], div="div_score_upper", cls="star"
+                ),
+                unsafe_allow_html=True,
+            )
 
     # ----- dominant star 2 -----
     with c_dom2:
         if n_dom <= 1:
-            st.image(
-                image=st.session_state.images["no_star"], use_column_width="always"
+            st.markdown(
+                ut.img2html(
+                    st.session_state.images["no_star"],
+                    div="div_score_upper",
+                    cls="star",
+                ),
+                unsafe_allow_html=True,
             )
         elif n_dom == 2:
-            st.image(image=st.session_state.images["star"], use_column_width="always")
+            st.markdown(
+                ut.img2html(
+                    st.session_state.images["star"], div="div_score_upper", cls="star"
+                ),
+                unsafe_allow_html=True,
+            )
         else:
-            st.image(
-                image=st.session_state.images["heroic_star"], use_column_width="always"
+            st.markdown(
+                ut.img2html(
+                    st.session_state.images["heroic_star"],
+                    div="div_score_upper",
+                    cls="star",
+                ),
+                unsafe_allow_html=True,
             )
 
     # ----- name -----
     with c_name:
         if st.session_state["1st_player"] == p:
-            name_str = """<div class="parent-div"><div class="text-div"><p style="
-            color:{color};
-            font-size: 40px;
-            font-weight: bold;
-            text-align:center;
-            ">{name}</p></div></div>""".format(
+            name_str = """
+                <div class="div_score_upper">
+                <div class="div_yCenter">
+                <p style="
+                    color: {color};
+                    font-size: 40px;
+                    font-weight: bold;
+                    text-align: center;
+                ">
+                {name}
+                </p></div></div>""".format(
                 color=st.session_state.cfg["font_color_1st_player"],
                 name=st.session_state.plr["name"][p],
             )
         else:
-            name_str = """<div class="parent-div"><div class="text-div"><p style="
-            font-size: 40px;
-            font-weight: bold;
-            text-align:center;
-            ">{name}</p></div></div>""".format(
+            name_str = """
+                <div class="div_score_upper">
+                <div class="div_yCenter">
+                <p style="
+                    font-size: 40px;
+                    font-weight: bold;
+                    text-align: center;
+                ">
+                {name}
+                </p></div></div>""".format(
                 name=st.session_state.plr["name"][p]
             )
         st.markdown(name_str, unsafe_allow_html=True)
 
     # ----- gene pool string -----
     with c_gp_txt:
-        gp_txt_str = """<div class="parent-div"><div class="text-div"><p style="
-        color:{color};
-        font-size: 14px;
-        text-align:right;
-        ">gene<br>pool</p></div></div>""".format(
+        gp_txt_str = """
+            <div class="div_score_upper">
+            <div class="div_yCenter">
+            <p style="
+                color: {color};
+                font-size: 12px;
+                font-weight: bold;
+                text-align: right;
+            ">
+            gene<br>pool
+            </p></div></div>""".format(
             color=st.session_state.cfg["font_color_genes"]
         )
         st.markdown(gp_txt_str, unsafe_allow_html=True)
 
     # ----- gene pool -----
     with c_gp:
-        gp_str = """<div class="parent-div"><div class="text-div"><p style="
-        color:{color};
-        font-size: 40px;
-        font-weight: bold;
-        text-align: left
-        ">{gp}</p></div></div>""".format(
+        gp_str = """
+            <div class="div_score_upper">
+            <div class="div_yCenter">
+            <p style="
+                color: {color};
+                font-size: 40px;
+                font-weight: bold;
+                text-align: left
+            ">
+            {gp}
+            </p></div></div>""".format(
             color=st.session_state.cfg["font_color_genes"],
             gp=st.session_state.plr["genes"][p],
         )
@@ -89,63 +137,100 @@ def score_board(p):
     )
     # ----- color count -----
     with c_col1:
-        cnt_b = """<div class="clr-cnt-div"><div class="text-div">
-            <p class="clr-cnt" style="color:{color}; text-align:right">
-            {cnt}</p></div></div>""".format(
+        cnt_b = """
+            <div class="div_points">
+            <div class="div_yCenter">
+            <p class="points" style="
+                color: {color};
+                text-align: right
+            ">
+            {cnt}
+            </p></div></div>""".format(
             color=st.session_state.cfg["color_blue"],
             cnt=st.session_state.plr["n_tp"][p]["b"],
         )
         st.markdown(cnt_b, unsafe_allow_html=True)
 
-        cnt_p = """<div class="clr-cnt-div"><div class="text-div">
-            <p class="clr-cnt" style="color:{color}; text-align:right">
-            {cnt}</p></div></div>""".format(
+        cnt_p = """
+            <div class="div_points">
+            <div class="div_yCenter">
+            <p class="points" style="
+                color: {color};
+                text-align: right
+            ">
+            {cnt}
+            </p></div></div>""".format(
             color=st.session_state.cfg["color_purple"],
             cnt=st.session_state.plr["n_tp"][p]["p"],
         )
         st.markdown(cnt_p, unsafe_allow_html=True)
 
     with c_col2:
-        cnt_g = """<div class="clr-cnt-div"><div class="text-div">
-            <p class="clr-cnt" style="color:{color}; text-align:center">
-            {cnt}</p></div></div>""".format(
+        cnt_g = """
+            <div class="div_points">
+            <div class="div_yCenter">
+            <p class="points" style="
+                color: {color};
+                text-align: center
+            ">
+            {cnt}
+            </p></div></div>""".format(
             color=st.session_state.cfg["color_green"],
             cnt=st.session_state.plr["n_tp"][p]["g"],
         )
         st.markdown(cnt_g, unsafe_allow_html=True)
 
-        cnt_r = """<div class="clr-cnt-div"><div class="text-div">
-            <p class="clr-cnt" style="color:{color}; text-align:center">
-            {cnt}</p></div></div>""".format(
+        cnt_r = """
+            <div class="div_points">
+            <div class="div_yCenter">
+            <p class="points" style="
+                color: {color};
+                text-align: center
+            ">
+            {cnt}
+            </p></div></div>""".format(
             color=st.session_state.cfg["color_red"],
             cnt=st.session_state.plr["n_tp"][p]["r"],
         )
         st.markdown(cnt_r, unsafe_allow_html=True)
 
     with c_col3:
-        cnt_c = """<div class="clr-cnt-div"><div class="text-div">
-            <p class="clr-cnt" style="color:{color}; text-align:left">
-            {cnt}</p></div></div>""".format(
+        cnt_c = """
+            <div class="div_points">
+            <div class="div_yCenter">
+            <p class="points" style="
+                color: {color};
+                text-align: left
+            ">
+            {cnt}
+            </p></div></div>""".format(
             color=st.session_state.cfg["color_colorless"],
             cnt=st.session_state.plr["n_tp"][p]["c"],
         )
         st.markdown(cnt_c, unsafe_allow_html=True)
 
-        cnt_total = """<div class="clr-cnt-div"><div class="text-div">
-            <p class="clr-cnt" style="text-align:left">
-            {cnt}</p></div></div>""".format(
+        cnt_total = """
+            <div class="div_points">
+            <div class="div_yCenter">
+            <p class="points" style="
+                tesxt-align: left
+            ">
+            {cnt}
+            </p></div></div>""".format(
             cnt=st.session_state.plr["n_tp"][p]["sb"],
         )
         st.markdown(cnt_total, unsafe_allow_html=True)
 
     # ----- points -----
     with c_pnts:
-        pnt_str = """<div class="ttl-scr-div"><div class="text-div"><p style="
-        color:{color};
-        font-size: 80px;
-        font-weight: bold;
-        text-align: center
-        ">{gp}</p></div></div>""".format(
+        pnt_str = """
+            <div class="div_points_total">
+            <div class="div_yCenter">
+            <p class="points_total" style="
+                color: {color}
+            ">
+            {gp}
+            </p></div></div>""".format(
             color=st.session_state.cfg["font_color_total_score"],
             gp=st.session_state.plr["points"][p]["total"],
         )
@@ -153,41 +238,80 @@ def score_board(p):
 
     # ----- sub-points -----
     with c_sub1:
-        st.image(image=st.session_state.images["blank_sb"], use_column_width="always")
-        st.image(image=st.session_state.images["drops_sb"], use_column_width="always")
+        st.markdown(
+            ut.img2html(
+                st.session_state.images["blank_sb"], div="div_points", cls="score_icons"
+            ),
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            ut.img2html(
+                st.session_state.images["drops_sb"], div="div_points", cls="score_icons"
+            ),
+            unsafe_allow_html=True,
+        )
 
     with c_sub2:
-        pnt_f = """<div class="clr-cnt-div"><div class="text-div">
-            <p class="clr-cnt" style="text-align:left">
-            {pnt}</p></div></div>""".format(
+        pnt_f = """
+            <div class="div_points">
+            <div class="div_yCenter">
+            <p class="points" style="
+                text-align: left
+            ">
+            {pnt}
+            </p></div></div>""".format(
             pnt=st.session_state.plr["points"][p]["face"],
         )
         st.markdown(pnt_f, unsafe_allow_html=True)
 
-        pnt_d = """<div class="clr-cnt-div"><div class="text-div">
-            <p class="clr-cnt" style="text-align:left">
+        pnt_d = """
+            <div class="div_points">
+            <div class="div_yCenter">
+            <p class="points" style="
+                text-align: left
+            ">
             {pnt}</p></div></div>""".format(
             pnt=st.session_state.plr["points"][p]["drops"],
         )
         st.markdown(pnt_d, unsafe_allow_html=True)
 
     with c_sub3:
-        st.image(
-            image=st.session_state.images["worlds_end_sb"], use_column_width="always"
+        st.markdown(
+            ut.img2html(
+                st.session_state.images["worlds_end_sb"],
+                div="div_points",
+                cls="score_icons",
+            ),
+            unsafe_allow_html=True,
         )
-        st.image(image=st.session_state.images["MOL_sb"], use_column_width="always")
+        st.markdown(
+            ut.img2html(
+                st.session_state.images["MOL_sb"], div="div_points", cls="score_icons"
+            ),
+            unsafe_allow_html=True,
+        )
 
     with c_sub4:
-        pnt_we = """<div class="clr-cnt-div"><div class="text-div">
-            <p class="clr-cnt" style="text-align:left">
-            {pnt}</p></div></div>""".format(
+        pnt_we = """
+            <div class="div_points">
+            <div class="div_yCenter">
+            <p class="points" style="
+                text-align: left
+            ">
+            {pnt}
+            </p></div></div>""".format(
             pnt=st.session_state.plr["points"][p]["worlds_end"],
         )
         st.markdown(pnt_we, unsafe_allow_html=True)
 
-        pnt_m = """<div class="clr-cnt-div"><div class="text-div">
-            <p class="clr-cnt" style="text-align:left">
-            {pnt}</p></div></div>""".format(
+        pnt_m = """
+            <div class="div_points">
+            <div class="div_yCenter">
+            <p class="points" style="
+                text-align: left
+            ">
+            {pnt}
+            </p></div></div>""".format(
             pnt=st.session_state.plr["points"][p]["MOL"],
         )
         st.markdown(pnt_m, unsafe_allow_html=True)
@@ -295,9 +419,13 @@ def trait_pile(p):
                 != traits_df.loc[trait_idx].color.lower()
                 else ""
             )
-            st.image(
-                image=st.session_state.images[cc + cb + cg + cp + cr + X],
-                use_column_width="always",
+            st.markdown(
+                ut.img2html(
+                    st.session_state.images[cc + cb + cg + cp + cr + X],
+                    div="div_icons",
+                    cls="icons",
+                ),
+                unsafe_allow_html=True,
             )
 
         # ----- face value -------------
@@ -309,15 +437,28 @@ def trait_pile(p):
             face_string = (
                 trait_face if isinstance(trait_face, str) else str(int(trait_face))
             )
-            st.image(
-                image=st.session_state.images[face_string + X],
-                use_column_width="always",
+            st.markdown(
+                ut.img2html(
+                    st.session_state.images[face_string + X],
+                    div="div_icons",
+                    cls="icons",
+                ),
+                unsafe_allow_html=True,
             )
 
         # ---------- STATE_icons -> current drop/attachment effects  ----------
         # ----- seperator -------------
         with c_trait[4]:
-            st.markdown("**|**")
+            sep_str = """
+                <div class="div_icons">
+                <div class="div_yCenter">
+                <p style="
+                    text-align: center;
+                    font-size: 20px;
+                ">
+                |
+                </p></div></div>"""
+            st.markdown(sep_str, unsafe_allow_html=True)
 
         # (running) index for next columns
         next_col = 4
@@ -347,9 +488,13 @@ def trait_pile(p):
                     X = ""
 
                 # add new color icon
-                st.image(
-                    image=st.session_state.images[cc + cb + cg + cp + cr + X],
-                    use_column_width="always",
+                st.markdown(
+                    ut.img2html(
+                        st.session_state.images[cc + cb + cg + cp + cr + X],
+                        div="div_icons",
+                        cls="icons",
+                    ),
+                    unsafe_allow_html=True,
                 )
 
         # ----- drop value -------------
@@ -358,9 +503,13 @@ def trait_pile(p):
             # drop icon
             next_col += 1
             with c_trait[next_col]:
-                st.image(
-                    image=st.session_state.images["drops"],
-                    use_column_width="always",
+                st.markdown(
+                    ut.img2html(
+                        st.session_state.images["drops"],
+                        div="div_icons",
+                        cls="icons",
+                    ),
+                    unsafe_allow_html=True,
                 )
 
             # value icon
@@ -378,9 +527,13 @@ def trait_pile(p):
                     else:
                         drop_string = str(int(cur_drops))
 
-                st.image(
-                    image=st.session_state.images[drop_string],
-                    use_column_width="always",
+                st.markdown(
+                    ut.img2html(
+                        st.session_state.images[drop_string],
+                        div="div_icons",
+                        cls="icons",
+                    ),
+                    unsafe_allow_html=True,
                 )
 
         # maybe add the following icons if i find a good way to do that
@@ -389,9 +542,13 @@ def trait_pile(p):
             if status_df.loc[trait_idx].attachment != "none":
                 next_col += 1
                 with c_trait[next_col]:
-                    st.image(
-                        image=st.session_state.images["attachment"],
-                        use_column_width="always",
+                    st.markdown(
+                        ut.img2html(
+                            st.session_state.images["attachment"],
+                            div="div_icons",
+                            cls="icons",
+                        ),
+                        unsafe_allow_html=True,
                     )
 
             # ----- noFX -------------
@@ -401,71 +558,103 @@ def trait_pile(p):
             ):
                 next_col += 1
                 with c_trait[next_col]:
-                    st.image(
-                        image=st.session_state.images["noFX"],
-                        use_column_width="always",
+                    st.markdown(
+                        ut.img2html(
+                            st.session_state.images["noFX"],
+                            div="div_icons",
+                            cls="icons",
+                        ),
+                        unsafe_allow_html=True,
                     )
 
             # ----- noRemove -------------
             if status_df.loc[trait_idx].no_remove:
                 next_col += 1
                 with c_trait[next_col]:
-                    st.image(
-                        image=st.session_state.images["noRemove"],
-                        use_column_width="always",
+                    st.markdown(
+                        ut.img2html(
+                            st.session_state.images["noRemove"],
+                            div="div_icons",
+                            cls="icons",
+                        ),
+                        unsafe_allow_html=True,
                     )
 
             # ----- noDiscard -------------
             if status_df.loc[trait_idx].no_discard:
                 next_col += 1
                 with c_trait[next_col]:
-                    st.image(
-                        image=st.session_state.images["noDiscard"],
-                        use_column_width="always",
+                    st.markdown(
+                        ut.img2html(
+                            st.session_state.images["noDiscard"],
+                            div="div_icons",
+                            cls="icons",
+                        ),
+                        unsafe_allow_html=True,
                     )
 
             # ----- noSteal -------------
             if status_df.loc[trait_idx].no_steal:
                 next_col += 1
                 with c_trait[next_col]:
-                    st.image(
-                        image=st.session_state.images["noSteal"],
-                        use_column_width="always",
+                    st.markdown(
+                        ut.img2html(
+                            st.session_state.images["noSteal"],
+                            div="div_icons",
+                            cls="icons",
+                        ),
+                        unsafe_allow_html=True,
                     )
 
             # ----- noSwap -------------
             if status_df.loc[trait_idx].no_swap:
                 next_col += 1
                 with c_trait[next_col]:
-                    st.image(
-                        image=st.session_state.images["noSwap"],
-                        use_column_width="always",
+                    st.markdown(
+                        ut.img2html(
+                            st.session_state.images["noSwap"],
+                            div="div_icons",
+                            cls="icons",
+                        ),
+                        unsafe_allow_html=True,
                     )
 
             # ----- if WORLDS END effects this trait -------------
             if status_df.loc[trait_idx].effects_WE != "none":
                 next_col += 1
                 with c_trait[next_col]:
-                    st.image(
-                        image=st.session_state.images["worlds_end"],
-                        use_column_width="always",
+                    st.markdown(
+                        ut.img2html(
+                            st.session_state.images["worlds_end"],
+                            div="div_icons",
+                            cls="icons",
+                        ),
+                        unsafe_allow_html=True,
                     )
 
                 if "face" in status_df.loc[trait_idx].effects_WE.lower():
                     we_face_string = str(int(status_df.loc[trait_idx].face))
                     next_col += 1
                     with c_trait[next_col]:
-                        st.image(
-                            image=st.session_state.images[we_face_string],
-                            use_column_width="always",
+                        st.markdown(
+                            ut.img2html(
+                                st.session_state.images[we_face_string],
+                                div="div_icons",
+                                cls="icons",
+                            ),
+                            unsafe_allow_html=True,
                         )
 
                 if "inactive" in status_df.loc[trait_idx].effects_WE.lower():
                     next_col += 1
                     with c_trait[next_col]:
-                        st.image(
-                            image=st.session_state.images["noFX"],
-                            use_column_width="always",
+                        st.markdown(
+                            ut.img2html(
+                                st.session_state.images["noFX"],
+                                div="div_icons",
+                                cls="icons",
+                            ),
+                            unsafe_allow_html=True,
                         )
 
         # ---------- TRAIT specific aditional rows ----------------------------
@@ -616,7 +805,7 @@ def trait_pile(p):
             # only if no one has it or this player has it
             if neoteny_effect == "none" or neoteny_effect == str(p):
                 # columns
-                c_trait = st.columns(4)
+                c_trait = st.columns([2, 3, 2])
 
                 # add trait
                 with c_trait[0]:
@@ -629,11 +818,23 @@ def trait_pile(p):
                     )
                     st.markdown(name_str, unsafe_allow_html=True)
 
-                # if is this hand
-                if st.session_state.game["neoteny_checkbutton"][p] == 1:
+                # not in this hand
+                if st.session_state.game["neoteny_checkbutton"][p] != 1:
                     with c_trait[1]:
                         st.checkbox(
-                            "got it ->",
+                            "on hand?",
+                            value=False,
+                            key=f"neoteny_{p}",
+                            on_change=update.traits_current_status,
+                            args=("neoteny", p),
+                            label_visibility="visible",
+                        )
+
+                # if is this hand
+                else:
+                    with c_trait[1]:
+                        st.checkbox(
+                            "got it!",
                             value=True,
                             key=f"neoteny_{p}",
                             on_change=update.traits_current_status,
@@ -642,26 +843,15 @@ def trait_pile(p):
                         )
 
                     with c_trait[2]:
-                        st.image(
-                            image=st.session_state.images["drops"],
-                            use_column_width="always",
-                        )
-
-                    with c_trait[3]:
-                        st.image(
-                            image=st.session_state.images["4"],
-                            use_column_width="always",
-                        )
-                # not in this hand
-                else:
-                    with c_trait[1]:
-                        st.checkbox(
-                            "in my hand???",
-                            value=False,
-                            key=f"neoteny_{p}",
-                            on_change=update.traits_current_status,
-                            args=("neoteny", p),
-                            label_visibility="visible",
+                        st.markdown(
+                            ut.img2html_doubles(
+                                [
+                                    st.session_state.images["drops"],
+                                    st.session_state.images["4"],
+                                ],
+                                cls="Xtra_icons",
+                            ),
+                            unsafe_allow_html=True,
                         )
 
     # *************************************************************************
@@ -676,23 +866,38 @@ def trait_pile(p):
         we_type = catastrophes_df.loc[we_idx].worlds_end_type
 
         # columns
-        c_we = st.columns([0.1, 0.2, 0.1])
+        c_we = st.columns([1, 3, 1])
 
         # WE_icons
-        for c in [0, 2]:
-            with c_we[c]:
-                st.image(
-                    image=st.session_state.images["catastrophe_WE"],
-                    use_column_width="always",
-                )
+        with c_we[0]:
+            st.markdown(
+                ut.img2html(
+                    st.session_state.images["catastrophe_WE"],
+                    div="div_WE_icons_L",
+                    cls="WE_icons",
+                ),
+                unsafe_allow_html=True,
+            )
+        with c_we[2]:
+            st.markdown(
+                ut.img2html(
+                    st.session_state.images["catastrophe_WE"],
+                    div="div_WE_icons_R",
+                    cls="WE_icons",
+                ),
+                unsafe_allow_html=True,
+            )
 
         # WE name & effect
         with c_we[1]:
-            we_str = """<p style="
-                color:{color};
-                font-weight: bold;
-                text-align: center
-                ">{we}</p>""".format(
+            we_str = """
+                <div class="div_WE">
+                <div class="div_yCenter">
+                <p class="WE" style="
+                    color:{color};
+                ">
+                {we}
+                </p></div></div>""".format(
                 color=st.session_state.cfg["font_color_total_score"],
                 we=we,
             )
@@ -717,9 +922,13 @@ def trait_pile(p):
                 we_points = (
                     rules_we.calc_WE_points(p) if worlds_end["played"] != "none" else 0
                 )
-                st.image(
-                    image=st.session_state.images[str(we_points)],
-                    use_column_width="always",
+                st.markdown(
+                    ut.img2html(
+                        st.session_state.images[str(we_points)],
+                        div="div_WE_points",
+                        cls="WE_icons",
+                    ),
+                    unsafe_allow_html=True,
                 )
 
 
@@ -763,9 +972,13 @@ def MOLs(p):
             create_MOL(m)
         with c_r:
             if m_idx is None:
-                st.image(
-                    image=st.session_state.images["question_mark"],
-                    use_column_width="always",
+                st.markdown(
+                    ut.img2html(
+                        st.session_state.images["question_mark"],
+                        div="div_MOL",
+                        cls="MOL",
+                    ),
+                    unsafe_allow_html=True,
                 )
             elif spin:
                 # create spinbox
@@ -781,7 +994,11 @@ def MOLs(p):
                     label_visibility="collapsed",
                 )
             else:
-                st.image(
-                    image=st.session_state.images[str(plr["points_MOL"][p][m])],
-                    use_column_width="always",
+                st.markdown(
+                    ut.img2html(
+                        st.session_state.images[str(plr["points_MOL"][p][m])],
+                        div="div_MOL",
+                        cls="MOL",
+                    ),
+                    unsafe_allow_html=True,
                 )

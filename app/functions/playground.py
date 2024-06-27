@@ -818,7 +818,8 @@ def trait_pile(p):
                     st.markdown(name_str, unsafe_allow_html=True)
 
                 # not in this hand
-                if st.session_state.game["neoteny_checkbutton"][p] != 1:
+                # if not st.session_state[f"neoteny_{p}"]:
+                if st.session_state.game["neoteny_checkbutton"][p] == 0:
                     with c_trait[1]:
                         st.checkbox(
                             "on hand?",

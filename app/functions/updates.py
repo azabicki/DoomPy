@@ -419,9 +419,11 @@ def traits_current_status(todo: str, *args) -> None:
             # update 'cur_effect'
             if not any([i for i in st.session_state.game["neoteny_checkbutton"]]):
                 status_df.loc[neoteny_idx, "effects"] = "none"
+                st.session_state[f"neoteny_{p}"] = False
                 print(["update_trait_status", "neoteny_no_one"])
             else:
                 status_df.loc[neoteny_idx, "effects"] = str(p)
+                st.session_state[f"neoteny_{p}"] = True
                 print(["update_trait_status", "neoteny_that_one"], plr["name"][p])
 
             # update

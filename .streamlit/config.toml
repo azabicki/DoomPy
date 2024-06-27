@@ -6,7 +6,7 @@ runOnSave = true
 
 [theme]
 # Primary accent for interactive elements
-primaryColor = '#1b82ff'
+primaryColor = '#3e95ff'
 
 # Background color for the main content area
 backgroundColor = '#2E2F2F'

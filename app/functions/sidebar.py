@@ -6,6 +6,10 @@ import functions.updates as update
 
 # -----------------------------------------------------------------------------
 def create():
+    st.sidebar.image(
+        "app/logo.png",
+        use_column_width="always",
+    )
     # Next Game ----------------------------------------
     next_game()
 

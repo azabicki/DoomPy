@@ -44,35 +44,35 @@ def filter_attachables(attachment: str, p: int) -> list:
             attachable = [
                 idx
                 for idx in attachable
-                if "blue" not in traits_df.loc[idx].color.lower()
+                if "blue" != traits_df.loc[idx].color.lower()
             ]
 
         case "non_green":
             attachable = [
                 idx
                 for idx in attachable
-                if "green" not in traits_df.loc[idx].color.lower()
+                if "green" != traits_df.loc[idx].color.lower()
             ]
 
         case "non_purple":
             attachable = [
                 idx
                 for idx in attachable
-                if "purple" not in traits_df.loc[idx].color.lower()
+                if "purple" != traits_df.loc[idx].color.lower()
             ]
 
         case "non_red":
             attachable = [
                 idx
                 for idx in attachable
-                if "red" not in traits_df.loc[idx].color.lower()
+                if "red" != traits_df.loc[idx].color.lower()
             ]
 
         case "color":
             attachable = [
                 idx
                 for idx in attachable
-                if "colorless" not in traits_df.loc[idx].color.lower()
+                if "colorless" != traits_df.loc[idx].color.lower()
             ]
 
         case "effectless":

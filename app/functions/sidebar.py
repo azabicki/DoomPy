@@ -296,8 +296,7 @@ def options():
         could even make use of this **Live Scoring** tool!
 
         If you find any bugs or space for improvement, just let me know! You
-        can open an [issue](https://github.com/azabicki/DoomPy/issues) in the
-        [_GITHUB repo_](https://github.com/azabicki/DoomPy), or drop me an
-        [_eMail_](azabicki@posteo.de).
+        can open an [_issue_](https://github.com/azabicki/DoomPy/issues) in the
+        [_GITHUB repo_](https://github.com/azabicki/DoomPy).
         """
         )

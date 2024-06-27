@@ -34,7 +34,7 @@ cfg["font_color_genes"] = "#bf3eff"
 
 # region load cards.xlsx ------------------------------------------------------
 # traits
-xlsx_traits = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="traits")
+xlsx_traits = pd.read_excel(os.path.join(dir_files, "assets", "cards.xlsx"), sheet_name="traits")
 xlsx_traits = xlsx_traits[xlsx_traits["in_game"] == "yes"]
 traits_df = (
     xlsx_traits.loc[xlsx_traits.index.repeat(xlsx_traits.n_cards)]
@@ -59,7 +59,7 @@ status_df["effects_WE"] = "none"
 status_df["traits_WE"] = "none"
 
 # catastrophes
-xlsx_ages = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="ages")
+xlsx_ages = pd.read_excel(os.path.join(dir_files, "assets", "cards.xlsx"), sheet_name="ages")
 xlsx_catastrophes = xlsx_ages.loc[xlsx_ages["type"] == "Catastrophe"]
 xlsx_catastrophes = xlsx_catastrophes.loc[xlsx_catastrophes["in_game"] == "yes"]
 catastrophes_df = (
@@ -69,7 +69,7 @@ catastrophes_df = (
 )
 
 # MOLs
-xlsx_MOLs = pd.read_excel(os.path.join(dir_files, "cards.xlsx"), sheet_name="MOL")
+xlsx_MOLs = pd.read_excel(os.path.join(dir_files, "assets", "cards.xlsx"), sheet_name="MOL")
 xlsx_MOLs = xlsx_MOLs[xlsx_MOLs["in_game"] == "yes"]
 MOLs_df = xlsx_MOLs.sort_values(by="MOL").reset_index(drop=True).drop(columns="game")
 
